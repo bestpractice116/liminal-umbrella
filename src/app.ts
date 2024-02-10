@@ -1,5 +1,5 @@
 import { App } from '@aws-cdk/core';
-import { StartAPIStack } from './stacks/start-api-stack';
+import { LiminalUmbrellaStack } from './stacks/start-api-stack';
 
 const stackEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -7,7 +7,7 @@ const stackEnv = {
 };
 
 const app = new App();
-const startAPIStack = new StartAPIStack(app, 'StartAPIStack', {
+const liminalUmbrellaStack = new LiminalUmbrellaStack(app, 'LiminalUmbrellaStack', {
   domainAddress: process.env.LAMBDA_DOMAIN,
   env: stackEnv
 });
