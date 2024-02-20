@@ -1,5 +1,7 @@
 import {Context, Callback} from 'aws-lambda';
-import {DiscordEventRequest, DiscordResponseData, verifyEvent} from 'discord-bot-cdk-construct';
+import {verifyEvent} from './DiscordBotFunction';
+import {DiscordEventRequest, DiscordResponseData} from '../constructs/DiscordBotConstruct';
+import {sendResponse} from './utils/Discord';
 import {Embed} from 'slash-commands';
 
 /**

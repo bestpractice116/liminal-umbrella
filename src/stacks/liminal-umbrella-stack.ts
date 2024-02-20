@@ -4,8 +4,7 @@ import { Construct } from 'constructs';
 import * as sqs from 'aws-cdk-lib/aws-sqs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
-import {Duration} from 'aws-cdk-lib';
-import {DiscordBotConstruct} from 'discord-bot-cdk-construct';
+import {DiscordBotConstruct} from '../constructs/DiscordBotConstruct';
 
 
 export class LiminalUmbrellaStack extends cdk.Stack {
@@ -35,12 +34,12 @@ export class LiminalUmbrellaStack extends cdk.Stack {
     // Create the Lambdas next.
     const discordCommandsLambda = new lambda.Function(this, 'discord-commands-lambda', {
       runtime: lambda.Runtime.NODEJS_18_X,
-      code: lambda.Code.fromAsset(path.join(__dirname, 'functions')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'functions')),
       handler: 'handler',
       environment: {
         USERS_TABLE_NAME: this.usersTable.tableName,
       },
-      timeout: Duration.seconds(60),
+      timeout: cdk.Duration.seconds(60),
     });
     this.usersTable.grantReadWriteData(discordCommandsLambda);
 
