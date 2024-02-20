@@ -5,6 +5,7 @@ import * as sqs from 'aws-cdk-lib/aws-sqs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 import {Duration} from 'aws-cdk-lib';
+import {DiscordBotConstruct} from 'discord-bot-cdk-construct';
 
 
 export class LiminalUmbrellaStack extends cdk.Stack {
@@ -42,5 +43,9 @@ export class LiminalUmbrellaStack extends cdk.Stack {
       timeout: Duration.seconds(60),
     });
     this.usersTable.grantReadWriteData(discordCommandsLambda);
+
+    const discordBot = new DiscordBotConstruct(this, 'discord-bot-endpoint', {
+      commandsLambdaFunction: discordCommandsLambda,
+    });
   }
 }
