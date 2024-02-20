@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { LiminalUmbrellaStack } from '../lib/liminal-umbrella-stack';
+import { LiminalUmbrellaStack } from '../src/stacks/liminal-umbrella-stack';
 
 const app = new cdk.App();
 new LiminalUmbrellaStack(app, 'LiminalUmbrellaStack', {
