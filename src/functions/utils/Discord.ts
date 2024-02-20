@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { getDiscordSecrets } from './DiscordSecrets';
+import {IDiscordResponseData} from '../../types';
 
-export async function sendResponse(response: DiscordResponseData,
+export async function sendResponse(response: IDiscordResponseData,
   interactionToken: string): Promise<boolean> {
   const discordSecret = await getDiscordSecrets();
   const authConfig = {

@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { LiminalUmbrellaStack } from './stacks/start-api-stack';
+import { LiminalUmbrellaStack } from './stacks/liminal-umbrella-stack';
 
 const stackEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,

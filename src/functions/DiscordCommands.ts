@@ -1,17 +1,17 @@
 import {Context, Callback} from 'aws-lambda';
 import {verifyEvent} from './DiscordBotFunction';
-import {DiscordEventRequest, DiscordResponseData} from '../constructs/DiscordBotConstruct';
+import {IDiscordEventRequest, IDiscordResponseData} from '../types';
 import {sendResponse} from './utils/Discord';
 import {Embed} from 'slash-commands';
 
 /**
  * The actual handler for the lambda.
- * @param {DiscordEventRequest} event The incoming event to handle.
+ * @param {IDiscordEventRequest} event The incoming event to handle.
  * @param {Context} context The context to handle.
  * @param {Callback} callback The callback to run for this.
  * @return {string} A simple status code of what was run.
  */
-export async function handler(event: DiscordEventRequest, context: Context,
+export async function handler(event: IDiscordEventRequest, context: Context,
     callback: Callback): Promise<string> {
   console.log('Running Discord command handler...');
 
@@ -31,10 +31,10 @@ export async function handler(event: DiscordEventRequest, context: Context,
 
 /**
  * Handles an incoming command for a user.
- * @param {DiscordEventRequest} event The incoming event with the command to handle.
- * @return {DiscordResponseData} Returns a response that can be outputted to the user.
+ * @param {IDiscordEventRequest} event The incoming event with the command to handle.
+ * @return {IDiscordResponseData} Returns a response that can be outputted to the user.
  */
-export async function handleCommand(event: DiscordEventRequest): Promise<DiscordResponseData> {
+export async function handleCommand(event: IDiscordEventRequest): Promise<IDiscordResponseData> {
   return generateStandardResponse('MOO');
 }
 
@@ -42,14 +42,14 @@ export async function handleCommand(event: DiscordEventRequest): Promise<Discord
  * A helper for generating a standard response for Discord.
  * @param {string} content The string content to return.
  * @param {Embed[]} embeds A list of embeds to return.
- * @return {DiscordResponseData} The fully-formed response.
+ * @return {IDiscordResponseData} The fully-formed response.
  */
-function generateStandardResponse(content: string, embeds: Embed[] = []): DiscordResponseData {
+function generateStandardResponse(content: string, embeds: Embed[] = []): IDiscordResponseData {
   return {
     tts: false,
     content,
     embeds,
-    allowed_mentions: [],
+    allowedMentions: [],
   };
 }
 
