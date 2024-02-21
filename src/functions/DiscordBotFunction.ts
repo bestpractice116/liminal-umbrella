@@ -1,3 +1,5 @@
+console.log("LOAD src/functions/DiscordBotFunction.ts");
+
 import {Context, Callback} from 'aws-lambda';
 import {IDiscordEventRequest} from '../types';
 import {getDiscordSecrets} from './utils/DiscordSecrets';
@@ -5,7 +7,11 @@ import {Lambda} from 'aws-sdk';
 import {commandLambdaARN} from './constants/EnvironmentProps';
 import {sign} from 'tweetnacl';
 
+console.log("LOAD src/functions/DiscordBotFunction.ts 2");
+
 const lambda = new Lambda();
+
+console.log("LOAD src/functions/DiscordBotFunction.ts - made lambda hmm");
 
 /**
  * Handles incoming events from the Discord bot.
@@ -16,7 +22,7 @@ const lambda = new Lambda();
  */
 export async function handler(event: IDiscordEventRequest, _context: Context,
     _callback: Callback) {
-  console.log(`Received event: ${JSON.stringify(event)}`);
+    console.log(`Received moo event: ${JSON.stringify(event)}`);
 
   const verifyPromise = verifyEvent(event);
 
@@ -64,6 +70,7 @@ export async function handler(event: IDiscordEventRequest, _context: Context,
  * @return {boolean} Returns true if the event was verified, false otherwise.
  */
 export async function verifyEvent(event: IDiscordEventRequest): Promise<boolean> {
+  console.log("IN verifyEvent");
   try {
     const discordSecrets = await getDiscordSecrets();
     const isVerified = sign.detached.verify(
@@ -71,9 +78,11 @@ export async function verifyEvent(event: IDiscordEventRequest): Promise<boolean>
         Buffer.from(event.signature, 'hex'),
         Buffer.from(discordSecrets?.publicKey ?? '', 'hex'),
     );
+    console.log("IN verifyEvent return normal");
     return isVerified;
   } catch (exception) {
     console.log(exception);
+    console.log("IN verifyEvent return exception");
     return false;
   }
 }

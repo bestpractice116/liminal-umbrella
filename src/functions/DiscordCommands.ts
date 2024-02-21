@@ -1,3 +1,5 @@
+console.log("LOADING src/functions/DiscordCommands.ts"); 
+
 import {Context, Callback} from 'aws-lambda';
 import {verifyEvent} from './DiscordBotFunction';
 import {IDiscordEventRequest, IDiscordResponseData} from '../types';

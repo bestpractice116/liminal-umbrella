@@ -37,8 +37,8 @@ export class DiscordBotConstruct extends Construct {
 
     // Create the Lambda for handling Interactions from our Discord bot.
     const discordBotLambda = new NodejsFunction(this, 'discord-bot-lambda', {
-      runtime: Runtime.NODEJS_18_X,
-      entry: path.join(__dirname, '../functions/DiscordBotFunction.js'),
+      runtime: Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, '../functions/DiscordBotFunction.ts'),
       handler: 'handler',
       environment: {
         DISCORD_BOT_API_KEY_NAME: this.discordAPISecrets.secretName,

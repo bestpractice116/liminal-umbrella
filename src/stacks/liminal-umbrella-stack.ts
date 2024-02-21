@@ -34,7 +34,7 @@ export class LiminalUmbrellaStack extends cdk.Stack {
     // Create the Lambdas next.
     const discordCommandsLambda = new lambda.Function(this, 'discord-commands-lambda', {
       runtime: lambda.Runtime.NODEJS_18_X,
-      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'functions')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'functions', 'DiscordCommands.ts')),
       handler: 'handler',
       environment: {
         USERS_TABLE_NAME: this.usersTable.tableName,
