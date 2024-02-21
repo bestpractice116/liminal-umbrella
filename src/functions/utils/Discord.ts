@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getDiscordSecrets } from './DiscordSecrets';
+import { getDiscordSecrets } from '../../utils/DiscordSecrets';
 import {IDiscordResponseData} from '../../types';
 
 export async function sendResponse(response: IDiscordResponseData,

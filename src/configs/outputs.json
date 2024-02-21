@@ -1,5 +1,5 @@
 {
-  "DiscordConfigStack": {
-    "discordSecretsName": "to-be-calculated"
+  "LiminalUmbrellaStack": {
+    "discordSecretName": "to-be-calculated"
   }
 }

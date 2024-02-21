@@ -1,9 +1,9 @@
-console.log("LOADING src/functions/DiscordCommands.ts"); 
+console.log("LOADING src/functions/DiscordCommands.ts");
 
 import {Context, Callback} from 'aws-lambda';
-import {verifyEvent} from './DiscordBotFunction';
+//import {verifyEvent} from './DiscordBotFunction';
 import {IDiscordEventRequest, IDiscordResponseData} from '../types';
-import {sendResponse} from './utils/Discord';
+//import {sendResponse} from './utils/Discord';
 import {Embed} from 'slash-commands';
 
 /**
@@ -17,7 +17,7 @@ export async function handler(event: IDiscordEventRequest, context: Context,
     callback: Callback): Promise<string> {
   console.log('Running Discord command handler...');
 
-  if (await verifyEvent(event)) {
+/*  if (await verifyEvent(event)) {
     const response = await handleCommand(event);
     console.log('Sending response...');
     if (event.jsonBody.token && await sendResponse(response, event.jsonBody.token)) {
@@ -27,7 +27,8 @@ export async function handler(event: IDiscordEventRequest, context: Context,
     }
   } else {
     console.log('Invalid request!');
-  }
+  }*/
+  console.log("END 200 OK");
   return '200';
 }
 
