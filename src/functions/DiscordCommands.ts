@@ -1,10 +1,8 @@
-console.log("LOADING src/functions/DiscordCommands.ts");
-
 import {Context, Callback} from 'aws-lambda';
-//import {verifyEvent} from './DiscordBotFunction';
-import {IDiscordEventRequest, IDiscordResponseData} from '../types';
-//import {sendResponse} from './utils/Discord';
-import {Embed} from 'slash-commands';
+import {verifyEvent} from './DiscordBotFunction';
+import {IDiscordEventRequest, IDiscordResponseData, Embed} from '../types';
+import { getDiscordSecrets } from '../utils/DiscordSecrets';
+import axios from 'axios';
 
 /**
  * The actual handler for the lambda.
@@ -15,11 +13,10 @@ import {Embed} from 'slash-commands';
  */
 export async function handler(event: IDiscordEventRequest, context: Context,
     callback: Callback): Promise<string> {
-  console.log('Running Discord command handler...');
+  console.log(`Running Discord command handler... ${JSON.stringify(event)}`);
 
-/*  if (await verifyEvent(event)) {
+  if (await verifyEvent(event)) {
     const response = await handleCommand(event);
-    console.log('Sending response...');
     if (event.jsonBody.token && await sendResponse(response, event.jsonBody.token)) {
       console.log('Responded successfully!');
     } else {
@@ -27,10 +24,29 @@ export async function handler(event: IDiscordEventRequest, context: Context,
     }
   } else {
     console.log('Invalid request!');
-  }*/
-  console.log("END 200 OK");
+  }
   return '200';
 }
+
+export async function sendResponse(response: IDiscordResponseData,
+  interactionToken: string): Promise<boolean> {
+  const discordSecret = await getDiscordSecrets();
+  const authConfig = {
+    headers: {
+      'Authorization': `Bot ${discordSecret?.authToken}`
+    }
+  };
+
+  try {
+    const url = `https://discord.com/api/v8/webhooks/${discordSecret?.applicationId}/${interactionToken}`;
+    console.log(`URL #{url}`);
+    return (await axios.post(url, response, authConfig)).status == 200;
+  } catch (exception) {
+    console.log(`There was an error posting a response: ${exception}`);
+    return false;
+  }
+}
+
 
 /**
  * Handles an incoming command for a user.

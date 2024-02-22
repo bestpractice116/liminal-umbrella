@@ -64,4 +64,4 @@ export async function getApplicationCommands(auth: IDiscordSecrets, guildId?: st
       }
     );
     return res.status == 204;
-  };
+};

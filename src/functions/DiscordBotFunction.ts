@@ -47,10 +47,12 @@ export async function handler(event: IDiscordEventRequest, _context: Context,
         // Note that all responses are deferred to meet Discord's 3 second
         // response time requirement.
         if (await Promise.all([verifyPromise, lambdaPromise])) {
-          console.log("ARGH RETURN YASSS");console.log("ARGH RETURN YASSS")
+          console.log("ARGH RETURN YASSS");
           return {
             type: 5,
           };
+        } else {
+          console.log("FAIL");
         }
         break;
     }

@@ -13,6 +13,7 @@ export class LiminalUmbrellaStack extends cdk.Stack {
 
     const discordAPISecrets = new Secret(this, 'discord-bot-api-key');
     new cdk.CfnOutput(this, 'discordSecretName', { value: discordAPISecrets.secretArn });
+
     const discordCommandsLambda = new NodejsFunction(this, 'discord-commands-lambda', {
       runtime: lambda.Runtime.NODEJS_20_X,
       entry: path.join(__dirname, '../functions/DiscordCommands.ts'),
@@ -62,7 +63,7 @@ export class LiminalUmbrellaStack extends cdk.Stack {
     });
 
     // Transform our requests and responses as appropriate.
-    const discordBotIntegration: LambdaIntegration = new LambdaIntegration(discordCommandsLambda, {
+    const discordBotIntegration: LambdaIntegration = new LambdaIntegration(discordBotLambda, {
       proxy: false,
       requestTemplates: {
         'application/json': '{\r\n\
