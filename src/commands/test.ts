@@ -1,54 +1,61 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { ApplicationCommandType, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
-	description: 'ping pong'
+	description: 'test test'
 })
-export class PingCommand extends Command {
+export class TestCommand extends Command {
 	// Register Chat Input and Context Menu command
 	public override registerApplicationCommands(registry: Command.Registry) {
 		// Register Chat Input command
-		registry.registerChatInputCommand({
-			name: this.name,
-			description: this.description
-		});
+		registry.registerChatInputCommand((builder) =>
+		builder //
+		  .setName(this.name)
+		  .setDescription(this.description)
+		  .addUserOption((option) =>
+          	option //
+            	.setName('user')
+            	.setDescription('User to say hello to')
+            	.setRequired(true)
+		  )
+		);
 
 		// Register Context Menu command available from any message
-		registry.registerContextMenuCommand({
+		/*registry.registerContextMenuCommand({
 			name: this.name,
 			type: ApplicationCommandType.Message
-		});
+		});*/
 
 		// Register Context Menu command available from any user
-		registry.registerContextMenuCommand({
+		/*registry.registerContextMenuCommand({
 			name: this.name,
 			type: ApplicationCommandType.User
-		});
+		});*/
 	}
 
 	// Message command
 	public override async messageRun(message: Message) {
-		return this.sendPing(message);
+		return this.sendTest(message);
 	}
 
 	// Chat Input (slash) command
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
-		return this.sendPing(interaction);
+		return this.sendTest(interaction);
 	}
 
 	// Context Menu command
 	public override async contextMenuRun(interaction: Command.ContextMenuCommandInteraction) {
-		return this.sendPing(interaction);
+		return this.sendTest(interaction);
 	}
 
-	private async sendPing(interactionOrMessage: Message | Command.ChatInputCommandInteraction | Command.ContextMenuCommandInteraction) {
+	private async sendTest(interactionOrMessage: Message | Command.ChatInputCommandInteraction | Command.ContextMenuCommandInteraction) {
 		const pingMessage =
 			interactionOrMessage instanceof Message
-				? await interactionOrMessage.channel.send({ content: 'Ping?' })
-				: await interactionOrMessage.reply({ content: 'Ping?', fetchReply: true });
+				? await interactionOrMessage.channel.send({ content: 'Test?' })
+				: await interactionOrMessage.reply({ content: 'Test?', fetchReply: true });
 
-		const content = `Pong! Bot Latency ${Math.round(this.container.client.ws.ping)}ms. API Latency ${
+		const content = `tseT! Bot Latency ${Math.round(this.container.client.ws.ping)}ms. API Latency ${
 			pingMessage.createdTimestamp - interactionOrMessage.createdTimestamp
 		}ms.`;
 

@@ -1,15 +1,27 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
+import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
+import { syncDb } from '../lib/database';
 
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
-export class UserEvent extends Listener {
+export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
-	public override run() {
+	public override run(client: Client) {
+		syncDb();
+		console.log("Synced db");
+		if (client.application) {
+			console.log("has application " + client.application.id);
+			console.log("application is partial " + client.application.partial);
+			client.application.fetch().then(app => {
+				console.log("application after fetch is partial " + app.partial);
+				console.log("app guild " + app.guild);
+			})
+		}
 		this.printBanner();
 		this.printStoreDebugInformation();
 	}
