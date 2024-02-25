@@ -3,7 +3,7 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
-import { syncDb, User, activeUsersMap } from '../lib/database';
+import { db, User } from '../lib/database';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -12,10 +12,10 @@ export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
 	public override async run(client: Client) {
-		await syncDb();
+		await db.sync({ force: true });
 		console.log("Synced db");
 		client.guilds.fetch("1205971443523788840").then(async (guild) => {
-			const dbusers = await activeUsersMap();
+			const dbusers = await User.activeUsersMap();
 			const members = await guild.members.fetch();
 			const missingMembers = [];
 			for (const [id, guildMember] of members) {

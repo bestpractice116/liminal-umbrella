@@ -1,6 +1,34 @@
 
-import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes } from '@sequelize/core';
+import { Attribute, PrimaryKey, NotNull  } from '@sequelize/core/decorators-legacy';
 import * as path from 'path';
+
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+    @Attribute(DataTypes.STRING)
+    @PrimaryKey
+    @NotNull
+    declare id: string;
+
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare username: string;
+
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare rulesaccepted: boolean;
+
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare left: boolean;
+
+    static async activeUsersMap() : Promise<Map<string, User>> {
+        const out = new Map();
+        for (const user of await this.findAll({where: {left: false}})) {
+            out.set(user.id, user);
+        }
+        return out;
+    }
+}
 
 export const db = new Sequelize('database', 'user', 'password', {
     host: 'localhost',
@@ -8,44 +36,10 @@ export const db = new Sequelize('database', 'user', 'password', {
     logging: false,
     // SQLite only
     storage: path.join(__dirname, '..', '..', 'database.sqlite'),
+    models: [User],
 });
 
-interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
-    // Some fields are optional when calling UserModel.create() or UserModel.build()
-    id: string;
-    username: string;
-    rulesaccepted: boolean;
-    left: boolean;
-  }
-
-export const User = db.define<UserModel>('User', {
-    id: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isInt: true,
-        },
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            notEmpty: true,
-        },
-    },
-    rulesaccepted: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-    },
-    left: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-    },
-});
-
-export async function activeUsersMap() : Promise<Map<string, UserModel>> {
+export async function activeUsersMap() : Promise<Map<string, User>> {
     const out = new Map();
     for (const user of await User.findAll({where: {left: false}})) {
         out.set(user.id, user);
