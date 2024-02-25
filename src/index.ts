@@ -12,13 +12,17 @@ const client = new SapphireClient({
 	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 	intents: [
 		GatewayIntentBits.DirectMessages,
+		//GatewayIntentBits.DirectMessageReactions,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMembers,
 	],
-	loadMessageCommandListeners: true
+	loadMessageCommandListeners: true,
+	api: {
+		listenOptions: { port: 8080 },
+	},
 });
 
 const main = async () => {

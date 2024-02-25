@@ -3,7 +3,7 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
-import { syncDb } from '../lib/database';
+import { syncDb, User, activeUsersMap } from '../lib/database';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -11,17 +11,44 @@ const dev = process.env.NODE_ENV !== 'production';
 export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
-	public override run(client: Client) {
-		syncDb();
+	public override async run(client: Client) {
+		await syncDb();
 		console.log("Synced db");
-		if (client.application) {
-			console.log("has application " + client.application.id);
-			console.log("application is partial " + client.application.partial);
-			client.application.fetch().then(app => {
-				console.log("application after fetch is partial " + app.partial);
-				console.log("app guild " + app.guild);
-			})
-		}
+		client.guilds.fetch("1205971443523788840").then(async (guild) => {
+			const dbusers = await activeUsersMap();
+			const members = await guild.members.fetch();
+			const missingMembers = [];
+			for (const [id, guildMember] of members) {
+				if (guildMember.user.bot) {
+					continue;
+				}
+				const dbMember = dbusers.get(id);
+				if (!dbMember) {
+					missingMembers.push(id);
+				}
+				dbusers.delete(id);
+			}
+			for (const missingId of missingMembers) {
+				console.log("database is missing member " + missingId);
+				const guildMember = members.get(missingId)!;
+				console.log("database is missing member " + missingId + " " + (guildMember.nickname || guildMember.user.globalName));
+				await User.create({
+					id: missingId,
+					username: (guildMember.nickname || guildMember.user.globalName)!,
+					rulesaccepted: false, // FIXME
+					left: false,
+				});
+			}
+			for (const [id, dbMember] of dbusers) {
+				console.log("database has user who has left " + id);
+				dbMember.left = true;
+				await dbMember.save();
+			}
+			console.log("DONE");
+				//console.log(id);
+				//console.log();
+				//console.log(guildMember);
+		});
 		this.printBanner();
 		this.printStoreDebugInformation();
 	}

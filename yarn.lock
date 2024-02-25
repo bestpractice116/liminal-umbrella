@@ -293,6 +293,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sapphire/plugin-api@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "@sapphire/plugin-api@npm:6.1.1"
+  dependencies:
+    "@types/ws": "npm:^8.5.10"
+    tldts: "npm:^6.1.2"
+    tslib: "npm:^2.6.2"
+    undici: "npm:^6.4.0"
+  checksum: 10c0/7df4c3ebf2804c2ee687670a3b940fa8bdf978e08d955afb683876e8482f1d8fc9982174a369e23c39230b34b82e9e0aa7264791c7df4b6f11269def15e9a28a
+  languageName: node
+  linkType: hard
+
 "@sapphire/plugin-logger@npm:^4.0.2":
   version: 4.0.2
   resolution: "@sapphire/plugin-logger@npm:4.0.2"
@@ -1428,6 +1440,7 @@ __metadata:
     "@sapphire/decorators": "npm:^6.0.4"
     "@sapphire/discord.js-utilities": "npm:7.1.6"
     "@sapphire/framework": "npm:^5.0.7"
+    "@sapphire/plugin-api": "npm:^6.1.1"
     "@sapphire/plugin-logger": "npm:^4.0.2"
     "@sapphire/prettier-config": "npm:^2.0.0"
     "@sapphire/ts-config": "npm:^5.0.0"
@@ -2486,6 +2499,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tldts-core@npm:^6.1.11":
+  version: 6.1.11
+  resolution: "tldts-core@npm:6.1.11"
+  checksum: 10c0/1e831fa329ed2483b063a6adcff9c5e2385f1ea09f2e0efc91a8f8507f944b503be9ff3dc9cdcc2a8a924e5b32f9cefa6751023230cad27ff519a9ed6961d88f
+  languageName: node
+  linkType: hard
+
+"tldts@npm:^6.1.2":
+  version: 6.1.11
+  resolution: "tldts@npm:6.1.11"
+  dependencies:
+    tldts-core: "npm:^6.1.11"
+  bin:
+    tldts: bin/cli.js
+  checksum: 10c0/a2919721022c755bf96351b7917416a01e2aac79b495302b830a05c9c024e875a695d604160a6de064f7a446b8349b30ff604b347a8dda3d6bcbf67a6621016e
+  languageName: node
+  linkType: hard
+
 "toposort-class@npm:^1.0.1":
   version: 1.0.1
   resolution: "toposort-class@npm:1.0.1"
@@ -2565,6 +2596,15 @@ __metadata:
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
   checksum: 10c0/0cb62c57edc938f242c116e41fb2a74f81ed20e7e2e554cf1ceae548520df0592385b53d444f8cf59e1e10e6b27acd153198d8a2353b3040d0a778a099aac92c
+  languageName: node
+  linkType: hard
+
+"undici@npm:^6.4.0":
+  version: 6.6.2
+  resolution: "undici@npm:6.6.2"
+  dependencies:
+    "@fastify/busboy": "npm:^2.0.0"
+  checksum: 10c0/c8c8a436059b13603f67ed4d917b4ba6d9ef282ac55c932c4790ee1a1c8cad1369da3c11b6e0b9df5a95ed1849cb98fa2f2310f6d0f9331dd359286c912497d2
   languageName: node
   linkType: hard
 

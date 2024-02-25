@@ -3,6 +3,7 @@ process.env.NODE_ENV ??= 'development';
 
 import { ApplicationCommandRegistries, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
+import '@sapphire/plugin-api/register';
 import * as colorette from 'colorette';
 import { join } from 'node:path';
 import { srcDir } from './constants';
