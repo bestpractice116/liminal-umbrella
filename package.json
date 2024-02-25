@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "author": "@sapphire",
   "license": "UNLICENSE",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@sapphire/decorators": "^6.0.4",
     "@sapphire/discord.js-utilities": "7.1.6",

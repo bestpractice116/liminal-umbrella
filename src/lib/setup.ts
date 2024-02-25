@@ -6,7 +6,7 @@ import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-api/register';
 import * as colorette from 'colorette';
 import { join } from 'node:path';
-import { srcDir } from './constants';
+import { srcDir } from './constants.js';
 
 import type { IntegerString } from '@skyra/env-utilities';
 import { setup } from '@skyra/env-utilities';

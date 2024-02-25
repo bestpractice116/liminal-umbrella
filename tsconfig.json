@@ -1,11 +1,21 @@
 {
 	"extends": ["@sapphire/ts-config", "@sapphire/ts-config/extra-strict", "@sapphire/ts-config/decorators"],
+	"module": "ESNext",
+	"ts-node": {
+		"esm": true,
+	},
 	"compilerOptions": {
 		"rootDir": "src",
 		"outDir": "dist",
 		"tsBuildInfoFile": "dist/.tsbuildinfo",
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/database": ["./src/lib/database/index.js"],
+			"@/database/model": ["./src/lib/database/model/index.js"],
+			"@/lib/*": ["./src/lib/*"],
+		},
 	},
-	"include": ["src"]
+	"include": ["src"],
 }
