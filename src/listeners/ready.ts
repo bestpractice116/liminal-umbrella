@@ -3,8 +3,6 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
-import { db, sync } from '../lib/database.js';
-
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
@@ -12,12 +10,13 @@ export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
 	public override async run(client: Client) {
-		await db.sync();
 		client.guilds.fetch("1205971443523788840").then(async (guild) => {
-			await sync(guild);
+			await this.container.database.sync(guild);
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
+			console.log("SEND FOO");
+			this.container.events.emit('foo', 'bar');
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();

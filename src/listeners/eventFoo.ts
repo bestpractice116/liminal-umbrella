@@ -1,14 +1,15 @@
 import { Listener, container } from '@sapphire/framework';
-import type { Client } from 'discord.js';
 
 export class FooListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
+    console.log("CONSTRUCT FOO LISTENER");
     super(context, {
       ...options,
       emitter: container.events,
-      event: 'GUILD_MEMBER_ADD'
+      event: 'foo'
     });
   }
-  run (_: Client) {
+  run (fooarg: string) {
+    console.log("FOO EVENT arg " + fooarg);
   }
 }

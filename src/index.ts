@@ -1,29 +1,7 @@
 import './lib/setup.js';
+import { MySapphireClient } from './sapphire.js';
 
-import { LogLevel, SapphireClient } from '@sapphire/framework';
-import { GatewayIntentBits, Partials } from 'discord.js';
-
-const client = new SapphireClient({
-	//defaultPrefix: '!',
-	caseInsensitiveCommands: true,
-	logger: {
-		level: LogLevel.Debug
-	},
-	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
-	intents: [
-		GatewayIntentBits.DirectMessages,
-		//GatewayIntentBits.DirectMessageReactions,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildMembers,
-	],
-	loadMessageCommandListeners: true,
-	api: {
-		listenOptions: { port: 8080 },
-	},
-});
+const client = new MySapphireClient();
 
 const main = async () => {
 	try {
