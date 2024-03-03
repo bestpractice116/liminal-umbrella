@@ -3,11 +3,21 @@ import { Sequelize, importModels } from '@sequelize/core';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
-import type { TextChannel, CategoryChannel, Guild } from 'discord.js';
-import { ChannelType } from 'discord.js';
-import { User, Role, Channel } from './database/model.js';
+import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage } from 'discord.js';
+import { ChannelType, GuildBasedChannel, MessageType } from 'discord.js';
+import { User, Role, Channel, Message } from './database/model.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function assertIsDefined<T>(value: T): asserts value is NonNullable<T> {
+    if (value === undefined || value === null) {
+        throw new Error(`${value} is not defined`)
+    }
+}
+
+async function sleep(time : number) {
+	return new Promise(resolve => setTimeout(resolve, time));
+}
 
 export default class Database {
     db: Sequelize | undefined;
@@ -15,7 +25,7 @@ export default class Database {
         this.db ||= new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
-            logging: false, //true,
+            logging: true,
             storage: path.join(__dirname, '..', '..', 'database.sqlite'),
             models: await importModels(__dirname + '/database/model/*.js'),
         });
@@ -97,6 +107,7 @@ export default class Database {
             channel => channel?.type == ChannelType.GuildText
             || channel?.type == ChannelType.GuildCategory
             || channel?.type == ChannelType.GuildAnnouncement
+            || channel?.type == ChannelType.GuildForum
         );
         const dbchannels = await Channel.channelsMap();
         const missingChannels = []
@@ -104,9 +115,6 @@ export default class Database {
             const dbChannel = dbchannels.get(id);
             if (!dbChannel) {
                 missingChannels.push(id);
-            }
-            else {
-                // FIXME - update if needed?
             }
             dbchannels.delete(id);
         }
@@ -122,7 +130,11 @@ export default class Database {
                 createdTimestamp: guildChannel.createdTimestamp,
             };
             let chan : any = null;
-            if (guildChannel.type == ChannelType.GuildText || guildChannel.type == ChannelType.GuildAnnouncement) {
+            if (
+                guildChannel.type == ChannelType.GuildText
+                || guildChannel.type == ChannelType.GuildAnnouncement
+                || guildChannel.type == ChannelType.GuildForum
+            ) {
                 chan = guildChannel as TextChannel;
             }
             if (guildChannel.type == ChannelType.GuildCategory) {
@@ -142,15 +154,137 @@ export default class Database {
         }
     }
 
-    async syncMessages(_ : Guild) : Promise<void> {
-    }
-
     async sync(guild : Guild) : Promise<void> {
         await this.getdb();
         await this.db!.sync();
         await this.syncRoles(guild);
         await this.syncUsers(guild);
+        console.log("sync channels");
         await this.syncChannels(guild);
-        await this.syncMessages(guild);
+        console.log("done sync channels");
+    }
+
+    async getdiscordChannel(guild : Guild, channel_name : string) : Promise<GuildBasedChannel> {
+        const channel = await Channel.findOne({ where: { name : channel_name }});
+        console.log(`FIND ${channel_name} found ${channel}`);
+        assertIsDefined(channel);
+        const discordChannel = await guild.channels.fetch(channel.id);
+        assertIsDefined(discordChannel);
+        return discordChannel;
+    }
+
+    async indexMessage(msg: DiscordMessage) : Promise<void> {
+        const dbMessage = await Message.findOne({where: {id: msg.id}});
+        if (dbMessage) {
+            console.log(`Already have message ${dbMessage.id}`);
+            if (
+                (!dbMessage.editedTimestamp && msg.editedTimestamp)
+                || (dbMessage.editedTimestamp && dbMessage.editedTimestamp < msg.editedTimestamp!)
+                || dbMessage.hasThread != msg.hasThread
+                || dbMessage.pinned != msg.pinned
+            ) {
+                console.log(`Updating message ${dbMessage.id}`);
+                dbMessage.content = msg.content;
+                dbMessage.editedTimestamp = msg.editedTimestamp;
+                dbMessage.hasThread = msg.hasThread;
+                if (dbMessage.hasThread) {
+                    dbMessage.threadId = msg.thread?.id || null;
+                }
+                dbMessage.embedCount = msg.embeds.length;
+                dbMessage.pinned = msg.pinned;
+                await dbMessage.save();
+            }
+        } else {
+            console.log(`Updating message ${msg.id}`);
+            await Message.create({
+                id: msg.id,
+                authorId: msg.author.id,
+                channelId: msg.channel.id,
+                applicationId: msg.applicationId || '',
+                type: MessageType[msg.type],
+                content: msg.content,
+                createdTimestamp: msg.createdTimestamp,
+                editedTimestamp: msg.editedTimestamp,
+                hasThread: msg.hasThread,
+                threadId: msg.thread?.id,
+                embedCount: msg.embeds.length,
+                pinned: msg.pinned,
+            });
+        }
+    }
+
+    async fetchAndStoreMessages(channel : TextBasedChannel) : Promise<void> {
+        const fetchAmount = 100;
+        const options : FetchMessagesOptions = {
+            limit: fetchAmount,
+        };
+        let msgCount = 0;
+        while (true) {
+            const messages = await channel.messages.fetch(options);
+            await sleep(1000);
+
+            if (messages.size > 0) {
+                console.log(`Has messages: ${messages.size}`);
+                let earliestMessage;
+                let earliestDate = Infinity;
+
+                for (let pairs of messages) {
+                    let msg = pairs[1];
+
+                    if (msg.createdTimestamp < earliestDate) {
+                        earliestDate = msg.createdTimestamp;
+                        earliestMessage = msg;
+                    }
+
+                    await this.indexMessage(msg);
+                }
+
+                options.before = earliestMessage!.id
+            }
+
+            msgCount += messages.size;
+
+            if (messages.size < fetchAmount) {
+                console.log("break");
+                break
+            }
+        }
+    }
+
+    async syncChannel(guild : Guild, channel_name : string) : Promise<void> {
+        console.log(`Sync in channel ${channel_name}`);
+        const discordChannel = await this.getdiscordChannel(guild, channel_name);
+
+        if (discordChannel.type === ChannelType.GuildText) {
+            await this.fetchAndStoreMessages(discordChannel);
+        }
+        if (discordChannel.type === ChannelType.GuildForum) {
+            const activeThreads = await discordChannel.threads.fetchActive();
+            const archivedThreads = await discordChannel.threads.fetchArchived({
+                fetchAll: true,
+                limit: 100
+            });
+            await sleep(1000);
+
+
+            if (archivedThreads) {
+                for (let pairs of archivedThreads.threads) {
+                    await this.fetchAndStoreMessages(pairs[1]);
+                }
+            }
+            if (activeThreads) {
+                for (let pairs of activeThreads.threads) {
+                    await this.fetchAndStoreMessages(pairs[1]);
+                }
+            }
+        }
+    }
+
+    async syncChannelAvailableGames(guild : Guild, channel_name : string) : Promise<void> {
+        return this.syncChannel(guild, channel_name)
+    }
+
+    async syncChannelOneShots(guild : Guild, channel_name : string) : Promise<void> {
+        return this.syncChannel(guild, channel_name)
     }
 }

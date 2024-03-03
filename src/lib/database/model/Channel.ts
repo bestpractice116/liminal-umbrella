@@ -11,6 +11,8 @@ export default class Channel extends Model<InferAttributes<Channel>, InferCreati
 
     @Attribute(DataTypes.STRING)
     @NotNull
+    // FIXME UNIQUE
+    // FIXME INDEX
     declare name: string;
 
     @Attribute(DataTypes.STRING)

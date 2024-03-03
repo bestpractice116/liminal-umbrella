@@ -2,7 +2,7 @@
 import { DataTypes, Model, InferAttributes, InferCreationAttributes} from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey  } from '@sequelize/core/decorators-legacy';
 
-export default class Channel extends Model<InferAttributes<Channel>, InferCreationAttributes<Channel>> {
+export default class Message extends Model<InferAttributes<Message>, InferCreationAttributes<Message>> {
     @Attribute(DataTypes.STRING)
     @NotNull
     @PrimaryKey
@@ -33,16 +33,14 @@ export default class Channel extends Model<InferAttributes<Channel>, InferCreati
     declare createdTimestamp: number;
 
     @Attribute(DataTypes. BIGINT)
-    @NotNull
-    declare editedTimestamp: number;
+    declare editedTimestamp: number | null;
 
     @Attribute(DataTypes. BOOLEAN)
     @NotNull
     declare hasThread: boolean;
 
     @Attribute(DataTypes.STRING)
-    @NotNull
-    declare threadId: string;
+    declare threadId: string | null;
 
     @Attribute(DataTypes. BIGINT)
     @NotNull

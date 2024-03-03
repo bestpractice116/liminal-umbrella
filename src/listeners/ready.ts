@@ -12,6 +12,8 @@ export class ReadyEvent extends Listener {
 	public override async run(client: Client) {
 		client.guilds.fetch("1205971443523788840").then(async (guild) => {
 			await this.container.database.sync(guild);
+			//await this.container.database.syncChannelAvailableGames(guild, 'available_games');
+			await this.container.database.syncChannelAvailableGames(guild, 'one_shots_other');
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
