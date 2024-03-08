@@ -26,7 +26,7 @@ export default class Database {
             host: 'localhost',
             dialect: 'sqlite',
             logging: true,
-            storage: path.join(__dirname, '..', '..', 'database.sqlite'),
+            storage: path.join(__dirname, '..', '..', process.env.DATABASE_NAME),
             models: await importModels(__dirname + '/database/model/*.js'),
         });
         return this.db
