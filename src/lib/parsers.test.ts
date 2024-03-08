@@ -6,7 +6,6 @@ import {expect, test, describe} from '@jest/globals';
 import type {AGameSession} from './parsers.js';
 import {parseAvailableGame} from './parsers.js';
 describe('parseAvailableGames', () => {
-//describe('parseAvailableGames' () => {
   const basePath = join(__dirname, '..', '..', 'testdata', 'parsers', 'available_games' );
 
   for (const d of readdirSync(basePath)) {
