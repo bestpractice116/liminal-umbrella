@@ -28,7 +28,7 @@ declare module '@skyra/env-utilities' {
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 
 // Read env var
-setup({ path: join(srcDir, '.env') });
+setup({ path: join(srcDir, '..', 'env') });
 
 // Enable colorette
 colorette.createColors({ useColor: true });
