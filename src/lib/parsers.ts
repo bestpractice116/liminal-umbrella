@@ -16,6 +16,7 @@ const typeRe = new RegExp(/(?:\*\*)?(?:Type of Adventure)\s*(?:\*\*)?:\s*(?:\*\*
 const dateRe = new RegExp(/(?:\*\*)?(?:(?:Start )?[dD]ate)\s*(?:\*\*)?:\s*(?:\*\*)?\s*(?:\w+day)?\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/);
 const dmRe = new RegExp(/(?:\*\*)?(?:DM [cC]ontact|DM)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
 const locationRe = new RegExp(/(?:\*\*)?Location\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
+const spacesRe = new RegExp(/(?:\*\*)?Spaces [Cc]urrently [Aa]vailable\s*(?:\*\*)?:\s*(?:\*\*)?\s*(\d)(?:\/| of)(\d)/);
 
 export function parseAvailableGame(input: string) : AGameSession {
   input = input.replace(inputRe, "\n");
@@ -49,6 +50,11 @@ export function parseAvailableGame(input: string) : AGameSession {
   const locationMatches = input.match(locationRe);
   if (locationMatches) {
     out["location"] = locationMatches[1];
+  }
+  const spacesMatches = input.match(spacesRe);
+  if (spacesMatches) {
+    out["spaces_free"] = parseInt(spacesMatches[1]);
+    out["spaces_total"] = parseInt(spacesMatches[2]);
   }
   return out;
 }

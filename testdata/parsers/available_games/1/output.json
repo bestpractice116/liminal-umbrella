@@ -4,8 +4,8 @@
    "dm_contact": "<@887976032542543932>",
    "location": "Harlequins",
    "name": "New player training game",
-   "spaces_free": 0,
-   "spaces_total": 0,
+   "spaces_free": 3,
+   "spaces_total": 3,
    "time": "??",
    "type": "One shot"
 }
