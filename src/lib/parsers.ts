@@ -16,6 +16,7 @@ const dateRe = new RegExp(/(?:\*\*)?(?:(?:Start )?[dD]ate)\s*(?:\*\*)?:\s*(?:\*\
 const dmRe = new RegExp(/(?:\*\*)?(?:DM [cC]ontact|DM)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
 const locationRe = new RegExp(/(?:\*\*)?Location\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
 const spacesRe = new RegExp(/(?:\*\*)?Spaces [Cc]urrently [Aa]vailable\s*(?:\*\*)?:\s*(?:\*\*)?\s*(\d)(?:\/| of )(\d)/);
+const descriptionRe = new RegExp(/(?:\*\*)?Brief description\s*(?:\*\*)?:\s*(?:\*\*)?\s*(.+)$/m);
 
 export function parseAvailableGame(input: string) : AGameSession {
   input = input.replace(inputRe, "\n");
@@ -53,6 +54,10 @@ export function parseAvailableGame(input: string) : AGameSession {
   if (spacesMatches) {
     out["spaces_free"] = parseInt(spacesMatches[1]);
     out["spaces_total"] = parseInt(spacesMatches[2]);
+  }
+  const descriptionMatches = input.match(descriptionRe);
+  if (descriptionMatches) {
+    out["description"] = descriptionMatches[1];
   }
   return out;
 }
