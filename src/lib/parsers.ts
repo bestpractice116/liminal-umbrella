@@ -10,8 +10,12 @@ export type AGameSession = {
   description: string;
 };
 
-export function parseAvailableGame(_: string) : AGameSession {
-  return {
+export function parseAvailableGame(input: string) : AGameSession {
+  // **Adventure Name**: Restom Adventure Guild Entertainment - Graduation!
+  // **Adventure name**: Unhappy Birthday
+  const re = new RegExp(/(?:\*\*)?(?:Adventure [nN]ame|Game)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
+  console.log();
+  const out = {
     name: "??",
     type: "??",
     date: "??",
@@ -22,4 +26,9 @@ export function parseAvailableGame(_: string) : AGameSession {
     dm_contact: "??",
     description: "??",
   };
+  const matches = input.match(re);
+  if (matches) {
+    out["name"] = matches[1];
+  }
+  return out;
 }
