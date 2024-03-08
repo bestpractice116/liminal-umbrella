@@ -15,7 +15,7 @@ const nameRe = new RegExp(/(?:\*\*)?(?:Adventure [nN]ame|Game)\s*(?:\*\*)?:\s*(?
 const typeRe = new RegExp(/(?:\*\*)?(?:Type of Adventure)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
 const dateRe = new RegExp(/(?:\*\*)?(?:(?:Start )?[dD]ate)\s*(?:\*\*)?:\s*(?:\*\*)?\s*(?:\w+day)?\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/);
 const dmRe = new RegExp(/(?:\*\*)?(?:DM [cC]ontact|DM)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
-
+const locationRe = new RegExp(/(?:\*\*)?Location\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
 
 export function parseAvailableGame(input: string) : AGameSession {
   input = input.replace(inputRe, "\n");
@@ -45,6 +45,10 @@ export function parseAvailableGame(input: string) : AGameSession {
   const dmMatches = input.match(dmRe);
   if (dmMatches) {
     out["dm_contact"] = dmMatches[1];
+  }
+  const locationMatches = input.match(locationRe);
+  if (locationMatches) {
+    out["location"] = locationMatches[1];
   }
   return out;
 }
