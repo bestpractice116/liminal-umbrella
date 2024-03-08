@@ -2,7 +2,6 @@ export type AGameSession = {
   name: string;
   type: string;
   date: string;
-  time: string;
   location: string;
   spaces_total: number;
   spaces_free: number;
@@ -24,7 +23,6 @@ export function parseAvailableGame(input: string) : AGameSession {
     name: "??",
     type: "??",
     date: "??",
-    time: "??",
     location: "??",
     spaces_total: 0,
     spaces_free: 0,
