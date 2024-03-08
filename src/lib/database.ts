@@ -251,10 +251,7 @@ export default class Database {
         }
     }
 
-    async syncChannel(guild : Guild, channel_name : string) : Promise<void> {
-        console.log(`Sync in channel ${channel_name}`);
-        const discordChannel = await this.getdiscordChannel(guild, channel_name);
-
+    async syncChannel(discordChannel: GuildBasedChannel) : Promise<void> {
         if (discordChannel.type === ChannelType.GuildText) {
             await this.fetchAndStoreMessages(discordChannel);
         }
@@ -281,10 +278,19 @@ export default class Database {
     }
 
     async syncChannelAvailableGames(guild : Guild, channel_name : string) : Promise<void> {
-        return this.syncChannel(guild, channel_name)
+        console.log(`Sync in channel ${channel_name}`);
+        const discordChannel = await this.getdiscordChannel(guild, channel_name);
+        await this.syncChannel(discordChannel);
+        console.log("SYNC CHANNEL DONE");
+        const messages = await Message.findAll({where: {channelId: discordChannel.id}});
+        for (const msg of messages) {
+            console.log("MSG " + msg.id);
+        }
     }
 
     async syncChannelOneShots(guild : Guild, channel_name : string) : Promise<void> {
-        return this.syncChannel(guild, channel_name)
+        console.log(`Sync in channel ${channel_name}`);
+        const discordChannel = await this.getdiscordChannel(guild, channel_name);
+        return this.syncChannel(discordChannel)
     }
 }

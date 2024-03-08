@@ -4,6 +4,7 @@
 	"ts-node": {
 		"esm": true,
 	},
+	"allowImportingTsExtensions": true,
 	"compilerOptions": {
 		"rootDir": "src",
 		"outDir": "dist",

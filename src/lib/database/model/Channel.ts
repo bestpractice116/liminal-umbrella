@@ -1,7 +1,8 @@
 ///CREATE TABLE IF NOT EXISTS channels (name text, type text, id text, parentId text, position integer, rawPosition integer, createdTimestamp integer, nsfw integer, lastMessageId text, topic text, rateLimitPerUser integer, bitrate integer, rtcRegion text, userLimit integer)")
 
-import { DataTypes, Model, InferAttributes, InferCreationAttributes} from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey  } from '@sequelize/core/decorators-legacy';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute} from '@sequelize/core';
+import { HasOne, Attribute, NotNull, PrimaryKey  } from '@sequelize/core/decorators-legacy';
+import GameSession from './GameSession.js';
 
 export default class Channel extends Model<InferAttributes<Channel>, InferCreationAttributes<Channel>> {
     @Attribute(DataTypes.STRING)
@@ -50,6 +51,9 @@ export default class Channel extends Model<InferAttributes<Channel>, InferCreati
     @NotNull
     declare rateLimitPerUser: bigint;
 */
+
+    @HasOne(() => GameSession, /* foreign key */ 'availableGamesMessageId')
+    declare gameSession?: NonAttribute<GameSession>;
 
     static async channelsMap() : Promise<Map<string, Channel>> {
         const out = new Map();

@@ -1,6 +1,7 @@
 
-import { DataTypes, Model, InferAttributes, InferCreationAttributes} from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey  } from '@sequelize/core/decorators-legacy';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute} from '@sequelize/core';
+import { HasOne, Attribute, NotNull, PrimaryKey, Index } from '@sequelize/core/decorators-legacy';
+import GameSession from './GameSession.js';
 
 export default class Message extends Model<InferAttributes<Message>, InferCreationAttributes<Message>> {
     @Attribute(DataTypes.STRING)
@@ -14,6 +15,7 @@ export default class Message extends Model<InferAttributes<Message>, InferCreati
 
     @Attribute(DataTypes.STRING)
     @NotNull
+    @Index
     declare channelId: string;
 
     @Attribute(DataTypes.STRING)
@@ -77,4 +79,7 @@ export default class Message extends Model<InferAttributes<Message>, InferCreati
     @Attribute(DataTypes.STRING)
     @NotNull
     declare referenceMessageId: string;*/
+
+    @HasOne(() => GameSession, /* foreign key */ 'channelId')
+    declare gameSession?: NonAttribute<GameSession>;
 }
