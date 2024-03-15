@@ -3,6 +3,7 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
+import {UserJoined} from '../lib/events/UserJoined.js';
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
@@ -18,7 +19,7 @@ export class ReadyEvent extends Listener {
 				//console.log();
 				//console.log(guildMember);
 			console.log("SEND FOO");
-			this.container.events.emit('foo', {bar: 'baz'});
+			this.container.events.emit('userJoined', new UserJoined('id', 'name', 'nickname'));
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();

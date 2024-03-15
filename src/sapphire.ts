@@ -1,12 +1,10 @@
 import './lib/setup.js';
 import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
+import {emitterSpec} from './lib/events.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { GatewayIntentBits, Partials } from 'discord.js';
-
-export type emitterSpec = {foo: Record<string, any>};
-export const luEvents = createEmitter<emitterSpec>();
 
 export class MySapphireClient extends SapphireClient {
 	public constructor() {
@@ -36,7 +34,7 @@ export class MySapphireClient extends SapphireClient {
 
 	public override async login(token?: string) {
 		container.database = new Database();
-		container.events = luEvents;
+		container.events = createEmitter<emitterSpec>();
 		return super.login(token);
 	  }
 }
