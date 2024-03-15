@@ -18,7 +18,7 @@ export class ReadyEvent extends Listener {
 				//console.log();
 				//console.log(guildMember);
 			console.log("SEND FOO");
-			this.container.events.emit('foo', 'bar');
+			this.container.events.emit('foo', {bar: 'baz'});
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();

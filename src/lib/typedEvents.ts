@@ -1,7 +1,6 @@
 import EventEmitter from 'node:events';
 
 type EventMap = Record<string, any>;
-
 type EventKey<T extends EventMap> = string & keyof T;
 type EventReceiver<T> = (params: T) => void;
 
@@ -34,11 +33,8 @@ export interface Emitter<T extends EventMap> {
     (eventName: K): Function[];
 }
 
-function createEmitter<T extends EventMap>(): Emitter<T> {
-    return new DiscordEvent();
+export class TypedEvent extends EventEmitter {};
+
+export function createEmitter<T extends EventMap>(): Emitter<T> {
+    return new TypedEvent();
 }
-
-class DiscordEvent extends EventEmitter {};
-
-export type emitterSpec = {foo: string};
-export const discordEvents = createEmitter<emitterSpec>();
