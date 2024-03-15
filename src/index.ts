@@ -5,7 +5,7 @@ const client = new MySapphireClient();
 
 const main = async () => {
 	try {
-		client.logger.info('Logging in ' + process.env.DISCORD_BOT_TOKEN);
+		client.logger.info('Logging in');
 		await client.login(process.env.DISCORD_BOT_TOKEN);
 		client.logger.info('logged in');
 	} catch (error) {

@@ -1,12 +1,19 @@
 import './lib/setup.js';
+
+import { readdirSync } from 'node:fs';
+import { join, basename } from 'node:path';
+
 import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
 import {emitterSpec} from './lib/events.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
+import { getRootData } from '@sapphire/pieces';
 import { GatewayIntentBits, Partials } from 'discord.js';
 
 export class MySapphireClient extends SapphireClient {
+	private rootData = getRootData();
+
 	public constructor() {
 	  // We call super our options
 	  	super({
@@ -30,6 +37,10 @@ export class MySapphireClient extends SapphireClient {
 				listenOptions: { port: 8080 },
 			},
 		});
+		for (const d of readdirSync(join(this.rootData.root, 'cogs'))) {
+			container.logger.info('Registering cog: ' + basename(d));
+			this.stores.registerPath(d);
+		}
 	}
 
 	public override async login(token?: string) {
