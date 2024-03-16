@@ -1,7 +1,7 @@
 import './lib/setup.js';
 
 import { readdirSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join } from 'node:path';
 
 import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
@@ -38,12 +38,12 @@ export class MySapphireClient extends SapphireClient {
 			},
 		});
 		for (const d of readdirSync(join(this.rootData.root, 'cogs'))) {
-			container.logger.info('Registering cog: ' + basename(d));
-			this.stores.registerPath(d);
+			container.logger.info('Registering cog: ' + d);
+			this.stores.registerPath(join(this.rootData.root, 'cogs', d));
 		}
 	}
 
-	public override async login(token?: string) {
+	public override async login(token?: string) : Promise<string> {
 		container.events = createEmitter<emitterSpec>();
 		container.database = new Database(container.events);
 		return super.login(token);

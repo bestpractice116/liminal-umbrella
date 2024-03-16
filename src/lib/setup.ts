@@ -21,6 +21,7 @@ declare module '@skyra/env-utilities' {
         DISCORD_PUBLIC_KEY: string;
         DISCORD_GUILD_ID: string;
         DATABASE_NAME: string;
+        LOG_EVENTS_CHANNEL: string | undefined;
 	}
 }
 

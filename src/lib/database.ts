@@ -4,7 +4,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage } from 'discord.js';
-import { ChannelType, GuildBasedChannel, MessageType } from 'discord.js';
+import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
 import {UserJoined, UserLeft} from '../lib/events/index.js';
@@ -72,6 +72,49 @@ export default class Database {
         }
     }
 
+    async guildMemberAdd(guildMember: GuildMember) {
+        const userData = {
+            nickname: (guildMember.nickname || guildMember.user.globalName)!,
+            username: guildMember.user.globalName!,
+            rulesaccepted: false, // FIXME
+            left: false,
+        };
+        let user = await User.findByPk(guildMember.id);
+        if (!user) {
+            user = await User.create({
+                id: guildMember.id,
+                ...userData,
+            });
+        } else {
+            user.set(userData);
+            await user.save();
+        }
+        await user.setRoles(guildMember.roles.cache.keys());
+        console.log("EMIT userJoined");
+        this.events.emit('userJoined', new UserJoined(
+            guildMember.id,
+            guildMember.user.globalName!,
+            (guildMember.nickname || guildMember.user.globalName)!)
+        );
+    }
+
+    async guildMemberRemove(id : string, member: User | null = null) {
+        if (!member) {
+          member = await User.findByPk(id);
+        }
+        if (!member) {
+            return
+        }
+        member.left = true;
+        await member.save();
+        await member.setRoles([]);
+        this.events.emit('userLeft', new UserLeft(
+            id,
+            member.username,
+            member.nickname,
+        ));
+    }
+
     async syncUsers(guild : Guild) : Promise<void> {
         const members = await guild.members.fetch();
         const dbusers = await User.activeUsersMap();
@@ -95,30 +138,12 @@ export default class Database {
         }
         for (const missingId of missingMembers) {
             const guildMember = members.get(missingId)!;
-            const user = await User.create({
-                id: missingId,
-                nickname: (guildMember.nickname || guildMember.user.globalName)!,
-                username: guildMember.user.globalName!,
-                rulesaccepted: false, // FIXME
-                left: false,
-            });
-            await user.setRoles(guildMember.roles.cache.keys());
-            this.events.emit('userJoined', new UserJoined(
-                missingId,
-                guildMember.user.globalName!,
-                (guildMember.nickname || guildMember.user.globalName)!)
-            );
+            await this.guildMemberAdd(guildMember);
+            console.log("FINISHED EMIT userJoined");
         }
         for (const [id, dbMember] of dbusers) {
             console.log("database has user who has left " + id);
-            dbMember.left = true;
-            await dbMember.save();
-            await dbMember.setRoles([]);
-            this.events.emit('userLeft', new UserLeft(
-                id,
-                dbMember.username,
-                dbMember.nickname,
-            ));
+            await this.guildMemberRemove(id, dbMember);
         }
     }
 

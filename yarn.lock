@@ -2779,6 +2779,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bufferutil@npm:^4.0.8":
+  version: 4.0.8
+  resolution: "bufferutil@npm:4.0.8"
+  dependencies:
+    node-gyp: "npm:latest"
+    node-gyp-build: "npm:^4.3.0"
+  checksum: 10c0/36cdc5b53a38d9f61f89fdbe62029a2ebcd020599862253fefebe31566155726df9ff961f41b8c97b02b4c12b391ef97faf94e2383392654cf8f0ed68f76e47c
+  languageName: node
+  linkType: hard
+
 "cacache@npm:^15.2.0":
   version: 15.3.0
   resolution: "cacache@npm:15.3.0"
@@ -4632,6 +4642,7 @@ __metadata:
     "@types/node": "npm:^20.11.5"
     "@types/ws": "npm:^8.5.10"
     babel-jest: "npm:^29.7.0"
+    bufferutil: "npm:^4.0.8"
     colorette: "npm:^2.0.20"
     discord.js: "npm:^14.14.1"
     jest: "npm:^29.7.0"
@@ -4642,6 +4653,7 @@ __metadata:
     ts-jest-resolver: "npm:^2.0.1"
     tsc-watch: "npm:^6.0.4"
     typescript: "npm:^5.3.3"
+    zlib-sync: "npm:^0.1.9"
   languageName: unknown
   linkType: soft
 
@@ -5038,6 +5050,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nan@npm:^2.18.0":
+  version: 2.19.0
+  resolution: "nan@npm:2.19.0"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/b8d05d75f92ee9d94affa50d0aa41b6c698254c848529452d7ab67c2e0d160a83f563bfe2cbd53e077944eceb48c757f83c93634c7c9ff404c9ec1ed4e5ced1a
+  languageName: node
+  linkType: hard
+
 "napi-build-utils@npm:^1.0.1":
   version: 1.0.2
   resolution: "napi-build-utils@npm:1.0.2"
@@ -5081,6 +5102,17 @@ __metadata:
   version: 2.1.2
   resolution: "node-cleanup@npm:2.1.2"
   checksum: 10c0/c59077d7cac01f6315e4417e5d13523e43aa19965b14768581dbd06b37419323abe5f7171afe6aa52b7a483bdd0027e5a5f62a532a2ebec2a8c4cdf163736c92
+  languageName: node
+  linkType: hard
+
+"node-gyp-build@npm:^4.3.0":
+  version: 4.8.0
+  resolution: "node-gyp-build@npm:4.8.0"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 10c0/85324be16f81f0235cbbc42e3eceaeb1b5ab94c8d8f5236755e1435b4908338c65a4e75f66ee343cbcb44ddf9b52a428755bec16dcd983295be4458d95c8e1ad
   languageName: node
   linkType: hard
 
@@ -6675,5 +6707,15 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 10c0/dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
+  languageName: node
+  linkType: hard
+
+"zlib-sync@npm:^0.1.9":
+  version: 0.1.9
+  resolution: "zlib-sync@npm:0.1.9"
+  dependencies:
+    nan: "npm:^2.18.0"
+    node-gyp: "npm:latest"
+  checksum: 10c0/1c05fdc5140f4c9afb931bfca01fc9f26ddfe242eb5c8c06ffc93b53d5103f0a99e8b8048697446001eb4a92c12febd270bcb4cda3fa3de9bf822e6ba0664902
   languageName: node
   linkType: hard
