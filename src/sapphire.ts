@@ -44,8 +44,8 @@ export class MySapphireClient extends SapphireClient {
 	}
 
 	public override async login(token?: string) {
-		container.database = new Database();
 		container.events = createEmitter<emitterSpec>();
+		container.database = new Database(container.events);
 		return super.login(token);
 	  }
 }

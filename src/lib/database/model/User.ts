@@ -19,6 +19,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     @NotNull
     declare username: string;
 
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare nickname: string;
+
     @Attribute(DataTypes.BOOLEAN)
     @NotNull
     declare rulesaccepted: boolean;

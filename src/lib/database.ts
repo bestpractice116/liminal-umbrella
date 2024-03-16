@@ -6,6 +6,8 @@ import { dirname } from 'node:path';
 import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType } from 'discord.js';
 import { User, Role, Channel, Message } from './database/model.js';
+import {TypedEvent} from '../lib/typedEvents.js';
+import {UserJoined, UserLeft} from '../lib/events/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -21,6 +23,13 @@ async function sleep(time : number) {
 
 export default class Database {
     db: Sequelize | undefined;
+
+    events: TypedEvent;
+
+    constructor(e: TypedEvent) {
+        this.events = e;
+    }
+
     async getdb() : Promise<Sequelize> {
         this.db ||= new Sequelize('database', 'user', 'password', {
             host: 'localhost',
@@ -88,17 +97,28 @@ export default class Database {
             const guildMember = members.get(missingId)!;
             const user = await User.create({
                 id: missingId,
-                username: (guildMember.nickname || guildMember.user.globalName)!,
+                nickname: (guildMember.nickname || guildMember.user.globalName)!,
+                username: guildMember.user.globalName!,
                 rulesaccepted: false, // FIXME
                 left: false,
             });
             await user.setRoles(guildMember.roles.cache.keys());
+            this.events.emit('userJoined', new UserJoined(
+                missingId,
+                guildMember.user.globalName!,
+                (guildMember.nickname || guildMember.user.globalName)!)
+            );
         }
         for (const [id, dbMember] of dbusers) {
             console.log("database has user who has left " + id);
             dbMember.left = true;
             await dbMember.save();
             await dbMember.setRoles([]);
+            this.events.emit('userLeft', new UserLeft(
+                id,
+                dbMember.username,
+                dbMember.nickname,
+            ));
         }
     }
 
