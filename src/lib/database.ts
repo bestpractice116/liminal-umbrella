@@ -74,8 +74,8 @@ export default class Database {
 
     async guildMemberAdd(guildMember: GuildMember) {
         const userData = {
-            nickname: (guildMember.nickname || guildMember.user.globalName)!,
-            username: guildMember.user.globalName!,
+            nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+            username: (guildMember.user.globalName || guildMember.user.username)!,
             rulesaccepted: false, // FIXME
             left: false,
         };
@@ -94,8 +94,8 @@ export default class Database {
         await user.setRoles(guildMember.roles.cache.keys());
         this.events.emit('userJoined', new UserJoined(
             guildMember.id,
-            guildMember.user.globalName!,
-            (guildMember.nickname || guildMember.user.globalName)!,
+            (guildMember.user.globalName|| guildMember.user.username)!,
+            (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
             exMember,
         ));
     }
