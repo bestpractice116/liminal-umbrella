@@ -10,3 +10,16 @@ This is a a Discord bot using the [sapphire framework][sapphire] written in Type
 fly volume create liminal_umbrella -s 1 -y -r iad
 ```
 
+### Deploy
+
+```sh
+fly deploy
+```
+
+### Teardown
+
+```sh
+fly machine destroy --force
+fly volume destroy
+```
+
