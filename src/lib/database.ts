@@ -1,5 +1,6 @@
 
-import { Sequelize, importModels, TransactionType } from '@sequelize/core';
+import { Sequelize, importModels, DataTypes, TransactionType } from '@sequelize/core';
+import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
@@ -24,6 +25,7 @@ async function sleep(time : number) {
 
 export default class Database {
     db: Sequelize | undefined;
+    migrations: boolean = false;
 
     events: TypedEvent;
 
@@ -49,7 +51,30 @@ export default class Database {
                 max: 5
             },
         });
+        await this.doMigrations(this.db);
+
         return this.db
+    }
+
+    async doMigrations(sequelize : Sequelize) : Promise<void> {
+        console.log("MIGRATIONS");
+        if (this.migrations) {
+            return;
+        }
+        console.log(path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'migrations'));
+        const migrator = new Umzug({
+            migrations: {
+                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
+            },
+            context: { sequelize, DataTypes },
+            storage: new SequelizeStorage({
+                sequelize,
+            }),
+            logger: console,
+        });
+        await migrator.up();
+        console.log("MIGRATIONS DONE");
+        this.migrations = true;
     }
 
     async greetingMessageAdd(messageId: string, userId: string) : Promise<void> {
