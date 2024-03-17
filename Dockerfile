@@ -21,16 +21,14 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link .yarnrc.yml package.json yarn.lock ./
-RUN yarn install --immutable --production=false
+COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
+RUN yarn install --immutable
 
 # Copy application code
 COPY --link . .
 
 # Build application
 RUN yarn run build
-
-# Remove development dependencies
-RUN yarn install --production=true
 
 # Final stage for app image
 FROM base

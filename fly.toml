@@ -22,7 +22,7 @@ primary_region = 'iad'
   method = "GET"
   timeout = "2s"
   path = "/health"
-  protocol = "HTTP"
+  protocol = "http"
 
 [env]
   NODE_ENV = "production"
