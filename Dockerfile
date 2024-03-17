@@ -35,13 +35,19 @@ RUN yarn run build
 # Remove development dependencies
 RUN yarn install --production=true
 
-
 # Final stage for app image
 FROM base
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y ca-certificates fuse3 sqlite3
+
+COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 
 # Copy built application
 COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 8080
 CMD [ "yarn", "run", "start" ]
+#ENTRYPOINT litefs mount
+

@@ -4,7 +4,7 @@
 #
 
 app = 'liminal-umbrella'
-primary_region = 'lhr'
+primary_region = 'iad'
 
 [build]
 
@@ -23,10 +23,13 @@ primary_region = 'lhr'
   timeout = "2s"
   path = "/health"
   protocol = "HTTP"
-  method = "GET"
 
 [env]
   NODE_ENV = "production"
 
 [[vm]]
   size = 'shared-cpu-1x'
+
+[mounts]
+  source = "liminal_umbrella"
+  destination = "/data"

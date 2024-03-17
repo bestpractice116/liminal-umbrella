@@ -8,6 +8,7 @@ import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discor
 import { User, Role, Channel, Message } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
 import {UserJoined, UserLeft, UserChangedNickname} from '../lib/events/index.js';
+import GreetingMessage from './database/model/GreetingMessage.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,14 +32,23 @@ export default class Database {
     }
 
     async getdb() : Promise<Sequelize> {
+        const storage = process.env.DATABASE_NAME.startsWith('/') ? process.env.DATABASE_NAME : path.join(__dirname, '..', '..', process.env.DATABASE_NAME)
+
         this.db ||= new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
             logging: process.env.NODE_ENV === 'development',
-            storage: path.join(__dirname, '..', '..', process.env.DATABASE_NAME),
+            storage,
             models: await importModels(__dirname + '/database/model/*.js'),
         });
         return this.db
+    }
+
+    async greetingMessageAdd(messageId: string, userId: string) : Promise<void> {
+        await GreetingMessage.findOrCreate({
+            where: { userId },
+            defaults: { userId, messageId },
+          });
     }
 
     async syncRoles(guild : Guild) : Promise<void> {
@@ -346,6 +356,12 @@ export default class Database {
     }
 
     async syncChannelOneShots(guild : Guild, channel_name : string) : Promise<void> {
+        //console.log(`Sync in channel ${channel_name}`);
+        const discordChannel = await this.getdiscordChannel(guild, channel_name);
+        return this.syncChannel(discordChannel)
+    }
+
+    async syncChannelNewMembers(guild : Guild, channel_name : string) : Promise<void> {
         //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         return this.syncChannel(discordChannel)

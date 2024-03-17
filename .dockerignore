@@ -3,3 +3,9 @@ Dockerfile
 .dockerignore
 node_modules
 .git
+database-prod.sqlite
+database-test.sqlite
+env.development
+env.production
+testdata
+liminal-umbrella.code-workspace

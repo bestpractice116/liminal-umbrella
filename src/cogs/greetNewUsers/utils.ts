@@ -1,7 +1,7 @@
 import { Container } from "@sapphire/framework";
 import { ChannelType } from 'discord.js';
 
-export function getChannelAndSend(container: Container, msg: string) {
+export async function getChannelAndSend(container: Container, msg: string) : Promise<void | string> {
   const channel_name = process.env.GREET_USERS_CHANNEL;
   if (!channel_name) {
     return;
@@ -9,7 +9,8 @@ export function getChannelAndSend(container: Container, msg: string) {
   const client = container.client;
   const channel = client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
   if (channel && channel.type == ChannelType.GuildText) {
-    channel.send(msg);
+    const message = await channel.send(msg);
+    return message.id;
   } else {
       container.logger.warn("Cannot find the ${channel_name} channel, or not a text channel");
   }

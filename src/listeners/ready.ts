@@ -14,6 +14,8 @@ export class ReadyEvent extends Listener {
 			await this.container.database.sync(guild);
 			//await this.container.database.syncChannelAvailableGames(guild, 'available_games');
 			await this.container.database.syncChannelAvailableGames(guild, 'available_games');
+			const channel_name = process.env.GREET_USERS_CHANNEL || 'new_members';
+			await this.container.database.syncChannelNewMembers(guild, channel_name);
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
