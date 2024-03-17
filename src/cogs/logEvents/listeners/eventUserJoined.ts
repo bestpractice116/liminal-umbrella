@@ -14,6 +14,6 @@ export class LogEventsUserJoinedListener extends Listener {
   }
   run (e: UserJoined) {
     container.logger.info("logEvents cog - userJoined arg ", e);
-    getChannelAndSend(this.container, `New user joined the server - id: ${e.id} username: ${e.name} server nickname: ${e.nickname}`)
+    getChannelAndSend(this.container, `New user joined the server - id: ${e.id} username: ${e.name} server nickname: ${e.nickname} previous member ${e.exMember}`)
   }
 }

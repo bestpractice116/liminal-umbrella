@@ -3,5 +3,6 @@ export class UserJoined {
     public id: string,
     public name: string,
     public nickname: string,
+    public exMember: boolean,
   ) {}
 }

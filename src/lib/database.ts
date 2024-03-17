@@ -7,7 +7,7 @@ import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessag
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
-import {UserJoined, UserLeft} from '../lib/events/index.js';
+import {UserJoined, UserLeft, UserChangedNickname} from '../lib/events/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,7 +34,7 @@ export default class Database {
         this.db ||= new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
-            logging: true,
+            logging: process.env.NODE_ENV === 'development',
             storage: path.join(__dirname, '..', '..', process.env.DATABASE_NAME),
             models: await importModels(__dirname + '/database/model/*.js'),
         });
@@ -80,22 +80,45 @@ export default class Database {
             left: false,
         };
         let user = await User.findByPk(guildMember.id);
+        let exMember = true;
         if (!user) {
             user = await User.create({
                 id: guildMember.id,
                 ...userData,
             });
+            exMember = false
         } else {
             user.set(userData);
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
-        console.log("EMIT userJoined");
         this.events.emit('userJoined', new UserJoined(
             guildMember.id,
             guildMember.user.globalName!,
-            (guildMember.nickname || guildMember.user.globalName)!)
-        );
+            (guildMember.nickname || guildMember.user.globalName)!,
+            exMember,
+        ));
+    }
+
+    async guildMemberUpdate(guildMember: GuildMember, user : User | null = null) {
+        user ||= await User.findByPk(guildMember.id);
+        if (!user) {
+            return;
+        }
+        let changed = false;
+        const newNick = (guildMember.nickname || guildMember.user.globalName)!;
+        if (newNick != user.nickname) {
+            this.events.emit('userChangedNickname', new UserChangedNickname(
+                guildMember.id,
+                user.nickname,
+                newNick
+            ));
+            user.nickname = newNick;
+            changed = true;
+        }
+        if (changed) {
+            user.save();
+        }
     }
 
     async guildMemberRemove(id : string, member: User | null = null) {
@@ -127,7 +150,7 @@ export default class Database {
             if (!dbMember) {
                 missingMembers.push(id);
             } else {
-                // FIXME - update user stuff if needed?
+                await this.guildMemberUpdate(guildMember, dbMember);
                 if (JSON.stringify(Array.from(guildMember.roles.cache.keys()).sort()) 
                     != JSON.stringify((await dbMember.getRoles()).map(role => role.id).sort())
                 ) {
@@ -139,10 +162,8 @@ export default class Database {
         for (const missingId of missingMembers) {
             const guildMember = members.get(missingId)!;
             await this.guildMemberAdd(guildMember);
-            console.log("FINISHED EMIT userJoined");
         }
         for (const [id, dbMember] of dbusers) {
-            console.log("database has user who has left " + id);
             await this.guildMemberRemove(id, dbMember);
         }
     }
@@ -193,8 +214,7 @@ export default class Database {
                 ...data,
             });
         }
-        for (const [id, dbChannel] of dbchannels) {
-            console.log("database has channel which was deleted " + id);
+        for (const [_, dbChannel] of dbchannels) {
             await dbChannel.destroy();
         }
     }
@@ -204,14 +224,11 @@ export default class Database {
         await this.db!.sync();
         await this.syncRoles(guild);
         await this.syncUsers(guild);
-        console.log("sync channels");
         await this.syncChannels(guild);
-        console.log("done sync channels");
     }
 
     async getdiscordChannel(guild : Guild, channel_name : string) : Promise<GuildBasedChannel> {
         const channel = await Channel.findOne({ where: { name : channel_name }});
-        console.log(`FIND ${channel_name} found ${channel}`);
         assertIsDefined(channel);
         const discordChannel = await guild.channels.fetch(channel.id);
         assertIsDefined(discordChannel);
@@ -221,14 +238,12 @@ export default class Database {
     async indexMessage(msg: DiscordMessage) : Promise<void> {
         const dbMessage = await Message.findOne({where: {id: msg.id}});
         if (dbMessage) {
-            console.log(`Already have message ${dbMessage.id}`);
             if (
                 (!dbMessage.editedTimestamp && msg.editedTimestamp)
                 || (dbMessage.editedTimestamp && dbMessage.editedTimestamp < msg.editedTimestamp!)
                 || dbMessage.hasThread != msg.hasThread
                 || dbMessage.pinned != msg.pinned
             ) {
-                console.log(`Updating message ${dbMessage.id}`);
                 dbMessage.content = msg.content;
                 dbMessage.editedTimestamp = msg.editedTimestamp;
                 dbMessage.hasThread = msg.hasThread;
@@ -240,7 +255,6 @@ export default class Database {
                 await dbMessage.save();
             }
         } else {
-            console.log(`Updating message ${msg.id}`);
             await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,
@@ -269,7 +283,6 @@ export default class Database {
             await sleep(1000);
 
             if (messages.size > 0) {
-                console.log(`Has messages: ${messages.size}`);
                 let earliestMessage;
                 let earliestDate = Infinity;
 
@@ -290,7 +303,6 @@ export default class Database {
             msgCount += messages.size;
 
             if (messages.size < fetchAmount) {
-                console.log("break");
                 break
             }
         }
@@ -323,18 +335,18 @@ export default class Database {
     }
 
     async syncChannelAvailableGames(guild : Guild, channel_name : string) : Promise<void> {
-        console.log(`Sync in channel ${channel_name}`);
+        //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         await this.syncChannel(discordChannel);
-        console.log("SYNC CHANNEL DONE");
-        const messages = await Message.findAll({where: {channelId: discordChannel.id}});
-        for (const msg of messages) {
-            console.log("MSG " + msg.id);
-        }
+        //console.log("SYNC CHANNEL DONE");
+        ///const messages = await Message.findAll({where: {channelId: discordChannel.id}});
+        ///for (const msg of messages) {
+            //console.log("MSG " + msg.id);
+        ///}
     }
 
     async syncChannelOneShots(guild : Guild, channel_name : string) : Promise<void> {
-        console.log(`Sync in channel ${channel_name}`);
+        //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         return this.syncChannel(discordChannel)
     }
