@@ -1,5 +1,5 @@
 
-import { Sequelize, importModels } from '@sequelize/core';
+import { Sequelize, importModels, TransactionType } from '@sequelize/core';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
@@ -40,6 +40,14 @@ export default class Database {
             logging: process.env.NODE_ENV === 'development',
             storage,
             models: await importModels(__dirname + '/database/model/*.js'),
+            transactionType: TransactionType.IMMEDIATE,
+            retry: {
+                match: [
+                  /SQLITE_BUSY/,
+                ],
+                name: 'query',
+                max: 5
+            },
         });
         return this.db
     }
