@@ -23,3 +23,8 @@ fly machine destroy --force
 fly volume destroy
 ```
 
+## Production
+
+```sh
+fly deploy -c fly-production.toml
+```

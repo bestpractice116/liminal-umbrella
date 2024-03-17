@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'liminal-umbrella'
+app = 'rpgbot'
 primary_region = 'iad'
 
 [build]
@@ -25,13 +25,13 @@ primary_region = 'iad'
   protocol = "http"
 
 [env]
-  NODE_ENV = "development"
+  NODE_ENV = "production"
   DATABASE_NAME = "/data/database.sqlite"
-  DISCORD_GUILD_ID = "1205971443523788840"
+  DISCORD_GUILD_ID = "1052919659965456397"
 
 [[vm]]
   size = 'shared-cpu-1x'
 
 [mounts]
-  source = "liminal_umbrella"
+  source = "rpgbot"
   destination = "/data"
