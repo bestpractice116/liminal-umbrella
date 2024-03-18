@@ -24,6 +24,10 @@ primary_region = 'iad'
   path = "/health"
   protocol = "http"
 
+[metrics]
+  port = 8080
+  path = "/metrics"
+
 [env]
   NODE_ENV = "development"
   DATABASE_NAME = "/data/database.sqlite"
