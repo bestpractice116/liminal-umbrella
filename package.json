@@ -17,6 +17,7 @@
     "bufferutil": "^4.0.8",
     "colorette": "^2.0.20",
     "discord.js": "^14.14.1",
+    "prom-client": "^15.1.0",
     "sequelize": "^7.0.0-alpha.9",
     "sqlite3": "^5.1.7",
     "zlib-sync": "^0.1.9"
@@ -48,7 +49,7 @@
     "generate": "sapphire generate",
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "node dist/index.js --experimental-specifier-resolution=node",
+    "start": "node --trace_gc --use-strict dist/index.js --experimental-specifier-resolution=node",
     "dev": "npm run build && npm run start",
     "watch:start": "tsc-watch --onSuccess \"npm run start\"",
     "format": "prettier --write \"src/\""

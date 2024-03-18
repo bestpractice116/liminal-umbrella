@@ -1904,6 +1904,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@opentelemetry/api@npm:^1.4.0":
+  version: 1.8.0
+  resolution: "@opentelemetry/api@npm:1.8.0"
+  checksum: 10c0/66d5504bfbf9c19a14ea549f5fca975a73a5e1e8a1e40a6dc2d662893c942b9ba66c009262816dee2b9ffd0267acd707ec692eba20db11a09d4ee114c00dc161
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -2674,6 +2681,13 @@ __metadata:
   dependencies:
     file-uri-to-path: "npm:1.0.0"
   checksum: 10c0/3dab2491b4bb24124252a91e656803eac24292473e56554e35bbfe3cc1875332cfa77600c3bac7564049dc95075bf6fcc63a4609920ff2d64d0fe405fcf0d4ba
+  languageName: node
+  linkType: hard
+
+"bintrees@npm:1.0.2":
+  version: 1.0.2
+  resolution: "bintrees@npm:1.0.2"
+  checksum: 10c0/132944b20c93c1a8f97bf8aa25980a76c6eb4291b7f2df2dbcd01cb5b417c287d3ee0847c7260c9f05f3d5a4233aaa03dec95114e97f308abe9cc3f72bed4a44
   languageName: node
   linkType: hard
 
@@ -4647,6 +4661,7 @@ __metadata:
     discord.js: "npm:^14.14.1"
     jest: "npm:^29.7.0"
     prettier: "npm:^3.2.4"
+    prom-client: "npm:^15.1.0"
     sequelize: "npm:^7.0.0-alpha.9"
     sqlite3: "npm:^5.1.7"
     ts-jest: "npm:^29.1.2"
@@ -5469,6 +5484,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prom-client@npm:^15.1.0":
+  version: 15.1.0
+  resolution: "prom-client@npm:15.1.0"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.4.0"
+    tdigest: "npm:^0.1.1"
+  checksum: 10c0/c10781adbf49225298e44da5396a51a0bd4d0cddc3c7e237ba50e888e12ead26a8f98261f362a442f1bbcdaddd6e7302d5675b37beac67ea9b6f82e4d39fb3cc
+  languageName: node
+  linkType: hard
+
 "promise-inflight@npm:^1.0.1":
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
@@ -6179,6 +6204,15 @@ __metadata:
     mkdirp: "npm:^1.0.3"
     yallist: "npm:^4.0.0"
   checksum: 10c0/02ca064a1a6b4521fef88c07d389ac0936730091f8c02d30ea60d472e0378768e870769ab9e986d87807bfee5654359cf29ff4372746cc65e30cbddc352660d8
+  languageName: node
+  linkType: hard
+
+"tdigest@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "tdigest@npm:0.1.2"
+  dependencies:
+    bintrees: "npm:1.0.2"
+  checksum: 10c0/10187b8144b112fcdfd3a5e4e9068efa42c990b1e30cd0d4f35ee8f58f16d1b41bc587e668fa7a6f6ca31308961cbd06cd5d4a4ae1dc388335902ae04f7d57df
   languageName: node
   linkType: hard
 
