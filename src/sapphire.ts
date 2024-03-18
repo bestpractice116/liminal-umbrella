@@ -9,7 +9,7 @@ import {emitterSpec} from './lib/events.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
-import { GatewayIntentBits, Partials } from 'discord.js';
+import { GatewayIntentBits, Partials, Options } from 'discord.js';
 
 export class MySapphireClient extends SapphireClient {
 	private rootData = getRootData();
@@ -35,6 +35,17 @@ export class MySapphireClient extends SapphireClient {
 			loadMessageCommandListeners: true,
 			api: {
 				listenOptions: { port: 8080 },
+			},
+			makeCache: Options.cacheWithLimits({
+				...Options.DefaultMakeCacheSettings,
+				MessageManager: 101, // Note this is 1 more than the amount we fetch at once in database.ts
+			}),
+			sweepers: {
+				...Options.DefaultSweeperSettings,
+				messages: {
+					interval: 300, // Every 5m.
+					lifetime: 300, // Remove messages older than 5 minutes.
+				},
 			},
 		});
 		for (const d of readdirSync(join(this.rootData.root, 'cogs'))) {
