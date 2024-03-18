@@ -124,7 +124,7 @@ export default class Database {
             return;
         }
         let changed = false;
-        const newNick = (guildMember.nickname || guildMember.user.globalName)!;
+        const newNick = (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!;
         if (newNick != user.nickname) {
             this.events.emit('userChangedNickname', new UserChangedNickname(
                 guildMember.id,
