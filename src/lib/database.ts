@@ -1,11 +1,11 @@
 
-import { Sequelize, importModels, TransactionType } from '@sequelize/core';
+import { Sequelize, importModels, TransactionType, Op } from '@sequelize/core';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
-import { User, Role, Channel, Message } from './database/model.js';
+import { User, Role, Channel, Message, Watermark } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
 import {UserJoined, UserLeft, UserChangedNickname} from '../lib/events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
@@ -27,14 +27,21 @@ export default class Database {
 
     events: TypedEvent;
 
+    highwatermark: number
+
     constructor(e: TypedEvent) {
         this.events = e;
+        this.highwatermark = 0;
     }
 
     async getdb() : Promise<Sequelize> {
         const storage = process.env.DATABASE_NAME.startsWith('/') ? process.env.DATABASE_NAME : path.join(__dirname, '..', '..', process.env.DATABASE_NAME)
 
-        this.db ||= new Sequelize('database', 'user', 'password', {
+        if (this.db) {
+            return this.db;
+        }
+
+        this.db = new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
             logging: process.env.NODE_ENV === 'development',
@@ -49,6 +56,8 @@ export default class Database {
                 max: 5
             },
         });
+        await this.db!.sync();
+        await this.getHighestWatermark();
         return this.db
     }
 
@@ -110,12 +119,18 @@ export default class Database {
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
+        console.log(`User joined at: ${guildMember.joinedTimestamp} and watermark is ${this.highwatermark}`);
+        if (this.highwatermark == 0) {
+            // Skip these events if we are bootstrapping - to avoid us spamming channels with repeated user joined / welcome messages.
+            return
+        }
         this.events.emit('userJoined', new UserJoined(
             guildMember.id,
             (guildMember.user.globalName|| guildMember.user.username)!,
             (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
             exMember,
         ));
+        await this.maybeSetHighestWatermark();
     }
 
     async guildMemberUpdate(guildMember: GuildMember, user : User | null = null) {
@@ -137,6 +152,7 @@ export default class Database {
         if (changed) {
             user.save();
         }
+        await this.maybeSetHighestWatermark();
     }
 
     async guildMemberRemove(id : string, member: User | null = null) {
@@ -154,9 +170,10 @@ export default class Database {
             member.username,
             member.nickname,
         ));
+        await this.maybeSetHighestWatermark();
     }
 
-    async syncUsers(guild : Guild) : Promise<void> {
+    async syncUsers(guild : Guild) {
         const members = await guild.members.fetch();
         const dbusers = await User.activeUsersMap();
         const missingMembers = [];
@@ -186,7 +203,7 @@ export default class Database {
         }
     }
 
-    async syncChannels(guild : Guild) : Promise<void> {
+    async syncChannels(guild : Guild) {
         const channels = (await guild.channels.fetch()).filter(
             channel => channel?.type == ChannelType.GuildText
             || channel?.type == ChannelType.GuildCategory
@@ -237,12 +254,47 @@ export default class Database {
         }
     }
 
-    async sync(guild : Guild) : Promise<void> {
+    async sync(guild : Guild) {
         await this.getdb();
-        await this.db!.sync();
         await this.syncRoles(guild);
         await this.syncUsers(guild);
         await this.syncChannels(guild);
+    }
+
+    async getHighestWatermark() {
+        const mark = await Watermark.findOne({order: [['time', 'DESC']]});
+        if (mark) {
+            this.highwatermark = mark.time;
+        }
+    }
+
+    // This logic here is that if the watermark in the database is > 10 seconds old we automatically set it to now - 5 seconds.
+    // This 5 seconds should allow for delays and etc meaning that we don't see Discord events for some time after they happen or if getting
+    // stuff committed to the database takes a while.
+    // The 10 seconds should mean that if a bunch of stuff happens in a fairly short space of time, we don't repeatedly hammer the
+    // dataabase with repeated watermark updates.
+    // Also note - that we don't update the watermark at all if it's 0 - this means that we don't write the watermark when we are
+    // bootstrapping with an empty database.
+    async maybeSetHighestWatermark() {
+        if (this.highwatermark == 0) {
+            return;
+        }
+        const now = Date.now();
+        const maxwatermark = now - 1000*5;
+        const minwatermark = now - 1000*10;
+        if (this.highwatermark < minwatermark) {
+            return this.setHighestWatermark(maxwatermark);
+        }
+    }
+
+    async setHighestWatermark(watermark: number) {
+        console.log(`Set highest watermark to ${watermark}`);
+        await Watermark.create({time: watermark});
+        await Watermark.destroy({
+            where: { time: {[Op.lt]: watermark} },
+        });
+        this.highwatermark = watermark;
+        return Promise.resolve();
     }
 
     async getdiscordChannel(guild : Guild, channel_name : string) : Promise<GuildBasedChannel> {
@@ -253,7 +305,7 @@ export default class Database {
         return discordChannel;
     }
 
-    async indexMessage(msg: DiscordMessage) : Promise<void> {
+    async indexMessage(msg: DiscordMessage) {
         const dbMessage = await Message.findOne({where: {id: msg.id}});
         if (dbMessage) {
             if (
@@ -290,7 +342,7 @@ export default class Database {
         }
     }
 
-    async fetchAndStoreMessages(channel : TextBasedChannel) : Promise<void> {
+    async fetchAndStoreMessages(channel : TextBasedChannel) {
         const fetchAmount = 100;
         const options : FetchMessagesOptions = {
             limit: fetchAmount,
@@ -326,7 +378,7 @@ export default class Database {
         }
     }
 
-    async syncChannel(discordChannel: GuildBasedChannel) : Promise<void> {
+    async syncChannel(discordChannel: GuildBasedChannel) {
         if (discordChannel.type === ChannelType.GuildText) {
             await this.fetchAndStoreMessages(discordChannel);
         }
@@ -352,7 +404,7 @@ export default class Database {
         }
     }
 
-    async syncChannelAvailableGames(guild : Guild, channel_name : string) : Promise<void> {
+    async syncChannelAvailableGames(guild : Guild, channel_name : string) {
         //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         await this.syncChannel(discordChannel);
@@ -363,15 +415,15 @@ export default class Database {
         ///}
     }
 
-    async syncChannelOneShots(guild : Guild, channel_name : string) : Promise<void> {
+    async syncChannelOneShots(guild : Guild, channel_name : string) {
         //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
-        return this.syncChannel(discordChannel)
+        return this.syncChannel(discordChannel);
     }
 
-    async syncChannelNewMembers(guild : Guild, channel_name : string) : Promise<void> {
+    async syncChannelNewMembers(guild : Guild, channel_name : string) {
         //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
-        return this.syncChannel(discordChannel)
+        return this.syncChannel(discordChannel);
     }
 }

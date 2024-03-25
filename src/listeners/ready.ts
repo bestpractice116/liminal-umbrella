@@ -11,7 +11,9 @@ export class ReadyEvent extends Listener {
 
 	public override async run(client: Client) {
 		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+			const start = Date.now();
 			await this.container.database.sync(guild);
+			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
 			//await this.container.database.syncChannelAvailableGames(guild, 'available_games');
 			await this.container.database.syncChannelAvailableGames(guild, 'available_games');
 			const channel_name = process.env.GREET_USERS_CHANNEL || 'new_members';
@@ -19,6 +21,7 @@ export class ReadyEvent extends Listener {
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
+			this.container.database.setHighestWatermark(start);
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
