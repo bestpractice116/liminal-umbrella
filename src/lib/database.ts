@@ -289,9 +289,11 @@ export default class Database {
 
     async setHighestWatermark(watermark: number) {
         console.log(`Set highest watermark to ${watermark}`);
-        await Watermark.create({time: watermark});
-        await Watermark.destroy({
-            where: { time: {[Op.lt]: watermark} },
+        await this.db!.transaction(async () => {
+            await Watermark.create({time: watermark});
+            await Watermark.destroy({
+                where: { time: {[Op.lt]: watermark} },
+            });
         });
         this.highwatermark = watermark;
         return Promise.resolve();
