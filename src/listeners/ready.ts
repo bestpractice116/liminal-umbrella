@@ -10,7 +10,7 @@ export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
 	public override async run(client: Client) {
-		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+		await client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
 			const start = Date.now();
 			await this.container.database.sync(guild);
 			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
@@ -25,6 +25,8 @@ export class ReadyEvent extends Listener {
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
+
+		this.container.ticker.start();
 	}
 
 	private printBanner() {

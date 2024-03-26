@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
 import {emitterSpec} from './lib/events.js';
+import Ticker from './lib/ticker.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
@@ -57,6 +58,7 @@ export class MySapphireClient extends SapphireClient {
 	public override async login(token?: string) : Promise<string> {
 		container.events = createEmitter<emitterSpec>();
 		container.database = new Database(container.events);
+		container.ticker = new Ticker(container.events);
 		return super.login(token);
 	  }
 }
@@ -65,5 +67,6 @@ declare module '@sapphire/pieces' {
 	interface Container {
 	  database: Database;
 	  events: Emitter<emitterSpec>;
+	  ticker: Ticker;
 	}
 }

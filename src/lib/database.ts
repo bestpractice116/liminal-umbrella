@@ -7,7 +7,7 @@ import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessag
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
-import {UserJoined, UserLeft, UserChangedNickname} from '../lib/events/index.js';
+import {UserJoined, UserLeft, UserChangedNickname} from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
