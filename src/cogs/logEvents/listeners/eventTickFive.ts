@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 
-export class LogEventsUserJoinedListener extends Listener {
+export class LogEventsTickFiveListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
