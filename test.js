@@ -1,6 +1,14 @@
 import 'dotenv/config';
+import { setup } from '@skyra/env-utilities';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+setup({ path: join(__dirname, 'env') });
+
 const creds = JSON.parse(process.env.GOOGLE_SERVICE_CREDENTIALS);
 
 async function foo() {

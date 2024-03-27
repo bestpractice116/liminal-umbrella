@@ -18,7 +18,7 @@
     "colorette": "^2.0.20",
     "discord.js": "^14.14.1",
     "google-auth-library": "^9.7.0",
-    "googleapis": "105",
+    "googleapis": "^134.0.0",
     "prom-client": "^15.1.0",
     "sequelize": "^7.0.0-alpha.9",
     "sqlite3": "^5.1.7",
