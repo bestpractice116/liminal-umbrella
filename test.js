@@ -1,6 +1,7 @@
+import 'dotenv/config';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
-import creds from './rpgbot-google.json' assert { type: 'json' };
+const creds = JSON.parse(process.env.GOOGLE_SERVICE_CREDENTIALS);
 
 async function foo() {
   const client = auth.fromJSON(creds);
@@ -8,7 +9,7 @@ async function foo() {
   client.scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
   const sheets = google.sheets({version: 'v4', auth: client});
   const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: '13ZUnnMefSKwYgvwwJ0wueexY9w6oI5BxJzz6mZNcz-o',
+    spreadsheetId: process.env.GOOGLE_MEMBER_SPREADSHEET_ID,
     range: 'Membership List!A2:E',
   });
   const rows = res.data.values;
