@@ -1,7 +1,9 @@
 import { Listener } from '@sapphire/framework';
 import { GuildMember } from 'discord.js';
+import {Sequential} from '../lib/utils.js';
 
 export class GuildMemberUpdateEvent extends Listener {
+	@Sequential
 	public override run(_ : GuildMember, newGuildMember : GuildMember) {
         console.log("RUNNING GUILD MEMBER UPDATE");
 		return this.container.database.guildMemberUpdate(newGuildMember);

@@ -3,12 +3,14 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
+import {Sequential} from '../lib/utils.js';
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
 export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
+	@Sequential
 	public override async run(client: Client) {
 		await client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
 			const start = Date.now();

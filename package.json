@@ -17,6 +17,7 @@
     "bufferutil": "^4.0.8",
     "colorette": "^2.0.20",
     "discord.js": "^14.14.1",
+    "limit-concurrency-decorator": "^0.6.0",
     "prom-client": "^15.1.0",
     "sequelize": "^7.0.0-alpha.9",
     "sqlite3": "^5.1.7",
