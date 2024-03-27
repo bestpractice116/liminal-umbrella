@@ -7,6 +7,7 @@ import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
 import {emitterSpec} from './lib/events.js';
 import Ticker from './lib/ticker.js';
+import {MemberSheet} from './lib/gsheet.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
@@ -59,6 +60,8 @@ export class MySapphireClient extends SapphireClient {
 		container.events = createEmitter<emitterSpec>();
 		container.database = new Database(container.events);
 		container.ticker = new Ticker(container.events);
+		container.memberSheet = new MemberSheet();
+		await container.memberSheet.fetch();
 		return super.login(token);
 	  }
 }
@@ -68,5 +71,6 @@ declare module '@sapphire/pieces' {
 	  database: Database;
 	  events: Emitter<emitterSpec>;
 	  ticker: Ticker;
+	  memberSheet: MemberSheet;
 	}
 }
