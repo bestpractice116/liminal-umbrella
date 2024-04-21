@@ -25,7 +25,7 @@ async function sleep(time : number) {
 
 export default class Database {
     db: Sequelize | undefined;
-    migrations: boolean = false;
+    public umzug: any = false;
 
     events: TypedEvent;
 
@@ -36,7 +36,10 @@ export default class Database {
     async getdb() : Promise<Sequelize> {
         const storage = process.env.DATABASE_NAME.startsWith('/') ? process.env.DATABASE_NAME : path.join(__dirname, '..', '..', process.env.DATABASE_NAME)
 
-        this.db ||= new Sequelize('database', 'user', 'password', {
+        if (this.db) {
+            return this.db
+        }
+        this.db = new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
             logging: process.env.NODE_ENV === 'development',
@@ -51,30 +54,24 @@ export default class Database {
                 max: 5
             },
         });
-        await this.doMigrations(this.db);
+        console.log("foooo");
+        this.umzug = new Umzug({
+            migrations: {
+                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
+            },
+            context: { sequelize: this.db, DataTypes },
+            storage: new SequelizeStorage({
+                sequelize: this.db,
+            }),
+            logger: console,
+        });
 
         return this.db
     }
 
-    async doMigrations(sequelize : Sequelize) : Promise<void> {
-        console.log("MIGRATIONS");
-        if (this.migrations) {
-            return;
-        }
-        console.log(path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'migrations'));
-        const migrator = new Umzug({
-            migrations: {
-                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
-            },
-            context: { sequelize, DataTypes },
-            storage: new SequelizeStorage({
-                sequelize,
-            }),
-            logger: console,
-        });
-        await migrator.up();
-        console.log("MIGRATIONS DONE");
-        this.migrations = true;
+    async doMigrations() {
+        await this.getdb();
+        return this.umzug.up();
     }
 
     async greetingMessageAdd(messageId: string, userId: string) : Promise<void> {

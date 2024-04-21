@@ -11,6 +11,7 @@ export class ReadyEvent extends Listener {
 
 	public override async run(client: Client) {
 		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+			await this.container.database.doMigrations();
 			await this.container.database.sync(guild);
 			//await this.container.database.syncChannelAvailableGames(guild, 'available_games');
 			await this.container.database.syncChannelAvailableGames(guild, 'available_games');
