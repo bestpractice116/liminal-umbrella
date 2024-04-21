@@ -260,8 +260,6 @@ export default class Database {
     }
 
     async sync(guild : Guild) : Promise<void> {
-        await this.getdb();
-        await this.db!.sync();
         await this.syncRoles(guild);
         await this.syncUsers(guild);
         await this.syncChannels(guild);

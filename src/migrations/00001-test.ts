@@ -30,7 +30,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		},
 		parentId: {
 			type: DataTypes.TEXT,
-			allowNull: false,
+			allowNull: true,
 		},
 		position: {
 			type: DataTypes.INTEGER,
@@ -40,7 +40,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		createdTikmestamp: {
+		createdTimestamp: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
@@ -96,11 +96,11 @@ export const up = async (uz: MigrationParams<any>) => {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		createdTikmestamp: {
+		createdTimestamp: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		editedTikmestamp: {
+		editedTimestamp: {
 			type: DataTypes.INTEGER,
 			allowNull: true,
 		},
@@ -178,7 +178,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			allowNull: false,
 			primaryKey: true,
 		},
-		usertId: {
+		userId: {
 			type: DataTypes.TEXT,
 			allowNull: true,
 		},
@@ -215,7 +215,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		mountable: {
+		mentionable: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
@@ -239,7 +239,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		permissios: {
+		permissions: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
@@ -305,7 +305,6 @@ export const up = async (uz: MigrationParams<any>) => {
 		userId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
-			primaryKey: true,
 		},
 		roleId: {
 			type: DataTypes.TEXT,
