@@ -2,6 +2,7 @@ import { DataTypes } from '@sequelize/core';
 import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
+	const qi = uz.context.sequelize.getQueryInterface();
 	/*\
 	CREATE TABLE `Channels` (
 		`id` TEXT NOT NULL PRIMARY KEY,
@@ -14,7 +15,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('channels', {
+	await qi.createTable('channels', {
 		id: {
 			type: DataTypes.TEXT,
 			allowNull: false,
@@ -70,7 +71,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('messages', {
+	await qi.createTable('messages', {
 		id: {
 			type: DataTypes.TEXT,
 			allowNull: false,
@@ -79,10 +80,22 @@ export const up = async (uz: MigrationParams<any>) => {
 		authorId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			/*references: {
+				table: 'users',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',*/
 		},
 		channelId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			/*references: {
+				table: 'channels',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',*/
 		},
 		applicationId: {
 			type: DataTypes.TEXT,
@@ -138,7 +151,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('gamesessions', {
+	await qi.createTable('gamesessions', {
 		id: {
 			type: DataTypes.TEXT,
 			allowNull: false,
@@ -147,6 +160,12 @@ export const up = async (uz: MigrationParams<any>) => {
 		availableGamesMessageId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			references: {
+				table: 'messages',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',
 		},
 		eventId: {
 			type: DataTypes.TEXT,
@@ -155,6 +174,12 @@ export const up = async (uz: MigrationParams<any>) => {
 		channelId: {
 			type: DataTypes.TEXT,
 			allowNull: true,
+			references: {
+				table: 'channels',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',
 		},
 		createdAt: {
 			type: DataTypes.TEXT,
@@ -166,21 +191,55 @@ export const up = async (uz: MigrationParams<any>) => {
 		},
 	});
 	/*
+	CREATE UNIQUE INDEX `game_sessions_available_games_message_id_unique` ON `GameSessions` (`availableGamesMessageId`);
+	CREATE UNIQUE INDEX `game_sessions_event_id_unique` ON `GameSessions` (`eventId`);
+	CREATE UNIQUE INDEX `game_sessions_channel_id_unique` ON `GameSessions` (`channelId`);
+	*/
+	await qi.addIndex('gamesessions', {
+		name: 'game_sessions_available_games_message_id_unique',
+        fields: ['availableGamesMessageId'],
+        unique: true,
+    });
+	await qi.addIndex('gamesessions', {
+		name: 'game_sessions_event_id_unique',
+        fields: ['eventId'],
+        unique: true,
+    });
+	await qi.addIndex('gamesessions', {
+		name: 'game_sessions_channel_id_unique',
+        fields: ['channelId'],
+        unique: true,
+    });
+	/*
 	CREATE TABLE `GreetingMessages` (`
 		`messageId` TEXT NOT NULL PRIMARY KEY,
 		`userId` TEXT NOT NULL,
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('greetingmessages', {
+	await qi.createTable('greetingmessages', {
 		messageId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 			primaryKey: true,
+			/*references: {
+				table: 'messages',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',
+			*/
 		},
 		userId: {
 			type: DataTypes.TEXT,
 			allowNull: true,
+			/*references: {
+				table: 'users',
+				key: 'id',
+			},
+			onDelete: 'RESTRICT',
+			onUpdate: 'RESTRICT',
+			*/
 		},
 		createdAt: {
 			type: DataTypes.TEXT,
@@ -191,6 +250,14 @@ export const up = async (uz: MigrationParams<any>) => {
 			allowNull: false,
 		},
 	});
+	/*
+	CREATE UNIQUE INDEX `greeting_messages_user_id_unique` ON `GreetingMessages` (`userId`);
+	*/
+	await qi.addIndex('greetingmessages', {
+		name: 'greeting_messages_user_id_unique',
+        fields: ['userId'],
+        unique: true,
+    });
 	/*
 	CREATE TABLE `Roles` (
 		`id` TEXT NOT NULL PRIMARY KEY,
@@ -205,7 +272,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('roles', {
+	await qi.createTable('roles', {
 		id: {
 			type: DataTypes.TEXT,
 			allowNull: false,
@@ -262,7 +329,7 @@ export const up = async (uz: MigrationParams<any>) => {
 		`createdAt` TEXT NOT NULL,
 		`updatedAt` TEXT NOT NULL);
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('users', {
+	await qi.createTable('users', {
 		id: {
 			type: DataTypes.TEXT,
 			allowNull: false,
@@ -277,6 +344,10 @@ export const up = async (uz: MigrationParams<any>) => {
 			allowNull: false,
 		},
 		rulesaccepted: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		bot: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
@@ -301,14 +372,26 @@ export const up = async (uz: MigrationParams<any>) => {
 		`updatedAt` TEXT NOT NULL,
 		PRIMARY KEY (`userId`, `roleId`));
 	*/
-	await uz.context.sequelize.getQueryInterface().createTable('rolemembers', {
+	await qi.createTable('rolemembers', {
 		userId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			references: {
+				table: 'users',
+				key: 'id',
+			},
+			onDelete: 'CASCADE',
+			onUpdate: 'CASCADE',
 		},
 		roleId: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			references: {
+				table: 'roles',
+				key: 'id',
+			},
+			onDelete: 'CASCADE',
+			onUpdate: 'CASCADE'
 		},
 		createdAt: {
 			type: DataTypes.TEXT,
@@ -322,11 +405,13 @@ export const up = async (uz: MigrationParams<any>) => {
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	await uz.context.sequelize.getQueryInterface().dropTable('channels');
-	await uz.context.sequelize.getQueryInterface().dropTable('messages');
-	await uz.context.sequelize.getQueryInterface().dropTable('gamesessions');
-	await uz.context.sequelize.getQueryInterface().dropTable('greetingmessges');
-	await uz.context.sequelize.getQueryInterface().dropTable('roles');
-	await uz.context.sequelize.getQueryInterface().dropTable('users');
-	await uz.context.sequelize.getQueryInterface().dropTable('rolemembers');
+	const qi = uz.context.sequelize.getQueryInterface()
+	await qi.dropTable('channels');
+	await qi.dropTable('messages');
+	await qi.dropTable('gamesessions');
+	await qi.removeIndex('gamesessions', 'game_sessions_available_games_message_id_unique');
+	await qi.dropTable('greetingmessges');
+	await qi.dropTable('roles');
+	await qi.dropTable('users');
+	await qi.dropTable('rolemembers');
 };

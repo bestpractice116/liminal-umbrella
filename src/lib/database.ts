@@ -118,7 +118,9 @@ export default class Database {
             username: (guildMember.user.globalName || guildMember.user.username)!,
             rulesaccepted: false, // FIXME
             left: false,
+            bot: guildMember.user.bot,
         };
+        console.log(`ADD USER ${userData.nickname} id ${guildMember.id}`);
         let user = await User.findByPk(guildMember.id);
         let exMember = true;
         if (!user) {
@@ -132,12 +134,14 @@ export default class Database {
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
-        this.events.emit('userJoined', new UserJoined(
-            guildMember.id,
-            (guildMember.user.globalName|| guildMember.user.username)!,
-            (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
-            exMember,
-        ));
+        if (!guildMember.user.bot) {
+            this.events.emit('userJoined', new UserJoined(
+                guildMember.id,
+                (guildMember.user.globalName|| guildMember.user.username)!,
+                (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+                exMember,
+            ));
+        }
     }
 
     async guildMemberUpdate(guildMember: GuildMember, user : User | null = null) {
@@ -183,9 +187,6 @@ export default class Database {
         const dbusers = await User.activeUsersMap();
         const missingMembers = [];
         for (const [id, guildMember] of members) {
-            if (guildMember.user.bot) {
-                continue;
-            }
             const dbMember = dbusers.get(id);
             if (!dbMember) {
                 missingMembers.push(id);
@@ -293,6 +294,7 @@ export default class Database {
                 await dbMessage.save();
             }
         } else {
+            console.log(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
             await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,

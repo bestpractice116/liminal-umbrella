@@ -29,6 +29,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     @Attribute(DataTypes.BOOLEAN)
     @NotNull
+    declare bot: boolean;
+
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
     declare left: boolean;
 
     @BelongsToMany(() => Role, {
