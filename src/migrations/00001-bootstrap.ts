@@ -4,12 +4,12 @@ import type { MigrationParams } from 'umzug';
 export const up = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.createTable('watermarks', {
-		time: {
+		"time": {
 			type: DataTypes.TEXT,
 			allowNull: false,
 			primaryKey: true,
 		},
-	);
+	});
 	/*
 	CREATE TABLE `Channels` (
 		`id` TEXT NOT NULL PRIMARY KEY,
