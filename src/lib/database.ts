@@ -138,6 +138,10 @@ export default class Database {
         }
         await user.setRoles(guildMember.roles.cache.keys());
         console.log(`User joined at: ${guildMember.joinedTimestamp} and watermark is ${this.highwatermark}`);
+        if (this.highwatermark == 0) {
+            // Skip these events if we are bootstrapping - to avoid us spamming channels with repeated user joined / welcome messages.
+            return
+        }
         if (!guildMember.user.bot) {
             this.events.emit('userJoined', new UserJoined(
                 guildMember.id,

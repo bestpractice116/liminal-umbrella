@@ -34,7 +34,8 @@ primary_region = 'iad'
   DISCORD_GUILD_ID = "1052919659965456397"
 
 [[vm]]
-  size = 'shared-cpu-1x'
+  size   = 'shared-cpu-1x'
+  memory = '512mb'
 
 [mounts]
   source = "rpgbot"
