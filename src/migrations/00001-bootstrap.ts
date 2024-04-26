@@ -3,7 +3,14 @@ import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface();
-	/*\
+	await qi.createTable('watermarks', {
+		time: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+			primaryKey: true,
+		},
+	);
+	/*
 	CREATE TABLE `Channels` (
 		`id` TEXT NOT NULL PRIMARY KEY,
 		`name` TEXT NOT NULL,
@@ -406,10 +413,10 @@ export const up = async (uz: MigrationParams<any>) => {
 
 export const down = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface()
+	await qi.dropTable('watermarks');
 	await qi.dropTable('channels');
 	await qi.dropTable('messages');
 	await qi.dropTable('gamesessions');
-	await qi.removeIndex('gamesessions', 'game_sessions_available_games_message_id_unique');
 	await qi.dropTable('greetingmessges');
 	await qi.dropTable('roles');
 	await qi.dropTable('users');
