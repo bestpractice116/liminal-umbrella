@@ -137,20 +137,7 @@ export default class Database {
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
-<<<<<<< HEAD
         console.log(`User joined at: ${guildMember.joinedTimestamp} and watermark is ${this.highwatermark}`);
-        if (this.highwatermark == 0) {
-            // Skip these events if we are bootstrapping - to avoid us spamming channels with repeated user joined / welcome messages.
-            return
-        }
-        this.events.emit('userJoined', new UserJoined(
-            guildMember.id,
-            (guildMember.user.globalName|| guildMember.user.username)!,
-            (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
-            exMember,
-        ));
-        await this.maybeSetHighestWatermark();
-=======
         if (!guildMember.user.bot) {
             this.events.emit('userJoined', new UserJoined(
                 guildMember.id,
@@ -158,8 +145,8 @@ export default class Database {
                 (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
                 exMember,
             ));
+            await this.maybeSetHighestWatermark();
         }
->>>>>>> migrations
     }
 
     async guildMemberUpdate(guildMember: GuildMember, user : User | null = null) {
@@ -280,12 +267,7 @@ export default class Database {
         }
     }
 
-<<<<<<< HEAD
-    async sync(guild : Guild) {
-        await this.getdb();
-=======
     async sync(guild : Guild) : Promise<void> {
->>>>>>> migrations
         await this.syncRoles(guild);
         await this.syncUsers(guild);
         await this.syncChannels(guild);
