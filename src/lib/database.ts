@@ -1,5 +1,5 @@
-
-import { Sequelize, importModels, TransactionType, Op } from '@sequelize/core';
+import { Sequelize, importModels, DataTypes, TransactionType, Op } from '@sequelize/core';
+import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
@@ -24,6 +24,7 @@ async function sleep(time : number) {
 
 export default class Database {
     db: Sequelize | undefined;
+    public umzug: any = false;
 
     events: TypedEvent;
 
@@ -56,9 +57,24 @@ export default class Database {
                 max: 5
             },
         });
-        await this.db!.sync();
-        await this.getHighestWatermark();
+
+        this.umzug = new Umzug({
+            migrations: {
+                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
+            },
+            context: { sequelize: this.db, DataTypes },
+            storage: new SequelizeStorage({
+                sequelize: this.db,
+            }),
+            logger: console,
+        });
+
         return this.db
+    }
+
+    async doMigrations() {
+        await this.getdb();
+        return this.umzug.up();
     }
 
     async greetingMessageAdd(messageId: string, userId: string) : Promise<void> {
@@ -105,7 +121,9 @@ export default class Database {
             username: (guildMember.user.globalName || guildMember.user.username)!,
             rulesaccepted: false, // FIXME
             left: false,
+            bot: guildMember.user.bot,
         };
+        console.log(`ADD USER ${userData.nickname} id ${guildMember.id}`);
         let user = await User.findByPk(guildMember.id);
         let exMember = true;
         if (!user) {
@@ -119,6 +137,7 @@ export default class Database {
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
+<<<<<<< HEAD
         console.log(`User joined at: ${guildMember.joinedTimestamp} and watermark is ${this.highwatermark}`);
         if (this.highwatermark == 0) {
             // Skip these events if we are bootstrapping - to avoid us spamming channels with repeated user joined / welcome messages.
@@ -131,6 +150,16 @@ export default class Database {
             exMember,
         ));
         await this.maybeSetHighestWatermark();
+=======
+        if (!guildMember.user.bot) {
+            this.events.emit('userJoined', new UserJoined(
+                guildMember.id,
+                (guildMember.user.globalName|| guildMember.user.username)!,
+                (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+                exMember,
+            ));
+        }
+>>>>>>> migrations
     }
 
     async guildMemberUpdate(guildMember: GuildMember, user : User | null = null) {
@@ -178,9 +207,6 @@ export default class Database {
         const dbusers = await User.activeUsersMap();
         const missingMembers = [];
         for (const [id, guildMember] of members) {
-            if (guildMember.user.bot) {
-                continue;
-            }
             const dbMember = dbusers.get(id);
             if (!dbMember) {
                 missingMembers.push(id);
@@ -254,8 +280,12 @@ export default class Database {
         }
     }
 
+<<<<<<< HEAD
     async sync(guild : Guild) {
         await this.getdb();
+=======
+    async sync(guild : Guild) : Promise<void> {
+>>>>>>> migrations
         await this.syncRoles(guild);
         await this.syncUsers(guild);
         await this.syncChannels(guild);
@@ -327,6 +357,7 @@ export default class Database {
                 await dbMessage.save();
             }
         } else {
+            console.log(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
             await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,

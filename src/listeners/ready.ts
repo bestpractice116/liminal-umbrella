@@ -12,7 +12,9 @@ export class ReadyEvent extends Listener {
 
 	@Sequential
 	public override async run(client: Client) {
-		await client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+			await this.container.database.doMigrations();
+			await this.container.database.getHighestWatermark()
 			const start = Date.now();
 			await this.container.database.sync(guild);
 			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
