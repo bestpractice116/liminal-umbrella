@@ -4,6 +4,8 @@ import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
 import {Sequential} from '../lib/utils.js';
+import {BotStarted} from '../lib/events/index.js';
+
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
@@ -13,23 +15,23 @@ export class ReadyEvent extends Listener {
 	@Sequential
 	public override async run(client: Client) {
 		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
-			await this.container.database.doMigrations();
+			await this.container.database.doMigrations(guild);
 			await this.container.database.getHighestWatermark()
 			const start = Date.now();
 			await this.container.database.sync(guild);
 			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
-			//await this.container.database.syncChannelAvailableGames(guild, 'available_games');
-			await this.container.database.syncChannelAvailableGames(guild, 'available_games');
+			//await this.container.database.syncChannelGameListings(guild, 'game_listings');
+			await this.container.database.syncChannelGameListings(guild, 'game_listings');
 			const channel_name = process.env.GREET_USERS_CHANNEL || 'new_members';
 			await this.container.database.syncChannelNewMembers(guild, channel_name);
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
+			this.container.events.emit('botStarted', new BotStarted(guild));
 			this.container.database.setHighestWatermark(start);
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
-
 		this.container.ticker.start();
 	}
 

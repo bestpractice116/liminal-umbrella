@@ -24,7 +24,6 @@ async function sleep(time : number) {
 
 export default class Database {
     db: Sequelize | undefined;
-    public umzug: any = false;
 
     events: TypedEvent;
 
@@ -58,23 +57,25 @@ export default class Database {
             },
         });
 
-        this.umzug = new Umzug({
-            migrations: {
-                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
-            },
-            context: { sequelize: this.db, DataTypes },
-            storage: new SequelizeStorage({
-                sequelize: this.db,
-            }),
-            logger: console,
-        });
-
         return this.db
     }
 
-    async doMigrations() {
-        await this.getdb();
-        return this.umzug.up();
+    async doMigrations(guild: Guild) {;
+        const umzug = new Umzug({
+            migrations: {
+                glob: ['migrations/*.js', { cwd: path.join(path.dirname(import.meta.url.replace('file://', '')), '..', '..', 'dist') }],
+            },
+            context: {
+                sequelize: await this.getdb(),
+                guild,
+                DataTypes,
+            },
+            storage: new SequelizeStorage({
+                sequelize: await this.getdb(),
+            }),
+            logger: console,
+        });
+        return umzug.up();
     }
 
     async greetingMessageAdd(messageId: string, userId: string) : Promise<void> {
@@ -423,7 +424,7 @@ export default class Database {
         }
     }
 
-    async syncChannelAvailableGames(guild : Guild, channel_name : string) {
+    async syncChannelGameListings(guild : Guild, channel_name : string) {
         //console.log(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         await this.syncChannel(discordChannel);
