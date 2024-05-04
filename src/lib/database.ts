@@ -286,10 +286,7 @@ export default class Database {
         }
         for (const missingId of missingChannels) {
             const guildChannel = channels.get(missingId)!;
-            await Channel.create({
-                id: missingId,
-                ...this.getChannelData(guildChannel)
-            });
+            await this.channelCreate(guildChannel);
         }
         for (const [_, dbChannel] of dbchannels) {
             await dbChannel.destroy();

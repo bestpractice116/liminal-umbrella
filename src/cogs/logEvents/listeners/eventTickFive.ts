@@ -13,6 +13,6 @@ export class LogEventsTickFiveListener extends Listener {
   }
   run (e: TickFive) {
     container.logger.info("logEvents cog - tickFive arg ", e);
-    getChannelAndSend(this.container, `Tick: ${e.firedAt}`)
+    //getChannelAndSend(this.container, `Tick: ${e.firedAt}`)
   }
 }
