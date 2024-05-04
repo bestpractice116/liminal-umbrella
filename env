@@ -1,2 +1,3 @@
 LOG_EVENTS_CHANNEL: bot_spraff
 GREET_USERS_CHANNEL: new_members
+DELETE_OLD_MESSAGES_CHANNEL: location_booking

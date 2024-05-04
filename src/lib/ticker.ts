@@ -1,10 +1,13 @@
 import {TypedEvent} from '../lib/typedEvents.js';
 import {TickFive} from './events/index.js';
+import { Guild } from "discord.js";
 
 export default class Ticker {
     events: TypedEvent;
 
     timeout: NodeJS.Timeout | undefined;
+
+    guild: Guild | undefined;
 
     constructor(e: TypedEvent) {
         this.events = e;
@@ -13,7 +16,7 @@ export default class Ticker {
         this.fireTimeout = this.fireTimeout.bind(this);
     }
 
-    start() {
+    start(guild: Guild) {
         const date = new Date();
         const secs = date.getSeconds();
         let remaining = 0;
@@ -21,6 +24,7 @@ export default class Ticker {
             remaining = 60-secs;
         }
         this.timeout = setTimeout(this.doTimeout, remaining * 1000);
+        this.guild = guild;
     }
 
     doTimeout() {
@@ -42,6 +46,6 @@ export default class Ticker {
     }
 
     fireTimeout(d: number) {
-        this.events.emit('tickFive', new TickFive(d));
+        this.events.emit('tickFive', new TickFive(d, this.guild!));
     }
 }

@@ -2,6 +2,8 @@
 
 This is a a Discord bot using the [sapphire framework][sapphire] written in TypeScript
 
+https://discord.com/api/oauth2/authorize?client_id=XXX&permissions=406881299711&scope=bot%20applications.commands
+
 ## How to deploy it 
 
 ### Prerequisite

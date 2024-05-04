@@ -16,8 +16,8 @@ export class BotStartedListener extends Listener {
     });
   }
 
-  async run (_: BotStarted) {
-    this.container.ticker.start();
+  async run (e: BotStarted) {
+    this.container.ticker.start(e.guild);
 
     /*
     // Example - how to do a slow data migration piecewise without stopping the bot...
