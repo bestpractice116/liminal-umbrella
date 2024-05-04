@@ -28,7 +28,6 @@ export class LogEventsTickFiveListener extends Listener {
       return
     }
     const since = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 1 week ago
-    container.logger.info("FIND OLD MESSAGES");
     const msgs = await Message.findAll({
       where: {
         channelId: discordChannel.id,
@@ -38,11 +37,11 @@ export class LogEventsTickFiveListener extends Listener {
       order: [['createdTimestamp', 'ASC']],
     });
     for (const msg of msgs) {
-      container.logger.info(`Found message to delete in ${channel_name} - ${msg.id}: ${msg.content}`);
+      container.logger.info(`Delete ${msg.type} type old message in ${channel_name} - ${msg.id}: '${msg.content}'`);
       await db.transaction(async () => {
-        /*const discordMessage = await discordChannel!.messages.fetch(msg.id);
+        const discordMessage = await discordChannel!.messages.fetch(msg.id);
         await discordMessage.delete();
-        await msg.destroy();*/
+        await msg.destroy();
       });
     }
   }
