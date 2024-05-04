@@ -258,6 +258,13 @@ export default class Database {
         await dbChannel!.save();
     }
 
+    async channelCreate(channel : NonThreadGuildBasedChannel) {
+        await Channel.create({
+            id: channel.id,
+            ...this.getChannelData(channel)
+        });
+    }
+
     async syncChannels(guild : Guild) {
         const channels = (await guild.channels.fetch()).filter(
             channel => channel?.type == ChannelType.GuildText
@@ -342,6 +349,10 @@ export default class Database {
     }
 
     async indexMessage(msg: DiscordMessage) {
+        if (!!!this.messageCollectors.get(msg.channel.id)) {
+            console.log(`Got index request for message on channel we are not subscribed to: ${msg.channel.id}`);
+            return;
+        }
         const dbMessage = await Message.findOne({where: {id: msg.id}});
         if (dbMessage) {
             if (
