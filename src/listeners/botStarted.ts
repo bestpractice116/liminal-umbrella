@@ -20,9 +20,10 @@ export class BotStartedListener extends Listener {
         where: {
             pinned: sql`null`,
         },
-        limit: 2,
+        limit: 10,
     });
   }
+
   @Sequential
   async updateMessage(id: string, val : boolean) {
     return Message.update(
@@ -52,6 +53,8 @@ export class BotStartedListener extends Listener {
                 console.log(`message ${msg.id} not a text message`)
             }
         }
+        console.log('updated 10 messages');
     } while (messages.length > 0);
+    console.log("Finished updates to messages");
   }
 }
