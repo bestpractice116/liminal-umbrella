@@ -22,8 +22,6 @@ export class ReadyEvent extends Listener {
 			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
 			//await this.container.database.syncChannelGameListings(guild, 'game_listings');
 			await this.container.database.syncChannelGameListings(guild, 'game_listings');
-			const channel_name = process.env.GREET_USERS_CHANNEL || 'new_members';
-			await this.container.database.syncChannelNewMembers(guild, channel_name);
 				//console.log(id);
 				//console.log();
 				//console.log(guildMember);
@@ -32,7 +30,6 @@ export class ReadyEvent extends Listener {
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
-		this.container.ticker.start();
 	}
 
 	private printBanner() {

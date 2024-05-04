@@ -41,10 +41,12 @@ export default class Database {
             return this.db;
         }
 
+        const log = (process.env.NODE_ENV === 'development') || !!process.env.LOG_QUERIES;
+
         this.db = new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
-            logging: process.env.NODE_ENV === 'development',
+            logging: log,
             storage,
             models: await importModels(__dirname + '/database/model/*.js'),
             transactionType: TransactionType.IMMEDIATE,

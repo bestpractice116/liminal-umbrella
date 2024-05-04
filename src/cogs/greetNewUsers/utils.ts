@@ -1,11 +1,17 @@
 import { Container } from "@sapphire/framework";
 import { ChannelType } from 'discord.js';
 
-export async function getChannelAndSend(container: Container, msg: string) : Promise<void | string> {
+export function getChannelName() : string | null {
   const channel_name = process.env.GREET_USERS_CHANNEL;
   if (!channel_name) {
-    return;
+    return null;
   }
+  return channel_name;
+}
+
+export async function getChannelAndSend(container: Container, msg: string) : Promise<void | string> {
+  const channel_name = getChannelName();
+
   const client = container.client;
   const channel = client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
   if (channel && channel.type == ChannelType.GuildText) {
