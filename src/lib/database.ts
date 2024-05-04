@@ -3,7 +3,7 @@ import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
-import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage } from 'discord.js';
+import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage, NonThreadGuildBasedChannel } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
@@ -221,6 +221,38 @@ export default class Database {
         }
     }
 
+    getChannelData(guildChannel: NonThreadGuildBasedChannel) : any {
+        const data : any = {};
+        data['name'] = guildChannel.name;
+        data['type'] = guildChannel.type.toString();
+        data['parentId'] = guildChannel.parentId;
+        data['position'] = guildChannel.position;
+        data['rawPosition'] = guildChannel.rawPosition;
+        data['createdTimestamp'] = guildChannel.createdTimestamp;
+        let chan : any = null;
+        if (
+            guildChannel.type == ChannelType.GuildText
+            || guildChannel.type == ChannelType.GuildAnnouncement
+            || guildChannel.type == ChannelType.GuildForum
+        ) {
+            chan = guildChannel as TextChannel;
+        }
+        if (guildChannel.type == ChannelType.GuildCategory) {
+            chan = guildChannel as CategoryChannel;
+        }
+        data['nsfw'] = chan.nsfw;
+        data['lastMessageId'] = chan.lastMessageId;
+        data['topic'] = chan.topic;
+        data['rateLimitPerUser'] = chan.rateLimitPerUser;
+        return data;
+    }
+
+    async channelUpdate(channel : NonThreadGuildBasedChannel) {
+        const dbChannel = await Channel.findOne({where: {id: channel.id}});
+        dbChannel!.set(this.getChannelData(channel!));
+        await dbChannel!.save();
+    }
+
     async syncChannels(guild : Guild) {
         const channels = (await guild.channels.fetch()).filter(
             channel => channel?.type == ChannelType.GuildText
@@ -230,41 +262,21 @@ export default class Database {
         );
         const dbchannels = await Channel.channelsMap();
         const missingChannels = []
-        for (const [id, _] of channels) {
+        for (const [id, guildChannel] of channels) {
             const dbChannel = dbchannels.get(id);
             if (!dbChannel) {
                 missingChannels.push(id);
+            } else {
+                dbChannel.set(this.getChannelData(guildChannel!));
+                await dbChannel.save();
             }
             dbchannels.delete(id);
         }
         for (const missingId of missingChannels) {
             const guildChannel = channels.get(missingId)!;
-            const data : any = {
-                id: missingId,
-                name: guildChannel.name,
-                type: guildChannel.type.toString(),
-                parentId: guildChannel.parentId,
-                position: guildChannel.position,
-                rawPosition: guildChannel.rawPosition,
-                createdTimestamp: guildChannel.createdTimestamp,
-            };
-            let chan : any = null;
-            if (
-                guildChannel.type == ChannelType.GuildText
-                || guildChannel.type == ChannelType.GuildAnnouncement
-                || guildChannel.type == ChannelType.GuildForum
-            ) {
-                chan = guildChannel as TextChannel;
-            }
-            if (guildChannel.type == ChannelType.GuildCategory) {
-                chan = guildChannel as CategoryChannel;
-            }
-            data['nsfw'] = chan.nsfw;
-            data['lastMessageId'] = chan.lastMessageId;
-            data['topic'] = chan.topic;
-            data['rateLimitPerUser'] = chan.rateLimitPerUser;
             await Channel.create({
-                ...data,
+                id: missingId,
+                ...this.getChannelData(guildChannel)
             });
         }
         for (const [_, dbChannel] of dbchannels) {
