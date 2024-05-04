@@ -14,6 +14,7 @@ export class BotStartedListener extends Listener {
       event: 'botStarted'
     });
   }
+
   @Sequential
   async getSome(): Promise<Message[]> {
     return await Message.findAll({
@@ -27,7 +28,7 @@ export class BotStartedListener extends Listener {
   @Sequential
   async updateMessage(id: string, val : boolean) {
     return Message.update(
-        { pinned: val},
+        { pinned: val },
         {
             where: {
                 id

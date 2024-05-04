@@ -4,6 +4,10 @@ import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface();
+	try {
+		await qi.removeColumn('messages', 'pinned');
+	} catch (Exception) {
+	}
 	await qi.addColumn('messages', 'pinned', {
 	    type: DataTypes.INTEGER,
 	    allowNull: true,
