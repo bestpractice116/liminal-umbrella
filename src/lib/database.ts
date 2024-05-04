@@ -3,11 +3,11 @@ import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
-import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage, NonThreadGuildBasedChannel } from 'discord.js';
+import type { TextChannel, TextBasedChannel, CategoryChannel, Guild, FetchMessagesOptions, Message as DiscordMessage, NonThreadGuildBasedChannel, MessageCollector, ThreadChannel, PublicThreadChannel } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark } from './database/model.js';
 import {TypedEvent} from '../lib/typedEvents.js';
-import {UserJoined, UserLeft, UserChangedNickname} from './events/index.js';
+import {UserJoined, UserLeft, UserChangedNickname, MessageUpdated, MessageAdded} from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -27,11 +27,14 @@ export default class Database {
 
     events: TypedEvent;
 
-    highwatermark: number
+    highwatermark: number;
+
+    messageCollectors: Map<string, MessageCollector>
 
     constructor(e: TypedEvent) {
         this.events = e;
         this.highwatermark = 0;
+        this.messageCollectors = new Map();
     }
 
     async getdb() : Promise<Sequelize> {
@@ -356,10 +359,13 @@ export default class Database {
                 dbMessage.embedCount = msg.embeds.length;
                 dbMessage.pinned = msg.pinned;
                 await dbMessage.save();
+                this.events.emit('messageUpdated', new MessageUpdated(
+                    msg, dbMessage,
+                ));
             }
         } else {
             console.log(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
-            await Message.create({
+            const dbMessage = await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,
                 channelId: msg.channel.id,
@@ -373,6 +379,9 @@ export default class Database {
                 embedCount: msg.embeds.length,
                 pinned: msg.pinned,
             });
+            this.events.emit('messageAdded', new MessageAdded(
+                msg, dbMessage,
+            ));
         }
     }
 
@@ -412,9 +421,26 @@ export default class Database {
         }
     }
 
+    createMessageListener(discordChannel: TextBasedChannel | ThreadChannel) {
+        const collector = discordChannel.createMessageCollector();
+        this.messageCollectors.set(discordChannel.id, collector);
+        collector.on('collect', message => {
+            this.indexMessage(message);
+        });
+        collector.on('end', () => {
+            this.messageCollectors.delete(discordChannel.id);
+            return Promise.resolve()
+        });
+    }
+
     async syncChannel(discordChannel: GuildBasedChannel) {
         if (discordChannel.type === ChannelType.GuildText) {
+            this.createMessageListener(discordChannel);
             await this.fetchAndStoreMessages(discordChannel);
+        }
+        if (discordChannel.type === ChannelType.PublicThread) {
+            const chan = discordChannel as PublicThreadChannel<true>;
+            this.createMessageListener(chan);
         }
         if (discordChannel.type === ChannelType.GuildForum) {
             const activeThreads = await discordChannel.threads.fetchActive();
@@ -432,6 +458,7 @@ export default class Database {
             }
             if (activeThreads) {
                 for (let pairs of activeThreads.threads) {
+                    this.createMessageListener(pairs[1]);
                     await this.fetchAndStoreMessages(pairs[1]);
                 }
             }
