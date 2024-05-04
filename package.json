@@ -53,7 +53,7 @@
     "generate": "sapphire generate",
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "node --trace_gc --use-strict dist/index.js --experimental-specifier-resolution=node",
+    "start": "node --use-strict dist/index.js --experimental-specifier-resolution=node",
     "dev": "npm run build && npm run start",
     "watch:start": "tsc-watch --onSuccess \"npm run start\"",
     "format": "prettier --write \"src/\""

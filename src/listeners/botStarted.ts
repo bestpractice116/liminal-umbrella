@@ -3,7 +3,7 @@ import { BotStarted } from '../lib/events/index.js';
 import { Message } from '../lib/database/model.js';
 import {Sequential} from '../lib/utils.js';
 import { sql } from '@sequelize/core';
-import { ChannelType } from 'discord.js';
+//import { ChannelType } from 'discord.js';
 
 export class BotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -15,6 +15,33 @@ export class BotStartedListener extends Listener {
     });
   }
 
+  async run (_: BotStarted) {
+    // Example - how to do a slow data migration piecewise without stopping the bot...
+    // See also migrations 00002 and 00003
+    /*
+    let count = 0;
+    let messages = [];
+    do {
+        messages = await this.getSome();
+        for (const msg of messages) {
+            console.log('start discord fetch of message');
+            const discordChannel = await e.guild.channels.fetch(msg.channelId);
+            if (discordChannel!.type === ChannelType.GuildText) {
+                const discordMessage = await discordChannel!.messages.fetch(msg.id);
+                await this.updateMessage(msg.id, discordMessage.pinned);
+                console.log(`Updated pinned on message ${msg.id}`);
+            }
+            else {
+                console.log(`message ${msg.id} not a text message`)
+            }
+            count++;
+        }
+    } while (messages.length > 0);
+    console.log(`Finished updates to ${count} messages`);
+    */
+  }
+
+  // Helper method to get a chunk of rows to work on
   @Sequential
   async getSome(): Promise<Message[]> {
     return await Message.findAll({
@@ -25,6 +52,7 @@ export class BotStartedListener extends Listener {
     });
   }
 
+  // Helper method to update one single row
   @Sequential
   async updateMessage(id: string, val : boolean) {
     return Message.update(
@@ -35,27 +63,5 @@ export class BotStartedListener extends Listener {
             },
         },
     );
-  }
-
-  async run (e: BotStarted) {
-    let messages = [];
-    do {
-        messages = await this.getSome();
-        for (const msg of messages) {
-            console.log('start discord fetch of message');
-            const discordChannel = await e.guild.channels.fetch(msg.channelId);
-            if (discordChannel!.type === ChannelType.GuildText) {
-                const discordMessage = await discordChannel!.messages.fetch(msg.id);
-                console.log('discord got message');
-                await this.updateMessage(msg.id, discordMessage.pinned);
-                console.log(`Updated pinned on message ${msg.id}`);
-            }
-            else {
-                console.log(`message ${msg.id} not a text message`)
-            }
-        }
-        console.log('updated 10 messages');
-    } while (messages.length > 0);
-    console.log("Finished updates to messages");
   }
 }
