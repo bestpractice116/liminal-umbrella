@@ -22,14 +22,14 @@ export function getChannelAndSend(container: Container, msg: string) {
   }
 }
 
-export function getChannelAndEmbed(container: Container, embed: EmbedBuilder) {
+export async function getChannelAndEmbed(container: Container, embed: EmbedBuilder) {
   const channel_name = channelName();
   if (!channel_name) {
     return;
   }
   const channel = container.client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
   if (channel && channel.type == ChannelType.GuildText) {
-    channel.send({embeds: [embed]});
+    await channel.send({embeds: [embed]});
   } else {
       container.logger.warn("Cannot find the ${channel_name} channel, or not a text channel");
   }

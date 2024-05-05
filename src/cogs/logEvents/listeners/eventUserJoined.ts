@@ -13,7 +13,7 @@ export class LogEventsUserJoinedListener extends Listener {
       event: 'userJoined'
     });
   }
-  run (e: UserJoined) {
+  async run (e: UserJoined) {
     const relative = time(e.joinedDiscordAt, TimestampStyles.RelativeTime);
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x00FF00)
@@ -29,6 +29,6 @@ export class LogEventsUserJoinedListener extends Listener {
       .setTimestamp()
       .setFooter({ text: `ID: ${e.id}` });
 
-    getChannelAndEmbed(this.container, exampleEmbed);
+    await getChannelAndEmbed(this.container, exampleEmbed);
   }
 }

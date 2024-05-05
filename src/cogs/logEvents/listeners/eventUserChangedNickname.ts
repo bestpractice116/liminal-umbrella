@@ -12,7 +12,7 @@ export class LogEventsUserChangedNicknameListener extends Listener {
       event: 'userChangedNickname'
     });
   }
-  run (e: UserChangedNickname) {
+  async run (e: UserChangedNickname) {
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x0000FF)
       .setAuthor({ name: 'Member Changed Nickname', iconURL: e.dbUser.avatarURL})
@@ -25,6 +25,6 @@ export class LogEventsUserChangedNicknameListener extends Listener {
       .setTimestamp()
       .setFooter({ text: `ID: ${e.id}` });
 
-    getChannelAndEmbed(this.container, exampleEmbed);
+    await getChannelAndEmbed(this.container, exampleEmbed);
   }
 }

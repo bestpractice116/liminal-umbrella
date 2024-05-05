@@ -12,7 +12,7 @@ export class LogEventsUserLeftListener extends Listener {
       event: 'userLeft'
     });
   }
-  run (e: UserLeft) {
+  async run (e: UserLeft) {
     const exampleEmbed = new EmbedBuilder()
       .setColor(0xFF0000)
       .setAuthor({ name: 'Member Left', iconURL: e.avatarURL})
@@ -25,6 +25,6 @@ export class LogEventsUserLeftListener extends Listener {
       .setTimestamp()
       .setFooter({ text: `ID: ${e.id}` });
 
-    getChannelAndEmbed(this.container, exampleEmbed);
+    await getChannelAndEmbed(this.container, exampleEmbed);
   }
 }

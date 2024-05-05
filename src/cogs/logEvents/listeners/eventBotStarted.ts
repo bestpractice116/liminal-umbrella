@@ -12,10 +12,10 @@ export class LogEventsBotStartedListener extends Listener {
       event: 'botStarted'
     });
   }
-  run (e: BotStarted) {
+  async run (e: BotStarted) {
     container.logger.info("logEvents cog - botStarted arg ", e);
     const t = time(Date.now(), TimestampStyles.ShortTime);
-    getChannelAndSend(this.container, `RPGBot restarted at ${t}`);
+    await getChannelAndSend(this.container, `RPGBot restarted at ${t}`);
   }
 }
 
