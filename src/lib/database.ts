@@ -154,6 +154,8 @@ export default class Database {
                 (guildMember.user.globalName|| guildMember.user.username)!,
                 (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
                 exMember,
+                user,
+                guildMember,
             ));
             await this.maybeSetHighestWatermark();
         }

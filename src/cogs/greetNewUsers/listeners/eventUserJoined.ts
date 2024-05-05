@@ -5,7 +5,6 @@ import { Sequential } from '../../../lib/utils.js';
 
 export class GreetNewUsersUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
-    container.logger.info("greetNewUsers cog - construct UserJoinedListener");
     super(context, {
       ...options,
       name: 'greetNewUsersUserJoined',
