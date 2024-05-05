@@ -14,7 +14,7 @@ export class LogEventsUserJoinedListener extends Listener {
     });
   }
   run (e: UserJoined) {
-    const relative = time(e.dbUser.joinedDiscordAt, TimestampStyles.RelativeTime);
+    const relative = time(e.joinedDiscordAt, TimestampStyles.RelativeTime);
     const exampleEmbed = new EmbedBuilder()
       .setColor(0xFF0000)
       .setAuthor({ name: 'Member Joined', iconURL: e.avatarURL})
