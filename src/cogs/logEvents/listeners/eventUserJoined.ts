@@ -16,7 +16,7 @@ export class LogEventsUserJoinedListener extends Listener {
   run (e: UserJoined) {
     const relative = time(e.joinedDiscordAt, TimestampStyles.RelativeTime);
     const exampleEmbed = new EmbedBuilder()
-      .setColor(0xFF0000)
+      .setColor(0x00FF00)
       .setAuthor({ name: 'Member Joined', iconURL: e.avatarURL})
       .setDescription(userMention(e.id))
       .setThumbnail(e.avatarURL)
