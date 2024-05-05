@@ -154,9 +154,12 @@ export default class Database {
         if (!guildMember.user.bot) {
             this.events.emit('userJoined', new UserJoined(
                 guildMember.id,
-                (guildMember.user.globalName|| guildMember.user.username)!,
-                (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+                user.username,
+                user.name,
+                user.nickname,
                 exMember,
+                user.avatarURL,
+                new Date(user.joinedDiscordAt),
                 user,
                 guildMember,
             ));

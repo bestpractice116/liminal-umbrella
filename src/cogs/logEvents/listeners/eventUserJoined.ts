@@ -14,21 +14,20 @@ export class LogEventsUserJoinedListener extends Listener {
     });
   }
   run (e: UserJoined) {
-    const icon = e.discordUser.user.avatarURL() || e.discordUser.user.defaultAvatarURL;
-    const relative = time(e.discordUser.user.createdAt, TimestampStyles.RelativeTime);
+    const relative = time(e.dbUser.joinedDiscordAt, TimestampStyles.RelativeTime);
     const exampleEmbed = new EmbedBuilder()
       .setColor(0xFF0000)
-      .setAuthor({ name: 'Member Joined', iconURL: icon})
-      .setDescription(userMention(e.discordUser.id))
-      .setThumbnail(icon)
+      .setAuthor({ name: 'Member Joined', iconURL: e.avatarURL})
+      .setDescription(userMention(e.id))
+      .setThumbnail(e.avatarURL)
       .addFields(
-        { name: 'Account name', value: e.discordUser.user.username, inline: true },
-        { name: 'Nickname', value: e.dbUser.nickname, inline: true },
+        { name: 'Account name', value: e.username, inline: true },
+        { name: 'Nickname', value: e.nickname, inline: true },
         { name: 'Joined discord', value: relative, inline: true },
         { name: 'Previous member', value: e.exMember ? 'Yes' : 'No', inline: true },
       )
       .setTimestamp()
-      .setFooter({ text: `ID: ${e.discordUser.id}` });
+      .setFooter({ text: `ID: ${e.id}` });
 
     getChannelAndEmbed(this.container, exampleEmbed);
   }
