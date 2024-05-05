@@ -130,7 +130,7 @@ export default class Database {
             rulesaccepted: false, // FIXME
             left: false,
             bot: guildMember.user.bot,
-            avatarUrl: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
+            avatarURL: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
             joinedDiscordAt: guildMember.user.createdAt.valueOf(),
         };
         container.logger.info(`ADD USER ${userData.nickname} id ${guildMember.id}`);
@@ -204,10 +204,10 @@ export default class Database {
         this.events.emit('userLeft', new UserLeft(
             id,
             member.username,
-            member.name || '',
+            member.name,
             member.nickname,
-            member.avatarURL || '',
-            new Date(member.joinedDiscordAt || 0),
+            member.avatarURL,
+            new Date(member.joinedDiscordAt),
             member
         ));
         await this.maybeSetHighestWatermark();

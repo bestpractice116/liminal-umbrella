@@ -18,6 +18,7 @@ export class BotStartedListener extends Listener {
   async run (e: BotStarted) {
     this.container.ticker.start(e.guild);
 
+    /*
     // Example - how to do a slow data migration piecewise without stopping the bot...
     // See also migrations 00002 and 00003
     let count = 0;
@@ -51,8 +52,10 @@ export class BotStartedListener extends Listener {
         }
     } while (users.length > 0);
     container.logger.info(`Finished updates to ${count} Users`);
+    */
   }
 
+  /*
   // Helper method to get a chunk of rows to work on
   @Sequential
   async getSome(): Promise<User[]> {
@@ -77,4 +80,5 @@ export class BotStartedListener extends Listener {
         },
     );
   }
+  */
 }

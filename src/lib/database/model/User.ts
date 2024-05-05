@@ -16,8 +16,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare id: string;
 
     @Attribute(DataTypes.STRING)
-    //@NotNull
-    declare name: string | null;
+    @NotNull
+    declare name: string;
 
     @Attribute(DataTypes.STRING)
     @NotNull
@@ -40,12 +40,12 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare left: boolean;
 
     @Attribute(DataTypes.STRING)
-    //@NotNull
-    declare avatarURL: string | null;
+    @NotNull
+    declare avatarURL: string;
 
     @Attribute(DataTypes.INTEGER)
-    //@NotNull
-    declare joinedDiscordAt: number | null;
+    @NotNull
+    declare joinedDiscordAt: number;
 
     @BelongsToMany(() => Role, {
         through: () => RoleMember,
