@@ -47,7 +47,8 @@ export class BotStartedListener extends Listener {
   async getSome(): Promise<User[]> {
     return await User.findAll({
         where: {
-          joinedDiscordAt: { [Op.is]: null }
+          joinedDiscordAt: { [Op.is]: null },
+          left: false,
         },
         limit: 10,
     });
