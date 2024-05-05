@@ -1,10 +1,9 @@
 import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../lib/events/index.js';
-/*import { Message } from '../lib/database/model.js';
+import { User } from '../lib/database/model.js';
 import {Sequential} from '../lib/utils.js';
 import { Op } from '@sequelize/core';
-import { ChannelType } from 'discord.js';
-*/
+
 
 export class BotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -19,48 +18,36 @@ export class BotStartedListener extends Listener {
   async run (e: BotStarted) {
     this.container.ticker.start(e.guild);
 
-    /*
     // Example - how to do a slow data migration piecewise without stopping the bot...
     // See also migrations 00002 and 00003
     let count = 0;
-    let messages = [];
-    container.logger.info('Starting migrations to messages to have pinned flag');
+    let users = [];
+    container.logger.info('Starting migrations to users to add data');
     do {
-        messages = await this.getSome();
-        for (const msg of messages) {
-            container.logger.info('start discord fetch of message');
-            const discordChannel = await e.guild.channels.fetch(msg.channelId);
-            if (discordChannel!.type === ChannelType.GuildText) {
-              try {
-                const discordMessage = await discordChannel!.messages.fetch(msg.id);
-                await this.updateMessage(msg.id, discordMessage.pinned);
-                container.logger.info(`Updated pinned on message ${msg.id}`);
-              } catch (e : any) {
-                if (e.code === 10008) {
-                  container.logger.info('Deleted message which is gone from discord');
-                  await msg.destroy();
-                } else {
-                  throw e;
-                }
-              }
+        users = await this.getSome();
+        for (const user of users) {
+            container.logger.info('start discord fetch of user');
+            const discordUser = await e.guild.members.fetch(user.id);
+            const updates = {
+              avatarURL: discordUser.user.avatarURL() || discordUser.user.defaultAvatarURL,
+              username: discordUser.user.username,
+              name: (discordUser.user.globalName || discordUser.user.username)!,
+              joinedDiscordAt: discordUser.user.createdAt.valueOf()
             }
-            else {
-                container.logger.info(`message ${msg.id} not a text message`)
-            }
+            await this.updateUser(user.id, updates);
+            container.logger.info(`Updated user ${user.id}`);
             count++;
         }
-    } while (messages.length > 0);
-    container.logger.info(`Finished updates to ${count} messages`);
-    */
+    } while (users.length > 0);
+    container.logger.info(`Finished updates to ${count} Users`);
   }
 
-  /*
   // Helper method to get a chunk of rows to work on
   @Sequential
-  async getSome(): Promise<Message[]> {
-    return await Message.findAll({
+  async getSome(): Promise<User[]> {
+    return await User.findAll({
         where: {
-            pinned: { [Op.is]: null }
+          joinedDiscordAt: { [Op.is]: null }
         },
         limit: 10,
     });
@@ -68,9 +55,9 @@ export class BotStartedListener extends Listener {
 
   // Helper method to update one single row
   @Sequential
-  async updateMessage(id: string, val : boolean) {
-    return Message.update(
-        { pinned: val },
+  async updateUser(id: string, updates : any) {
+    return User.update(
+        updates,
         {
             where: {
                 id
@@ -78,5 +65,4 @@ export class BotStartedListener extends Listener {
         },
     );
   }
-  */
 }

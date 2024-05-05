@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
-import {Sequential} from '../../../lib/utils.js';
+import { Sequential } from '../../../lib/utils.js';
 
 export class GreetNewUsersBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {

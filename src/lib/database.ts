@@ -125,10 +125,13 @@ export default class Database {
     async guildMemberAdd(guildMember: GuildMember) {
         const userData = {
             nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
-            username: (guildMember.user.globalName || guildMember.user.username)!,
+            username: guildMember.user.username,
+            name: (guildMember.user.globalName || guildMember.user.username)!,
             rulesaccepted: false, // FIXME
             left: false,
             bot: guildMember.user.bot,
+            avatarUrl: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
+            joinedDiscordAt: guildMember.user.createdAt.valueOf(),
         };
         container.logger.info(`ADD USER ${userData.nickname} id ${guildMember.id}`);
         let user = await User.findByPk(guildMember.id);
@@ -177,6 +180,11 @@ export default class Database {
             user.nickname = newNick;
             changed = true;
         }
+        const newAvatar = guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL;
+        if (newAvatar != user.avatarURL) {
+            user.avatarURL = newAvatar;
+            changed = true;
+        }
         if (changed) {
             user.save();
         }
@@ -196,7 +204,11 @@ export default class Database {
         this.events.emit('userLeft', new UserLeft(
             id,
             member.username,
+            member.name || '',
             member.nickname,
+            member.avatarURL || '',
+            new Date(member.joinedDiscordAt || 0),
+            member
         ));
         await this.maybeSetHighestWatermark();
     }

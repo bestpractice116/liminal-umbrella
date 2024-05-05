@@ -1,6 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { UserLeft } from '../../../lib/events/index.js';
-import { getChannelAndSend } from '../utils.js';
+import { getChannelAndEmbed } from '../utils.js';
+import { time, TimestampStyles, userMention, EmbedBuilder } from 'discord.js';
 
 export class LogEventsUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -12,7 +13,21 @@ export class LogEventsUserJoinedListener extends Listener {
     });
   }
   run (e: UserLeft) {
-    container.logger.info("logEvents cog - userLeft arg ", e);
-    getChannelAndSend(this.container, `User left the server - id: ${e.id} username: ${e.name} server nickname: ${e.nickname}`)
+    const icon = e.avatarURL;
+    const relative = time(e.joinedDiscordAt, TimestampStyles.RelativeTime);
+    const exampleEmbed = new EmbedBuilder()
+      .setColor(0xFF0000)
+      .setAuthor({ name: 'Member Joined', iconURL: icon})
+      .setDescription(userMention(e.id))
+      .setThumbnail(icon)
+      .addFields(
+        { name: 'Account name', value: e.username, inline: true },
+        { name: 'Nickname', value: e.dbUser.nickname, inline: true },
+        { name: 'Joined discord', value: relative, inline: true },
+      )
+      .setTimestamp()
+      .setFooter({ text: `ID: ${e.id}` });
+
+    getChannelAndEmbed(this.container, exampleEmbed);
   }
 }
