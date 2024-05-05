@@ -16,10 +16,9 @@ export class LogEventsUserChangedNicknameListener extends Listener {
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x0000FF)
       .setAuthor({ name: 'Member Changed Nickname', iconURL: e.dbUser.avatarURL})
-      .setDescription(userMention(e.id))
+      .setDescription(`${userMention(e.id)} (${e.dbUser.username})`)
       .setThumbnail(e.dbUser.avatarURL)
       .addFields(
-        { name: 'Account name', value: e.dbUser.username, inline: true },
         { name: 'New Nickname', value: e.newNickname, inline: true },
         { name: 'Old Nickname', value: e.oldNickname, inline: true },
       )
