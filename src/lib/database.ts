@@ -178,7 +178,9 @@ export default class Database {
             this.events.emit('userChangedNickname', new UserChangedNickname(
                 guildMember.id,
                 user.nickname,
-                newNick
+                newNick,
+                user,
+                guildMember,
             ));
             user.nickname = newNick;
             changed = true;
