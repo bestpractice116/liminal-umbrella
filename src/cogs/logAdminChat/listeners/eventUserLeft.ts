@@ -3,7 +3,7 @@ import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 
-export class logAdminChatUserJoinedListener extends Listener {
+export class logAdminChatUserLeftListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
