@@ -15,10 +15,13 @@ export class AddAllUsersRoleBotStartedListener extends Listener {
 
   @Sequential
   async run (e: BotStarted) {
-    for (const user of await User.findAll({where: { bot: false }})) {
+    for (const user of await User.findAll({
+      where: { bot: false },
+      include: ['roles'],
+    })) {
       const roles = await user.getRoles();
       if (!roles.find(role => role.name == 'AllUsers')) {
-        console.log(`User ${user.nickname} is missing AllUsers Role`);
+        container.logger.info(`Pre-existing user ${user.nickname} is missing 'AllUsers' Role - adding it.`);
         const dbRole = await Role.findOne({where: { name: 'AllUsers' }});
         if (!dbRole) {
           container.logger.error(`Cannot find 'AllUsers' role`);
@@ -27,7 +30,6 @@ export class AddAllUsersRoleBotStartedListener extends Listener {
         const role = await e.guild.roles.resolve(dbRole.id);
         const discordUser = await e.guild.members.fetch(user.id);
         await discordUser.roles.add(role!);
-        console.log(`Added role ${role!.name} to discord user ${discordUser.id} in eventBotStarted`);
       }
     }
   }

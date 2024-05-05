@@ -25,6 +25,6 @@ export class AddAllUsersRoleUserJoinedListener extends Listener {
     }
     const role = await e.discordUser.guild.roles.resolve(dbRole.id);
     await e.discordUser.roles.add(role!);
-    console.log('Added role to discord user in eventUserJoined');
+    container.logger.debug(`Added AllUsers role to discord user ${e.discordUser.id} in eventUserJoined`);
   }
 }
