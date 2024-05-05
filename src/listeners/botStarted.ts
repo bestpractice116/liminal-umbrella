@@ -62,7 +62,6 @@ export class BotStartedListener extends Listener {
     return await User.findAll({
         where: {
           joinedDiscordAt: { [Op.is]: null },
-          left: false,
         },
         limit: 10,
     });
