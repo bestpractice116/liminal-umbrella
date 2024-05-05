@@ -27,16 +27,27 @@ export class BotStartedListener extends Listener {
         users = await this.getSome();
         for (const user of users) {
             container.logger.info('start discord fetch of user');
-            const discordUser = await e.guild.members.fetch(user.id);
-            const updates = {
-              avatarURL: discordUser.user.avatarURL() || discordUser.user.defaultAvatarURL,
-              username: discordUser.user.username,
-              name: (discordUser.user.globalName || discordUser.user.username)!,
-              joinedDiscordAt: discordUser.user.createdAt.valueOf()
+            let discordUser = null;
+            try {
+              discordUser = await e.guild.members.fetch(user.id);
+            } catch (e: any) {
+              if (e.code === 10007) {
+                await user.destroy();
+              } else {
+                throw e;
+              }
             }
-            await this.updateUser(user.id, updates);
-            container.logger.info(`Updated user ${user.id}`);
-            count++;
+            if (discordUser) {
+              const updates = {
+                avatarURL: discordUser.user.avatarURL() || discordUser.user.defaultAvatarURL,
+                username: discordUser.user.username,
+                name: (discordUser.user.globalName || discordUser.user.username)!,
+                joinedDiscordAt: discordUser.user.createdAt.valueOf(),
+              }
+              await this.updateUser(user.id, updates);
+              container.logger.info(`Updated user ${user.id}`);
+              count++;
+            }
         }
     } while (users.length > 0);
     container.logger.info(`Finished updates to ${count} Users`);

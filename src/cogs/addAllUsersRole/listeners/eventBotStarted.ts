@@ -16,7 +16,7 @@ export class AddAllUsersRoleBotStartedListener extends Listener {
   @Sequential
   async run (e: BotStarted) {
     for (const user of await User.findAll({
-      where: { bot: false },
+      where: { bot: false, left: false },
       include: ['roles'],
     })) {
       const roles = await user.getRoles();
