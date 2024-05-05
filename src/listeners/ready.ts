@@ -19,12 +19,7 @@ export class ReadyEvent extends Listener {
 			await this.container.database.getHighestWatermark()
 			const start = Date.now();
 			await this.container.database.sync(guild);
-			console.log(`Watermark from DB is ${this.container.database.highwatermark} start is ${start}`);
-			//await this.container.database.syncChannelGameListings(guild, 'game_listings');
 			await this.container.database.syncChannelGameListings(guild, 'game_listings');
-				//console.log(id);
-				//console.log();
-				//console.log(guildMember);
 			this.container.events.emit('botStarted', new BotStarted(guild));
 			this.container.database.setHighestWatermark(start);
 		});

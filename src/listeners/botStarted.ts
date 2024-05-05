@@ -24,20 +24,20 @@ export class BotStartedListener extends Listener {
     // See also migrations 00002 and 00003
     let count = 0;
     let messages = [];
-    console.log('Starting migrations to messages to have pinned flag');
+    container.logger.info('Starting migrations to messages to have pinned flag');
     do {
         messages = await this.getSome();
         for (const msg of messages) {
-            console.log('start discord fetch of message');
+            container.logger.info('start discord fetch of message');
             const discordChannel = await e.guild.channels.fetch(msg.channelId);
             if (discordChannel!.type === ChannelType.GuildText) {
               try {
                 const discordMessage = await discordChannel!.messages.fetch(msg.id);
                 await this.updateMessage(msg.id, discordMessage.pinned);
-                console.log(`Updated pinned on message ${msg.id}`);
+                container.logger.info(`Updated pinned on message ${msg.id}`);
               } catch (e : any) {
                 if (e.code === 10008) {
-                  console.log('Deleted message which is gone from discord');
+                  container.logger.info('Deleted message which is gone from discord');
                   await msg.destroy();
                 } else {
                   throw e;
@@ -45,12 +45,12 @@ export class BotStartedListener extends Listener {
               }
             }
             else {
-                console.log(`message ${msg.id} not a text message`)
+                container.logger.info(`message ${msg.id} not a text message`)
             }
             count++;
         }
     } while (messages.length > 0);
-    console.log(`Finished updates to ${count} messages`);
+    container.logger.info(`Finished updates to ${count} messages`);
     */
   }
 

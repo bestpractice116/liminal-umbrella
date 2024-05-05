@@ -7,7 +7,6 @@ export const up = async (uz: MigrationParams<any>) => {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	});
-	console.log("MIGRATION 00003 - FINISH COLUMN CHANGE");
 };
 
 export const down = async (uz: MigrationParams<any>) => {

@@ -1,4 +1,5 @@
 import { Sequelize, importModels, DataTypes, TransactionType, Op } from '@sequelize/core';
+import { container } from '@sapphire/framework';
 import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
 import { fileURLToPath } from 'node:url';
@@ -129,7 +130,7 @@ export default class Database {
             left: false,
             bot: guildMember.user.bot,
         };
-        console.log(`ADD USER ${userData.nickname} id ${guildMember.id}`);
+        container.logger.info(`ADD USER ${userData.nickname} id ${guildMember.id}`);
         let user = await User.findByPk(guildMember.id);
         let exMember = true;
         if (!user) {
@@ -143,7 +144,6 @@ export default class Database {
             await user.save();
         }
         await user.setRoles(guildMember.roles.cache.keys());
-        console.log(`User joined at: ${guildMember.joinedTimestamp} and watermark is ${this.highwatermark}`);
         if (this.highwatermark == 0) {
             // Skip these events if we are bootstrapping - to avoid us spamming channels with repeated user joined / welcome messages.
             return
@@ -326,7 +326,7 @@ export default class Database {
     }
 
     async setHighestWatermark(watermark: number) {
-        console.log(`Set highest watermark to ${watermark}`);
+        container.logger.debug(`Set highest watermark to ${watermark}`);
         await this.db!.transaction(async () => {
             await Watermark.create({time: watermark});
             await Watermark.destroy({
@@ -347,7 +347,7 @@ export default class Database {
 
     async indexMessage(msg: DiscordMessage) {
         if (!!!this.messageCollectors.get(msg.channel.id)) {
-            console.log(`Got index request for message on channel we are not subscribed to: ${msg.channel.id}`);
+            container.logger.debug(`Got index request for message on channel we are not subscribed to: ${msg.channel.id}`);
             return;
         }
         const dbMessage = await Message.findOne({where: {id: msg.id}});
@@ -372,7 +372,7 @@ export default class Database {
                 ));
             }
         } else {
-            console.log(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
+            container.logger.debug(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
             const dbMessage = await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,
@@ -442,6 +442,10 @@ export default class Database {
     }
 
     async syncChannel(discordChannel: GuildBasedChannel) {
+        // We only need to sync each channel once!
+        if (!!this.messageCollectors.get(discordChannel.id)) {
+            return;
+        }
         if (discordChannel.type === ChannelType.GuildText) {
             this.createMessageListener(discordChannel);
             await this.fetchAndStoreMessages(discordChannel);
@@ -458,7 +462,6 @@ export default class Database {
             });
             await sleep(1000);
 
-
             if (archivedThreads) {
                 for (let pairs of archivedThreads.threads) {
                     await this.fetchAndStoreMessages(pairs[1]);
@@ -474,24 +477,24 @@ export default class Database {
     }
 
     async syncChannelGameListings(guild : Guild, channel_name : string) {
-        //console.log(`Sync in channel ${channel_name}`);
+        //container.logger.info(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         await this.syncChannel(discordChannel);
-        //console.log("SYNC CHANNEL DONE");
+        //container.logger.info("SYNC CHANNEL DONE");
         ///const messages = await Message.findAll({where: {channelId: discordChannel.id}});
         ///for (const msg of messages) {
-            //console.log("MSG " + msg.id);
+            //ccontainer.logger.info("MSG " + msg.id);
         ///}
     }
 
     async syncChannelOneShots(guild : Guild, channel_name : string) {
-        //console.log(`Sync in channel ${channel_name}`);
+        //container.logger.info(`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         return this.syncChannel(discordChannel);
     }
 
     async syncChannelNewMembers(guild : Guild, channel_name : string) {
-        //console.log(`Sync in channel ${channel_name}`);
+        //container.logger.info`Sync in channel ${channel_name}`);
         const discordChannel = await this.getdiscordChannel(guild, channel_name);
         return this.syncChannel(discordChannel);
     }
