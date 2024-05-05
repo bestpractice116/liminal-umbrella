@@ -1,8 +1,8 @@
 import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../lib/events/index.js';
-import { User } from '../lib/database/model.js';
+/*import { User } from '../lib/database/model.js';
 import {Sequential} from '../lib/utils.js';
-import { Op } from '@sequelize/core';
+import { Op } from '@sequelize/core';*/
 
 
 export class BotStartedListener extends Listener {
