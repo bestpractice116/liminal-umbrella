@@ -20,3 +20,7 @@
 # Channels that things happen/are posted in
 
 These are all controlled by the envs setup [here](env) - removing any setting will disable the relevant functionality.
+
+# Random 'Playing...'
+
+Just for fun, the bot has a [list of games](src/cogs/randomActivity/playing.txt) it lists itself as 'Playing' on Discord. This randomly changes [approximately every 4 hours](src/cogs/randomActivity/listeners/eventTickFive.ts#L17).
