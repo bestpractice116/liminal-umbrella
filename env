@@ -1,4 +1,4 @@
-ADMIN_CHAT_CHANNEL: admin_chat
-LOG_EVENTS_CHANNEL: bot_spraff
+LOG_CHANNEL: bot_log
+VERBOSE_LOG_CHANNEL: bot_spraff
 GREET_USERS_CHANNEL: new_members
 DELETE_OLD_MESSAGES_CHANNEL: location_booking

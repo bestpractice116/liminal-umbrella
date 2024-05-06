@@ -2,7 +2,7 @@ import { Container } from "@sapphire/framework";
 import { ChannelType, EmbedBuilder } from 'discord.js';
 
 export function channelName() : string | null {
-  const channel_name = process.env.LOG_EVENTS_CHANNEL;
+  const channel_name = process.env.VERBOSE_LOG_CHANNEL;
   if (!channel_name) {
     return null;
   }
