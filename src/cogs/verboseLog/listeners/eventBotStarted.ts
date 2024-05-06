@@ -12,7 +12,7 @@ export class VerboseLogBotStartedListener extends Listener {
       event: 'botStarted'
     });
   }
-  async run (e: BotStarted) {
+  async run (_: BotStarted) {
     container.logger.info("verboseLog cog - botStarted");
     const t = time(new Date(Date.now()), TimestampStyles.ShortTime);
     await getChannelAndSend(this.container, `RPGBot restarted at ${t}`);

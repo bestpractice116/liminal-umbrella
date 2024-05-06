@@ -11,7 +11,7 @@ export class VerboseLogTickFiveListener extends Listener {
       event: 'tickFive'
     });
   }
-  run (e: TickFive) {
+  run (_: TickFive) {
     container.logger.info("verboseLog cog - tickFive");
     //getChannelAndSend(this.container, `Tick: ${e.firedAt}`)
   }
