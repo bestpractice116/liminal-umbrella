@@ -1,1 +1,15 @@
 Fix bot restarted message timestamp to be the right time.
+Parse available games.
+Validate available games posts
+Validate events 
+Tie events to available games
+Admin command
+DM user command
+Respond to DMs
+OAuth web interface
+Playing random thing
+Sync user spreadsheet + validate 
+Kick user reaction automation
+Suggested random questions (for admins)
+Campaign role and channel management
+Cleanup available games?
