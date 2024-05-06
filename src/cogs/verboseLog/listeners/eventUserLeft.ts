@@ -3,11 +3,11 @@ import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 
-export class LogEventsUserLeftListener extends Listener {
+export class VerboseLogUserLeftListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
-      name: 'logEventsUserLeft',
+      name: 'verboseLogUserLeft',
       emitter: container.events,
       event: 'userLeft'
     });

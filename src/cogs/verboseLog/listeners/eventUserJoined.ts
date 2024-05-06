@@ -3,12 +3,12 @@ import { UserJoined } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { time, TimestampStyles, userMention, EmbedBuilder } from 'discord.js';
 
-export class LogEventsUserJoinedListener extends Listener {
+export class VerboseLogUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
-    container.logger.info("logEvents cog - construct UserJoinedListener");
+    container.logger.info("verboseLog cog - construct UserJoinedListener");
     super(context, {
       ...options,
-      name: 'logEventsUserJoined',
+      name: 'verboseLogUserJoined',
       emitter: container.events,
       event: 'userJoined'
     });

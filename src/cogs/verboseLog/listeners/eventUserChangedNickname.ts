@@ -3,11 +3,11 @@ import { UserChangedNickname } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 
-export class LogEventsUserChangedNicknameListener extends Listener {
+export class VerboseLogUserChangedNicknameListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
-      name: 'logEventsUserChangedNickname',
+      name: 'verboseLogUserChangedNickname',
       emitter: container.events,
       event: 'userChangedNickname'
     });
