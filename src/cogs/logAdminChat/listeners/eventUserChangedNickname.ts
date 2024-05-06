@@ -13,7 +13,7 @@ export class logAdminChatUserChangedNicknameListener extends Listener {
     });
   }
   async run (e: UserChangedNickname) {
-    console.log("USER CHANGED NICKNAME");
+    // Log change (with old and new nickname in bot-log)
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x0000FF)
       .setAuthor({ name: 'Member Changed Nickname', iconURL: e.dbUser.avatarURL})

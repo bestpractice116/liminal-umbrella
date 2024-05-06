@@ -13,7 +13,7 @@ export class logAdminChatUserLeftListener extends Listener {
     });
   }
   async run (e: UserLeft) {
-    console.log("USER LEFT");
+    // Log user left (with nickname in bot-log)
     const exampleEmbed = new EmbedBuilder()
       .setColor(0xFF0000)
       .setAuthor({ name: 'Member Left', iconURL: e.avatarURL})

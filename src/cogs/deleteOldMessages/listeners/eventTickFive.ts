@@ -27,6 +27,8 @@ export class LogEventsTickFiveListener extends Listener {
     if (discordChannel!.type !== ChannelType.GuildText) {
       return
     }
+
+    // Find all non-pinned messages > 1 week old from the channel.
     const since = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 1 week ago
     const msgs = await Message.findAll({
       where: {
@@ -36,6 +38,8 @@ export class LogEventsTickFiveListener extends Listener {
       },
       order: [['createdTimestamp', 'ASC']],
     });
+
+    // Delete them from Discord and the bot's database.
     for (const msg of msgs) {
       container.logger.info(`Delete ${msg.type} type old message in ${channel_name} - ${msg.id}: '${msg.content}'`);
       await db.transaction(async () => {

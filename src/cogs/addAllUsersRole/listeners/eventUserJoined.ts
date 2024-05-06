@@ -15,15 +15,20 @@ export class AddAllUsersRoleUserJoinedListener extends Listener {
 
   @Sequential
   async run (e: UserJoined) {
+    // If the user already has AllUsers, do nothing
     if (!!Array.from(e.discordUser.roles.cache.keys()).find(name => name === 'AllUsers')) {
       return;
     }
+
+    // Find the AllUsers role from Discord
     const dbRole = await Role.findOne({where: { name: 'AllUsers' }});
     if (!dbRole) {
       container.logger.error(`Cannot find 'AllUsers' role`);
       return;
     }
     const role = await e.discordUser.guild.roles.resolve(dbRole.id);
+
+    // Add the role to the user who just joined.
     await e.discordUser.roles.add(role!);
     container.logger.debug(`Added AllUsers role to discord user ${e.discordUser.id} in eventUserJoined`);
   }
