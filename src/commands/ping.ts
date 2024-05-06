@@ -1,30 +1,32 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { ApplicationCommandType, Message } from 'discord.js';
+//import { ApplicationCommandType, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'ping pong'
 })
 export class PingCommand extends Command {
 	// Register Chat Input and Context Menu command
-	public override registerApplicationCommands(registry: Command.Registry) {
-		// Register Chat Input command
-		registry.registerChatInputCommand({
+	public override registerApplicationCommands(_: Command.Registry) {
+		// Register Chat Input command - this is /ping
+		/*registry.registerChatInputCommand({
 			name: this.name,
 			description: this.description
 		});
+		*/
 
 		// Register Context Menu command available from any message
-		registry.registerContextMenuCommand({
+		/*registry.registerContextMenuCommand({
 			name: this.name,
 			type: ApplicationCommandType.Message
-		});
+		});*/
 
 		// Register Context Menu command available from any user
-		registry.registerContextMenuCommand({
+		/*registry.registerContextMenuCommand({
 			name: this.name,
 			type: ApplicationCommandType.User
-		});
+		});*/
 	}
 
 	// Message command

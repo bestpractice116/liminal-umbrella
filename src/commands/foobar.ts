@@ -7,9 +7,9 @@ import { Message } from 'discord.js';
 })
 export class TestCommand extends Command {
 	// Register Chat Input and Context Menu command
-	public override registerApplicationCommands(registry: Command.Registry) {
+	public override registerApplicationCommands(_: Command.Registry) {
 		// Register Chat Input command
-		registry.registerChatInputCommand((builder) =>
+		/*registry.registerChatInputCommand((builder) =>
 		builder //
 		  .setName(this.name)
 		  .setDescription(this.description)
@@ -19,7 +19,7 @@ export class TestCommand extends Command {
             	.setDescription('User to say hello to')
             	.setRequired(true)
 		  )
-		);
+		);*/
 
 		// Register Context Menu command available from any message
 		/*registry.registerContextMenuCommand({
