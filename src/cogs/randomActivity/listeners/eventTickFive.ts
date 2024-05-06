@@ -1,6 +1,6 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
-import { pickActivity } from '../pick.js';
+import { setRandomActivity } from '../activity.js';
 
 export class randomActivityTickFiveListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -43,7 +43,7 @@ export class randomActivityTickFiveListener extends Listener {
       50 x 5 minutes = 4h 10m
     */
     if (Math.random() < 0.02) {
-      container.client.user?.setActivity(pickActivity());
+      setRandomActivity();
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Container } from "@sapphire/framework";
+import { container } from "@sapphire/framework";
 import { ChannelType, EmbedBuilder } from 'discord.js';
 
 export function channelName() : string | null {
@@ -9,7 +9,7 @@ export function channelName() : string | null {
   return channel_name;
 }
 
-export function getChannelAndSend(container: Container, msg: string) {
+export function getChannelAndSend(msg: string) {
   const channel_name = channelName();
   if (!channel_name) {
     return;
@@ -22,7 +22,7 @@ export function getChannelAndSend(container: Container, msg: string) {
   }
 }
 
-export async function getChannelAndEmbed(container: Container, embed: EmbedBuilder) {
+export async function getChannelAndEmbed(embed: EmbedBuilder) {
   const channel_name = channelName();
   if (!channel_name) {
     return;

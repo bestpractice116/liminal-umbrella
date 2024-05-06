@@ -1,6 +1,6 @@
 import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
-import { pickActivity } from '../pick.js';
+import { setRandomActivity } from '../activity.js';
 
 export class randomActivityBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -13,7 +13,7 @@ export class randomActivityBotStartedListener extends Listener {
   }
 
   run (_: BotStarted) {
-    container.client.user?.setActivity(pickActivity());
+    setRandomActivity();
   }
 }
 
