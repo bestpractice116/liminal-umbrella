@@ -3,17 +3,17 @@ import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 
-export class logAdminChatUserLeftListener extends Listener {
+export class logBotActionUserLeftListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
-      name: 'logAdminChatUserLeft',
+      name: 'logBotActionUserLeft',
       emitter: container.events,
       event: 'userLeft'
     });
   }
   async run (e: UserLeft) {
-    // Log user left (with nickname in bot-log)
+    // Log user left (with nickname in bot_log)
     const exampleEmbed = new EmbedBuilder()
       .setColor(0xFF0000)
       .setAuthor({ name: 'Member Left', iconURL: e.avatarURL})

@@ -3,17 +3,17 @@ import { UserChangedNickname } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 
-export class logAdminChatUserChangedNicknameListener extends Listener {
+export class logBotActionUserChangedNicknameListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
-      name: 'logAdminChatUserChangedNickname',
+      name: 'logBotActionUserChangedNickname',
       emitter: container.events,
       event: 'userChangedNickname'
     });
   }
   async run (e: UserChangedNickname) {
-    // Log change (with old and new nickname in bot-log)
+    // Log change (with old and new nickname in bot_log)
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x0000FF)
       .setAuthor({ name: 'Member Changed Nickname', iconURL: e.dbUser.avatarURL})
