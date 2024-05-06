@@ -7,13 +7,16 @@
 
 ## Members changing nickname
 
-  * Posts a nickname change log (with old and new nickname) into #bot-log [[code](src/cogs/logAdminChat/listeners/eventUserChangedNickname.ts)].
+  * Posts a nickname change log (with old and new nickname) into #bot-log [[code](src/cogs/logBotAction/listeners/eventUserChangedNickname.ts)].
 
 ## Members leaving
 
-  * Posts a member left log (including their nickname) into #bot-log [[code](src/cogs/logAdminChat/listeners/eventUserLeft.ts)].
+  * Posts a member left log (including their nickname) into #bot-log [[code](src/cogs/logBotAction/listeners/eventUserLeft.ts)].
 
 ## Cleaning up old messages
 
   * Deletes old messages (age > 7 days) which are not pinned from #location_booking [[code](src/cogs/deleteOldMessages/listeners/eventTickFive.ts)].
 
+# Channels that things happen/are posted in
+
+These are all controlled by the envs setup [here](env) - removing any setting will disable the relevant functionality.
