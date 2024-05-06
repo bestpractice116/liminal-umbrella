@@ -3,7 +3,7 @@ import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import { time, TimestampStyles } from 'discord.js';
 
-export class VerboseLogBotStartedListener extends Listener {
+export class verboseLogBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

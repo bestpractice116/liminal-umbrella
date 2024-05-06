@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../lib/events/index.js';
 import {Sequential} from '../lib/utils.js';
 
-export class TickFiveListener extends Listener {
+export class TickFiveEvent extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

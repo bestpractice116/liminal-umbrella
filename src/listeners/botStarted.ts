@@ -5,7 +5,7 @@ import {Sequential} from '../lib/utils.js';
 import { Op } from '@sequelize/core';*/
 
 
-export class BotStartedListener extends Listener {
+export class BotStartedEvent extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

@@ -6,7 +6,7 @@ import { Message } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
 import { ChannelType } from 'discord.js';
 
-export class LogEventsTickFiveListener extends Listener {
+export class deleteOldMessagesTickFiveListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

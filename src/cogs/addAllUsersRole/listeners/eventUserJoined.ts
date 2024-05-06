@@ -3,7 +3,7 @@ import { UserJoined } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { Role } from '../../../lib/database/model.js';
 
-export class AddAllUsersRoleUserJoinedListener extends Listener {
+export class addAllUsersRoleUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

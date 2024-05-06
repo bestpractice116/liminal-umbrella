@@ -3,7 +3,7 @@ import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
 
-export class GreetNewUsersBotStartedListener extends Listener {
+export class greetNewUsersBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

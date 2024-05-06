@@ -3,7 +3,7 @@ import { BotStarted } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { User, Role } from '../../../lib/database/model.js';
 
-export class AddAllUsersRoleBotStartedListener extends Listener {
+export class addAllUsersRoleBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,

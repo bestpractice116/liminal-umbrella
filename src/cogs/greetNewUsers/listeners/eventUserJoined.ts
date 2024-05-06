@@ -3,7 +3,7 @@ import { UserJoined } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
 
-export class GreetNewUsersUserJoinedListener extends Listener {
+export class greetNewUsersUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
