@@ -15,6 +15,7 @@ export class ReadyEvent extends Listener {
 	@Sequential
 	public override async run(client: Client) {
 		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+			this.container.guild = guild;
 			await this.container.database.doMigrations(guild);
 			await this.container.database.getHighestWatermark()
 			const start = Date.now();
