@@ -50,7 +50,7 @@ export default class Database {
         this.db = new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
-            logging: log,
+            logging: log ? msg => container.logger.debug(msg) : false,
             storage,
             models: await importModels(__dirname + '/database/model/*.js'),
             transactionType: TransactionType.IMMEDIATE,
