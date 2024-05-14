@@ -1,6 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, container } from '@sapphire/framework';
-import { PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+//import { PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { PermissionFlagsBits, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+
 
 @ApplyOptions<Command.Options>({
 	description: 'Post a game'
@@ -36,7 +38,7 @@ export class GamePostCommand extends Command {
 	}
 
 	private async sendTest(interaction: Command.ChatInputCommandInteraction | Command.ContextMenuCommandInteraction) {
-		const row = new ActionRowBuilder<ButtonBuilder>();
+		/*const row = new ActionRowBuilder<ButtonBuilder>();
 
 		const confirm = new ButtonBuilder()
 			.setCustomId('confirm')
@@ -49,7 +51,7 @@ export class GamePostCommand extends Command {
 			.setStyle(ButtonStyle.Secondary);
 
 		row.addComponents(cancel, confirm);
-
+		
 		const pingMessage = await interaction.reply({ content: 'Test?', fetchReply: true, ephemeral: true, components: [row] });
 
 		try {
@@ -62,6 +64,22 @@ export class GamePostCommand extends Command {
 		} catch (e) {
 			return interaction.editReply({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
 		}
+		*/
+
+		const row = new ActionRowBuilder<TextInputBuilder>();
+		const favoriteColorInput = new TextInputBuilder()
+			.setCustomId('favoriteColorInput')
+		    // The label is the prompt the user sees for this input
+			.setLabel("What's your favorite color?")
+		    // Short means only a single line of text
+			.setStyle(TextInputStyle.Short);
+		row.addComponents(favoriteColorInput);
+
+		const modal = new ModalBuilder();
+		modal.setCustomId('hello-popup');
+		modal.setTitle('Hello World');
+		modal.addComponents(row);
+		await interaction.showModal(modal);
 		return Promise.resolve();
 	}
 }
