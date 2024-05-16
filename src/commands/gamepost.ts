@@ -66,19 +66,41 @@ export class GamePostCommand extends Command {
 		}
 		*/
 
-		const row = new ActionRowBuilder<TextInputBuilder>();
-		const favoriteColorInput = new TextInputBuilder()
-			.setCustomId('favoriteColorInput')
-		    // The label is the prompt the user sees for this input
-			.setLabel("What's your favorite color?")
-		    // Short means only a single line of text
-			.setStyle(TextInputStyle.Short);
-		row.addComponents(favoriteColorInput);
+		/*
+		Adventure name: 
+Type of Adventure: One shot/Ongoing campaign/Drop in and out campaign (these are the only options)
+Game System: DnD 5e, Pathfinder 2e, Cypher System, World of Darkness 5e etc.
+Date, day and time of play:  Please put start date for ongoing campaigns.
+Location:
+Spaces currently available:
+DM contact:
+Brief description: Max 50 words.  Please give a simple description of the scenario and a brief idea of style of play.  Please include much more detail in your thread or channel.  Do not forget to put a link to your channel. 
 
-		const modal = new ModalBuilder();
-		modal.setCustomId('hello-popup');
-		modal.setTitle('Hello World');
-		modal.addComponents(row);
+*/
+		const modal = new ModalBuilder()
+			.setCustomId('hello-popup')
+			.setTitle('Hello World')
+			.addComponents(
+				(new ActionRowBuilder<TextInputBuilder>())
+					.addComponents(new TextInputBuilder()
+						.setCustomId('name')
+						.setLabel("Advanture Name")
+						.setStyle(TextInputStyle.Short)
+						.setMinLength(10)
+						.setMaxLength(500)
+						.setRequired(true)
+				)
+			).addComponents(
+				(new ActionRowBuilder<TextInputBuilder>())
+					.addComponents(new TextInputBuilder()
+						.setCustomId('description')
+						.setLabel("Brief Description")
+						.setStyle(TextInputStyle.Paragraph)
+						.setMaxLength(100)
+						.setMaxLength(1_500)
+						.setRequired(true)
+				)
+			);
 		await interaction.showModal(modal);
 		return Promise.resolve();
 	}
