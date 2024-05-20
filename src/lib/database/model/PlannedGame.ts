@@ -2,11 +2,14 @@
 
 import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique } from '@sequelize/core/decorators-legacy';
-import { Command } from '@sapphire/framework';
-import { userMention, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle,
+import { Command, container } from '@sapphire/framework';
+import {
+    userMention, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle,
     ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
-    ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AnySelectMenuInteraction, ButtonInteraction, ModalSubmitInteraction,
-    Message, StringSelectMenuInteraction
+    ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction,
+    AnySelectMenuInteraction, ButtonInteraction, ModalSubmitInteraction,
+    Message, StringSelectMenuInteraction, ChannelType, GuildScheduledEventEntityType,
+    GuildScheduledEventPrivacyLevel, ThreadAutoArchiveDuration
     } from 'discord.js';
 
 
@@ -205,29 +208,66 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
         return interaction.reply({ content: this.format(), fetchReply: true, ephemeral: true, components});
     }
 
-    async postGame() {}
+    async postGame(interaction: ReplyableInteraction) {
+        await this.postGameListing();
+        await this.postEvent(interaction);
+        await this.createGameThread();
+    }
+
+    async postEvent(interaction: ReplyableInteraction) {
+        await interaction.guild?.scheduledEvents.create({
+            description: this.description!,
+            entityType: GuildScheduledEventEntityType.External,
+            name: this.name!,
+            scheduledStartTime: Date.now(),
+            privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+        });
+    }
+
+    async postGameListing() {
+        const channel_name = 'game_listings';
+        const channel = container.client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
+        if (channel && channel.type == ChannelType.GuildText) {
+            await channel.send(this.format());
+        }
+    }
+
+    async createGameThread() {
+        const channel_name = 'one_shots';
+        const channel = container.client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
+        if (channel && channel.type == ChannelType.GuildForum) {
+            await channel.threads.create({
+                name: 'Food Talk',
+                autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+                message: {
+                    content: this.format(),
+                },
+                reason: 'Needed a thread for a game',
+            });
+        }
+    }
 
     async handleEditForm(interaction: ReplyableInteraction, msg: Message) {
         console.log("HANDLE EDIT FORM");
         const input  = await msg.awaitMessageComponent();
         console.log("GOT MESSAGE");
         if (input.customId === 'discard') {
-            const confirm = await this.getConfirmInput(msg);
-            if (confirm) {
+            //const confirm = await this.getConfirmInput(msg);
+            //if (confirm) {
                 await this.destroy();
                 return interaction.editReply({content: 'Game deleted', components: []});
-            } else {
-                return this.showEditForm(interaction);
-            }
+            //} else {
+            //    return this.showEditForm(interaction);
+            //}
         }
         if (input.customId === 'game-post-do-it') {
-            const confirm = await this.getConfirmInput(msg);
+            await this.postGame(interaction);
+            /*const confirm = await this.getConfirmInput(msg);
             if (confirm) {
-                await this.postGame();
                 return interaction.editReply({content: 'Game posted', components: []});
             } else {
                 return this.showEditForm(interaction);
-            }
+            }*/
         }
         console.log("INPUT CUSTOM ID "+ input.customId);
         /*
