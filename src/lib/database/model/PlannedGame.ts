@@ -219,7 +219,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             description: this.description!,
             entityType: GuildScheduledEventEntityType.External,
             name: this.name!,
-            scheduledStartTime: Date.now(),
+            scheduledStartTime: new Date(Date.now()+1000000),
+            scheduledEndTime: new Date(Date.now()+1000000+(1000*60*60)), // 1hr
             privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
             entityMetadata: {
                 location: 'FIXME'
@@ -247,6 +248,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
                 },
                 reason: 'Needed a thread for a game',
             });
+        } else {
+            console.log(`Could not find channel: ${channel_name}`);
         }
     }
 
