@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, container } from '@sapphire/framework';
 //import { PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-import { PermissionFlagsBits, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-
+import { PermissionFlagsBits } from 'discord.js';
+import { PlannedGame } from '../lib/database/model.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Post a game'
@@ -34,10 +34,7 @@ export class GamePostCommand extends Command {
 	}
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
-		return this.sendTest(interaction);
-	}
-
-	private async sendTest(interaction: Command.ChatInputCommandInteraction | Command.ContextMenuCommandInteraction) {
+		return  PlannedGame.runCommand(interaction);
 		/*const row = new ActionRowBuilder<ButtonBuilder>();
 
 		const confirm = new ButtonBuilder()
@@ -77,31 +74,5 @@ DM contact:
 Brief description: Max 50 words.  Please give a simple description of the scenario and a brief idea of style of play.  Please include much more detail in your thread or channel.  Do not forget to put a link to your channel. 
 
 */
-		const modal = new ModalBuilder()
-			.setCustomId('hello-popup')
-			.setTitle('Hello World')
-			.addComponents(
-				(new ActionRowBuilder<TextInputBuilder>())
-					.addComponents(new TextInputBuilder()
-						.setCustomId('name')
-						.setLabel("Advanture Name")
-						.setStyle(TextInputStyle.Short)
-						.setMinLength(10)
-						.setMaxLength(500)
-						.setRequired(true)
-				)
-			).addComponents(
-				(new ActionRowBuilder<TextInputBuilder>())
-					.addComponents(new TextInputBuilder()
-						.setCustomId('description')
-						.setLabel("Brief Description")
-						.setStyle(TextInputStyle.Paragraph)
-						.setMaxLength(100)
-						.setMaxLength(1_500)
-						.setRequired(true)
-				)
-			);
-		await interaction.showModal(modal);
-		return Promise.resolve();
 	}
 }
