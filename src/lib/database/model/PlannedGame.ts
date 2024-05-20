@@ -221,6 +221,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             name: this.name!,
             scheduledStartTime: Date.now(),
             privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+            entityMetadata: {
+                location: 'FIXME'
+            }
         });
     }
 
