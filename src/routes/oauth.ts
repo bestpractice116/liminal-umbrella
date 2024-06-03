@@ -1,6 +1,6 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 
-import type { LoginData } from '@sapphire/plugin-api';
+//import type { LoginData } from '@sapphire/plugin-api';
 
 /*async function exchangeCodeForAccessToken() {
   //const codeSearchParam = new URL(window.location.href).searchParams.get('code');
