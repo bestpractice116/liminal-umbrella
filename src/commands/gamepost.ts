@@ -8,11 +8,11 @@ import { PlannedGame } from '../lib/database/model.js';
 	description: 'Post a game'
 })
 export class GamePostCommand extends Command {
-	/*ublic constructor(context: Command.LoaderContext) {
+	public constructor(context: Command.LoaderContext) {
 		super(context, {
-			preconditions: ['AdminOnly', 'DMOnly']
+			preconditions: ['DMOnly']
 		})
-	}*/
+	}
 
 	// Register Chat Input and Context Menu command
 	public override registerApplicationCommands(registry: Command.Registry) {
