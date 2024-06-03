@@ -1,16 +1,16 @@
 // Unless explicitly defined, set NODE_ENV as development:
 process.env.NODE_ENV ??= 'development';
 
-import { ApplicationCommandRegistries, RegisterBehavior } from '@sapphire/framework';
-import '@sapphire/plugin-logger/register';
-import '@sapphire/plugin-api/register';
-import * as colorette from 'colorette';
-import { join } from 'node:path';
-import { srcDir } from './constants.js';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export const rootDir = join(__dirname, '..');
+export const srcDir = join(rootDir, 'src');
 
 import type { IntegerString } from '@skyra/env-utilities';
 import { setup } from '@skyra/env-utilities';
-
 
 declare module '@skyra/env-utilities' {
     interface Env {
@@ -25,11 +25,17 @@ declare module '@skyra/env-utilities' {
     }
 }
 
-// Set default behavior to bulk overwrite
-ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
-
 // Read env var
 setup({ path: join(srcDir, '..', 'env') });
 
-// Enable colorette
-colorette.createColors({ useColor: true });
+const DiscordOauthURL = `https://discord.com/oauth2/authorize`;
+
+export const oauthURL = new URL(DiscordOauthURL);
+oauthURL.search = new URLSearchParams([
+  ['redirect_uri', 'http://127.0.0.1:8080/oauth/authorize'],
+  ['response_type', 'code'],
+  ['scope', ['identify'].join(' ')],
+  ['client_id', process.env.DISCORD_APPLICATION_ID]
+]).toString();
+
+console.log(oauthURL.toString());

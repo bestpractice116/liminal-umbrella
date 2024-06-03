@@ -34,7 +34,7 @@ export class GamePostCommand extends Command {
 	}
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
-		return  PlannedGame.runCommand(interaction);
+		return PlannedGame.runCommand(interaction);
 		/*const row = new ActionRowBuilder<ButtonBuilder>();
 
 		const confirm = new ButtonBuilder()

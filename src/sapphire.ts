@@ -10,7 +10,7 @@ import Ticker from './lib/ticker.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
-import { GatewayIntentBits, Partials, Options } from 'discord.js';
+import { GatewayIntentBits, Partials, Options, OAuth2Scopes } from 'discord.js';
 
 export class MySapphireClient extends SapphireClient {
 	private rootData = getRootData();
@@ -36,6 +36,13 @@ export class MySapphireClient extends SapphireClient {
 			loadMessageCommandListeners: true,
 			api: {
 				listenOptions: { port: 8080 },
+				auth: {
+					id: process.env.DISCORD_APPLICATION_ID,
+					secret: process.env.DISCORD_TOKEN!,
+					scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
+					cookie: 'SAPPHIRE_AUTH',
+					domainOverwrite: '127.0.0.1', // FIXME for non dev
+				  }
 			},
 			makeCache: Options.cacheWithLimits({
 				...Options.DefaultMakeCacheSettings,
