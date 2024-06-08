@@ -11,7 +11,7 @@ export class SelectsPostGamenHandler extends InteractionHandler {
   }
 
   public override parse(interaction: StringSelectMenuInteraction) {
-    for (const field_name of ['post-game-system', 'post-game-month', 'post-game-day']) {
+    for (const field_name of ['post-game-system', 'post-game-date']) {
       if (interaction.customId == field_name) {
         return this.some();
       }
@@ -24,10 +24,7 @@ export class SelectsPostGamenHandler extends InteractionHandler {
     if (interaction.customId == 'post-game-system') {
       gamerow?.set({'system': interaction.values[0]});
     }
-    if (interaction.customId == 'post-game-month') {
-      gamerow?.set({'datetime': interaction.values[0]});
-    }
-    if (interaction.customId == 'post-game-day') {
+    if (interaction.customId == 'post-game-date') {
       gamerow?.set({'datetime': interaction.values[0]});
     }
     gamerow?.save();

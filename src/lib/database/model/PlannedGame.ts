@@ -69,7 +69,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             out.push(`Game system: ${this.system}`);
         }
         if (this.datetime) {
-            out.push(`Date, day and time of play: ${this.datetime}`); // FIXME format
+            const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
+            const d = new Date(this.datetime);
+            out.push(`Date, day and time of play: ${formatter.format(d)} (${this.datetime})`); // FIXME format
         }
         if (this.location) {
             out.push(`Location: ${this.location}`);
@@ -149,35 +151,19 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu));
         }
         if (!this.datetime) {
-            const month = new StringSelectMenuBuilder()
-            .setCustomId('post-game-month')
-            .setPlaceholder('Month');
+            const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
             const now = new Date();
-            const thisMonth = new StringSelectMenuOptionBuilder()
-                 .setLabel(now.getMonth().toString())
-                 .setValue(now.getMonth().toString())
-                 .setDescription(now.toLocaleString('default', { month: 'long' }));
-            now.setMonth(now.getMonth()+1);
-            const nextMonth = new StringSelectMenuOptionBuilder()
-                .setLabel(now.getMonth().toString())
-                .setValue(now.getMonth().toString())
-                .setDescription(now.toLocaleString('default', { month: 'long' }));
-            now.setMonth(now.getMonth()+1);
-            const nextNextMonth = new StringSelectMenuOptionBuilder()
-                .setLabel(now.getMonth().toString())
-                .setValue(now.getMonth().toString())
-                .setDescription(now.toLocaleString('default', { month: 'long' }));
-            month.addOptions(thisMonth, nextMonth, nextNextMonth);
-            components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(month));
-            const days = Array.from({length: 31}, (_, i) => i + 1).map(i => {
+            const days = Array.from({length: 25}, (_, days) => days + 1).map(days => {
+                const then = new Date(now.getTime());
+                then.setDate(then.getDate() + days);
                 return new StringSelectMenuOptionBuilder()
-                    .setLabel(i.toString())
-                    .setDescription(i.toString())
-                    .setValue(i.toString());
+                    .setLabel(then.toISOString().substring(0, 10))
+                    .setDescription(formatter.format(then))
+                    .setValue(then.toISOString().substring(0, 10));
             })
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
-                .setCustomId('post-game-day')
+                .setCustomId('post-game-date')
                 .setPlaceholder('Date')
                 .addOptions(
                     ...days
