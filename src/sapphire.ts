@@ -10,7 +10,7 @@ import Ticker from './lib/ticker.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
-import { GatewayIntentBits, Partials, Options, OAuth2Scopes } from 'discord.js';
+import { Guild, GatewayIntentBits, Partials, Options, OAuth2Scopes } from 'discord.js';
 
 export class MySapphireClient extends SapphireClient {
 	private rootData = getRootData();
@@ -75,5 +75,6 @@ declare module '@sapphire/pieces' {
 	  database: Database;
 	  events: Emitter<emitterSpec>;
 	  ticker: Ticker;
+	  guild: Guild | null;
 	}
 }

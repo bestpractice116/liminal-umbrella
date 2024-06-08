@@ -14,7 +14,6 @@ export class TickFiveEvent extends Listener {
 
   @Sequential
   run (e: TickFive) {
-    container.logger.info("tickFive arg ", e);
     // FIXME - do sync for messages and check if we or discord dropped anything?
     return container.database.setHighestWatermark(e.firedAt);
   }

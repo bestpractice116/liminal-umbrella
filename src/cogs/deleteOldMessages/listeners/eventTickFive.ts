@@ -28,8 +28,8 @@ export class deleteOldMessagesTickFiveListener extends Listener {
       return
     }
 
-    // Find all non-pinned messages > 1 week old from the channel.
-    const since = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 1 week ago
+    // Find all non-pinned messages > 30 days old from the channel.
+    const since = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30 days ago
     const msgs = await Message.findAll({
       where: {
         channelId: discordChannel.id,

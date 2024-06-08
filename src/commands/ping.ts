@@ -1,32 +1,36 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
-//import { ApplicationCommandType, Message } from 'discord.js';
-import { Message } from 'discord.js';
+import { Command, CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { ApplicationCommandType, Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'ping pong'
 })
 export class PingCommand extends Command {
+	public constructor(context: Command.LoaderContext) {
+		super(context, {
+		  preconditions: ['AdminOnly'],
+		  runIn: CommandOptionsRunTypeEnum.Dm,
+		})
+	}
 	// Register Chat Input and Context Menu command
-	public override registerApplicationCommands(_: Command.Registry) {
+	public override registerApplicationCommands(registry: Command.Registry) {
 		// Register Chat Input command - this is /ping
-		/*registry.registerChatInputCommand({
+		registry.registerChatInputCommand({
 			name: this.name,
-			description: this.description
+			description: 'moooo'
 		});
-		*/
 
 		// Register Context Menu command available from any message
-		/*registry.registerContextMenuCommand({
+		registry.registerContextMenuCommand({
 			name: this.name,
-			type: ApplicationCommandType.Message
-		});*/
+			type: ApplicationCommandType.Message,
+		});
 
 		// Register Context Menu command available from any user
-		/*registry.registerContextMenuCommand({
+		registry.registerContextMenuCommand({
 			name: this.name,
 			type: ApplicationCommandType.User
-		});*/
+		});
 	}
 
 	// Message command
