@@ -9,8 +9,11 @@ export default class Ticker {
 
     guild: Guild | undefined;
 
+    startTime: number;
+
     constructor(e: TypedEvent) {
         this.events = e;
+        this.startTime = Date.now();
 
         this.doTimeout = this.doTimeout.bind(this);
         this.fireTickFiveTimeout = this.fireTickFiveTimeout.bind(this);
@@ -48,7 +51,8 @@ export default class Ticker {
         if (doTickFiveCb) {
             this.fireTickFiveTimeout(d.getTime());
         }
-        if (doTickOneTwentyTimeout) {
+        // Note we don't fire the tickOneTwentyTimeout if the bot has been running for less than 2 hours
+        if (doTickOneTwentyTimeout && ((Date.now() - this.startTime) > 1000*60*60*2)) {
             this.fireTickOneTwentyTimeout(d.getTime());
         }
     }
