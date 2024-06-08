@@ -149,38 +149,38 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu));
         }
         if (!this.datetime) {
-            components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-                new StringSelectMenuBuilder()
-                .setCustomId('post-game-month')
-                .setPlaceholder('Month')
-                .addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('5')
-                    .setDescription('May')
-                    .setValue('5'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('6')
-                    .setDescription('June')
-                    .setValue('6'),
-                )
-            ));
+            const month = new StringSelectMenuBuilder()
+            .setCustomId('post-game-month')
+            .setPlaceholder('Month');
+            const now = new Date();
+            const thisMonth = new StringSelectMenuOptionBuilder()
+                 .setLabel(now.getMonth().toString())
+                 .setValue(now.getMonth().toString())
+                 .setDescription(now.toLocaleString('default', { month: 'long' }));
+            now.setMonth(now.getMonth()+1);
+            const nextMonth = new StringSelectMenuOptionBuilder()
+                .setLabel(now.getMonth().toString())
+                .setValue(now.getMonth().toString())
+                .setDescription(now.toLocaleString('default', { month: 'long' }));
+            now.setMonth(now.getMonth()+1);
+            const nextNextMonth = new StringSelectMenuOptionBuilder()
+                .setLabel(now.getMonth().toString())
+                .setValue(now.getMonth().toString())
+                .setDescription(now.toLocaleString('default', { month: 'long' }));
+            month.addOptions(thisMonth, nextMonth, nextNextMonth);
+            components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(month));
+            const days = Array.from({length: 31}, (_, i) => i + 1).map(i => {
+                return new StringSelectMenuOptionBuilder()
+                    .setLabel(i.toString())
+                    .setDescription(i.toString())
+                    .setValue(i.toString());
+            })
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
                 new StringSelectMenuBuilder()
                 .setCustomId('post-game-day')
                 .setPlaceholder('Date')
                 .addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('16')
-                    .setDescription('16')
-                    .setValue('16'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('17')
-                    .setDescription('17')
-                    .setValue('17'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('18')
-                    .setDescription('18')
-                    .setValue('18'),
+                    ...days
                 )
             ));
         }
