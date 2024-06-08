@@ -1,7 +1,7 @@
 ///CREATE TABLE IF NOT EXISTS channels (name text, type text, id text, parentId text, position integer, rawPosition integer, createdTimestamp integer, nsfw integer, lastMessageId text, topic text, rateLimitPerUser integer, bitrate integer, rtcRegion text, userLimit integer)")
 
 import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique } from '@sequelize/core/decorators-legacy';
+import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, Default } from '@sequelize/core/decorators-legacy';
 import { Command, container } from '@sapphire/framework';
 import {
     userMention, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle,
@@ -10,7 +10,8 @@ import {
     AnySelectMenuInteraction, ButtonInteraction, ModalSubmitInteraction,
     Message, StringSelectMenuInteraction, ChannelType, GuildScheduledEventEntityType,
     GuildScheduledEventPrivacyLevel, ThreadAutoArchiveDuration
-    } from 'discord.js';
+} from 'discord.js';
+import GameSystem from './GameSystem.js';
 
 
 export type ReplyableInteraction = ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction | AnySelectMenuInteraction | ButtonInteraction | ModalSubmitInteraction | StringSelectMenuInteraction
@@ -51,8 +52,16 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
     @Attribute(DataTypes.INTEGER)
     declare max_players: number | null;
 
+    @Attribute(DataTypes.INTEGER)
+    @Default(0)
+    @NotNull
+    declare signed_up_players: number | null;
+
     @Attribute(DataTypes.STRING)
     declare description: string | null;
+
+    @Attribute(DataTypes.STRING)
+    declare location: string | null;
 
     format() : string {
         const out = [`Advanture Name: ${this.name}`, `Type: One shot`];
@@ -62,10 +71,11 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
         if (this.datetime) {
             out.push(`Date, day and time of play: ${this.datetime}`); // FIXME format
         }
-        // FIXME - add location
-        // FIXME - add spaces available/taken
+        if (this.location) {
+            out.push(`Location: ${this.location}`);
+        }
         if (this.max_players) {
-            out.push(`Spaces currently available: ?/${this.max_players}`);
+            out.push(`Spaces currently available: ${this.signed_up_players}/${this.max_players}`);
         }
         out.push(`DM Contact: ${userMention(this.owner)}`);
         out.push(`Brief description: ${this.description}`);
@@ -111,6 +121,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             .setLabel("Brief Description")
             .setStyle(TextInputStyle.Paragraph)
             //.setMinLength(100)
+            // FIXME
             .setMaxLength(1_500)
             .setRequired(true);
         if (this.description) {
@@ -128,28 +139,14 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
         return interaction.showModal(modal);
     }
 
-    showEditForm(interaction: ReplyableInteraction) {
+    async showEditForm(interaction: ReplyableInteraction) {
         const components = [];
         if (!this.system) {
-            components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-                new StringSelectMenuBuilder()
-                .setCustomId('post-game-system')
-                .setPlaceholder('Game system')
-                .addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('dnd5e')
-                    .setDescription('DnD 5e')
-                    .setValue('dnd5e'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('pathfinder')
-                    .setDescription('Pathfinder 2e')
-                    .setValue('pathfinder'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('alien')
-                    .setDescription('Alien')
-                    .setValue('alien'),
-                )
-            ));
+            const menu = new StringSelectMenuBuilder()
+            .setCustomId('post-game-system')
+            .setPlaceholder('Game system');
+            await GameSystem.addGameSystemOptions(menu);
+            components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu));
         }
         if (!this.datetime) {
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
