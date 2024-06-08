@@ -28,7 +28,7 @@ export class GamePostCommand extends Command {
             	.setDescription('User to say hello to')
             	.setRequired(true)
 		  )*/
-		  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+		  .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
 		  .setDMPermission(false)
 		);
 	}
