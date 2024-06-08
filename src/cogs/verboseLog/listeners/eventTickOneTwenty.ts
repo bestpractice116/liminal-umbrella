@@ -1,6 +1,6 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickOneTwenty } from '../../../lib/events/index.js';
-//import { getChannelAndSend } from '../utils.js';
+import { getChannelAndSend } from '../utils.js';
 
 export class verboseLogTickOneTwentyListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -11,8 +11,8 @@ export class verboseLogTickOneTwentyListener extends Listener {
       event: 'tickOneTwenty'
     });
   }
-  run (_: TickOneTwenty) {
+  run (e: TickOneTwenty) {
     container.logger.info("verboseLog cog - tickOneTwenty");
-    getChannelAndSend(this.container, `Tick (2 hours): ${e.firedAt}`)
+    getChannelAndSend(`Tick (2 hours): ${e.firedAt}`)
   }
 }
