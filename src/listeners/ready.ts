@@ -5,7 +5,6 @@ import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
 import {Sequential} from '../lib/utils.js';
 import {BotStarted} from '../lib/events/index.js';
-import {User} from '../lib/database/model.js';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -24,13 +23,6 @@ export class ReadyEvent extends Listener {
 			await this.container.database.syncChannelGameListings(guild, 'game_listings');
 			this.container.events.emit('botStarted', new BotStarted(guild));
 			this.container.database.setHighestWatermark(start);
-			// TODO: Remove this
-			User.findOne({ where: { username: 'tom04558' } }).then((user) => {
-				if (user) {
-					console.log('LOL DELETE TOM');
-					user.destroy();
-				}
-			});
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
