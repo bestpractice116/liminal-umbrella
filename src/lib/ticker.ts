@@ -1,5 +1,5 @@
 import {TypedEvent} from '../lib/typedEvents.js';
-import {TickFive} from './events/index.js';
+import { TickFive, TickOneTwenty } from './events/index.js';
 import { Guild } from "discord.js";
 
 export default class Ticker {
@@ -13,7 +13,8 @@ export default class Ticker {
         this.events = e;
 
         this.doTimeout = this.doTimeout.bind(this);
-        this.fireTimeout = this.fireTimeout.bind(this);
+        this.fireTickFiveTimeout = this.fireTickFiveTimeout.bind(this);
+        this.fireTickOneTwentyTimeout = this.fireTickOneTwentyTimeout.bind(this);
     }
 
     start(guild: Guild) {
@@ -30,9 +31,13 @@ export default class Ticker {
     doTimeout() {
         const d = new Date();
         const mins = d.getMinutes();
-        let doCb = false;
+        let doTickFiveCb = false;
         if ((mins % 5) == 0) {
-            doCb = true;
+            doTickFiveCb = true;
+        }
+        let doTickOneTwentyTimeout = false;
+        if ((mins % 120) == 0) {
+            doTickOneTwentyTimeout = true;
         }
         const secs = d.getSeconds();
         const remaining = 60-secs;
@@ -40,12 +45,19 @@ export default class Ticker {
             clearTimeout(this.timeout);
         }
         this.timeout = setTimeout(this.doTimeout, remaining * 1000);
-        if (doCb) {
-            this.fireTimeout(d.getTime());
+        if (doTickFiveCb) {
+            this.fireTickFiveTimeout(d.getTime());
+        }
+        if (doTickOneTwentyTimeout) {
+            this.fireTickOneTwentyTimeout(d.getTime());
         }
     }
 
-    fireTimeout(d: number) {
+    fireTickFiveTimeout(d: number) {
         this.events.emit('tickFive', new TickFive(d, this.guild!));
+    }
+
+    fireTickOneTwentyTimeout(d: number) {
+        this.events.emit('tickOneTwenty', new TickOneTwenty(d, this.guild!));
     }
 }

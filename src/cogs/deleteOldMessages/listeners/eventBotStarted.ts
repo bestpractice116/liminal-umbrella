@@ -4,7 +4,7 @@ import { getChannelName } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
 import { ChannelType } from 'discord.js';
 
-export class deleteOldMessagesTickFiveListener extends Listener {
+export class deleteOldMessagesBotStartedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
