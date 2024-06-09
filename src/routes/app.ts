@@ -10,7 +10,7 @@ export class RootRoute extends Route {
 
   public [methods.GET](_request: ApiRequest, response: ApiResponse) {
     response.setHeader('Content-Type', 'text/javascript').end(`
-    function redirect() {
+    function doLogin() {
       const DiscordOauthURL = 'https://discord.com/oauth2/authorize';
 
       const oauthURL = new URL(DiscordOauthURL);

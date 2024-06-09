@@ -5,6 +5,13 @@ import { OAuth2Routes, type RESTPostOAuth2AccessTokenResult } from 'discord.js';
 import { stringify } from 'node:querystring';
 
 export class RefreshRoute extends Route {
+  public constructor(context: Route.LoaderContext, options: Route.Options) {
+    super(context, {
+        ...options,
+        route: 'oauth/refreshtoken'
+    });
+  }
+
   async [methods.POST](request: ApiRequest, response: ApiResponse) {
     if (!request.auth) return response.error(HttpCodes.Unauthorized);
 
