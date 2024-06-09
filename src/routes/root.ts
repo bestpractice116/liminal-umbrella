@@ -8,28 +8,16 @@ export class RootRoute extends Route {
     });
   }
 
-  public [methods.GET](_request: ApiRequest, response: ApiResponse) {
+  public [methods.GET](request: ApiRequest, response: ApiResponse) {
+    console.log(request.auth);
     response.html(200, `
   <!doctype html>
   <html>
     <head>
-      <script>
-    function redirect() {
-      const DiscordOauthURL = 'https://discord.com/oauth2/authorize';
-
-      const oauthURL = new URL(DiscordOauthURL);
-      oauthURL.search = new URLSearchParams([
-        ['redirect_uri', 'http://127.0.0.1:8080/oauth/authorize'],
-        ['response_type', 'code'],
-        ['scope', ['identify'].join(' ')],
-        ['client_id', '${process.env.DISCORD_APPLICATION_ID}']
-      ]).toString();
-      window.location.replace(oauthURL);
-    }
-  </script>
+    <script src="/app"></script>
 </head>
 <body>
-  <button onclick="redirect()">Login</button>
+  <button onclick="doLogin()">Login</button>
 </body>
 
     `);
