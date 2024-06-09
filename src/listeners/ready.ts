@@ -5,6 +5,7 @@ import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
 import {Sequential} from '../lib/utils.js';
 import {BotStarted} from '../lib/events/index.js';
+import { Methods } from '@sapphire/plugin-api';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -57,6 +58,12 @@ ${line03}${dev ? ` ${pad}${blc('<')}${llc('/')}${blc('>')} ${llc('DEVELOPMENT MO
 
 		for (const store of stores) logger.info(this.styleStore(store, false));
 		logger.info(this.styleStore(last, true));
+		const routes = client.stores.get('routes');
+		for (const routeType of ['GET', 'POST']) {
+			for (const route of routes.table.get(routeType as Methods)!.keys()) {
+				logger.info(gray(`├─ Loaded route ${routeType} /${route.router.path}.`));
+			}
+		}
 	}
 
 	private styleStore(store: StoreRegistryValue, last: boolean) {

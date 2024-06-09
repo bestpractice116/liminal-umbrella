@@ -22,7 +22,7 @@ import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plu
   //window.location.replace('/');
 }*/
 
-export class UserRoute extends Route {
+export class OauthRoute extends Route {
   public constructor(context: Route.LoaderContext, options: Route.Options) {
     super(context, {
       ...options,
@@ -31,10 +31,39 @@ export class UserRoute extends Route {
   }
 
   public [methods.GET](_request: ApiRequest, response: ApiResponse) {
-    response.json({ message: 'Hello World' });
+    response.html(200, `
+  <!doctype html>
+  <html>
+    <head>
+      <script>
+   async function foo() {
+    const codeSearchParam = new URL(window.location.href).searchParams.get('code');
+  console.log('CODE FROM DISCORD AUTH', codeSearchParam);
+  // Call the backend to exchange the code for an access token.
+  const response = await fetch('/oauth/callback', {
+    method: 'POST',
+    body: JSON.stringify({
+      code: codeSearchParam,
+      clientId: '${process.env.DISCORD_APPLICATION_ID}',
+      redirectUri: 'http://127.0.0.1:8080/oauth/authorize',
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const data = (await response.json());
+  console.log(data);
+   }
+  </script>
+</head>
+<body>
+  FOOO AUTHORIZED
+  <button onclick="foo()">GET OAUTH DATA</button>
+
+</body>
+
+    `);
   }
 
-  public [methods.POST](_request: ApiRequest, response: ApiResponse) {
-    response.json({ message: 'Hello World' });
-  }
 }
