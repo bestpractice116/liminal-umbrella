@@ -3,7 +3,7 @@ import {
     QueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import { useEffect, cloneElement } from 'react';
+import {  cloneElement } from 'react';
 
 export const queryClient = new QueryClient()
 
@@ -12,54 +12,61 @@ const fetchAuth = async () => {
 
   const postsData = await fetch('/oauth/refreshtoken', {
     method: "POST"
-  });
+  }).then(data => data.json());
   console.log('done fetching auth')
 
-  return await postsData.json()
+  return postsData
 };
 
-const doAuthCallback = async () => {
-  console.log('fetching auth')
-  const codeSearchParam = new URL(window.location.href).searchParams.get('code');
-  const postsData = await fetch('/oauth/callback', {
-      method: 'POST',
-      body: JSON.stringify({
-        code: codeSearchParam,
-        redirectUri: 'http://127.0.0.1:5173/oauth/return',
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+const doLogoutCallback = async () => {
+    console.log('fetching logout')
+    const postsData = await fetch('/oauth/logout', {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    console.log('done fetching logout')
+    return await postsData.json()
+  };
+
+export function LogoutButton({auth}: {auth: any}) {
+    const logoutCallbackMutation = useMutation({
+      mutationFn: doLogoutCallback,
+      onSuccess: (_) => {
+        queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
       }
-    });
-  console.log('done fetching auth')
-
-  return await postsData.json()
-};
-
-
-export function AuthCallback() {
-  console.log('auth callback')
-  const authCallbackMutation = useMutation({
-    mutationFn: doAuthCallback,
-    onSuccess: (data) => {
-        queryClient.setQueryData(['auth'], data)
+    })
+    if (!isAuthenticated(auth)) {
+        return <></>
     }
-  })
-  useEffect(() => {
-    if(authCallbackMutation.isIdle) {
-        authCallbackMutation.mutate()
-    }
- }, [])
-/* auth.isFetching ? 'true' : 'false'}<br />
-  Network Error: {props.auth.isError}<br />
-  Auth Error: {props.auth.data.error
-    */
+    return <button onClick={() => {logoutCallbackMutation.mutate()}}>
+    Logout
+    </button>
+  }
 
-  return <div></div> //AUTHED: {JSON.stringify(authCallbackMutation)}</div>;
-}
-
-export function CheckAuth({children}: {children: React.ReactNode}) {
+export function GetAuth({children}: {children: React.ReactNode}) {
   const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth })
 
-  return cloneElement(children as React.ReactElement, { auth: result});
+  return cloneElement(children as React.ReactElement, { auth: result });
 }
+
+export function isAuthenticated(auth: any) {
+    if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
+        return false
+    }
+    return true;
+}
+
+export function doAuthRedirect() {
+    const DiscordOauthURL = 'https://discord.com/oauth2/authorize';
+    const oauthURL = new URL(DiscordOauthURL);
+    oauthURL.search = new URLSearchParams([
+      ['redirect_uri', 'http://127.0.0.1:5173/oauth/authorize'],
+      ['response_type', 'code'],
+      ['scope', ['identify'].join(' ')],
+      ['client_id', '1206722586206281749']
+    ]).toString();
+    window.location.replace(oauthURL);
+  }

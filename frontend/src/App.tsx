@@ -5,17 +5,15 @@ import {
 } from '@tanstack/react-query'
 import HomePage from "./Homepage"
 import AboutPage from "./Aboutpage"
-import AuthReturn from "./AuthReturn"
-import { CheckAuth, queryClient } from "./Auth"
+import { GetAuth, queryClient } from "./Auth"
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
     <Router>
       <Routes>
-        <Route path="/" element={<CheckAuth><HomePage /></CheckAuth>} />
+        <Route path="/" element={<GetAuth><HomePage/></GetAuth>} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/oauth/return" element={<AuthReturn />} />
       </Routes>
     </Router>
     </QueryClientProvider>

@@ -1,21 +1,9 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { LogoutButton, doAuthRedirect, isAuthenticated } from './Auth';
 import './App.css'
 
-
-function redirect() {
-  const DiscordOauthURL = 'https://discord.com/oauth2/authorize';
-
-  const oauthURL = new URL(DiscordOauthURL);
-  oauthURL.search = new URLSearchParams([
-    ['redirect_uri', 'http://127.0.0.1:5173/oauth/return'],
-    ['response_type', 'code'],
-    ['scope', ['identify'].join(' ')],
-    ['client_id', '1206722586206281749']
-  ]).toString();
-  window.location.replace(oauthURL);
-}
 
 function AuthData(props: {auth: any}) {
   if (!props.auth || !props.auth.data) {
@@ -29,8 +17,7 @@ function AuthData(props: {auth: any}) {
   </div>
 }
 
-function HomePage(props: {auth: any}) {
-
+function HomePage(props: {auth: any} = {auth: null}) {
   const [count, setCount] = useState(0)
 
   return (
@@ -51,9 +38,13 @@ function HomePage(props: {auth: any}) {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <button onClick={redirect}>
-          DO AUTH FLOW
-        </button>
+        {!isAuthenticated(props.auth) ?
+          <button onClick={doAuthRedirect}>
+            Login
+          </button>
+          : <></>
+        }
+        <LogoutButton auth={props.auth} />
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

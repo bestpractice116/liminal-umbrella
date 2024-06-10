@@ -9,6 +9,7 @@ export default defineConfig({
       '/oauth/authorize': 'http://127.0.0.1:8080',
       '/oauth/callback': 'http://127.0.0.1:8080',
       '/oauth/refreshtoken': 'http://127.0.0.1:8080',
+      '/oauth/logout': 'http://127.0.0.1:8080',
     }
   }
 })

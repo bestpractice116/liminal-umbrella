@@ -45,7 +45,7 @@ export class OauthRoute extends Route {
     body: JSON.stringify({
       code: codeSearchParam,
       clientId: '${process.env.DISCORD_APPLICATION_ID}',
-      redirectUri: 'http://127.0.0.1:8080/oauth/authorize',
+      redirectUri: 'http://127.0.0.1:5173/oauth/authorize',
     }),
     headers: {
       'Content-Type': 'application/json'
@@ -54,12 +54,12 @@ export class OauthRoute extends Route {
 
   const data = (await response.json());
   console.log(data);
+  window.location.replace('/');
    }
   </script>
 </head>
 <body>
-  FOOO AUTHORIZED
-  <button onclick="foo()">GET OAUTH DATA</button>
+  <script>foo()</script>
 
 </body>
 
