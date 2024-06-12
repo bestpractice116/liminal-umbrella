@@ -32,37 +32,34 @@ export class OauthRoute extends Route {
 
   public [methods.GET](_request: ApiRequest, response: ApiResponse) {
     response.html(200, `
-  <!doctype html>
-  <html>
-    <head>
-      <script>
-   async function foo() {
-    const codeSearchParam = new URL(window.location.href).searchParams.get('code');
-  console.log('CODE FROM DISCORD AUTH', codeSearchParam);
-  // Call the backend to exchange the code for an access token.
-  const response = await fetch('/oauth/callback', {
-    method: 'POST',
-    body: JSON.stringify({
-      code: codeSearchParam,
-      clientId: '${process.env.DISCORD_APPLICATION_ID}',
-      redirectUri: 'http://127.0.0.1:5173/oauth/authorize',
-    }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  const data = (await response.json());
-  console.log(data);
-  window.location.replace('/');
-   }
-  </script>
-</head>
+<!doctype html>
+<html>
+  <head>
+    <script>
+      function doRedirect() {
+        const u = new URL(window.location.href)
+        const codeSearchParam = u.searchParams.get('code')
+        const redirectUri = u.protocol + '//' + u.host + '/oauth/authorize';
+        // Call the backend to exchange the code for an access token.
+        fetch('/oauth/callback', {
+          method: 'POST',
+          body: JSON.stringify({
+            code: codeSearchParam,
+            clientId: '${process.env.DISCORD_APPLICATION_ID}',
+            redirectUri,
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(() => {
+          window.location.replace('/')
+        })
+      }
+    </script>
+  </head>
 <body>
-  <script>foo()</script>
-
+  <script>doRedirect()</script>
 </body>
-
     `);
   }
 

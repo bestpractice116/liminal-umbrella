@@ -30,3 +30,12 @@ fly volume destroy
 ```sh
 fly deploy -c fly-production.toml
 ```
+
+# Dev webserver
+
+```sh
+$ yarn run dev
+$ cd frontend ; yarn run dev
+
+http://127.0.0.1:5173/
+
