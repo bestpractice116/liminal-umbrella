@@ -16,6 +16,17 @@ export class MySapphireClient extends SapphireClient {
 	private rootData = getRootData();
 
 	public constructor() {
+		const auth : any = {
+			id: process.env.DISCORD_APPLICATION_ID,
+			secret: process.env.DISCORD_TOKEN!,
+			scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
+			cookie: 'SAPPHIRE_AUTH',
+		}
+		// Only used for local development
+		if (process.env.DOMAIN_OVERWRITE) {
+			auth.DOMAIN_OVERWRITE = process.env.DOMAIN_OVERWRITE;
+		}
+
 	  // We call super our options
 	  	super({
 			//defaultPrefix: '!',
@@ -36,13 +47,7 @@ export class MySapphireClient extends SapphireClient {
 			loadMessageCommandListeners: true,
 			api: {
 				listenOptions: { port: 8080 },
-				auth: {
-					id: process.env.DISCORD_APPLICATION_ID,
-					secret: process.env.DISCORD_TOKEN!,
-					scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
-					cookie: 'SAPPHIRE_AUTH',
-					domainOverwrite: '127.0.0.1', // FIXME for non dev
-				  }
+				auth
 			},
 			makeCache: Options.cacheWithLimits({
 				...Options.DefaultMakeCacheSettings,
