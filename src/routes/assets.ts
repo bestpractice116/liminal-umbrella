@@ -1,6 +1,6 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import fs from 'fs';
-import path from 'path';
+import { readFile } from 'fs';
+import { extname } from 'path';
 
 const mimeTypes : {[key: string]: string} = {
   '.html': 'text/html',
@@ -30,9 +30,9 @@ export class RootRoute extends Route {
   }
 
   public [methods.GET](request: ApiRequest, response: ApiResponse) {
-    const extname = String(path.extname(request.params.asset)).toLowerCase();
-    const contentType: string = mimeTypes[extname] || 'application/octet-stream';
-    fs.readFile('frontend/dist/assets/' + request.params.asset, function(error, content) {
+    const name = String(extname(request.params.asset)).toLowerCase();
+    const contentType: string = mimeTypes[name] || 'application/octet-stream';
+    readFile('frontend/dist/assets/' + request.params.asset, function(error, content) {
       if (error) {
         response.writeHead(500);
         response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');

@@ -30,7 +30,7 @@ COPY --link . .
 
 # Build application
 RUN yarn run build
-RUN cd frontend ; yarn run build
+RUN cd frontend ; yarn install --immutable ; yarn run build
 
 
 # Final stage for app image
