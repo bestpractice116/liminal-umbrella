@@ -62,12 +62,5 @@ export function isAuthenticated(auth: any) {
 export function doAuthRedirect() {
     const u = new URL(window.location.href)
     const redirectUri = u.protocol + '//' + u.host + '/oauth/authorize'
-    const oauthURL = new URL('https://discord.com/oauth2/authorize')
-    oauthURL.search = new URLSearchParams([
-      ['redirect_uri', redirectUri ],
-      ['response_type', 'code'],
-      ['scope', ['identify'].join(' ')],
-      ['client_id', '1206722586206281749']
-    ]).toString();
-    window.location.replace(oauthURL);
+    window.location.replace('/oauth/discordredirect?redirect_uri=' + encodeURIComponent(redirectUri))
   }
