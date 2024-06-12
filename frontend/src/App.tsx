@@ -12,7 +12,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
     <Router>
       <Routes>
-        <Route path="/" element={<GetAuth><HomePage/></GetAuth>} />
+        <Route path="/" element={<GetAuth><HomePage auth={null}/></GetAuth>} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
     </Router>
