@@ -9,3 +9,4 @@ env.development
 env.production
 testdata
 liminal-umbrella.code-workspace
+frontend/node_modules
