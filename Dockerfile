@@ -22,6 +22,7 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY --link .yarnrc.yml package.json yarn.lock ./
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
+COPY --link .yarn/patches ./.yarn/patches
 RUN yarn install --immutable
 RUN cd frontend ; yarn install --immutable
 

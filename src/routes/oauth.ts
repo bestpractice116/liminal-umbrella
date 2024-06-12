@@ -40,7 +40,6 @@ export class OauthRoute extends Route {
         const u = new URL(window.location.href)
         const codeSearchParam = u.searchParams.get('code')
         const redirectUri = u.protocol + '//' + u.host + '/oauth/authorize';
-        alert(redirectUri)
         // Call the backend to exchange the code for an access token.
         fetch('/oauth/callback', {
           method: 'POST',
@@ -53,8 +52,7 @@ export class OauthRoute extends Route {
             'Content-Type': 'application/json'
           }
         }).then(() => {
-          console.log('redirecting /')
-          //window.location.replace('/')
+          window.location.replace('/')
         })
       }
     </script>
