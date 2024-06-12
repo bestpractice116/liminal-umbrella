@@ -1,0 +1,25 @@
+diff --git a/dist/esm/routes/oauth/callback.mjs b/dist/esm/routes/oauth/callback.mjs
+index f77ed76d2737ad004281e941552054233dcaa63c..8a15d91c6d5987011c81bb7a73f36ffe213dbd3e 100644
+--- a/dist/esm/routes/oauth/callback.mjs
++++ b/dist/esm/routes/oauth/callback.mjs
+@@ -49,6 +49,7 @@ var _PluginRoute = class _PluginRoute extends Route {
+       redirect_uri: this.redirectUri ?? body.redirectUri
+       /* eslint-enable @typescript-eslint/naming-convention */
+     };
++    console.log(`Call discord: ${OAuth2Routes.tokenURL}`, stringify(data));
+     const result = await fetch(OAuth2Routes.tokenURL, {
+       method: "POST",
+       body: stringify(data),
+@@ -57,8 +58,11 @@ var _PluginRoute = class _PluginRoute extends Route {
+       }
+     });
+     const json = await result.json();
+-    if (result.ok)
++    if (result.ok) {
++      console.log("OK");
+       return json;
++    }
++    console.log("FAILED");
+     this.container.logger.error(json);
+     return null;
+   }

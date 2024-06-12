@@ -10,7 +10,7 @@
     "@sapphire/discord.js-utilities": "7.1.6",
     "@sapphire/fetch": "^3.0.2",
     "@sapphire/framework": "^5.0.7",
-    "@sapphire/plugin-api": "^6.1.1",
+    "@sapphire/plugin-api": "patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch",
     "@sapphire/plugin-logger": "^4.0.2",
     "@sapphire/utilities": "^3.15.3",
     "@sequelize/core": "^7.0.0-alpha.37",
