@@ -2098,7 +2098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sapphire/plugin-api@npm:^6.1.1":
+"@sapphire/plugin-api@npm:6.1.1":
   version: 6.1.1
   resolution: "@sapphire/plugin-api@npm:6.1.1"
   dependencies:
@@ -2107,6 +2107,18 @@ __metadata:
     tslib: "npm:^2.6.2"
     undici: "npm:^6.4.0"
   checksum: 10c0/7df4c3ebf2804c2ee687670a3b940fa8bdf978e08d955afb683876e8482f1d8fc9982174a369e23c39230b34b82e9e0aa7264791c7df4b6f11269def15e9a28a
+  languageName: node
+  linkType: hard
+
+"@sapphire/plugin-api@patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch":
+  version: 6.1.1
+  resolution: "@sapphire/plugin-api@patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch::version=6.1.1&hash=01552c"
+  dependencies:
+    "@types/ws": "npm:^8.5.10"
+    tldts: "npm:^6.1.2"
+    tslib: "npm:^2.6.2"
+    undici: "npm:^6.4.0"
+  checksum: 10c0/a0112245dfe0e17d2e39fc0c89f7bdabadd6714724a2e341fc57a7310e11ab5229361415cc13ce99f85159f0f0abb180dd67f132b39cef3653d64a84170b9059
   languageName: node
   linkType: hard
 
@@ -4852,7 +4864,7 @@ __metadata:
     "@sapphire/discord.js-utilities": "npm:7.1.6"
     "@sapphire/fetch": "npm:^3.0.2"
     "@sapphire/framework": "npm:^5.0.7"
-    "@sapphire/plugin-api": "npm:^6.1.1"
+    "@sapphire/plugin-api": "patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch"
     "@sapphire/plugin-logger": "npm:^4.0.2"
     "@sapphire/prettier-config": "npm:^2.0.0"
     "@sapphire/ts-config": "npm:^5.0.0"
