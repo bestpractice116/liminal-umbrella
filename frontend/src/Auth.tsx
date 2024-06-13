@@ -8,18 +8,15 @@ import {  cloneElement } from 'react';
 export const queryClient = new QueryClient()
 
 const fetchAuth = async () => {
-  console.log('fetching auth')
 
   const postsData = await fetch('/oauth/refreshtoken', {
     method: "POST"
   }).then(data => data.json());
-  console.log('done fetching auth')
 
   return postsData
 };
 
 const doLogoutCallback = async () => {
-    console.log('fetching logout')
     const postsData = await fetch('/oauth/logout', {
         method: 'POST',
         body: JSON.stringify({}),
@@ -27,7 +24,6 @@ const doLogoutCallback = async () => {
           'Content-Type': 'application/json'
         }
       });
-    console.log('done fetching logout')
     return await postsData.json()
   };
 
