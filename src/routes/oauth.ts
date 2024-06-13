@@ -52,7 +52,7 @@ export class OauthRoute extends Route {
             'Content-Type': 'application/json'
           }
         }).then(() => {
-          window.location.replace('/')
+          //window.location.replace('/')
         })
       }
     </script>

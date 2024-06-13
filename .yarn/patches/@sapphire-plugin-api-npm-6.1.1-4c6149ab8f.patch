@@ -1,25 +1,22 @@
 diff --git a/dist/esm/routes/oauth/callback.mjs b/dist/esm/routes/oauth/callback.mjs
-index f77ed76d2737ad004281e941552054233dcaa63c..8a15d91c6d5987011c81bb7a73f36ffe213dbd3e 100644
+index f77ed76d2737ad004281e941552054233dcaa63c..7c17523019d39e88cddb006d5328f39588c59a37 100644
 --- a/dist/esm/routes/oauth/callback.mjs
 +++ b/dist/esm/routes/oauth/callback.mjs
-@@ -49,6 +49,7 @@ var _PluginRoute = class _PluginRoute extends Route {
-       redirect_uri: this.redirectUri ?? body.redirectUri
-       /* eslint-enable @typescript-eslint/naming-convention */
-     };
-+    console.log(`Call discord: ${OAuth2Routes.tokenURL}`, stringify(data));
-     const result = await fetch(OAuth2Routes.tokenURL, {
-       method: "POST",
-       body: stringify(data),
-@@ -57,8 +58,11 @@ var _PluginRoute = class _PluginRoute extends Route {
-       }
+@@ -6,6 +6,8 @@ import { Route } from '../../lib/structures/Route.mjs';
+ import { HttpCodes } from '../../lib/structures/http/HttpCodes.mjs';
+ import { methods } from '../../lib/structures/http/HttpMethods.mjs';
+ 
++const APP_DOMAIN = process.env.FLY_APP_NAME ? `${process.env.FLY_APP_NAME}.fly.dev` : '127.0.0.1'
++
+ var _PluginRoute = class _PluginRoute extends Route {
+   constructor(context) {
+     super(context, { route: "oauth/callback" });
+@@ -35,7 +37,7 @@ var _PluginRoute = class _PluginRoute extends Route {
+       refresh: value.refresh_token,
+       token: value.access_token
      });
-     const json = await result.json();
--    if (result.ok)
-+    if (result.ok) {
-+      console.log("OK");
-       return json;
-+    }
-+    console.log("FAILED");
-     this.container.logger.error(json);
-     return null;
+-    response.cookies.add(auth.cookie, token, { maxAge: value.expires_in });
++    response.cookies.add(auth.cookie, token, { maxAge: value.expires_in, httpOnly: false, domain: APP_DOMAIN });
+     return response.json(data);
    }
+   async fetchAuth(body) {

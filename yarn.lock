@@ -2112,13 +2112,13 @@ __metadata:
 
 "@sapphire/plugin-api@patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch":
   version: 6.1.1
-  resolution: "@sapphire/plugin-api@patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch::version=6.1.1&hash=01552c"
+  resolution: "@sapphire/plugin-api@patch:@sapphire/plugin-api@npm%3A6.1.1#~/.yarn/patches/@sapphire-plugin-api-npm-6.1.1-4c6149ab8f.patch::version=6.1.1&hash=ccd687"
   dependencies:
     "@types/ws": "npm:^8.5.10"
     tldts: "npm:^6.1.2"
     tslib: "npm:^2.6.2"
     undici: "npm:^6.4.0"
-  checksum: 10c0/a0112245dfe0e17d2e39fc0c89f7bdabadd6714724a2e341fc57a7310e11ab5229361415cc13ce99f85159f0f0abb180dd67f132b39cef3653d64a84170b9059
+  checksum: 10c0/eecfbf7bc89528bb2a44d724e0e63239163112165677908f47dcf5c9cd3e272038cccd288c77cb41569c42d05ee93c95728e2ec794004c22da4edbced0a0f84f
   languageName: node
   linkType: hard
 
