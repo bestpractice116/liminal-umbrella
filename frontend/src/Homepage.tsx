@@ -1,6 +1,6 @@
 import { LogoutButton, doAuthRedirect, isAuthenticated } from './Auth';
 import './App.css'
-
+import { Button } from 'antd';
 
 function AuthData(props: {auth: any}) {
   if (!props.auth || !props.auth.data) {
@@ -20,9 +20,7 @@ function HomePage(props: {auth: any} = {auth: null}) {
       <div>
         <div className="card">
           {!isAuthenticated(props.auth) ?
-            <button onClick={doAuthRedirect}>
-              Login
-            </button>
+            <Button type="primary" onClick={doAuthRedirect}>Login</Button>
             : <>
               <AuthData auth={props.auth} />
               <LogoutButton auth={props.auth} />
