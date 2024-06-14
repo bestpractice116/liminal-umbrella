@@ -7,6 +7,7 @@ import Database from './lib/database.js';
 import {createEmitter, Emitter} from './lib/typedEvents.js';
 import {emitterSpec} from './lib/events.js';
 import Ticker from './lib/ticker.js';
+import authTransformer from './lib/api/authTransformer.js';
 
 import { LogLevel, container, SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
@@ -21,6 +22,7 @@ export class MySapphireClient extends SapphireClient {
 			secret: process.env.DISCORD_TOKEN!,
 			scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
 			cookie: 'SAPPHIRE_AUTH',
+			transformers: [authTransformer],
 		}
 		// Only used for local development
 		if (process.env.DOMAIN_OVERWRITE) {
