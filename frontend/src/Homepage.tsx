@@ -1,31 +1,28 @@
-import { LogoutButton, doAuthRedirect, isAuthenticated } from './Auth';
+import { LogoutButton, LoginButton, isAuthenticated, AuthContext } from './Auth';
 import './App.css'
-import { Button } from 'antd';
+import { useContext } from 'react';
 
-function AuthData(props: {auth: any}) {
-  if (!props.auth || !props.auth.data) {
+function AuthData() {
+  const auth = useContext(AuthContext);
+  if (!auth || !auth.data) {
     return <div>NO AUTH DATA</div>
   }
   return <div className="authdata">
-  LOADING: {props.auth.isFetching ? 'true' : 'false'}<br />
-  Network Error: {props.auth.isError}<br />
-  Auth Error: {props.auth.data.error}<br />
-  DATA: <pre>{JSON.stringify(props.auth.data, null, 2)}</pre><br />
+  LOADING: {auth.isFetching ? 'true' : 'false'}<br />
+  Network Error: {auth.isError}<br />
+  Auth Error: {auth.data.error}<br />
+  DATA: <pre>{JSON.stringify(auth.data, null, 2)}</pre><br />
   </div>
 }
 
-function HomePage(props: {auth: any} = {auth: null}) {
+function HomePage() {
   return (
     <>
       <div>
         <div className="card">
-          {!isAuthenticated(props.auth) ?
-            <Button type="primary" onClick={doAuthRedirect}>Login</Button>
-            : <>
-              <AuthData auth={props.auth} />
-              <LogoutButton auth={props.auth} />
-            </>
-          }
+          <LoginButton />
+          {isAuthenticated() && <AuthData />}
+          <LogoutButton />
         </div>
       </div>
     </>

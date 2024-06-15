@@ -3,7 +3,8 @@ import {
     QueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import {  cloneElement } from 'react';
+import { createContext, cloneElement, useContext } from 'react';
+import { Button } from 'antd';
 
 export const queryClient = new QueryClient()
 
@@ -27,36 +28,54 @@ const doLogoutCallback = async () => {
     return await postsData.json()
   };
 
-export function LogoutButton({auth}: {auth: any}) {
-    const logoutCallbackMutation = useMutation({
-      mutationFn: doLogoutCallback,
-      onSuccess: (_) => {
-        queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
-      }
-    })
-    if (!isAuthenticated(auth)) {
-        return <></>
+export function LogoutButton() {
+  const logoutCallbackMutation = useMutation({
+    mutationFn: doLogoutCallback,
+    onSuccess: (_) => {
+      queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
     }
-    return <button onClick={() => {logoutCallbackMutation.mutate()}}>
-    Logout
-    </button>
+  })
+  if (!isAuthenticated()) {
+      return null
   }
-
-export function GetAuth({children}: {children: React.ReactNode}) {
-  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth })
-
-  return cloneElement(children as React.ReactElement, { auth: result });
+  return <Button type="primary" onClick={() => {logoutCallbackMutation.mutate()}}>Logout</Button>
 }
 
-export function isAuthenticated(auth: any) {
+export function LoginButton() {
+  if (isAuthenticated()) {
+    return null;
+  }
+  return <Button type="primary" onClick={doAuthRedirect}>Login</Button>
+}
+
+export const AuthContext = createContext(null as any);
+export function AuthProvider({children}: {children: React.ReactNode}) {
+  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth })
+  return (
+    <AuthContext.Provider value={result}>
+        {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function isAuthenticated() {
+    const auth = useContext(AuthContext);
     if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
         return false
     }
-    return true;
+    return auth.data;
 }
 
-export function doAuthRedirect() {
-    const u = new URL(window.location.href)
-    const redirectUri = u.protocol + '//' + u.host + '/oauth/authorize'
-    window.location.replace('/oauth/discordredirect?redirect_uri=' + encodeURIComponent(redirectUri))
+export function isAdmin() {
+  const auth = isAuthenticated();
+  if (!auth) {
+    return false;
   }
+  return auth.roles.find(e => e === 'Admin') !== -1;
+}
+
+function doAuthRedirect() {
+  const u = new URL(window.location.href)
+  const redirectUri = u.protocol + '//' + u.host + '/oauth/authorize'
+  window.location.replace('/oauth/discordredirect?redirect_uri=' + encodeURIComponent(redirectUri))
+}
