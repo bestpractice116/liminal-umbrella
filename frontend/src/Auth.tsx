@@ -3,7 +3,7 @@ import {
     QueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import { createContext, cloneElement, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { Button } from 'antd';
 
 export const queryClient = new QueryClient()
@@ -71,7 +71,7 @@ export function isAdmin() {
   if (!auth) {
     return false;
   }
-  return auth.roles.find(e => e === 'Admin') !== -1;
+  return auth.roles.find((e: any) => e === 'Admin') !== -1;
 }
 
 function doAuthRedirect() {
