@@ -45,7 +45,7 @@ export function LoginButton() {
   if (isAuthenticated()) {
     return null;
   }
-  return <Button type="primary" onClick={doAuthRedirect}>Login</Button>
+  return <Button type="primary" onClick={doAuthRedirect} className="login-form-button">Login</Button>
 }
 
 export const AuthContext = createContext(null as any);
