@@ -2,6 +2,7 @@ import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plu
 
 import { getActivityList } from '../cogs/randomActivity/activity.js';
 
+//TODO - Add decorators to require authentication
 export class ApiBotplayingList extends Route {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
@@ -26,6 +27,7 @@ export class ApiBotplayingList extends Route {
     }
 }
 
+//TODO - Add decorators to require authentication
 export class ApiBotplayingEdit extends Route {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
