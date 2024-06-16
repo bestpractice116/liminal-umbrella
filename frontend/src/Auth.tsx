@@ -1,12 +1,10 @@
 import {
     useQuery,
-    QueryClient,
+    useQueryClient,
     useMutation,
 } from '@tanstack/react-query'
 import { createContext, useContext } from 'react';
 import { Button } from 'antd';
-
-export const queryClient = new QueryClient()
 
 const fetchAuth = async () => {
 
@@ -29,6 +27,7 @@ const doLogoutCallback = async () => {
   };
 
 export function LogoutButton() {
+  const queryClient = useQueryClient();
   const logoutCallbackMutation = useMutation({
     mutationFn: doLogoutCallback,
     onSuccess: (_) => {
