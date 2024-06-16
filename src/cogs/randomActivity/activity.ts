@@ -8,6 +8,10 @@ import { getChannelAndSend } from '../verboseLog/utils.js';
 const fn = join(srcDir, 'cogs', 'randomActivity', 'playing.txt');
 const lines = readFileSync(fn, 'utf-8').split(/\r?\n/).filter(phrase => !!phrase.match(/\S/));
 
+export function getActivityList(): string[] {
+    return lines;
+}
+
 export function setRandomActivity() {
     const thing = lines[Math.floor(Math.random()*lines.length)];
     getChannelAndSend(`Set activity: Playing ${thing}`);
