@@ -14,7 +14,7 @@ export class ApiBotplayingList extends Route {
     // Get current list
     public [methods.GET](_request: ApiRequest, response: ApiResponse) {
         // TODO - Change list into map of IDs
-        const playing = getActivityList().map((activity, index) => ({id: index, type: "playing", name: activity}));
+        const playing = getActivityList().map((activity, index) => ({key: index, type: "playing", name: activity}));
         response.json({playing})
     }
 
@@ -23,6 +23,6 @@ export class ApiBotplayingList extends Route {
         // TODO - Validate request contains info we need
         // TODO - Validate info is valid (activity name doesn't just contain whitespace, etc)
         // TODO - Add new activity to list, return actual ID
-        response.json({status: "ok", activity: {"id": 1, type: "playing", name: "New Activity"}});
+        response.json({status: "ok", activity: {"key": 38, type: "playing", name: "New Activity"}});
     }
 }

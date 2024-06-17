@@ -1,7 +1,11 @@
 import {createContext, useState, useEffect, useRef, useContext} from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Space, Table, Form, Input, Button, Popconfirm } from 'antd';
-import type { TableProps, GetRef, InputRef } from 'antd';
+import { Table, Form, Input, Button, Popconfirm,  } from 'antd';
+import type { GetRef, InputRef,  } from 'antd';
+
+type CreateFieldType = {
+  name?: string;
+};
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
@@ -105,26 +109,10 @@ interface DataType {
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-
-function doEdit(id: string) {
-  return () => {
-    console.log('edit', id);
-  };
-}
-
-function doDelete(id: string) {
-  return () => {
-    console.log('delete', id);
-  };
-}
-
 function fetchBotActivityList() {
   return fetch('/api/botplaying').then(data => data.json());
 }
 
-function formatData(data: any) {
-  return data.playing.map((res: any) => ({ key: res.id, name: res.name }));
-}
 
 export default function AdminBotPlaying() {
   const queryClient = useQueryClient();
@@ -132,23 +120,55 @@ export default function AdminBotPlaying() {
 
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
-      console.log('delete', r);
-      await fetch(`/api/botplaying/${r.key}`, {
+      return fetch(`/api/botplaying/${r.key}`, {
         method: 'DELETE',
-      }).then(res => res.json());
-      console.log("CALING DELETE MUTATION SET QUERY")
-      queryClient.setQueryData(['bot_playing'], (old: any) => {
-        console.log("OLD ", old)
-        const nu = {playing: old.playing.filter((item: any) => {
-          console.log('DELETE MUT item', item, r.key, item.id !== r.key)
-          return item.id !== r.key
-        })}
-        console.log("NEW ", nu)
-        return nu;
-      });
-      console.log("MMOOOO");
+      }).then(res => res.json()).then(_data => {
+        queryClient.setQueryData(['bot_playing'], (old: any) => {
+          return {
+            playing: old.playing.filter((item: any) => item.key !== r.key)
+          };
+        })
+      })
+  }})
+  const updateMutation = useMutation({
+    mutationFn: async (r: any) => {
+      console.log(`R UPDATE /api/botplaying/${r.key} BODY:`, r)
+      return fetch(`/api/botplaying/${r.key}`, {
+        method: 'POST',
+        body: JSON.stringify(r),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json()).then(data => {
+        console.log("DATA", data)
+        queryClient.setQueryData(['bot_playing'], (old: any) => {
+          const x = {
+            playing: old.playing.map((item: any) => {
+              console.log("ITEM", item, r.key, item.key === r.key)
+              if (item.key === r.key) {
+                return data.activity;
+              }
+              return item;
+            })
+          };
+          console.log("SET QUERY DATA", x)
+          return x;
+        })
+      })
     }
-  });
+  })
+  const createMutation = useMutation({
+    mutationFn: async (r: any) => {
+      return fetch(`/api/botplaying`, {
+        method: 'POST',
+      }).then(res => res.json()).then(data => {
+        queryClient.setQueryData(['bot_playing'], (old: any) => {
+          return {
+            playing: [...old.playing, data.activity]
+          };
+        })
+      })
+  }})
 
   if (result.isLoading) {
     return <div>Loading...</div>;
@@ -162,24 +182,12 @@ export default function AdminBotPlaying() {
   };
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
-    //const defaultColumns: TableProps<Item>['columns'] = [
       {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        render: (text) => <a>{text}</a>,
+        editable: true,
       },
-      /*{
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => (
-          console.log('rec', record),
-          <Space size="middle">
-            <a onClick={doEdit(record.key)}>Edit</a>
-            <a onClick={doDelete(record.key)}>Delete</a>
-          </Space>
-        ),
-      },*/
       {
         title: 'operation',
         dataIndex: 'operation',
@@ -208,12 +216,7 @@ export default function AdminBotPlaying() {
   });
 
   const handleSave = (row: DataType) => {
-    const index = dataSource.findIndex((item) => row.key === item.key);
-    const item = dataSource[index];
-    dataSource.splice(index, 1, {
-      ...item,
-      ...row,
-    });
+    updateMutation.mutate({...row, type: 'playing'});
   };
 
   const components = {
@@ -223,21 +226,36 @@ export default function AdminBotPlaying() {
     },
   };
 
-  console.log(result);
-  const dataSource: DataType[] = formatData(result.data);
-  let count = dataSource.length;
-  const handleAdd = () => {
-    const newData: DataType = {
-      key: count,
-      name: `Edward King ${count}`,
-    };
-    dataSource.push(newData);
-    count = count + 1;
-  };
+  const dataSource: DataType[] = result.data.playing;
+
+  const AddRow = () => {
+    const [amCreating, setCreating] = useState(false)
+    if (!amCreating) {
+      return <Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+        Add a row
+      </Button>
+    }
+    return <Form onFinish={(values) => {
+      createMutation.mutate({name: values.name})
+      setCreating(false)
+    }}>
+      <Form.Item<CreateFieldType>
+        label="Name"
+        name="name"
+        rules={[{ required: true, message: 'Please input the game name!' }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  }
+
   return <div>
-  <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-    Add a row
-  </Button>
+  <AddRow />
   <Table
     components={components}
     rowClassName={() => 'editable-row'}
