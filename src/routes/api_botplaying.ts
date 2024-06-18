@@ -12,9 +12,10 @@ export class ApiBotplayingList extends Route {
     }
 
     // Get current list
-    public [methods.GET](_request: ApiRequest, response: ApiResponse) {
+    public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
         // TODO - Change list into map of IDs
-        const playing = getActivityList().map((activity, index) => ({key: index, type: "playing", name: activity}));
+        const list = await getActivityList();
+        const playing = list.map((activity, index) => ({key: index, type: "playing", name: activity}));
         response.json({playing})
     }
 
