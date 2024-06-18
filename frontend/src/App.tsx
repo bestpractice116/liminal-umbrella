@@ -88,11 +88,12 @@ function Crumbs() {
   if (!auth) {
     return <></>;
   }
-  return <Breadcrumb style={{ margin: '16px 0' }}>
-    <Breadcrumb.Item>Home</Breadcrumb.Item>
-    <Breadcrumb.Item>List</Breadcrumb.Item>
-    <Breadcrumb.Item>App</Breadcrumb.Item>
-  </Breadcrumb>
+  const items=[
+    { title: 'Home' },
+    { title: 'List' },
+    { title: 'App' },
+  ]
+  return <Breadcrumb style={{ margin: '16px 0' }} items={items} />
 }
 
 function App() {
