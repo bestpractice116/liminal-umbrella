@@ -22,7 +22,6 @@ class AuthDecorators {
       attributes: ['id', 'avatarURL', 'nickname'],
       include: ['roles'],
     })
-    console.log("ADD OPTIONAL PROPERTIES");
     if (u) {
       request.auth.nickname = u.nickname
       request.auth.avatarURL = u.avatarURL
