@@ -161,6 +161,10 @@ export default function AdminBotPlaying() {
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying`, {
         method: 'POST',
+        body: JSON.stringify(r),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }).then(res => res.json()).then(data => {
         queryClient.setQueryData(['bot_playing'], (old: any) => {
           return {
@@ -236,7 +240,7 @@ export default function AdminBotPlaying() {
       </Button>
     }
     return <Form onFinish={(values) => {
-      createMutation.mutate({name: values.name})
+      createMutation.mutate({name: values.name, type: 'playing'})
       setCreating(false)
     }}>
       <Form.Item<CreateFieldType>

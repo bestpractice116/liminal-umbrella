@@ -42,8 +42,8 @@ export class randomActivityTickFiveListener extends Listener {
 
       50 x 5 minutes = 4h 10m
     */
-    if (Math.random() < 0.02) {
+    //if (Math.random() < 0.02) {
       setRandomActivity();
-    }
+    //}
   }
 }

@@ -8,7 +8,7 @@ export class randomActivityActivityCacheClearListener extends Listener {
       ...options,
       name: 'randomActivityCacheClearFive',
       emitter: container.events,
-      event: 'ActivityCacheClear '
+      event: 'activityCacheClear'
     });
   }
   run (_: ActivityCacheClear) {

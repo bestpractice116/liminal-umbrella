@@ -11,9 +11,8 @@ export enum ActivityType {
 @Table({ tableName: 'activities' })
 export default class Activity extends Model<InferAttributes<Activity>, InferCreationAttributes<Activity>> {
     @Attribute(DataTypes.INTEGER)
-    @NotNull
     @PrimaryKey
-    declare id: string;
+    declare id: number | null;
 
     @Attribute(DataTypes.STRING)
     @NotNull

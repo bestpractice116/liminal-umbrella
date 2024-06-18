@@ -12,6 +12,7 @@ export function getActivityListFile(): string[] {
     return readFileSync(fn, 'utf-8').split(/\r?\n/).filter(phrase => !!phrase.match(/\S/));
 }
 
+// TODO - is it even worth keeping this cache?
 let activityList: string[] | null = null;
 export async function getActivityList(): Promise<string[]> {
     if (activityList === null) {

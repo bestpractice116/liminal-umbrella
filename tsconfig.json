@@ -17,6 +17,7 @@
 			"@/database/model": ["./src/lib/database/model/index.js"],
 			"@/lib/*": ["./src/lib/*"],
 		},
+		"strict": true,
 	},
 	"include": ["src"],
 }
