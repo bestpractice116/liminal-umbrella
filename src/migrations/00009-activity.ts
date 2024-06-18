@@ -5,7 +5,7 @@ import { getActivityListFile } from '../cogs/randomActivity/activity.js';
 export const up = async (uz: MigrationParams<any>) => {
     const qi = uz.context.sequelize.getQueryInterface();
     await qi.createTable('activities', {
-        id: {
+        key: {
             type: DataTypes.INTEGER,
             allowNull: false,
             primaryKey: true,
