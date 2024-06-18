@@ -19,10 +19,8 @@ export class ApiBotplayingList extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
-        console.log('AUTH IS ', _request.auth)
         const activities = await Activity.findAll({ where: { type: 'playing'}});
         const playing = activities.map(activity => {return {key: activity.key, type: activity.type, name: activity.name}});
-        console.log("ABOUT TO SET RESPONSE");
         response.json({playing})
     }
 
