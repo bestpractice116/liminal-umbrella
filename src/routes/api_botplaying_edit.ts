@@ -3,8 +3,8 @@ import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
 import { deleteSchema, updateSchema } from '../lib/database/model/Activity.js';
 import { AuthenticatedAdmin } from '../lib/api/decorators.js';
+import {Sequential} from '../lib/utils.js';
 
-//TODO - Add decorators to require authentication
 export class ApiBotplayingEdit extends Route {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
@@ -13,6 +13,7 @@ export class ApiBotplayingEdit extends Route {
       });
     }
 
+    @Sequential
     private async findActivity(params: ApiRequest['params'], response: ApiResponse): Promise<Activity | null> {
       const { success, error, data } = deleteSchema.safeParse(params);
       if (!success) {
@@ -28,6 +29,7 @@ export class ApiBotplayingEdit extends Route {
     }
 
     @AuthenticatedAdmin()
+    @Sequential
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
       const activity = await this.findActivity(request.params, response);
       if (!activity) {
@@ -46,6 +48,7 @@ export class ApiBotplayingEdit extends Route {
     }
 
     @AuthenticatedAdmin()
+    @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
       const activity = await this.findActivity(request.params, response);
       if (!activity) {

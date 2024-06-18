@@ -3,6 +3,8 @@ import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
 import { createSchema } from '../lib/database/model/Activity.js';
 import { Authenticated } from '../lib/api/decorators.js';
+import {Sequential} from '../lib/utils.js';
+
 
 //TODO - Add decorators to require authentication
 export class ApiBotplayingList extends Route {
@@ -15,6 +17,7 @@ export class ApiBotplayingList extends Route {
 
     // Get current list
     @Authenticated()
+    @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
         const activities = await Activity.findAll({ where: { type: 'playing'}});
         const playing = activities.map(activity => {return {key: activity.key, type: activity.type, name: activity.name}});
@@ -23,6 +26,7 @@ export class ApiBotplayingList extends Route {
 
     // Add a new one
     @Authenticated()
+    @Sequential
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
         const { success, error, data } = createSchema.safeParse(request.body);
         if (!success) {
