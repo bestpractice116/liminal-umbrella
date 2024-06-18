@@ -2,6 +2,34 @@ import {createContext, useState, useEffect, useRef, useContext} from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Table, Form, Input, Button, Popconfirm,  } from 'antd';
 import type { GetRef, InputRef,  } from 'antd';
+import { createSchemaFieldRule } from 'antd-zod';
+import * as z from 'zod';
+
+export enum ActivityType {
+  Playing = 'playing',
+  Steaming = 'streaming',
+  Listening = 'listening',
+  Watching = 'watching',
+}
+
+export const createSchema = z.object({
+  name: z.string({
+      required_error: "Name is required",
+      invalid_type_error: "Name must be a string",
+  }).trim().min(3, { message: "Name must be at least 3 characters long"
+  }).max(100, { message: "Name must be less than 100 characters"
+  }),
+  type: z.nativeEnum(ActivityType),
+});
+
+export const deleteSchema = z.object({
+  key: z.coerce.number().int().positive(),
+});
+
+export const updateSchema = createSchema.merge(deleteSchema);
+
+const rule = createSchemaFieldRule(updateSchema);
+
 
 type CreateFieldType = {
   name?: string;
@@ -81,12 +109,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
+        rules={[rule]}
       >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
@@ -140,6 +163,10 @@ export default function AdminBotPlaying() {
           'Content-Type': 'application/json'
         }
       }).then(res => res.json()).then(data => {
+        if (data.status !== "ok") {
+          console.error("Error updating data", data)
+          return;
+        }
         console.log("DATA", data)
         queryClient.setQueryData(['bot_playing'], (old: any) => {
           const x = {
@@ -246,7 +273,7 @@ export default function AdminBotPlaying() {
       <Form.Item<CreateFieldType>
         label="Name"
         name="name"
-        rules={[{ required: true, message: 'Please input the game name!' }]}
+        rules={[rule]}
       >
         <Input />
       </Form.Item>
