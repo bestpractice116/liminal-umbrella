@@ -2,7 +2,7 @@ import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@s
 import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
 import { createSchema } from '../lib/database/model/Activity.js';
-import { Authenticated } from '../lib/api/decorators.js';
+import { AuthenticatedAdmin } from '../lib/api/decorators.js';
 import {Sequential} from '../lib/utils.js';
 
 
@@ -16,16 +16,18 @@ export class ApiBotplayingList extends Route {
     }
 
     // Get current list
-    @Authenticated()
+    @AuthenticatedAdmin()
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
+        console.log('AUTH IS ', _request.auth)
         const activities = await Activity.findAll({ where: { type: 'playing'}});
         const playing = activities.map(activity => {return {key: activity.key, type: activity.type, name: activity.name}});
+        console.log("ABOUT TO SET RESPONSE");
         response.json({playing})
     }
 
     // Add a new one
-    @Authenticated()
+    @AuthenticatedAdmin()
     @Sequential
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
         const { success, error, data } = createSchema.safeParse(request.body);

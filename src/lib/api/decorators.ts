@@ -3,19 +3,37 @@ import { ApiRequest, ApiResponse, HttpCodes } from '@sapphire/plugin-api';
 import { User } from '../database/model.js';
 import {Sequential} from '../utils.js';
 
+declare module "@sapphire/plugin-api" {
+  interface AuthData {
+    nickname?: string;
+    avatarURL?: string;
+    roles?: string[];
+  }
+}
+
 class AuthDecorators {
   @Sequential
-  private static getUser(request: ApiRequest): Promise<User | null> {
+  // This is kinda gross - just calling this method has a bunch of side effects
+  // It sets the nickname, avatarURL, and roles on the request.auth object
+  private static async getUser(request: ApiRequest): Promise<User | null> {
     if (!request.auth) return Promise.resolve(null);
-    return User.findOne({
+    const u = await User.findOne({
       where: {id: request.auth.id},
       attributes: ['id', 'avatarURL', 'nickname'],
       include: ['roles'],
-    });
+    })
+    console.log("ADD OPTIONAL PROPERTIES");
+    if (u) {
+      request.auth.nickname = u.nickname
+      request.auth.avatarURL = u.avatarURL
+      const roles = u.roles || []
+      request.auth.roles = roles.map(r => r.name)
+    }
+    return u
   }
 
   static Authenticated = createFunctionPrecondition(
-    async (request: ApiRequest) => !!this.getUser(request),
+    (request: ApiRequest) => this.getUser(request).then(user => !!user),
     (_request: ApiRequest, response: ApiResponse) => response.error(HttpCodes.Unauthorized));
 
   static AuthenticatedAdmin =

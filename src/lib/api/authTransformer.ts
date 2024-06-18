@@ -1,13 +1,7 @@
 //import { container } from '@sapphire/framework';
 import type { LoginData } from '@sapphire/plugin-api';
-import type { RESTGetAPICurrentUserResult } from 'discord.js';
 import {Sequential} from '../utils.js';
 import { User } from '../database/model.js';
-
-export interface UserAuthData extends RESTGetAPICurrentUserResult {
-    nickname: string;
-    avatarURL: string;
-}
 
 export interface TransformedLoginData extends LoginData {
   roles: string[];
@@ -23,7 +17,11 @@ class AuthTransformer {
     if (!loginData.user) {
       return { error: 'No user in login data' };
     }
-    const u = await User.findByPk(loginData.user.id);
+    const u = await User.findOne({
+      where: {id: loginData.user.id},
+      attributes: ['id', 'avatarURL', 'nickname', 'left', 'bot'],
+      include: ['roles'],
+    });
     if (!u) {
       return {"error": "User not found in database - probably not a member of this Discord server"};
     }
