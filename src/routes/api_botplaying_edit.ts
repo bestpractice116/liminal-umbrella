@@ -13,7 +13,6 @@ export class ApiBotplayingEdit extends Route {
       });
     }
 
-    @Sequential
     private async findActivity(params: ApiRequest['params'], response: ApiResponse): Promise<Activity | null> {
       const { success, error, data } = deleteSchema.safeParse(params);
       if (!success) {
