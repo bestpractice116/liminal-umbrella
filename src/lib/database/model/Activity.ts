@@ -20,7 +20,7 @@ export const createSchema = z.object({
 });
 
 export const deleteSchema = z.object({
-  key: z.number().int().positive(),
+  key: z.coerce.number().int().positive(),
 });
 
 export const updateSchema = createSchema.merge(deleteSchema);

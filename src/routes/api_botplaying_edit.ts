@@ -2,7 +2,7 @@ import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@s
 import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
 import { deleteSchema, updateSchema } from '../lib/database/model/Activity.js';
-
+import { AuthenticatedAdmin } from '../lib/api/decorators.js';
 
 //TODO - Add decorators to require authentication
 export class ApiBotplayingEdit extends Route {
@@ -19,16 +19,15 @@ export class ApiBotplayingEdit extends Route {
           response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
           return null;
       }
-        // TODO - Validate request contains info we need
-        // TODO - Find and delete activity or 404
-        const activity = await Activity.findOne({where: data});
-        if (!activity) {
-            response.status(HttpCodes.NotFound).json({status: "error", error: "Activity not found"});
-            return null;
-        }
-        return activity;
+      const activity = await Activity.findOne({where: data});
+      if (!activity) {
+          response.status(HttpCodes.NotFound).json({status: "error", error: "Activity not found"});
+          return null;
+      }
+      return activity;
     }
 
+    @AuthenticatedAdmin()
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
       const activity = await this.findActivity(request.params, response);
       if (!activity) {
@@ -46,6 +45,7 @@ export class ApiBotplayingEdit extends Route {
         response.json({status: "ok", activity: data});
     }
 
+    @AuthenticatedAdmin()
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
       const activity = await this.findActivity(request.params, response);
       if (!activity) {
