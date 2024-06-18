@@ -1,4 +1,4 @@
-import { UserJoined, UserLeft, BotStarted, TickFive, TickOneTwenty, MessageAdded, MessageDeleted, MessageUpdated } from './events/index.js';
+import { UserJoined, UserLeft, BotStarted, TickFive, TickOneTwenty, MessageAdded, MessageDeleted, MessageUpdated, ActivityCacheClear } from './events/index.js';
 
 export type emitterSpec = {
   userJoined: UserJoined
@@ -9,5 +9,6 @@ export type emitterSpec = {
   messageAdded: MessageAdded,
   messageDeleted: MessageDeleted,
   messageUpdated: MessageUpdated,
+  activityCacheClear: ActivityCacheClear,
 };
 

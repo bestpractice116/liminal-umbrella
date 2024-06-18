@@ -1,6 +1,6 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-
 import { getActivityList } from '../cogs/randomActivity/activity.js';
+import { ActivityCacheClear } from '../lib/events/index.js';
 
 //TODO - Add decorators to require authentication
 export class ApiBotplayingList extends Route {
@@ -24,6 +24,7 @@ export class ApiBotplayingList extends Route {
         // TODO - Validate request contains info we need
         // TODO - Validate info is valid (activity name doesn't just contain whitespace, etc)
         // TODO - Add new activity to list, return actual ID
+        this.container.events.emit('activityCacheClear', new ActivityCacheClear());
         response.json({status: "ok", activity: {"key": 38, type: "playing", name: "New Activity"}});
     }
 }
