@@ -9,7 +9,7 @@ import type  { GetRef } from 'antd/es/_util/type';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
-import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+import { useErrorBoundary } from "react-error-boundary";
 
 type InputRef = GetRef<typeof Input>
 
@@ -120,16 +120,6 @@ type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
   return fetch('/api/botplaying', FetchResultTypes.JSON);
-}
-
-const Fallback = ({ error }: {error: Error, resetErrorBoundary: Function }) => {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
-    </div>
-  );
 }
 
 export default function AdminBotPlaying() {
@@ -302,15 +292,13 @@ export default function AdminBotPlaying() {
   }
 
   return <div>
-    <ErrorBoundary FallbackComponent={Fallback}>
-      <AddRow />
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        columns={columns as ColumnTypes}
-      />
-    </ErrorBoundary>
+    <AddRow />
+    <Table
+      components={components}
+      rowClassName={() => 'editable-row'}
+      bordered
+      dataSource={dataSource}
+      columns={columns as ColumnTypes}
+    />
   </div>
 }

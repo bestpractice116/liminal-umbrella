@@ -7,6 +7,8 @@ import Avatar from 'antd/es/avatar/avatar'
 import { UserOutlined } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { ErrorBoundary  } from "react-error-boundary";
+
 import HomePage from "./Homepage"
 import { AuthProvider, isAuthenticated, isAdmin } from "./Auth"
 
@@ -15,6 +17,16 @@ import AdminCogs from "./admin/Cogs";
 import AdminRoles from "./admin/Roles";
 import AdminGamesystems from "./admin/Gamesystems";
 import AdminBotplaying from "./admin/Botplaying";
+
+const Fallback = ({ error }: {error: Error, resetErrorBoundary: Function }) => {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+    </div>
+  );
+}
 
 function TopMenu() {
   const items : any = [];
@@ -115,6 +127,7 @@ function App() {
                   padding: 24,
                 }}
               >
+                <ErrorBoundary FallbackComponent={Fallback}>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/admin/users" element={<AdminUsers />} />
@@ -123,6 +136,7 @@ function App() {
                     <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
                     <Route path="/admin/botplaying" element={<AdminBotplaying />} />
                   </Routes>
+                </ErrorBoundary>
               </div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>
