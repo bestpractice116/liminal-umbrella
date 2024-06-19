@@ -4,6 +4,7 @@ import { Table, Form, Input, Button, Popconfirm,  } from 'antd';
 import type { GetRef, InputRef,  } from 'antd';
 import { createSchemaFieldRule } from 'antd-zod';
 import * as z from 'zod';
+import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 
 export enum ActivityType {
   Playing = 'playing',
@@ -25,6 +26,10 @@ export const createSchema = z.object({
 export const deleteSchema = z.object({
   key: z.coerce.number().int().positive(),
 });
+
+interface FetchBotActivityListResponse {
+  playing: { key: number, name: string, type: ActivityType }[];
+}
 
 export const updateSchema = createSchema.merge(deleteSchema);
 
@@ -132,8 +137,8 @@ interface DataType {
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-function fetchBotActivityList() {
-  return fetch('/api/botplaying').then(data => data.json());
+async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
+  return fetch('/api/botplaying', FetchResultTypes.JSON);
 }
 
 
@@ -144,8 +149,8 @@ export default function AdminBotPlaying() {
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
-        method: 'DELETE',
-      }).then(res => res.json()).then(_data => {
+        method: FetchMethods.Delete
+      }, FetchResultTypes.JSON).then(_data => {
         queryClient.setQueryData(['bot_playing'], (old: any) => {
           return {
             playing: old.playing.filter((item: any) => item.key !== r.key)
@@ -157,12 +162,13 @@ export default function AdminBotPlaying() {
     mutationFn: async (r: any) => {
       console.log(`R UPDATE /api/botplaying/${r.key} BODY:`, r)
       return fetch(`/api/botplaying/${r.key}`, {
-        method: 'POST',
+        method: FetchMethods.Post,
         body: JSON.stringify(r),
         headers: {
           'Content-Type': 'application/json'
-        }
-      }).then(res => res.json()).then(data => {
+        },
+        },FetchResultTypes.JSON
+      ).then((data: any) => {
         if (data.status !== "ok") {
           console.error("Error updating data", data)
           throw(new z.ZodError(data.error))
@@ -187,12 +193,12 @@ export default function AdminBotPlaying() {
   const createMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying`, {
-        method: 'POST',
+        method: FetchMethods.Post,
         body: JSON.stringify(r),
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(res => res.json()).then(data => {
+      }, FetchResultTypes.JSON).then((data:any) => {
         queryClient.setQueryData(['bot_playing'], (old: any) => {
           return {
             playing: [...old.playing, data.activity]
@@ -278,7 +284,7 @@ export default function AdminBotPlaying() {
     },
   };
 
-  const dataSource: DataType[] = result.data.playing;
+  const dataSource: DataType[] = result.data!.playing;
 
   const AddRow = () => {
     const [amCreating, setCreating] = useState(false)
