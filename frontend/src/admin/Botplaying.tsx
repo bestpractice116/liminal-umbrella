@@ -9,38 +9,12 @@ import type  { GetRef } from 'antd/es/_util/type';
 import { createSchemaFieldRule } from 'antd-zod';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
-
+import { ActivitySchema, ActivityType } from 'common/schema';
 type InputRef = GetRef<typeof Input>
-
-export enum ActivityType {
-  Playing = 'playing',
-  Steaming = 'streaming',
-  Listening = 'listening',
-  Watching = 'watching',
-}
-
-export const createSchema = z.object({
-  name: z.string({
-      required_error: "Name is required",
-      invalid_type_error: "Name must be a string",
-  }).trim().min(2, { message: "Name must be at least 2 characters long"
-  }).max(100, { message: "Name must be less than 100 characters"
-  }),
-  type: z.nativeEnum(ActivityType),
-});
-
-export const deleteSchema = z.object({
-  key: z.coerce.number().int().positive(),
-});
 
 interface FetchBotActivityListResponse {
   playing: { key: number, name: string, type: ActivityType }[];
 }
-
-export const updateSchema = createSchema.merge(deleteSchema);
-
-const rule = createSchemaFieldRule(updateSchema);
-
 
 type CreateFieldType = {
   name?: string;
@@ -120,7 +94,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[rule]}
+        rules={[ActivitySchema.formRule]}
       >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
@@ -281,8 +255,6 @@ export default function AdminBotPlaying() {
     };
   });
 
-
-
   const components = {
     body: {
       row: EditableRow,
@@ -306,7 +278,7 @@ export default function AdminBotPlaying() {
       <Form.Item<CreateFieldType>
         label="Name"
         name="name"
-        rules={[rule]}
+        rules={[ActivitySchema.formRule]}
       >
         <Input />
       </Form.Item>

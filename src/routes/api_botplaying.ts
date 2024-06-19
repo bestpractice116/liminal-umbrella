@@ -1,7 +1,7 @@
 import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@sapphire/plugin-api';
 import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
-import { createSchema } from '../lib/database/model/Activity.js';
+import { ActivitySchema } from "common/schema";
 import { AuthenticatedAdmin } from '../lib/api/decorators.js';
 import {Sequential} from '../lib/utils.js';
 
@@ -28,7 +28,7 @@ export class ApiBotplayingList extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
-        const { success, error, data } = createSchema.safeParse(request.body);
+        const { success, error, data } = ActivitySchema.create.safeParse(request.body);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;

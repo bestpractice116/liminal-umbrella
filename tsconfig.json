@@ -6,18 +6,17 @@
 	},
 	"allowImportingTsExtensions": true,
 	"compilerOptions": {
-		"rootDir": "src",
-		"outDir": "dist",
+		"rootDir": "src/",
+		"outDir": "dist/",
 		"tsBuildInfoFile": "dist/.tsbuildinfo",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"baseUrl": ".",
-		"paths": {
-			"@/database": ["./src/lib/database/index.js"],
-			"@/database/model": ["./src/lib/database/model/index.js"],
-			"@/lib/*": ["./src/lib/*"],
-		},
 		"strict": true,
 	},
-	"include": ["src"],
+	"include": ["src", "common/dist"],
+        "references": [
+    		{
+		    "path": "./common"
+		},
+  	]
 }

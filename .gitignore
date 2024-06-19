@@ -31,3 +31,9 @@ package-lock.json
 
 *.sqlite
 env.*
+
+frontend/dist/
+frontend/node_modules/
+
+common/dist
+common/node_modules/

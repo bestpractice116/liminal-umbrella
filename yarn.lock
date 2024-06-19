@@ -3151,6 +3151,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsconfig/node20@npm:^20.1.4":
+  version: 20.1.4
+  resolution: "@tsconfig/node20@npm:20.1.4"
+  checksum: 10c0/239cd6abaceaaffc758e7a9dd3748ec1acfdabd6de28a9a16a3824c21f17ad69a16184870298460345d2fb6f3663d092c21d5b764bef669a179658b4a7eac739
+  languageName: node
+  linkType: hard
+
+"@tsconfig/strictest@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@tsconfig/strictest@npm:2.0.5"
+  checksum: 10c0/cfc86da2d57f7b4b0827701b132c37a4974284e5c40649656c0e474866dfd8a69f57c6718230d8a8139967e2a95438586b8224c13ab0ff9d3a43eda771c50cc4
+  languageName: node
+  linkType: hard
+
 "@types/argparse@npm:1.0.38":
   version: 1.0.38
   resolution: "@types/argparse@npm:1.0.38"
@@ -4302,6 +4316,23 @@ __metadata:
   checksum: 10c0/5f7784fbda2aaec39e89eb46f06a999e00224b3763dc65976e05929ec486e174fe9aac2655f03ba6a5e83875bd173be5283dc19309b7c65954701c02025b3c1d
   languageName: node
   linkType: hard
+
+"common@npm:1.0.0, common@workspace:common":
+  version: 0.0.0-use.local
+  resolution: "common@workspace:common"
+  dependencies:
+    "@tsconfig/node20": "npm:^20.1.4"
+    "@tsconfig/strictest": "npm:^2.0.5"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.11.5"
+    antd-zod: "npm:^5.1.0"
+    jest: "npm:^29.7.0"
+    ts-jest: "npm:^29.1.2"
+    ts-jest-resolver: "npm:^2.0.1"
+    typescript: "npm:^5.3.3"
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
 
 "compute-scroll-into-view@npm:^3.0.2":
   version: 3.1.0
@@ -6444,6 +6475,7 @@ __metadata:
     babel-jest: "npm:^29.7.0"
     bufferutil: "npm:^4.0.8"
     colorette: "npm:^2.0.20"
+    common: "npm:1.0.0"
     discord.js: "npm:^14.14.1"
     jest: "npm:^29.7.0"
     limit-concurrency-decorator: "npm:^0.6.0"

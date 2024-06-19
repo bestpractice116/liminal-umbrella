@@ -1,9 +1,9 @@
 import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@sapphire/plugin-api';
 import { ActivityCacheClear } from '../lib/events/index.js';
 import { Activity } from '../lib/database/model.js';
-import { deleteSchema, updateSchema } from '../lib/database/model/Activity.js';
+import { ActivitySchema } from "common/schema";
 import { AuthenticatedAdmin } from '../lib/api/decorators.js';
-import {Sequential} from '../lib/utils.js';
+import { Sequential } from '../lib/utils.js';
 
 export class ApiBotplayingEdit extends Route {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -14,7 +14,7 @@ export class ApiBotplayingEdit extends Route {
     }
 
     private async findActivity(params: ApiRequest['params'], response: ApiResponse): Promise<Activity | null> {
-      const { success, error, data } = deleteSchema.safeParse(params);
+      const { success, error, data } = ActivitySchema.delete.safeParse(params);
       if (!success) {
           response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
           return null;
@@ -34,7 +34,7 @@ export class ApiBotplayingEdit extends Route {
       if (!activity) {
           return;
       }
-      const { success, error, data } = updateSchema.safeParse(request.body);
+      const { success, error, data } = ActivitySchema.update.safeParse(request.body);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;
