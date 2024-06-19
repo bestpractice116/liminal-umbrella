@@ -1,5 +1,9 @@
 import './App.css'
-import { Breadcrumb, Layout, Menu, theme, ConfigProvider, Avatar } from 'antd';
+import Breadcrumb from 'antd/lib/breadcrumb/breadcrumb'
+import Layout, { Header, Footer, Content } from 'antd/es/layout/layout'
+import Menu from 'antd/es/menu/menu'
+import ConfigProvider from 'antd/es/config-provider'
+import Avatar from 'antd/es/avatar/avatar'
 import { UserOutlined } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
@@ -11,9 +15,6 @@ import AdminCogs from "./admin/Cogs";
 import AdminRoles from "./admin/Roles";
 import AdminGamesystems from "./admin/Gamesystems";
 import AdminBotplaying from "./admin/Botplaying";
-
-const { Header, Footer, Content } = Layout; // Sider,
-
 
 function TopMenu() {
   const items : any = [];
@@ -98,9 +99,6 @@ function Crumbs() {
 
 function App() {
   const queryClient = new QueryClient();
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   return (
     <Router>
@@ -113,10 +111,8 @@ function App() {
               <Crumbs />
               <div
                 style={{
-                  background: colorBgContainer,
                   minHeight: 280,
                   padding: 24,
-                  borderRadius: borderRadiusLG,
                 }}
               >
                   <Routes>

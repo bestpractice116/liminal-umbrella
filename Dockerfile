@@ -24,14 +24,13 @@ COPY --link .yarnrc.yml package.json yarn.lock ./
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
 COPY --link .yarn/patches ./.yarn/patches
 RUN yarn install --immutable
-RUN cd frontend ; yarn install --immutable
 
 # Copy application code
 COPY --link . .
 
 # Build application
 RUN yarn run build
-RUN cd frontend ; yarn install --immutable ; yarn run build
+RUN yarn workspace frontend run build
 
 
 # Final stage for app image

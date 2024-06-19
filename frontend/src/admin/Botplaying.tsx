@@ -1,10 +1,16 @@
 import {createContext, useState, useEffect, useRef, useContext} from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Table, Form, Input, Button, Popconfirm,  } from 'antd';
-import type { GetRef, InputRef,  } from 'antd';
+import Button from 'antd/es/button';
+import Table from 'antd/es/table';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
+import Popconfirm from 'antd/es/popconfirm';
+import type  { GetRef } from 'antd/es/_util/type';
 import { createSchemaFieldRule } from 'antd-zod';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
+
+type InputRef = GetRef<typeof Input>
 
 export enum ActivityType {
   Playing = 'playing',

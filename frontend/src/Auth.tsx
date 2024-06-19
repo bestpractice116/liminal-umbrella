@@ -4,7 +4,7 @@ import {
     useMutation,
 } from '@tanstack/react-query'
 import { createContext, useContext } from 'react';
-import { Button } from 'antd';
+import { Button } from 'antd/es';
 
 const fetchAuth = async () => {
 
