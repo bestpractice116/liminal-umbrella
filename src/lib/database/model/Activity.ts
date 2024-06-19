@@ -14,7 +14,7 @@ export const createSchema = z.object({
         required_error: "Name is required",
         invalid_type_error: "Name must be a string",
     }).trim().min(3, { message: "Name must be at least 3 characters long"
-    }).max(100, { message: "Name must be less than 100 characters"
+    }).max(4, { message: "Name must be less than 5 characters"
     }),
     type: z.nativeEnum(ActivityType),
 });

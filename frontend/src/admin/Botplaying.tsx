@@ -16,7 +16,7 @@ export const createSchema = z.object({
   name: z.string({
       required_error: "Name is required",
       invalid_type_error: "Name must be a string",
-  }).trim().min(3, { message: "Name must be at least 3 characters long"
+  }).trim().min(2, { message: "Name must be at least 2 characters long"
   }).max(100, { message: "Name must be less than 100 characters"
   }),
   type: z.nativeEnum(ActivityType),
@@ -64,7 +64,7 @@ interface EditableCellProps {
   editable: boolean;
   dataIndex: keyof Item;
   record: Item;
-  handleSave: (record: Item) => void;
+  handleSave: (record: Item, form: FormInstance<any>, _: Function) => void;
 }
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
@@ -95,8 +95,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     try {
       const values = await form.validateFields();
 
-      toggleEdit();
-      handleSave({ ...record, ...values });
+      console.log("Calling handleSave")
+      handleSave({ ...record, ...values }, form, toggleEdit)
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -139,7 +139,7 @@ function fetchBotActivityList() {
 
 export default function AdminBotPlaying() {
   const queryClient = useQueryClient();
-  const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList });
+  const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList, throwOnError: true});
 
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
@@ -165,7 +165,7 @@ export default function AdminBotPlaying() {
       }).then(res => res.json()).then(data => {
         if (data.status !== "ok") {
           console.error("Error updating data", data)
-          return;
+          throw(new z.ZodError(data.error))
         }
         console.log("DATA", data)
         queryClient.setQueryData(['bot_playing'], (old: any) => {
@@ -230,6 +230,29 @@ export default function AdminBotPlaying() {
           ) : null,
       },
     ];
+
+  const handleSave = (row: DataType, _form: FormInstance<any>, toggleEdit: Function): Boolean => {
+      console.log('calling update mutation, have form', _form)
+      updateMutation.mutate({...row, type: 'playing'}, {
+        onError: (e) => {
+          console.log("HERE", e);
+          const formatted = (e as z.ZodError).format();
+          const f = Object.entries(formatted)
+          .filter(([key, _]) => key !== '_errors')
+          .map(([key, value]) => {return {name: key, errors: (value as any)._errors}});
+          console.log('setting fields', f)
+          _form.setFields(
+            f
+          )
+        },
+        onSuccess: () => {
+          toggleEdit();
+        }
+      });
+      console.log('finished update mutation')
+      return true
+  };
+
   const columns = defaultColumns!.map((col) => {
     if (!col.editable) {
       return col;
@@ -246,9 +269,7 @@ export default function AdminBotPlaying() {
     };
   });
 
-  const handleSave = (row: DataType) => {
-    updateMutation.mutate({...row, type: 'playing'});
-  };
+
 
   const components = {
     body: {
