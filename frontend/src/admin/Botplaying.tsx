@@ -6,10 +6,11 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Popconfirm from 'antd/es/popconfirm';
 import type  { GetRef } from 'antd/es/_util/type';
-import { createSchemaFieldRule } from 'antd-zod';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
+import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+
 type InputRef = GetRef<typeof Input>
 
 interface FetchBotActivityListResponse {
@@ -121,8 +122,18 @@ async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
   return fetch('/api/botplaying', FetchResultTypes.JSON);
 }
 
+const Fallback = ({ error }: {error: Error, resetErrorBoundary: Function }) => {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+    </div>
+  );
+}
 
 export default function AdminBotPlaying() {
+  const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
   const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList, throwOnError: true});
 
@@ -136,7 +147,7 @@ export default function AdminBotPlaying() {
             playing: old.playing.filter((item: any) => item.key !== r.key)
           };
         })
-      })
+      }).catch((e) => showBoundary(e))
   }})
   const updateMutation = useMutation({
     mutationFn: async (r: any) => {
@@ -167,7 +178,7 @@ export default function AdminBotPlaying() {
           console.log("SET QUERY DATA", x)
           return x;
         })
-      })
+      }).catch((e) => showBoundary(e))
     }
   })
   const createMutation = useMutation({
@@ -184,7 +195,7 @@ export default function AdminBotPlaying() {
             playing: [...old.playing, data.activity]
           };
         })
-      })
+      }).catch((e) => showBoundary(e))
   }})
 
   if (result.isLoading) {
@@ -221,15 +232,15 @@ export default function AdminBotPlaying() {
       console.log('calling update mutation, have form', _form)
       updateMutation.mutate({...row, type: 'playing'}, {
         onError: (e) => {
+          try {
           console.log("HERE", e);
           const formatted = (e as z.ZodError).format();
           const f = Object.entries(formatted)
           .filter(([key, _]) => key !== '_errors')
           .map(([key, value]) => {return {name: key, errors: (value as any)._errors}});
           console.log('setting fields', f)
-          _form.setFields(
-            f
-          )
+          _form.setFields(f)
+          } catch (e) {showBoundary(e)}
         },
         onSuccess: () => {
           toggleEdit();
@@ -291,13 +302,15 @@ export default function AdminBotPlaying() {
   }
 
   return <div>
-  <AddRow />
-  <Table
-    components={components}
-    rowClassName={() => 'editable-row'}
-    bordered
-    dataSource={dataSource}
-    columns={columns as ColumnTypes}
-  />
-</div>
+    <ErrorBoundary FallbackComponent={Fallback}>
+      <AddRow />
+      <Table
+        components={components}
+        rowClassName={() => 'editable-row'}
+        bordered
+        dataSource={dataSource}
+        columns={columns as ColumnTypes}
+      />
+    </ErrorBoundary>
+  </div>
 }
