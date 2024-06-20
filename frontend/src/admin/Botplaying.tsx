@@ -9,7 +9,7 @@ import type  { GetRef } from 'antd/es/_util/type';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
-import { useErrorBoundary } from "react-error-boundary";
+import { useErrorBoundary } from '../ErrorFallback';
 
 type InputRef = GetRef<typeof Input>
 

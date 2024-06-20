@@ -21,3 +21,7 @@
 .className {
   margin-right: 20px;
 }
+
+pre {
+  text-align: left;
+}
