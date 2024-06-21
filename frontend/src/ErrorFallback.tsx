@@ -243,7 +243,7 @@ export function useErrorBoundary<TError = any>(): UseErrorBoundaryApi<TError> {
   return memoized;
 }
 
-export const ErrorFallback = ({ error, errorInfo }: {error: Error, resetErrorBoundary: Function, errorInfo: ErrorInfo }) => {
+export const ErrorFallback = ({ error, errorInfo }: {error: Error, resetErrorBoundary?: Function, errorInfo?: ErrorInfo }) => {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
     useEffect(() => {
       console.error(error, errorInfo)
