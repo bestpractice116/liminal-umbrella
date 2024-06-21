@@ -4,7 +4,8 @@ import {
     useMutation,
 } from '@tanstack/react-query'
 import { createContext, useContext } from 'react';
-import { Button } from 'antd/es';
+import Button from 'antd/es/button';
+import Spin from 'antd/es/spin';
 
 const fetchAuth = async () => {
 
@@ -50,6 +51,9 @@ export function LoginButton() {
 export const AuthContext = createContext(null as any);
 export function AuthProvider({children}: {children: React.ReactNode}) {
   const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth })
+  if (!result.isSuccess) {
+    return <Spin size="large" />
+  }
   return (
     <AuthContext.Provider value={result}>
         {children}

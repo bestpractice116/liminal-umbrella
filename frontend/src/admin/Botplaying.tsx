@@ -4,6 +4,7 @@ import Button from 'antd/es/button';
 import Table from 'antd/es/table';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
+import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
 import type  { GetRef } from 'antd/es/_util/type';
 import * as z from 'zod';
@@ -126,7 +127,9 @@ export default function AdminBotPlaying() {
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
   const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList, throwOnError: true});
-
+  if (result.isLoading) {
+    return <Spin size="large" />
+  }
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
