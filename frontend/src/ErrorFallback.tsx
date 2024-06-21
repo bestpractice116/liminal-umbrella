@@ -77,41 +77,6 @@ const initialState: ErrorBoundaryState = {
   errorInfo: null,
 };
 
-/*
-class ErrorBoundary extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { hasError: false, errorInfo: null }
-  }
-
-  static getDerivedStateFromError(_error: any) {
-    //return the new state to trigger a re-render with the fallback UI
-    return { hasError: true }
-  }
-
-  componentDidCatch(error, errorInfo) {
-    //log the catched error and save the errorInfo in the state
-    this.setState({ errorInfo })
-    console.warn(error)
-  }
-
-  render() {
-    const { state: { hasError, errorInfo }, props: { children } } = this
-    if (hasError && errorInfo) {
-      return (
-        <>
-         <p>
-           Ooops, something happened please try again
-           <br/><br/>
-           <details style={{ whiteSpace: 'pre-wrap' }}>{errorInfo.componentStack}</details>
-         </p>
-        </>
-      )
-    }
-    return children
-  }
-}
-*/
 
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
@@ -229,7 +194,7 @@ type UseErrorBoundaryState<TError> =
 
 export type UseErrorBoundaryApi<TError> = {
   resetBoundary: () => void;
-  showBoundary: (error: TError, errorInfo: ErrorInfo | undefined) => void;
+  showBoundary: (error: TError, errorInfo?: ErrorInfo | undefined) => void;
 };
 
 export function assertErrorBoundaryContext(
@@ -261,7 +226,7 @@ export function useErrorBoundary<TError = any>(): UseErrorBoundaryApi<TError> {
         context.resetErrorBoundary();
         setState({ error: null, errorInfo: null, hasError: false });
       },
-      showBoundary: (error: TError, info: ErrorInfo | undefined) =>
+      showBoundary: (error: TError, info?: ErrorInfo|undefined) =>
         setState({
           error,
           errorInfo: info || null,
