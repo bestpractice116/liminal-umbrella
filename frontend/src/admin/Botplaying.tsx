@@ -10,7 +10,7 @@ import type  { GetRef } from 'antd/es/_util/type';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
-import { useErrorBoundary } from '../ErrorFallback';
+import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
 
 type InputRef = GetRef<typeof Input>
 
@@ -192,7 +192,7 @@ export default function AdminBotPlaying() {
     return <Spin size="large" />
   }
   if (result.isError) {
-    return <div>Error: {result.error.toString()}</div>;
+    return <ErrorFallback error={result.error} />;
   }
 
   const handleDelete = (key: React.Key) => {
