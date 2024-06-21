@@ -127,9 +127,6 @@ export default function AdminBotPlaying() {
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
   const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList, throwOnError: true});
-  if (result.isLoading) {
-    return <Spin size="large" />
-  }
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
@@ -192,7 +189,7 @@ export default function AdminBotPlaying() {
   }})
 
   if (result.isLoading) {
-    return <div>Loading...</div>;
+    return <Spin size="large" />
   }
   if (result.isError) {
     return <div>Error: {result.error.toString()}</div>;
