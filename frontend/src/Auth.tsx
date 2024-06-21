@@ -3,28 +3,57 @@ import {
     useQueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { Button } from 'antd';
+import { fetch, FetchResultTypes } from '@sapphire/fetch';
 
+export type AuthQueryData = {
+  user: {
+    avatarURL: string
+    discriminator: string
+    id: string
+    username: string
+    global_name: string
+    nickname: string
+  }
+  roles: string[]
+}
 
-const fetchAuth = async () => {
+export type AuthError = {
+  error: string
+}
 
-  const postsData = await fetch('/oauth/refreshtoken', {
+export type AuthFetchResult = AuthQueryData | AuthError
+
+export type AuthQueryResult = {
+  data: AuthFetchResult | undefined
+  error: any
+  isError: boolean
+  isFetching: boolean
+  isFetched: boolean
+  isPending: boolean
+  isLoading: boolean
+  isSuccess: boolean
+}
+
+async function fetchAuth(): Promise<AuthFetchResult> {
+  return fetch('/oauth/refreshtoken', {
     method: "POST"
-  }).then(data => data.json());
-  console.log("Fetch done, about to return")
-  return postsData
+  }, FetchResultTypes.JSON);
 };
 
-const doLogoutCallback = async () => {
-    const postsData = await fetch('/oauth/logout', {
-        method: 'POST',
-        body: JSON.stringify({}),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    return await postsData.json()
+export type LogoutFetchResult = {
+  success: boolean
+}
+
+async function doLogoutCallback(): Promise<LogoutFetchResult> {
+    return fetch('/oauth/logout', {
+      method: 'POST',
+      body: JSON.stringify({}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, FetchResultTypes.JSON);
   };
 
 export function LogoutButton() {
@@ -35,9 +64,9 @@ export function LogoutButton() {
       queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
     }
   })
-  //if (!isAuthenticated()) {
-  //    return null
-  //}
+  if (!isAuthenticated()) {
+      return null
+  }
   return <Button type="primary" onClick={() => {logoutCallbackMutation.mutate()}}>Logout</Button>
 }
 
@@ -62,18 +91,19 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 export function isAuthenticated() {
     const auth = useContext(AuthContext);
 
-    if (auth && auth.isFetching) {
-      console.log(auth);
-      console.log("Still fetching")
-    }
-    if (auth && auth.isError) {
-      console.log("isError")
-    }
     if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
-      console.log("NO AUTH");
       return false
     }
     return auth.data;
+}
+
+export function isAuthFetching() {
+  const auth = useContext(AuthContext);
+
+    if (!auth) {
+      return false
+    }
+    return auth.isFetching
 }
 
 export function isAdmin() {
@@ -82,6 +112,22 @@ export function isAdmin() {
     return false;
   }
   return auth.roles.find((e: any) => e === 'Admin') !== -1;
+}
+
+export function AuthData() {
+  const auth = useContext(AuthContext);
+  if (!auth || !auth.data) {
+    return <div>NO AUTH DATA</div>
+  }
+  return <div className="authdata">
+  LOADING: {auth.isFetching ? 'true' : 'false'}<br />
+  FETCH STATUS: {auth.fetchStatus}<br />
+  auth.isFetching: {auth.isFetching? 'true' : 'false'}<br />
+  isSuccess: {auth.isSuccess? 'true' : 'false'}<br />
+  Network Error: {auth.isError? 'true' : 'false'}<br />
+  Auth Error: {auth.data.error}<br />
+  DATA: <pre>{JSON.stringify(auth.data, null, 2)}</pre><br />
+  </div>
 }
 
 function doAuthRedirect() {

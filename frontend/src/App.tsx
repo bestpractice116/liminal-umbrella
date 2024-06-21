@@ -5,11 +5,12 @@ import Menu from 'antd/es/menu/menu'
 import ConfigProvider from 'antd/es/config-provider'
 import Avatar from 'antd/es/avatar/avatar'
 import { UserOutlined } from '@ant-design/icons';
+import Spin from 'antd/es/spin';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
 import HomePage from "./Homepage"
-import { AuthProvider, isAuthenticated, isAdmin } from "./Auth"
+import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching } from "./Auth"
 
 import AdminUsers from "./admin/Users";
 import AdminCogs from "./admin/Cogs";
@@ -99,43 +100,61 @@ function Crumbs() {
   return <Breadcrumb style={{ margin: '16px 0' }} items={items} />
 }
 
+function PageContent() {
+  return  <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/cogs" element={<AdminCogs />} />
+            <Route path="/admin/roles" element={<AdminRoles />} />
+            <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
+            <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+          </Routes>
+}
+
+function AuthLoadingSpinner() {
+  if (isAuthenticated()) {
+    return <PageContent />
+  }
+  if (isAuthFetching()) {
+    return <Spin size="large" />
+  }
+  return <LoginButton />
+}
+
+function Page() {
+  return <Layout>
+          <TopMenu />
+          <Content style={{ padding: '0 48px' }}>
+            <Crumbs />
+            <div
+              style={{
+                minHeight: 280,
+                padding: 24,
+              }}
+            >
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <AuthLoadingSpinner />
+              </ErrorBoundary>
+            </div>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>
+            Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D
+          </Footer>
+        </Layout>
+}
+
 function App() {
   const queryClient = new QueryClient();
 
   return (
     <Router>
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
-        <AuthProvider>
-          <Layout>
-            <TopMenu />
-            <Content style={{ padding: '0 48px' }}>
-              <Crumbs />
-              <div
-                style={{
-                  minHeight: 280,
-                  padding: 24,
-                }}
-              >
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/admin/users" element={<AdminUsers />} />
-                    <Route path="/admin/cogs" element={<AdminCogs />} />
-                    <Route path="/admin/roles" element={<AdminRoles />} />
-                    <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
-                    <Route path="/admin/botplaying" element={<AdminBotplaying />} />
-                  </Routes>
-                </ErrorBoundary>
-              </div>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>
-              Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D
-            </Footer>
-          </Layout>
-        </AuthProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
+          <AuthProvider>
+            <Page />
+          </AuthProvider>
+        </ConfigProvider>
+      </QueryClientProvider>
     </Router>
   )
 }
