@@ -3,16 +3,16 @@ import {
     useQueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import { createContext, useContext } from 'react';
-import Button from 'antd/es/button';
-import Spin from 'antd/es/spin';
+import { createContext, useContext, useState } from 'react';
+import { Button } from 'antd';
+
 
 const fetchAuth = async () => {
 
   const postsData = await fetch('/oauth/refreshtoken', {
     method: "POST"
   }).then(data => data.json());
-
+  console.log("Fetch done, about to return")
   return postsData
 };
 
@@ -35,9 +35,9 @@ export function LogoutButton() {
       queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
     }
   })
-  if (!isAuthenticated()) {
-      return null
-  }
+  //if (!isAuthenticated()) {
+  //    return null
+  //}
   return <Button type="primary" onClick={() => {logoutCallbackMutation.mutate()}}>Logout</Button>
 }
 
@@ -50,10 +50,8 @@ export function LoginButton() {
 
 export const AuthContext = createContext(null as any);
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth })
-  if (!result.isSuccess) {
-    return <Spin size="large" />
-  }
+  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth, notifyOnChangeProps: 'all'});
+  console.log("AuthProvider", result)
   return (
     <AuthContext.Provider value={result}>
         {children}
@@ -63,8 +61,17 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
 export function isAuthenticated() {
     const auth = useContext(AuthContext);
+
+    if (auth && auth.isFetching) {
+      console.log(auth);
+      console.log("Still fetching")
+    }
+    if (auth && auth.isError) {
+      console.log("isError")
+    }
     if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
-        return false
+      console.log("NO AUTH");
+      return false
     }
     return auth.data;
 }
