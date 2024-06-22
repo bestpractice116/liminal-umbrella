@@ -1,16 +1,20 @@
 import { FC, useContext } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { AuthQueryResult, AuthContext } from './Auth';
+import { AuthContext } from './Auth';
 
 type Props = {
   redirectPath?: string;
   role?: string
 };
 
-export const ProtectedRoute: FC<Props> = ({ redirectPath = "/login" }) => {
+export const ProtectedRoute: FC<Props> = ({ role, redirectPath = "/login" }) => {
   const auth = useContext(AuthContext);
   const location = useLocation();
-  if (!auth || auth.isFetching) {
+  if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
+    return null
+  }
+
+  if (role && (!auth.data.roles.includes(role)&&!auth.data.roles.includes('Admin'))) {
     return null
   }
 

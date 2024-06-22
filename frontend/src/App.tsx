@@ -17,6 +17,7 @@ import AdminCogs from "./admin/Cogs";
 import AdminRoles from "./admin/Roles";
 import AdminGamesystems from "./admin/Gamesystems";
 import AdminBotplaying from "./admin/Botplaying";
+import NotFound from "./NotFound";
 import { ErrorFallback, ErrorBoundary } from "./ErrorFallback";
 
 function TopMenu() {
@@ -104,12 +105,16 @@ function PageContent() {
   return  <Routes>
             <Route path="/login" element={<LoginButton />} />
             <Route path="/" element={<ProtectedRoute />}>
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/cogs" element={<AdminCogs />} />
-              <Route path="/admin/roles" element={<AdminRoles />} />
-              <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
-              <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<ProtectedRoute role="Admin" />}>
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/cogs" element={<AdminCogs />} />
+                <Route path="/admin/roles" element={<AdminRoles />} />
+                <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
+                <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+              </Route>
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
 }
 
