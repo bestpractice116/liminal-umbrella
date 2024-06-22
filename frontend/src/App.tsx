@@ -8,9 +8,9 @@ import { UserOutlined } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-
+import { ProtectedRoute } from "./ProtectedRoute"
 import HomePage from "./Homepage"
-import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching } from "./Auth"
+import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching, LogoutButton } from "./Auth"
 
 import AdminUsers from "./admin/Users";
 import AdminCogs from "./admin/Cogs";
@@ -102,23 +102,22 @@ function Crumbs() {
 
 function PageContent() {
   return  <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/cogs" element={<AdminCogs />} />
-            <Route path="/admin/roles" element={<AdminRoles />} />
-            <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
-            <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+            <Route path="/login" element={<LoginButton />} />
+            <Route path="/" element={<ProtectedRoute />}>
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/cogs" element={<AdminCogs />} />
+              <Route path="/admin/roles" element={<AdminRoles />} />
+              <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
+              <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+            </Route>
           </Routes>
 }
 
 function AuthLoadingSpinner() {
-  if (isAuthenticated()) {
-    return <PageContent />
-  }
   if (isAuthFetching()) {
     return <Spin size="large" />
   }
-  return <LoginButton />
+  return <><PageContent /><LogoutButton /></>
 }
 
 function Page() {

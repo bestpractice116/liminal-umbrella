@@ -3,6 +3,7 @@ import {
     useQueryClient,
     useMutation,
 } from '@tanstack/react-query'
+import { useLocation } from 'react-router-dom';
 import { createContext, useContext } from 'react';
 import { Button } from 'antd';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
@@ -74,6 +75,17 @@ export function LoginButton() {
   if (isAuthenticated()) {
     return null;
   }
+  const location = useLocation()
+  const redirectTo = location.state?.redirectTo
+  let returnTo: string = '/'
+  if (redirectTo) {
+    returnTo = redirectTo.pathname + redirectTo.search + redirectTo.hash
+  }
+  if (redirectTo.pathname === '/login') {
+    returnTo = '/'
+  }
+  console.log("RETURN TO", returnTo)
+  sessionStorage.setItem('beforeLogin', returnTo)
   return <Button type="primary" onClick={doAuthRedirect} className="login-form-button">Login</Button>
 }
 

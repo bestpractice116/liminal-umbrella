@@ -52,7 +52,9 @@ export class OauthRoute extends Route {
             'Content-Type': 'application/json'
           }
         }).then(() => {
-          window.location.replace('/')
+          const beforeLoginUrl = sessionStorage.getItem('beforeLogin') || '/';
+          sessionStorage.removeItem('beforeLogin');
+          window.location.replace(beforeLoginUrl)
         })
       }
     </script>
