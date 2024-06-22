@@ -14,8 +14,9 @@ export const ProtectedRoute: FC<Props> = ({ redirectPath = "/login" }) => {
     return null
   }
 
+  const redirectTo = location.pathname + location.search + location.hash
   if (auth.isError || !auth.data || ('error' in auth.data && auth.data.error)) {
-    return <Navigate to={redirectPath} replace state={{ redirectTo: location }} />;
+    return <Navigate to={redirectPath} replace state={{ redirectTo }} />;
   }
 
   return <Outlet />;

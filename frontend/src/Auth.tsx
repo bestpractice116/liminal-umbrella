@@ -3,7 +3,7 @@ import {
     useQueryClient,
     useMutation,
 } from '@tanstack/react-query'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext } from 'react';
 import { Button } from 'antd';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
@@ -59,10 +59,12 @@ async function doLogoutCallback(): Promise<LogoutFetchResult> {
 
 export function LogoutButton() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const logoutCallbackMutation = useMutation({
     mutationFn: doLogoutCallback,
     onSuccess: (_) => {
       queryClient.setQueryData(['auth'], {"error":"Unauthorized"});
+      navigate('/login', {replace: true, state: { redirectTo: '/' }})
     }
   })
   if (!isAuthenticated()) {
@@ -79,7 +81,7 @@ export function LoginButton() {
   const redirectTo = location.state?.redirectTo
   let returnTo: string = '/'
   if (redirectTo) {
-    returnTo = redirectTo.pathname + redirectTo.search + redirectTo.hash
+    returnTo = redirectTo
   }
   if (redirectTo.pathname === '/login') {
     returnTo = '/'
@@ -91,8 +93,7 @@ export function LoginButton() {
 
 export const AuthContext = createContext(null as any);
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth, notifyOnChangeProps: 'all'});
-  console.log("AuthProvider", result)
+  const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth, notifyOnChangeProps: 'all', retry: 0 });
   return (
     <AuthContext.Provider value={result}>
         {children}
