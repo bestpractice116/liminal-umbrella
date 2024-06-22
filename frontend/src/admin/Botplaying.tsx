@@ -124,9 +124,14 @@ async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
 }
 
 export default function AdminBotPlaying() {
+  const [isMutating, setIsMutating] = useState(false);
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
-  const result = useQuery({ queryKey: ['bot_playing'], queryFn: fetchBotActivityList, throwOnError: true});
+  const result = useQuery({
+    queryKey: ['bot_playing'],
+    queryFn: fetchBotActivityList,
+    throwOnError: true,
+  });
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
@@ -138,10 +143,16 @@ export default function AdminBotPlaying() {
           };
         })
       }).catch((e) => showBoundary(e))
-  }})
+    },
+    onMutate: () => {
+      setIsMutating(true);
+    },
+    onSettled: () => {
+      setIsMutating(false);
+    },
+  })
   const updateMutation = useMutation({
     mutationFn: async (r: any) => {
-      console.log(`R UPDATE /api/botplaying/${r.key} BODY:`, r)
       return fetch(`/api/botplaying/${r.key}`, {
         method: FetchMethods.Post,
         body: JSON.stringify(r),
@@ -154,7 +165,6 @@ export default function AdminBotPlaying() {
           console.error("Error updating data", data)
           throw(new z.ZodError(data.error))
         }
-        console.log("DATA", data)
         queryClient.setQueryData(['bot_playing'], (old: any) => {
           const x = {
             playing: old.playing.map((item: any) => {
@@ -165,11 +175,16 @@ export default function AdminBotPlaying() {
               return item;
             })
           };
-          console.log("SET QUERY DATA", x)
           return x;
         })
       }).catch((e) => showBoundary(e))
-    }
+    },
+    onMutate: () => {
+      setIsMutating(true);
+    },
+    onSettled: () => {
+      setIsMutating(false);
+    },
   })
   const createMutation = useMutation({
     mutationFn: async (r: any) => {
@@ -186,7 +201,14 @@ export default function AdminBotPlaying() {
           };
         })
       }).catch((e) => showBoundary(e))
-  }})
+    },
+    onMutate: () => {
+      setIsMutating(true);
+    },
+    onSettled: () => {
+      setIsMutating(false);
+    },
+  })
 
   if (result.isLoading) {
     return <Spin size="large" />
@@ -292,6 +314,7 @@ export default function AdminBotPlaying() {
   }
 
   return <div>
+    <Spin spinning={isMutating} fullscreen />
     <AddRow />
     <Table
       components={components}
