@@ -1,15 +1,16 @@
 
 import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@sequelize/core';
-import { Attribute, NotNull, Unique, PrimaryKey } from '@sequelize/core/decorators-legacy';
+import { Attribute, NotNull, Unique, PrimaryKey, AutoIncrement } from '@sequelize/core/decorators-legacy';
 import {
     StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
 } from 'discord.js';
 
 export default class GameSystem extends Model<InferAttributes<GameSystem>, InferCreationAttributes<GameSystem>> {
-    @Attribute(DataTypes.STRING)
+    @Attribute(DataTypes.INTEGER)
     @NotNull
     @PrimaryKey
-    declare id: string;
+    @AutoIncrement
+    declare key: string | null;
 
     @Attribute(DataTypes.STRING)
     @Unique

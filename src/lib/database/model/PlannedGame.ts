@@ -43,8 +43,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
     @Attribute(DataTypes.STRING)
     declare name: string | null;
 
-    @Attribute(DataTypes.STRING)
-    declare system: string | null;
+    @Attribute(DataTypes.INTEGER)
+    declare system: number | null;
 
     @Attribute(DataTypes.STRING)
     declare datetime: string | null;
