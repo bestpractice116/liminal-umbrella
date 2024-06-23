@@ -23,6 +23,8 @@ RUN apt-get update -qq && \
 COPY --link .yarnrc.yml package.json yarn.lock ./
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
 COPY --link .yarn/patches ./.yarn/patches
+RUN yarn workspace common run install --immutable
+RUN yarn workspace common run build
 RUN yarn install --immutable
 
 # Copy application code
