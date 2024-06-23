@@ -24,7 +24,7 @@ COPY --link .yarnrc.yml package.json yarn.lock ./
 COPY --link common/package.json ./common/
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
 COPY --link .yarn/patches ./.yarn/patches
-RUN yarn install --immutable
+RUN yarn install
 
 # Copy application code
 COPY --link . .
