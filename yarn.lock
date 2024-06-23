@@ -4328,6 +4328,8 @@ __metadata:
     antd: "npm:^5.18.3"
     antd-zod: "npm:^5.1.0"
     jest: "npm:^29.7.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     ts-jest: "npm:^29.1.2"
     ts-jest-resolver: "npm:^2.0.1"
     typescript: "npm:^5.3.3"
