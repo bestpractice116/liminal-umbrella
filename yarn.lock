@@ -3688,7 +3688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^5.18.1":
+"antd@npm:^5.18.1, antd@npm:^5.18.3":
   version: 5.18.3
   resolution: "antd@npm:5.18.3"
   dependencies:
@@ -4325,6 +4325,7 @@ __metadata:
     "@tsconfig/strictest": "npm:^2.0.5"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.11.5"
+    antd: "npm:^5.18.3"
     antd-zod: "npm:^5.1.0"
     jest: "npm:^29.7.0"
     ts-jest: "npm:^29.1.2"

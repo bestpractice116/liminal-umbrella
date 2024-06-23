@@ -21,10 +21,9 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link .yarnrc.yml package.json yarn.lock ./
+COPY --link common/package.json ./common/
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
 COPY --link .yarn/patches ./.yarn/patches
-RUN yarn workspace common run install --immutable
-RUN yarn workspace common run build
 RUN yarn install --immutable
 
 # Copy application code
