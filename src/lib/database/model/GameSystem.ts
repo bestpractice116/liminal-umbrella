@@ -10,7 +10,7 @@ export default class GameSystem extends Model<InferAttributes<GameSystem>, Infer
     @NotNull
     @PrimaryKey
     @AutoIncrement
-    declare key: string | null;
+    declare key: number | null;
 
     @Attribute(DataTypes.STRING)
     @Unique
