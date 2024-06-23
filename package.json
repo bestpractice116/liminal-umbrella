@@ -64,7 +64,7 @@
   "prettier": "@sapphire/prettier-config",
   "packageManager": "yarn@4.1.0",
   "workspaces": [
-    "frontend/",
-    "common/"
+    "common/",
+    "frontend/"
   ]
 }
