@@ -1,4 +1,4 @@
-import { LogoutButton, AuthData } from './Auth';
+import { AuthData } from './Auth';
 import './App.css'
 
 function HomePage() {
