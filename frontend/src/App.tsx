@@ -1,5 +1,6 @@
 import './App.css'
-import Breadcrumb from 'antd/lib/breadcrumb/breadcrumb'
+//import Breadcrumb from 'antd/es/breadcrumb/breadcrumb'
+import { Breadcrumb } from 'antd'
 import Layout, { Header, Footer, Content } from 'antd/es/layout/layout'
 import Menu from 'antd/es/menu/menu'
 import ConfigProvider from 'antd/es/config-provider'

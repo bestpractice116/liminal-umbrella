@@ -21,15 +21,17 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link .yarnrc.yml package.json yarn.lock ./
+COPY --link frontend/package.json ./frontend/
 COPY --link common/package.json ./common/
 COPY --link .yarn/releases/yarn-4.1.0.cjs ./.yarn/releases/yarn-4.1.0.cjs
 COPY --link .yarn/patches ./.yarn/patches
-RUN yarn install
+RUN yarn install --immutable
 
 # Copy application code
 COPY --link . .
 
 # Build application
+RUN yarn workspace common run build
 RUN yarn run build
 RUN yarn workspace frontend run build
 
