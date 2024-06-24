@@ -4,10 +4,9 @@ import './App.css'
 function HomePage() {
   return (
     <>
-      <div>IN HOMEPAGE
+      <div>
         <div className="card">
           <AuthData />
-          <LogoutButton />
         </div>
       </div>
     </>
