@@ -78,12 +78,12 @@ export function LoginButton() {
     return null;
   }
   const location = useLocation()
-  const redirectTo = location.state?.redirectTo
+  const redirectTo = location.state?.redirectTo || '/'
   let returnTo: string = '/'
   if (redirectTo) {
     returnTo = redirectTo
   }
-  if (redirectTo.pathname === '/login') {
+  if (redirectTo === '/login') {
     returnTo = '/'
   }
   console.log("RETURN TO", returnTo)
