@@ -34,10 +34,13 @@ export abstract class CR extends Route {
           response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
           return;
       }
-      const activity = await this.getModel().create(data);
+      const item = await this.getModel().create(data);
       this.onMuatation()
       const schemaKeys = getSchemaKeys(this.getSchema().update);
-      const datum = schemaKeys.reduce((acc, cv) => { return {...acc, key: activity.get(cv) } }, {})
+      const datum = schemaKeys.reduce((acc, cv) => { const i = {...acc} as any;
+        i[cv] = item.get(cv);
+        return i
+       }, {})
       response.status(HttpCodes.Created).json({status: "ok", datum });
   }
 }
@@ -71,7 +74,7 @@ export abstract class UD extends Route {
       if (!item) {
           return;
       }
-      const { success, error, data } = this.getSchema().update.safeParse(request.body);
+=      const { success, error, data } = this.getSchema().update.safeParse(request.body);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;

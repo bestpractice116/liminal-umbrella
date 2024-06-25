@@ -14,8 +14,8 @@ import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
 
 type InputRef = GetRef<typeof Input>
 
-interface ActivityListItem { key: number, name: string, description: string }
-interface FetchBotActivityListResponse extends Array<ActivityListItem>{}
+interface GameSyctemListItem { key: number, name: string, description: string }
+interface FetchBotActivityListResponse extends Array<GameSyctemListItem>{}
 
 type CreateFieldType = {
   name?: string
@@ -168,7 +168,7 @@ export default function AdminGameSystems() {
           return old.map((item: any) => {
               console.log("ITEM", item, r.key, item.key === r.key)
               if (item.key === r.key) {
-                return data.activity;
+                return data.datum;
               }
               return item;
             })
@@ -184,7 +184,6 @@ export default function AdminGameSystems() {
   })
   const createMutation = useMutation({
     mutationFn: async (r: any) => {
-      console.log("Creating", r)
       return fetch(`/api/gamesystem`, {
         method: FetchMethods.Post,
         body: JSON.stringify(r),
@@ -193,7 +192,7 @@ export default function AdminGameSystems() {
         }
       }, FetchResultTypes.JSON).then((data:any) => {
         queryClient.setQueryData(['gamesystem'], (old: any) => {
-          return [...old, data.gamesystem]
+          return [...old, data.datum]
         })
       }).catch((e) => showBoundary(e))
     },
