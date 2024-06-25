@@ -67,6 +67,7 @@ export class MySapphireClient extends SapphireClient {
 			container.logger.info('Registering cog: ' + d);
 			this.stores.registerPath(join(this.rootData.root, 'cogs', d));
 		}
+		console.log(this.stores.get('listeners').get('PluginServerNoMatch'))
 	}
 
 	public override async login(token?: string) : Promise<string> {
