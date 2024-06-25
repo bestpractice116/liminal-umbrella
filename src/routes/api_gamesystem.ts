@@ -18,9 +18,8 @@ export class ApiBotplayingList extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
-        const activities = await GameSystem.findAll({ where: { }});
-        const playing = activities.map(gamesystem => {return {key: gamesystem.key, name: gamesystem.name}});
-        response.json({playing})
+        const gamesystems = await GameSystem.findAll({ where: { }});
+        response.json(gamesystems.map(gamesystem => {return {key: gamesystem.key, name: gamesystem.name, description: gamesystem.description}}))
     }
 
     // Add a new one
@@ -33,6 +32,6 @@ export class ApiBotplayingList extends Route {
             return;
         }
         const gamesystem = await GameSystem.create(data);
-        response.status(HttpCodes.Created).json({status: "ok", GameSystem: {key: gamesystem.key, name: gamesystem.name, description: gamesystem.description}});
+        response.status(HttpCodes.Created).json({status: "ok", gamesystem: {key: gamesystem.key, name: gamesystem.name, description: gamesystem.description}});
     }
 }
