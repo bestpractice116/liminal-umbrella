@@ -7,7 +7,6 @@ import {
 
 export default class GameSystem extends Model<InferAttributes<GameSystem>, InferCreationAttributes<GameSystem>> {
     @Attribute(DataTypes.INTEGER)
-    @NotNull
     @PrimaryKey
     @AutoIncrement
     declare key: number | null;

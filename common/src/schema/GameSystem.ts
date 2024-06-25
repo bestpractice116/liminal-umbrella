@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
+import { SchemaBundle } from './types.js';
 
 const create = z.object({
   name: z.string({
@@ -21,7 +22,7 @@ const del = z.object({
 const update = create.merge(del)
 const formRule = createSchemaFieldRule(update)
 
-export const GameSystemSchema = {
+export const GameSystemSchema: SchemaBundle = {
   create,
   update,
   delete: del,

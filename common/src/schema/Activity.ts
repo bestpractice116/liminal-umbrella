@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
+import { SchemaBundle } from './types.js';
 
 export enum ActivityType {
   Playing = 'playing',
@@ -23,7 +24,7 @@ const del = z.object({
 const update = create.merge(del)
 const formRule = createSchemaFieldRule(update)
 
-export const ActivitySchema = {
+export const ActivitySchema: SchemaBundle = {
   create,
   update,
   delete: del,

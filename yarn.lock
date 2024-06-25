@@ -4329,6 +4329,7 @@ __metadata:
     antd: "npm:^5.18.3"
     antd-zod: "npm:^5.1.0"
     jest: "npm:^29.7.0"
+    rc-field-form: "npm:^2.2.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     ts-jest: "npm:^29.1.2"
@@ -7603,7 +7604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-field-form@npm:~2.2.1":
+"rc-field-form@npm:^2.2.1, rc-field-form@npm:~2.2.1":
   version: 2.2.1
   resolution: "rc-field-form@npm:2.2.1"
   dependencies:

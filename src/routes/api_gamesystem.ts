@@ -31,7 +31,7 @@ export class ApiBotplayingList extends Route {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;
         }
-        const gamesystem = await GameSystem.create(data);
+        const gamesystem = await GameSystem.create(data as any);
         response.status(HttpCodes.Created).json({status: "ok", gamesystem: {key: gamesystem.key, name: gamesystem.name, description: gamesystem.description}});
     }
 }

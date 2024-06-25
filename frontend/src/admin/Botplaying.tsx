@@ -14,9 +14,7 @@ import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
 
 type InputRef = GetRef<typeof Input>
 
-interface FetchBotActivityListResponse {
-  playing: { key: number, name: string, type: ActivityType }[];
-}
+interface FetchBotActivityListResponse extends Array<{ key: number, name: string, type: ActivityType }>{};
 
 type CreateFieldType = {
   name?: string;
@@ -138,9 +136,7 @@ export default function AdminBotPlaying() {
         method: FetchMethods.Delete
       }, FetchResultTypes.JSON).then(_data => {
         queryClient.setQueryData(['bot_playing'], (old: any) => {
-          return {
-            playing: old.playing.filter((item: any) => item.key !== r.key)
-          };
+          return old.filter((item: any) => item.key !== r.key)
         })
       }).catch((e) => showBoundary(e))
     },
@@ -166,16 +162,13 @@ export default function AdminBotPlaying() {
           throw(new z.ZodError(data.error))
         }
         queryClient.setQueryData(['bot_playing'], (old: any) => {
-          const x = {
-            playing: old.playing.map((item: any) => {
-              console.log("ITEM", item, r.key, item.key === r.key)
-              if (item.key === r.key) {
-                return data.activity;
-              }
-              return item;
-            })
-          };
-          return x;
+          return old.map((item: any) => {
+            console.log("ITEM", item, r.key, item.key === r.key)
+            if (item.key === r.key) {
+              return data.datum;
+            }
+            return item;
+          })
         })
       }).catch((e) => showBoundary(e))
     },
@@ -196,9 +189,7 @@ export default function AdminBotPlaying() {
         }
       }, FetchResultTypes.JSON).then((data:any) => {
         queryClient.setQueryData(['bot_playing'], (old: any) => {
-          return {
-            playing: [...old.playing, data.activity]
-          };
+          return [...old, data.datum]
         })
       }).catch((e) => showBoundary(e))
     },
@@ -285,7 +276,7 @@ export default function AdminBotPlaying() {
     },
   };
 
-  const dataSource: DataType[] = result.data!.playing;
+  const dataSource: DataType[] = result.data!;
 
   const AddRow = () => {
     const [amCreating, setCreating] = useState(false)
