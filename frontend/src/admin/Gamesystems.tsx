@@ -5,27 +5,22 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
-import * as z from 'zod';
 import { GameSystemSchema } from 'common/schema';
-import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-import { FormInstance, getEditables, ColumnTypes, DataType, getQueries } from '../CRUD.js';
+import { ErrorFallback } from '../ErrorFallback';
+import { getComponents, ColumnTypes, getQueries } from '../CRUD.js';
 
-interface GameSyctemListItem { key: number, name: string, description: string }
-interface FetchBotActivityListResponse extends Array<GameSyctemListItem>{}
+interface GameSystemListItem { key: number, name: string, description: string }
 
 type CreateFieldType = {
   name?: string
   description?: string
 };
 
-const {
-  EditableRow,
-  EditableCell,
-} = getEditables(GameSystemSchema.formRule);
+
+const components = getComponents(GameSystemSchema.formRule);
 
 export default function AdminGameSystems() {
-  const { showBoundary } = useErrorBoundary();
-  const { result, isMutating, deleteMutation, updateMutation, createMutation } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
+  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<Array<GameSystemListItem>>('/api/gamesystem', 'gamesystem')
 
   if (result.isLoading) {
     return <Spin size="large" />
@@ -33,10 +28,6 @@ export default function AdminGameSystems() {
   if (result.isError) {
     return <ErrorFallback error={result.error} />;
   }
-
-  const handleDelete = (key: React.Key) => {
-    deleteMutation.mutate({ key });
-  };
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
       {
@@ -55,7 +46,7 @@ export default function AdminGameSystems() {
         title: 'operation',
         dataIndex: 'operation',
         render: (_, record) =>
-          dataSource.length >= 1 ? (
+          result.data!.length >= 1 ? (
             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
               <a>Delete</a>
             </Popconfirm>
@@ -63,35 +54,13 @@ export default function AdminGameSystems() {
       },
     ];
 
-  const handleSave = (row: DataType, _form: FormInstance<any>, toggleEdit: Function): Boolean => {
-      console.log('calling update mutation, have form', _form)
-      updateMutation.mutate(row, {
-        onError: (e) => {
-          try {
-          console.log("HERE", e);
-          const formatted = (e as z.ZodError).format();
-          const f = Object.entries(formatted)
-          .filter(([key, _]) => key !== '_errors')
-          .map(([key, value]) => {return {name: key, errors: (value as any)._errors}});
-          console.log('setting fields', f)
-          _form.setFields(f)
-          } catch (e) {showBoundary(e)}
-        },
-        onSuccess: () => {
-          toggleEdit();
-        }
-      });
-      console.log('finished update mutation')
-      return true
-  };
-
   const columns = defaultColumns!.map((col) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: GameSystemListItem) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -100,15 +69,6 @@ export default function AdminGameSystems() {
       }),
     };
   });
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const dataSource: DataType[] = result.data!;
 
   const AddRow = () => {
     const [amCreating, setCreating] = useState(false)
@@ -150,7 +110,7 @@ export default function AdminGameSystems() {
       components={components}
       rowClassName={() => 'editable-row'}
       bordered
-      dataSource={dataSource}
+      dataSource={result.data!}
       columns={columns as ColumnTypes}
     />
   </div>

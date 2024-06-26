@@ -5,22 +5,20 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
-import * as z from 'zod';
 import { ActivitySchema, ActivityType } from 'common/schema';
-import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-import { FormInstance, getEditables, ColumnTypes, DataType, getQueries } from '../CRUD.js';
+import { ErrorFallback } from '../ErrorFallback';
+import { getComponents, ColumnTypes, getQueries } from '../CRUD.js';
 
-interface FetchBotActivityListResponse extends Array<{ key: number, name: string, type: ActivityType }>{};
+interface FetchBotActivityItem { key: number, name: string, type: ActivityType }
 
 type CreateFieldType = {
   name?: string;
 };
 
-const { EditableRow, EditableCell } = getEditables(ActivitySchema.formRule);
+const components = getComponents(ActivitySchema.formRule);
 
 export default function AdminBotPlaying() {
-  const { showBoundary } = useErrorBoundary();
-  const { result, isMutating, deleteMutation, updateMutation, createMutation } = getQueries<FetchBotActivityListResponse>('/api/botplaying', 'bot_playing')
+  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<Array<FetchBotActivityItem>>('/api/botplaying', 'bot_playing')
 
   if (result.isLoading) {
     return <Spin size="large" />
@@ -28,10 +26,6 @@ export default function AdminBotPlaying() {
   if (result.isError) {
     return <ErrorFallback error={result.error} />;
   }
-
-  const handleDelete = (key: React.Key) => {
-    deleteMutation.mutate({ key });
-  };
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
       {
@@ -44,7 +38,7 @@ export default function AdminBotPlaying() {
         title: 'operation',
         dataIndex: 'operation',
         render: (_, record) =>
-          dataSource.length >= 1 ? (
+          result.data!.length >= 1 ? (
             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
               <a>Delete</a>
             </Popconfirm>
@@ -52,35 +46,13 @@ export default function AdminBotPlaying() {
       },
     ];
 
-  const handleSave = (row: DataType, _form: FormInstance<any>, toggleEdit: Function): Boolean => {
-      console.log('calling update mutation, have form', _form)
-      updateMutation.mutate({...row, type: 'playing'}, {
-        onError: (e) => {
-          try {
-          console.log("HERE", e);
-          const formatted = (e as z.ZodError).format();
-          const f = Object.entries(formatted)
-          .filter(([key, _]) => key !== '_errors')
-          .map(([key, value]) => {return {name: key, errors: (value as any)._errors}});
-          console.log('setting fields', f)
-          _form.setFields(f)
-          } catch (e) {showBoundary(e)}
-        },
-        onSuccess: () => {
-          toggleEdit();
-        }
-      });
-      console.log('finished update mutation')
-      return true
-  };
-
   const columns = defaultColumns!.map((col) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: FetchBotActivityItem) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -89,15 +61,6 @@ export default function AdminBotPlaying() {
       }),
     };
   });
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const dataSource: DataType[] = result.data!;
 
   const AddRow = () => {
     const [amCreating, setCreating] = useState(false)
@@ -132,7 +95,7 @@ export default function AdminBotPlaying() {
       components={components}
       rowClassName={() => 'editable-row'}
       bordered
-      dataSource={dataSource}
+      dataSource={result.data!}
       columns={columns as ColumnTypes}
     />
   </div>

@@ -9,9 +9,8 @@ import * as z from 'zod';
 import { RuleRender } from 'rc-field-form/es/interface.js'
 import { useErrorBoundary } from './ErrorFallback';
 
-
 type InputRef = GetRef<typeof Input>
-export type FormInstance<T> = GetRef<typeof Form<T>>;
+type FormInstance<T> = GetRef<typeof Form<T>>;
 
 interface EditableCellProps<T> {
     title: React.ReactNode;
@@ -23,11 +22,6 @@ interface EditableCellProps<T> {
 
 type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
-
-export interface DataType {
-    key: React.Key;
-    name: string;
-}
 
 interface Item {
     key: string;
@@ -42,7 +36,7 @@ interface EditableRowProps {
     index: number;
 }
 
-export function getEditables(formRule: RuleRender) {
+export function getComponents(formRule: RuleRender) {
     const EditableContext = getEditableContext()
     const EditableRow: FC<EditableRowProps> = ({index, ...props}) => {
         const [form] = Form.useForm();
@@ -81,8 +75,6 @@ export function getEditables(formRule: RuleRender) {
         const save = async () => {
           try {
             const values = await form.validateFields();
-
-            console.log("Calling handleSave")
             handleSave({ ...record, ...values }, form, toggleEdit)
           } catch (errInfo) {
             console.log('Save failed:', errInfo);
@@ -109,19 +101,22 @@ export function getEditables(formRule: RuleRender) {
 
         return <td {...restProps}>{childNode}</td>;
     };
-    return {
-        EditableRow,
-        EditableCell
-    }
+    const components = {
+        body: {
+          row: EditableRow,
+          cell: EditableCell,
+        },
+    };
+    return components
 }
 
-export function getQueries<ListResponse>(apipath: string, querykey: string) {
+export function getQueries<APIRow>(apipath: string, querykey: string) {
     const queryClient = useQueryClient();
     const { showBoundary } = useErrorBoundary();
     const [isMutating, setIsMutating] = useState(false);
     const result = useQuery({
         queryKey: [querykey],
-        queryFn: (): Promise<ListResponse> => {
+        queryFn: (): Promise<Array<APIRow>> => {
             return fetch(apipath, FetchResultTypes.JSON);
         },
         throwOnError: true,
@@ -143,6 +138,9 @@ export function getQueries<ListResponse>(apipath: string, querykey: string) {
           setIsMutating(false);
         },
     })
+    const handleDelete = (key: React.Key) => {
+        deleteMutation.mutate({ key });
+    };
     const updateMutation = useMutation({
         mutationFn: async (r: any) => {
           return fetch(`${apipath}/${r.key}`, {
@@ -174,6 +172,23 @@ export function getQueries<ListResponse>(apipath: string, querykey: string) {
           setIsMutating(false);
         },
     })
+    const handleSave = (row: APIRow, form: FormInstance<any>, toggleEdit: Function): Boolean => {
+        updateMutation.mutate(row, {
+          onError: (e) => {
+            try {
+              const formatted = (e as z.ZodError).format();
+              const f = Object.entries(formatted)
+                .filter(([key, _]) => key !== '_errors')
+                .map(([key, value]) => {return {name: key, errors: (value as any)._errors}});
+              form.setFields(f)
+            } catch (e) {showBoundary(e)}
+          },
+          onSuccess: () => {
+            toggleEdit();
+          }
+        });
+        return true
+    };
     const createMutation = useMutation({
         mutationFn: async (r: any) => {
           return fetch(`/api/botplaying`, {
@@ -195,5 +210,5 @@ export function getQueries<ListResponse>(apipath: string, querykey: string) {
           setIsMutating(false);
         },
     })
-    return { result, isMutating, deleteMutation, updateMutation, createMutation }
+    return { result, isMutating, handleDelete, handleSave, createMutation }
 }
