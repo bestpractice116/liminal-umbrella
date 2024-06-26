@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useContext} from 'react';
+import {useState} from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import Button from 'antd/es/button';
 import Table from 'antd/es/table';
@@ -10,7 +10,7 @@ import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
 import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-import { InputRef, FormInstance, getEditables, EditableCellProps, EditableTableProps } from '../CRUD.js';
+import { FormInstance, getEditables, ColumnTypes } from '../CRUD.js';
 
 interface FetchBotActivityListResponse extends Array<{ key: number, name: string, type: ActivityType }>{};
 
@@ -18,75 +18,12 @@ type CreateFieldType = {
   name?: string;
 };
 
-const { EditableContext, EditableRow } = getEditables();
-
-interface Item {
-  key: string;
-  name: string;
-}
-
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps<Item>>> = ({
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef<InputRef>(null);
-  const form = useContext(EditableContext)!;
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-    }
-  }, [editing]);
-
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
-  };
-
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-
-      console.log("Calling handleSave")
-      handleSave({ ...record, ...values }, form, toggleEdit)
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
-  };
-
-  let childNode = children;
-
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        rules={[ActivitySchema.formRule]}
-      >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
-        {children}
-      </div>
-    );
-  }
-
-  return <td {...restProps}>{childNode}</td>;
-};
+const { EditableRow, EditableCell } = getEditables(ActivitySchema.formRule);
 
 interface DataType {
   key: React.Key;
   name: string;
 }
-
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
   return fetch('/api/botplaying', FetchResultTypes.JSON);
