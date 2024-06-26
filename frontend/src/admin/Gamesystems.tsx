@@ -1,4 +1,4 @@
-import {createContext, useState, useEffect, useRef, useContext} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import Button from 'antd/es/button';
 import Table from 'antd/es/table';
@@ -6,13 +6,11 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
-import type  { GetRef } from 'antd/es/_util/type';
 import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { GameSystemSchema } from 'common/schema';
 import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-
-type InputRef = GetRef<typeof Input>
+import { InputRef, FormInstance, getEditables, EditableCellProps, EditableTableProps } from '../CRUD.js';
 
 interface GameSyctemListItem { key: number, name: string, description: string }
 interface FetchBotActivityListResponse extends Array<GameSyctemListItem>{}
@@ -22,39 +20,15 @@ type CreateFieldType = {
   description?: string
 };
 
-type FormInstance<T> = GetRef<typeof Form<T>>;
+const { EditableContext, EditableRow } = getEditables();
 
-const EditableContext = createContext<FormInstance<any> | null>(null);
-
-interface EditableRowProps {
-  index: number;
-}
 
 interface Item {
   key: string;
   name: string;
 }
 
-const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-
-interface EditableCellProps {
-  title: React.ReactNode;
-  editable: boolean;
-  dataIndex: keyof Item;
-  record: Item;
-  handleSave: (record: Item, form: FormInstance<any>, _: Function) => void;
-}
-
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
+const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps<Item>>> = ({
   title,
   editable,
   children,
@@ -109,8 +83,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   return <td {...restProps}>{childNode}</td>;
 };
-
-type EditableTableProps = Parameters<typeof Table>[0];
 
 interface DataType {
   key: React.Key;

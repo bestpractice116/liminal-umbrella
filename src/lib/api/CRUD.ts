@@ -74,7 +74,7 @@ export abstract class UD extends Route {
       if (!item) {
           return;
       }
-=      const { success, error, data } = this.getSchema().update.safeParse(request.body);
+      const { success, error, data } = this.getSchema().update.safeParse(request.body);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;
