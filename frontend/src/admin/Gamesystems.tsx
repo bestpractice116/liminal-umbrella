@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import Button from 'antd/es/button';
 import Table from 'antd/es/table';
 import Form from 'antd/es/form';
@@ -10,7 +10,7 @@ import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { GameSystemSchema } from 'common/schema';
 import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-import { FormInstance, getEditables, ColumnTypes } from '../CRUD.js';
+import { FormInstance, getEditables, ColumnTypes, DataType, getQueries } from '../CRUD.js';
 
 interface GameSyctemListItem { key: number, name: string, description: string }
 interface FetchBotActivityListResponse extends Array<GameSyctemListItem>{}
@@ -25,31 +25,17 @@ const {
   EditableCell,
 } = getEditables(GameSystemSchema.formRule);
 
-interface DataType {
-  key: React.Key;
-  name: string;
-}
-
-async function fetchGameSystemList(): Promise<FetchBotActivityListResponse> {
-  return fetch('/api/gamesystem', FetchResultTypes.JSON);
-}
-
 export default function AdminGameSystems() {
   const [isMutating, setIsMutating] = useState(false);
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
-  const result = useQuery({
-    queryKey: ['gamesystem'],
-    queryFn: fetchGameSystemList,
-    throwOnError: true,
-  });
+  const { result } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/gamesystem/${r.key}`, {
         method: FetchMethods.Delete
       }, FetchResultTypes.JSON).then(_data => {
         queryClient.setQueryData(['gamesystem'], (old: any) => {
-          console.log("OLD", old)
           return old.filter((item: any) => item.key !== r.key);
         })
       }).catch((e) => showBoundary(e))

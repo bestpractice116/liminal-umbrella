@@ -1,4 +1,6 @@
 import { createContext, type FC, useState, useContext, useRef, useEffect } from 'react';
+import { fetch, FetchResultTypes } from '@sapphire/fetch'
+import { useQuery } from '@tanstack/react-query'
 import type  { GetRef } from 'antd/es/_util/type';
 import Input from 'antd/es/input';
 import Form from 'antd/es/form';
@@ -18,6 +20,11 @@ interface EditableCellProps<T> {
 
 type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+
+export interface DataType {
+    key: React.Key;
+    name: string;
+}
 
 interface Item {
     key: string;
@@ -103,4 +110,15 @@ export function getEditables(formRule: RuleRender) {
         EditableRow,
         EditableCell
     }
+}
+
+export function getQueries<ListResponse>(apipath: string, querykey: string) {
+    const result = useQuery({
+        queryKey: [querykey],
+        queryFn: (): Promise<ListResponse> => {
+            return fetch(apipath, FetchResultTypes.JSON);
+        },
+        throwOnError: true,
+    });
+    return { result }
 }

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import Button from 'antd/es/button';
 import Table from 'antd/es/table';
 import Form from 'antd/es/form';
@@ -10,7 +10,7 @@ import * as z from 'zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { ActivitySchema, ActivityType } from 'common/schema';
 import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
-import { FormInstance, getEditables, ColumnTypes } from '../CRUD.js';
+import { FormInstance, getEditables, ColumnTypes, DataType, getQueries } from '../CRUD.js';
 
 interface FetchBotActivityListResponse extends Array<{ key: number, name: string, type: ActivityType }>{};
 
@@ -20,24 +20,11 @@ type CreateFieldType = {
 
 const { EditableRow, EditableCell } = getEditables(ActivitySchema.formRule);
 
-interface DataType {
-  key: React.Key;
-  name: string;
-}
-
-async function fetchBotActivityList(): Promise<FetchBotActivityListResponse> {
-  return fetch('/api/botplaying', FetchResultTypes.JSON);
-}
-
 export default function AdminBotPlaying() {
   const [isMutating, setIsMutating] = useState(false);
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
-  const result = useQuery({
-    queryKey: ['bot_playing'],
-    queryFn: fetchBotActivityList,
-    throwOnError: true,
-  });
+  const { result } = getQueries<FetchBotActivityListResponse>('/api/botplaying', 'bot_playing')
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
