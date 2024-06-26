@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import { useQueryClient, useMutation } from '@tanstack/react-query'
 import Button from 'antd/es/button';
 import Table from 'antd/es/table';
 import Form from 'antd/es/form';
@@ -7,7 +6,6 @@ import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
 import * as z from 'zod';
-import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
 import { GameSystemSchema } from 'common/schema';
 import { ErrorFallback, useErrorBoundary } from '../ErrorFallback';
 import { FormInstance, getEditables, ColumnTypes, DataType, getQueries } from '../CRUD.js';
@@ -27,78 +25,7 @@ const {
 
 export default function AdminGameSystems() {
   const { showBoundary } = useErrorBoundary();
-  const queryClient = useQueryClient();
-  const { result, isMutating, setIsMutating } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
-  const deleteMutation = useMutation({
-    mutationFn: async (r: any) => {
-      return fetch(`/api/gamesystem/${r.key}`, {
-        method: FetchMethods.Delete
-      }, FetchResultTypes.JSON).then(_data => {
-        queryClient.setQueryData(['gamesystem'], (old: any) => {
-          return old.filter((item: any) => item.key !== r.key);
-        })
-      }).catch((e) => showBoundary(e))
-    },
-    onMutate: () => {
-      setIsMutating(true);
-    },
-    onSettled: () => {
-      setIsMutating(false);
-    },
-  })
-  const updateMutation = useMutation({
-    mutationFn: async (r: any) => {
-      return fetch(`/api/gamesystem/${r.key}`, {
-        method: FetchMethods.Post,
-        body: JSON.stringify(r),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        },FetchResultTypes.JSON
-      ).then((data: any) => {
-        if (data.status !== "ok") {
-          console.error("Error updating data", data)
-          throw(new z.ZodError(data.error))
-        }
-        queryClient.setQueryData(['gamesystem'], (old: any) => {
-          return old.map((item: any) => {
-              console.log("ITEM", item, r.key, item.key === r.key)
-              if (item.key === r.key) {
-                return data.datum;
-              }
-              return item;
-            })
-        })
-      }).catch((e) => showBoundary(e))
-    },
-    onMutate: () => {
-      setIsMutating(true);
-    },
-    onSettled: () => {
-      setIsMutating(false);
-    },
-  })
-  const createMutation = useMutation({
-    mutationFn: async (r: any) => {
-      return fetch(`/api/gamesystem`, {
-        method: FetchMethods.Post,
-        body: JSON.stringify(r),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }, FetchResultTypes.JSON).then((data:any) => {
-        queryClient.setQueryData(['gamesystem'], (old: any) => {
-          return [...old, data.datum]
-        })
-      }).catch((e) => showBoundary(e))
-    },
-    onMutate: () => {
-      setIsMutating(true);
-    },
-    onSettled: () => {
-      setIsMutating(false);
-    },
-  })
+  const { result, isMutating, deleteMutation, updateMutation, createMutation } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
 
   if (result.isLoading) {
     return <Spin size="large" />
