@@ -113,6 +113,7 @@ export function getEditables(formRule: RuleRender) {
 }
 
 export function getQueries<ListResponse>(apipath: string, querykey: string) {
+    const [isMutating, setIsMutating] = useState(false);
     const result = useQuery({
         queryKey: [querykey],
         queryFn: (): Promise<ListResponse> => {
@@ -120,5 +121,5 @@ export function getQueries<ListResponse>(apipath: string, querykey: string) {
         },
         throwOnError: true,
     });
-    return { result }
+    return { result, isMutating, setIsMutating }
 }

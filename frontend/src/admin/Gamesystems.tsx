@@ -26,10 +26,9 @@ const {
 } = getEditables(GameSystemSchema.formRule);
 
 export default function AdminGameSystems() {
-  const [isMutating, setIsMutating] = useState(false);
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
-  const { result } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
+  const { result, isMutating, setIsMutating } = getQueries<FetchBotActivityListResponse>('/api/gamesystem', 'gamesystem')
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/gamesystem/${r.key}`, {

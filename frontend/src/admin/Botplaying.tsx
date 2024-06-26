@@ -21,10 +21,9 @@ type CreateFieldType = {
 const { EditableRow, EditableCell } = getEditables(ActivitySchema.formRule);
 
 export default function AdminBotPlaying() {
-  const [isMutating, setIsMutating] = useState(false);
   const { showBoundary } = useErrorBoundary();
   const queryClient = useQueryClient();
-  const { result } = getQueries<FetchBotActivityListResponse>('/api/botplaying', 'bot_playing')
+  const { result, isMutating, setIsMutating } = getQueries<FetchBotActivityListResponse>('/api/botplaying', 'bot_playing')
   const deleteMutation = useMutation({
     mutationFn: async (r: any) => {
       return fetch(`/api/botplaying/${r.key}`, {
