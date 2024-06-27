@@ -1,13 +1,15 @@
 import { createContext, type FC, useState, useContext, useRef, useEffect } from 'react';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch'
-import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
+import { useQueryClient, useQuery, useMutation, UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import type  { GetRef } from 'antd/es/_util/type';
 import Input from 'antd/es/input';
 import Form from 'antd/es/form';
 import Table from 'antd/es/table';
+import Button from 'antd/es/button';
+import Spin from 'antd/es/spin';
 import * as z from 'zod';
-import { RuleRender } from 'rc-field-form/es/interface.js'
-import { useErrorBoundary } from './ErrorFallback';
+import { RuleRender, FormRef } from 'rc-field-form/es/interface.js'
+import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
 
 type InputRef = GetRef<typeof Input>
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -22,6 +24,11 @@ interface EditableCellProps<T> {
 
 type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+export type ColumnTypeArray = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>
+export type SaveHandler<Item> = {
+    (row: Item, form: FormRef<any>, toggleEdit: Function): Boolean
+}
+export type DefaultColumns = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>
 
 interface Item {
     key: string;
@@ -212,3 +219,52 @@ export function getQueries<APIRow>(apipath: string, querykey: string) {
     })
     return { result, isMutating, handleDelete, handleSave, createMutation }
 }
+
+  export function AddRow({createMutation, children}: {createMutation: UseMutationResult<void, Error, any, void>, children: React.ReactNode}) {
+    const [amCreating, setCreating] = useState(false)
+    if (!amCreating) {
+        return <Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+        Add a row
+        </Button>
+    }
+    return <Form onFinish={(values) => {
+        console.log("VALUES", values)
+        createMutation.mutate(values)
+        setCreating(false)
+    }}>
+        <>{children}</>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Button type="primary" htmlType="submit">
+            Submit
+        </Button>
+        </Form.Item>
+    </Form>
+}
+
+export function getColumns<Item>(columns: ColumnTypeArray, handleSave: SaveHandler<Item>) {
+    return columns.map((col) => {
+        if (!col.editable) {
+          return col;
+        }
+        return {
+          ...col,
+          onCell: (record: Item) => ({
+            record,
+            editable: col.editable,
+            dataIndex: col.dataIndex,
+            title: col.title,
+            handleSave,
+          }),
+        };
+    });
+}
+
+export function WrapCRUD<Res>({ children, result }: { children: React.ReactNode, result: UseQueryResult<Array<Res>, Error> }) {
+    if (result.isLoading) {
+      return <Spin size="large" />
+    }
+    if (result.isError) {
+      return <ErrorFallback error={result.error} />;
+    }
+    return <>{children}</>
+  }
