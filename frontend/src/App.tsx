@@ -1,6 +1,4 @@
 import './App.css'
-//import Breadcrumb from 'antd/es/breadcrumb/breadcrumb'
-import { Breadcrumb } from 'antd'
 import Layout, { Header, Footer, Content } from 'antd/es/layout/layout'
 import Menu from 'antd/es/menu/menu'
 import ConfigProvider from 'antd/es/config-provider'
@@ -29,7 +27,6 @@ function TopMenu() {
     items.push({
       key: 'admin',
       label: 'Admin',
-      //onClick: () => alert('Admin'),
       children: [
         {
           key: 'admin/users',
@@ -60,15 +57,6 @@ function TopMenu() {
   }
 
   const auth = isAuthenticated();
-  if (auth) {
-    new Array(3).fill(null).forEach((_, index) => {
-      items.push({
-        key: index + 1,
-        label: `nav ${index + 1}`,
-        onClick: () => console.log(`nav ${index + 1}`),
-      });
-    })
-  }
 
   const avatarSrc = auth ? auth.user.avatarURL : null;
   const avatarIcon = auth ? null : <UserOutlined />;
@@ -92,19 +80,6 @@ function TopMenu() {
       onClick={handleMenuClick}
     />
   </Header>
-}
-
-function Crumbs() {
-  const auth = isAuthenticated();
-  if (!auth) {
-    return <></>;
-  }
-  const items=[
-    { title: 'Home' },
-    { title: 'List' },
-    { title: 'App' },
-  ]
-  return <Breadcrumb style={{ margin: '16px 0' }} items={items} />
 }
 
 function PageContent() {
@@ -136,7 +111,6 @@ function Page() {
   return <Layout>
           <TopMenu />
           <Content style={{ padding: '0 48px' }}>
-            <Crumbs />
             <div
               style={{
                 minHeight: 280,

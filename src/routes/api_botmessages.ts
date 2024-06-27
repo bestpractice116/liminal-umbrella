@@ -1,4 +1,4 @@
-import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
+import { Route } from '@sapphire/plugin-api';
 import { BotMessage } from '../lib/database/model.js';
 import { BotMessageSchema } from "common/schema";
 import type { SchemaBundle } from "common/schema"
