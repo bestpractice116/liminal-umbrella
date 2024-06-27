@@ -10,7 +10,7 @@ import { PlannedGame } from '../lib/database/model.js';
 export class GamePostCommand extends Command {
 	public constructor(context: Command.LoaderContext) {
 		super(context, {
-			preconditions: ['DMOnly']
+			preconditions: ['BetaOnly']
 		})
 	}
 
