@@ -5,7 +5,6 @@ import { ActivitySchema } from "common/schema";
 import type { SchemaBundle } from "common/schema"
 import { CR } from '../lib/api/CRUD.js';
 
-//TODO - Add decorators to require authentication
 export class ApiBotplayingList extends CR {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
