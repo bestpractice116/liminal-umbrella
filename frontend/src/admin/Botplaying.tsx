@@ -18,7 +18,7 @@ type CreateFieldType = {
 const components = getComponents(ActivitySchema.formRule);
 
 export default function AdminBotPlaying() {
-  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<Array<FetchBotActivityItem>>('/api/botplaying', 'bot_playing')
+  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<FetchBotActivityItem>('/api/botplaying', 'bot_playing')
 
   if (result.isLoading) {
     return <Spin size="large" />

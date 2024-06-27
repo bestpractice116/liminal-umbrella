@@ -20,7 +20,7 @@ type CreateFieldType = {
 const components = getComponents(GameSystemSchema.formRule);
 
 export default function AdminGameSystems() {
-  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<Array<GameSystemListItem>>('/api/gamesystem', 'gamesystem')
+  const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem')
 
   if (result.isLoading) {
     return <Spin size="large" />
