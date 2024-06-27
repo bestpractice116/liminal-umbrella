@@ -1,12 +1,16 @@
 import './App.css'
+import { useContext } from 'react'
 import Layout, { Header, Footer, Content } from 'antd/es/layout/layout'
 import Menu from 'antd/es/menu/menu'
 import ConfigProvider from 'antd/es/config-provider'
 import Avatar from 'antd/es/avatar/avatar'
+import Button from "antd/es/button"
 import { UserOutlined } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+
+import { MaybeDebug, DebugContext } from "./Debug"
 import { ProtectedRoute } from "./ProtectedRoute"
 import HomePage from "./Homepage"
 import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching, LogoutButton } from "./Auth"
@@ -20,15 +24,17 @@ import AdminBotMessages from "./admin/BotMessages"
 import NotFound from "./NotFound";
 import { ErrorFallback, ErrorBoundary } from "./ErrorFallback";
 
-function TopMenu() {
+function TopMenu(){
+  const { debug, setDebug } = useContext(DebugContext);
   const items : any = [];
 
-  if (isAdmin()) {
+  const admin = isAdmin()
+  if (admin) {
     items.push({
       key: 'admin',
       label: 'Admin',
       children: [
-        {
+/*        {
           key: 'admin/users',
           label: 'Users',
         },
@@ -39,7 +45,7 @@ function TopMenu() {
         {
           key: 'admin/roles',
           label: 'Roles',
-        },
+        },*/
         {
           key: 'admin/gamesystems',
           label: 'Gamesystems',
@@ -69,8 +75,11 @@ function TopMenu() {
     }
   };
 
+  const onDebugChange = () => {
+    setDebug(!debug);
+  }
   return <Header style={{ display: 'flex', alignItems: 'center' }}>
-    <Avatar icon={avatarIcon} src={avatarSrc} shape="square" size="large" className="avatarIcon" />
+    <Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '20px' }} shape="square" size="large" className="avatarIcon" />
     <Menu
       theme="dark"
       mode="horizontal"
@@ -79,6 +88,7 @@ function TopMenu() {
       style={{ flex: 1, minWidth: 0 }}
       onClick={handleMenuClick}
     />
+    {admin ? debug ? <Button danger type="primary" onClick={onDebugChange}>Debug Off</Button> : <Button type="dashed" onClick={onDebugChange}>Debug On</Button> : <></>}
   </Header>
 }
 
@@ -108,7 +118,8 @@ function AuthLoadingSpinner() {
 }
 
 function Page() {
-  return <Layout>
+  return <MaybeDebug>
+    <Layout>
           <TopMenu />
           <Content style={{ padding: '0 48px' }}>
             <div
@@ -125,12 +136,12 @@ function Page() {
           <Footer style={{ textAlign: 'center' }}>
             Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D
           </Footer>
-        </Layout>
+    </Layout>
+  </MaybeDebug>
 }
 
 function App() {
   const queryClient = new QueryClient();
-
   return (
     <Router>
       <QueryClientProvider client={queryClient}>
