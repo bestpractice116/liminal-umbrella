@@ -20,7 +20,7 @@ export const ProtectedRoute: FC<Props> = ({ role, redirectPath = "/login" }) => 
   }
 
   if (role && (!auth.data.roles.includes(role)&&!auth.data.roles.includes('Admin'))) {
-    return null
+    return <Navigate to={redirectPath} replace state={{ redirectTo }} />
   }
 
   return <Outlet />;
