@@ -198,14 +198,14 @@ export function getQueries<APIRow>(apipath: string, querykey: string) {
     };
     const createMutation = useMutation({
         mutationFn: async (r: any) => {
-          return fetch(`/api/botplaying`, {
+          return fetch(apipath, {
             method: FetchMethods.Post,
             body: JSON.stringify(r),
             headers: {
               'Content-Type': 'application/json'
             }
           }, FetchResultTypes.JSON).then((data:any) => {
-            queryClient.setQueryData(['bot_playing'], (old: any) => {
+            queryClient.setQueryData([querykey], (old: any) => {
               return [...old, data.datum]
             })
           }).catch((e) => showBoundary(e))
@@ -228,7 +228,6 @@ export function getQueries<APIRow>(apipath: string, querykey: string) {
         </Button>
     }
     return <Form onFinish={(values) => {
-        console.log("VALUES", values)
         createMutation.mutate(values)
         setCreating(false)
     }}>

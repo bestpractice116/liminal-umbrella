@@ -8,7 +8,7 @@ export class ApiBotpMessagesList extends CR {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
         ...options,
-        route: 'api/botplaying'
+        route: 'api/botmessages'
       });
     }
 
@@ -17,9 +17,5 @@ export class ApiBotpMessagesList extends CR {
     }
     getSchema(): SchemaBundle {
       return BotMessageSchema
-    }
-
-    override async [methods.POST](_request: ApiRequest, response: ApiResponse) {
-        response.notFound()
     }
 }

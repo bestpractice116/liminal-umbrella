@@ -18,8 +18,4 @@ export class ApiBotpMessagesEdit extends UD {
     getSchema(): SchemaBundle {
       return BotMessageSchema
     }
-
-    override async [methods.DELETE](_request: ApiRequest, response: ApiResponse) {
-        response.notFound()
-    }
 }

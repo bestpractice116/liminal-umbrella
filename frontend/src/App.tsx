@@ -13,11 +13,12 @@ import { ProtectedRoute } from "./ProtectedRoute"
 import HomePage from "./Homepage"
 import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching, LogoutButton } from "./Auth"
 
-import AdminUsers from "./admin/Users";
-import AdminCogs from "./admin/Cogs";
-import AdminRoles from "./admin/Roles";
-import AdminGamesystems from "./admin/Gamesystems";
-import AdminBotplaying from "./admin/Botplaying";
+import AdminUsers from "./admin/Users"
+import AdminCogs from "./admin/Cogs"
+import AdminRoles from "./admin/Roles"
+import AdminGamesystems from "./admin/Gamesystems"
+import AdminBotplaying from "./admin/Botplaying"
+import AdminBotMessages from "./admin/BotMessages"
 import NotFound from "./NotFound";
 import { ErrorFallback, ErrorBoundary } from "./ErrorFallback";
 
@@ -49,6 +50,10 @@ function TopMenu() {
         {
           key: 'admin/botplaying',
           label: 'Bot Playing',
+        },
+        {
+          key: 'admin/botmessages',
+          label: 'Bot Messages',
         },
       ],
     });
@@ -113,6 +118,7 @@ function PageContent() {
                 <Route path="/admin/roles" element={<AdminRoles />} />
                 <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
                 <Route path="/admin/botplaying" element={<AdminBotplaying />} />
+                <Route path="/admin/botmessages" element={<AdminBotMessages />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

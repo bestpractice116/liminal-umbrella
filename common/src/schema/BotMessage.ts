@@ -2,7 +2,7 @@ import * as z from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
 import { SchemaBundle } from './types.js';
 
-const create = z.object({
+const update = z.object({
   name: z.string({
       required_error: "Name is required",
       invalid_type_error: "Name must be a string",
@@ -15,16 +15,11 @@ const create = z.object({
     }).trim().min(2, { message: "Value must be at least 2 characters long"
     }).max(1000, { message: "Value must be less than 1000 characters"
     }),
+  key: z.coerce.number().int().positive()
 });
-const del = z.object({
-  key: z.coerce.number().int().positive(),
-})
-const update = create.merge(del)
 const formRule = createSchemaFieldRule(update)
 
 export const BotMessageSchema: SchemaBundle = {
-  create,
-  update,
-  delete: del,
+  update: update.readonly(),
   formRule,
 }

@@ -23,8 +23,8 @@ const update = create.merge(del)
 const formRule = createSchemaFieldRule(update)
 
 export const GameSystemSchema: SchemaBundle = {
-  create,
-  update,
-  delete: del,
+  create: create.readonly(),
+  update: update.readonly(),
+  delete: del.readonly(),
   formRule,
 }
