@@ -86,7 +86,6 @@ export function LoginButton() {
   if (redirectTo === '/login') {
     returnTo = '/'
   }
-  console.log("RETURN TO", returnTo)
   sessionStorage.setItem('beforeLogin', returnTo)
   return <Button type="primary" onClick={doAuthRedirect} className="login-form-button">Login</Button>
 }
@@ -124,7 +123,7 @@ export function isAdmin() {
   if (!auth) {
     return false;
   }
-  return auth.roles.find((e: any) => e === 'Admin') !== -1;
+  return !!auth.roles.find((e: any) => e === 'Admin');
 }
 
 export function AuthData() {
