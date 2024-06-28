@@ -5,11 +5,11 @@ export class LoginRoute extends Route {
   public constructor(context: Route.LoaderContext, options: Route.Options) {
     super(context, {
       ...options,
-      route: '/login'
+      route: 'login'
     });
   }
 
-  public [methods.GET](_request: ApiRequest, response: ApiResponse) {
-    serveRoot(_request, response);
+  public [methods.GET](request: ApiRequest, response: ApiResponse) {
+    serveRoot(request, response);
   }
 }

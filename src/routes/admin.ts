@@ -5,11 +5,11 @@ export class AdminRoute extends Route {
   public constructor(context: Route.LoaderContext, options: Route.Options) {
     super(context, {
       ...options,
-      route: '/admin/:page'
+      route: 'admin/:page'
     });
   }
 
-  public [methods.GET](_request: ApiRequest, response: ApiResponse) {
-    serveRoot(_request, response);
+  public [methods.GET](request: ApiRequest, response: ApiResponse) {
+    serveRoot(request, response);
   }
 }

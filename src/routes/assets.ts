@@ -25,7 +25,7 @@ export class RootRoute extends Route {
   public constructor(context: Route.LoaderContext, options: Route.Options) {
     super(context, {
       ...options,
-      route: '/assets/:asset'
+      route: 'assets/:asset'
     });
   }
 
