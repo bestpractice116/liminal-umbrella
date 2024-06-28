@@ -29,7 +29,7 @@ export class OauthRoute extends Route {
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then((response) => { response.body.then( (body) => {
+        }).then((response) => { response.text().then((body) => {
           if (response.ok) {
             const beforeLoginUrl = sessionStorage.getItem('beforeLogin') || '/';
             sessionStorage.removeItem('beforeLogin');
