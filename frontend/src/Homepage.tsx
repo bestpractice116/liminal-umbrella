@@ -1,5 +1,4 @@
 import List from 'antd/es/list'
-import Typography from 'antd/es/typography'
 import { useContext } from 'react';
 import { AuthData, isAuthenticated } from './Auth';
 import { DebugContext } from './Debug';
