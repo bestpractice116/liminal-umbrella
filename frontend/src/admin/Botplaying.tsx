@@ -3,6 +3,7 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
+import { DeleteOutlined } from '@ant-design/icons';
 import { ActivitySchema, ActivityType } from 'common/schema';
 import { getComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 
@@ -26,7 +27,7 @@ export default function AdminBotPlaying() {
         render: (_, record) =>
           result.data!.length >= 1 ? (
             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-              <a>Delete</a>
+              <DeleteOutlined />&nbsp;<a>Delete</a>
             </Popconfirm>
           ) : null,
       },

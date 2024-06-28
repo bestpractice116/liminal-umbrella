@@ -7,6 +7,7 @@ import Form from 'antd/es/form';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
 import Spin from 'antd/es/spin';
+import { EditOutlined } from '@ant-design/icons';
 import * as z from 'zod';
 import { RuleRender, FormRef } from 'rc-field-form/es/interface.js'
 import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
@@ -101,7 +102,7 @@ export function getComponents(formRule: RuleRender) {
             </Form.Item>
           ) : (
             <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
-              {children}
+              <EditOutlined />&nbsp;{children}
             </div>
           );
         }

@@ -3,6 +3,7 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
+import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema } from 'common/schema';
 import { getComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
 
@@ -32,7 +33,7 @@ export default function AdminGameSystems() {
         render: (_, record) =>
           result.data!.length >= 1 ? (
             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-              <a>Delete</a>
+              <a><DeleteOutlined />&nbsp;Delete</a>
             </Popconfirm>
           ) : null,
       },
