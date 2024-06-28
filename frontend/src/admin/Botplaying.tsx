@@ -3,6 +3,7 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
+import Divider from 'antd/es/divider'
 import { DeleteOutlined } from '@ant-design/icons';
 import { ActivitySchema, ActivityType } from 'common/schema';
 import { getComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
@@ -38,6 +39,13 @@ export default function AdminBotPlaying() {
   return <WrapCRUD<FetchBotActivityItem> result={result}>
     <>
       <Spin spinning={isMutating} fullscreen />
+      <div>
+        This page is for editing the games which the bot can be listed as '<code>Playing ...</code>' in the user list at the side of Discord.
+        The bot will randomly pick a new activity from this list roughly every 4 hours (although this will vary!).
+        The list here is not used anywhere else in the bot, and so it's safe to add or remove items as you see fit
+        and you can add items which are not TTRPGs (e.g. <code>with kittens</code>)
+      </div>
+      <Divider />
       <AddRow createMutation={createMutation}>
         <Form.Item
           label="Name"

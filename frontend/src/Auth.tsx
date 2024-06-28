@@ -74,10 +74,10 @@ export function LogoutButton() {
 }
 
 export function LoginButton() {
+  const location = useLocation()
   if (isAuthenticated()) {
     return null;
   }
-  const location = useLocation()
   const redirectTo = location.state?.redirectTo || '/'
   let returnTo: string = '/'
   if (redirectTo) {

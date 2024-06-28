@@ -3,6 +3,8 @@ import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
+import Divider from 'antd/es/divider';
+import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema } from 'common/schema';
 import { getComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
@@ -58,6 +60,15 @@ export default function AdminGameSystems() {
   return <WrapCRUD<GameSystemListItem> result={result}>
     <>
       <Spin spinning={isMutating} fullscreen />
+      <div>
+        This page is for editing the game which DMs can list their games as in Discord
+        Please be careful here and do not delete any system which currently has games running or scheduled using it.
+        <br /><WarningOutlined />TODO: Add details about what fields are safe to edit - name no and description yes?
+        <br /><WarningOutlined />TODO: This list of systems is not currently in use right now - it will be part of the game listing feature
+        <br /><WarningOutlined />TODO: We probably need to keep this list at 25 entries or less as Discord drop downs have a 25 entry limit.
+          So we can only support that many systems without sub-categories etc. <b>This limit is not enforce currently</b>
+      </div>
+      <Divider />
       <AddRow createMutation={createMutation}>
         <Form.Item
             label="Name"
