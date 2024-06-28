@@ -66,7 +66,7 @@ export default function AdminGameSystems() {
         <br /><WarningOutlined />TODO: Add details about what fields are safe to edit - name no and description yes?
         <br /><WarningOutlined />TODO: This list of systems is not currently in use right now - it will be part of the game listing feature
         <br /><WarningOutlined />TODO: We probably need to keep this list at 25 entries or less as Discord drop downs have a 25 entry limit.
-          So we can only support that many systems without sub-categories etc. <b>This limit is not enforce currently</b>
+          So we can only support that many systems without sub-categories etc. <b>This limit is not enforced currently</b>
       </div>
       <Divider />
       <AddRow createMutation={createMutation}>
