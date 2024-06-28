@@ -14,11 +14,11 @@ import { setup } from '@skyra/env-utilities';
 
 declare module '@skyra/env-utilities' {
     interface Env {
-        DISCORD_CLIENT_SECRET: string;
         DISCORD_BOT_TOKEN: string;
         DISCORD_APPLICATION_ID: IntegerString;
         DISCORD_PUBLIC_KEY: string;
         DISCORD_GUILD_ID: string;
+        DISCORD_TOKEN: string;
         DATABASE_NAME: string;
         GREET_USERS_CHANNEL: string | undefined;
     }
