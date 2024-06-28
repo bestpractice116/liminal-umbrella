@@ -1,27 +1,5 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 
-//import type { LoginData } from '@sapphire/plugin-api';
-
-/*async function exchangeCodeForAccessToken() {
-  //const codeSearchParam = new URL(window.location.href).searchParams.get('code');
-
-  // Call the backend to exchange the code for an access token.
-  const response = await fetch(`/oauth/callback`, {
-    method: 'POST',
-    body: JSON.stringify({
-      code: codeSearchParam
-    })
-  });
-
-  //const data = (await response.json()) as Promise<LoginData>;
-
-  // Now store data somewhere so you can access it later.
-  //localStorage.setItem('discord-data', JSON.stringify(data));
-
-  // Lastly, send the user back to the home page or similar:
-  //window.location.replace('/');
-}*/
-
 export class OauthRoute extends Route {
   public constructor(context: Route.LoaderContext, options: Route.Options) {
     super(context, {
@@ -51,16 +29,24 @@ export class OauthRoute extends Route {
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(() => {
-          const beforeLoginUrl = sessionStorage.getItem('beforeLogin') || '/';
-          sessionStorage.removeItem('beforeLogin');
-          window.location.replace(beforeLoginUrl)
-        })
+        }).then((response) => { response.body.then( (body) => {
+          if (response.ok) {
+            const beforeLoginUrl = sessionStorage.getItem('beforeLogin') || '/';
+            sessionStorage.removeItem('beforeLogin');
+            window.location.replace(beforeLoginUrl)
+            return
+          }
+          const error = 'response.status ' + response.status} + ' content type ' + response.headers.get('content-type') + ' Body: ' + body
+          const node = document.getElementById('error')
+          node.appendChild(document.createTextNode(error))
+          console.error(error)
+        })})
       }
     </script>
   </head>
 <body>
   <script>doRedirect()</script>
+  <div id="error"></div>
 </body>
     `);
   }
