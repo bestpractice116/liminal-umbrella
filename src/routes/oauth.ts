@@ -36,7 +36,7 @@ export class OauthRoute extends Route {
             window.location.replace(beforeLoginUrl)
             return
           }
-          const error = 'response.status ' + response.status} + ' content type ' + response.headers.get('content-type') + ' Body: ' + body
+          const error = 'response.status ' + response.status + ' content type ' + response.headers.get('content-type') + ' Body: ' + body
           const node = document.getElementById('error')
           node.appendChild(document.createTextNode(error))
           console.error(error)
