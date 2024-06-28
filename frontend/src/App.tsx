@@ -7,6 +7,7 @@ import Avatar from 'antd/es/avatar/avatar'
 import Button from "antd/es/button"
 import { UserOutlined } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
+import Tooltip from 'antd/es/tooltip'
 import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
@@ -88,7 +89,10 @@ function TopMenu(){
       style={{ flex: 1, minWidth: 0 }}
       onClick={handleMenuClick}
     />
-    {admin ? debug ? <Button danger type="primary" onClick={onDebugChange}>Debug Off</Button> : <Button type="dashed" onClick={onDebugChange}>Debug On</Button> : <></>}
+    {admin ? debug ?
+      <Button danger type="primary" onClick={onDebugChange}>Debug Off</Button>
+      : <Tooltip title="Note - can break layout"><Button type="dashed" onClick={onDebugChange}>Debug On</Button></Tooltip>
+      : <></>}
   </Header>
 }
 
