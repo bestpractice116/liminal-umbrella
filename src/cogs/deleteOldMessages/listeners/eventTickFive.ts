@@ -42,9 +42,17 @@ export class deleteOldMessagesTickFiveListener extends Listener {
     // Delete them from Discord and the bot's database.
     for (const msg of msgs) {
       container.logger.info(`Delete ${msg.type} type old message in ${channel_name} - ${msg.id}: '${msg.content}'`);
+      // TODO - log error if this fails
       await db.transaction(async () => {
-        const discordMessage = await discordChannel!.messages.fetch(msg.id);
-        await discordMessage.delete();
+	try {
+            const discordMessage = await discordChannel!.messages.fetch(msg.id)
+            await discordMessage.delete()
+        } catch (e: any) {
+             if (e.code === 10008) { // Discord message has already been deleted, skip
+             } else {
+                 throw e
+             }
+        }
         await msg.destroy();
       });
     }
