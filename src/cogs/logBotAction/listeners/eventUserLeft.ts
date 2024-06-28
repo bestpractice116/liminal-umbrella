@@ -26,6 +26,6 @@ export class logBotActionUserLeftListener extends Listener {
       .setTimestamp()
       .setFooter({ text: `ID: ${e.id}` });
 
-    await getChannelAndEmbed(this.container, exampleEmbed);
+    await getChannelAndEmbed(exampleEmbed);
   }
 }

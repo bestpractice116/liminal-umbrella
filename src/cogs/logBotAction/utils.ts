@@ -1,4 +1,4 @@
-import { Container } from "@sapphire/framework";
+import { container } from "@sapphire/framework";
 import { ChannelType, EmbedBuilder } from 'discord.js';
 
 export function channelNames() : string[] {
@@ -14,7 +14,19 @@ export function channelNames() : string[] {
   return channel_names;
 }
 
-export async function getChannelAndEmbed(container: Container, embed: EmbedBuilder) {
+export function getChannelAndSend(msg: string) {
+  const channel_names = channelNames();
+  for (const channel_name of channel_names) {
+    const channel = container.client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);
+    if (channel && channel.type == ChannelType.GuildText) {
+      channel.send(msg);
+    } else {
+        container.logger.warn("Cannot find the ${channel_name} channel, or not a text channel");
+    }
+  }
+}
+
+export async function getChannelAndEmbed(embed: EmbedBuilder) {
   const channel_names = channelNames();
   for (const channel_name of channel_names) {
     const channel = container.client.channels.cache.find(channel => channel.type == ChannelType.GuildText && channel.name === channel_name);

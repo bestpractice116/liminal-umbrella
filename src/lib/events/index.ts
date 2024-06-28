@@ -8,3 +8,4 @@ export * from './MessageAdded.js';
 export * from './MessageDeleted.js';
 export * from './MessageUpdated.js';
 export * from './ActivityCacheClear.js';
+export * from './MessageCacheClear.js'

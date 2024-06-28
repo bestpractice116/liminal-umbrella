@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
+import { getMessage } from '../../../lib/message.js';
 
 export class greetNewUsersUserJoinedListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -16,7 +17,8 @@ export class greetNewUsersUserJoinedListener extends Listener {
   @Sequential
   async run (e: UserJoined) {
     // Post welcome message for newly joined users
-    const id = await getChannelAndSend(this.container, `<@${e.id}> Welcome to Preston RPG Community.  If you have read the rules and altered your name as asked then an Admin will be along shortly to give access to the rest of the server.`);
+    const msg = await getMessage('NEW_USER_GREETING', {e})
+    const id = await getChannelAndSend(this.container, msg)
 
     // Stash a reference to that message so that we can find it when reacted to etc later. (not currently used for anything)
     if (id) {
