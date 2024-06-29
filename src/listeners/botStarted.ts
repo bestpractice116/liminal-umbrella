@@ -30,7 +30,7 @@ export class BotStartedEvent extends Listener {
             container.logger.info('start discord fetch of user');
             let discordUser = null;
             try {
-              discordUser = await e.guild.members.fetch(user.id);
+              discordUser = await e.guild.members.fetch(user.key);
             } catch (e: any) {
               if (e.code === 10007) {
                 await user.destroy();
@@ -45,8 +45,8 @@ export class BotStartedEvent extends Listener {
                 name: (discordUser.user.globalName || discordUser.user.username)!,
                 joinedDiscordAt: discordUser.user.createdAt.valueOf(),
               }
-              await this.updateUser(user.id, updates);
-              container.logger.info(`Updated user ${user.id}`);
+              await this.updateUser(user.key, updates);
+              container.logger.info(`Updated user ${user.key}`);
               count++;
             }
         }
@@ -74,7 +74,7 @@ export class BotStartedEvent extends Listener {
         updates,
         {
             where: {
-                id
+               key: id 
             },
         },
     );

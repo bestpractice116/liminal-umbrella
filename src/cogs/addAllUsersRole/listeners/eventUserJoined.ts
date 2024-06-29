@@ -26,7 +26,7 @@ export class addAllUsersRoleUserJoinedListener extends Listener {
       container.logger.error(`Cannot find 'AllUsers' role`);
       return;
     }
-    const role = await e.discordUser.guild.roles.resolve(dbRole.id);
+    const role = await e.discordUser.guild.roles.resolve(dbRole.key);
 
     // Add the role to the user who just joined.
     await e.discordUser.roles.add(role!);

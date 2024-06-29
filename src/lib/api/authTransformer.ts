@@ -18,8 +18,8 @@ class AuthTransformer {
       return { error: 'No user in login data' };
     }
     const u = await User.findOne({
-      where: {id: loginData.user.id},
-      attributes: ['id', 'avatarURL', 'nickname', 'left', 'bot'],
+      where: {key: loginData.user.id},
+      attributes: ['key', 'avatarURL', 'nickname', 'left', 'bot'],
       include: ['roles'],
     });
     if (!u) {

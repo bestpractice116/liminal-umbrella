@@ -27,8 +27,8 @@ export class addAllUsersRoleBotStartedListener extends Listener {
           container.logger.error(`Cannot find 'AllUsers' role`);
           return;
         }
-        const role = await e.guild.roles.resolve(dbRole.id);
-        const discordUser = await e.guild.members.fetch(user.id);
+        const role = await e.guild.roles.resolve(dbRole.key);
+        const discordUser = await e.guild.members.fetch(user.key);
         await discordUser.roles.add(role!);
       }
     }

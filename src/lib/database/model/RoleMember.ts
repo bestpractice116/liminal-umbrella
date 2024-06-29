@@ -9,9 +9,9 @@ import { Table, Attribute, NotNull } from '@sequelize/core/decorators-legacy';
 export default class RoleMember extends Model<InferAttributes<RoleMember>, InferCreationAttributes<RoleMember>> {
     @Attribute(DataTypes.STRING)
     @NotNull
-    declare userId: string;
+    declare userKey: string;
 
     @Attribute(DataTypes.STRING)
     @NotNull
-    declare roleId: string;
+    declare roleKey: string;
 }

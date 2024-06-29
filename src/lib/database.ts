@@ -95,17 +95,17 @@ export default class Database {
         const roles = await guild.roles.fetch();
         const dbRoles = await Role.rolesMap();
         const missingRoles = [];
-        for (const [id, _] of roles) {
-            const dbRole = dbRoles.get(id);
+        for (const [key, _] of roles) {
+            const dbRole = dbRoles.get(key);
             if (!dbRole) {
-                missingRoles.push(id);
+                missingRoles.push(key);
             }
-            dbRoles.delete(id);
+            dbRoles.delete(key);
         }
         for (const missingId of missingRoles) {
             const role = roles.get(missingId)!;
             await Role.create({
-                id: missingId,
+                key: missingId,
                 name: role.name,
                 mentionable: role.mentionable,
                 tags: JSON.stringify(role.tags||[]) || '',
@@ -116,8 +116,8 @@ export default class Database {
                 permissions: JSON.stringify(role.permissions.serialize()),
             });
         }
-        for (const [id, _] of dbRoles) {
-            const role = await Role.findByPk(id);
+        for (const [key, _] of dbRoles) {
+            const role = await Role.findByPk(key);
             await role?.destroy();
         }
     }
@@ -138,7 +138,7 @@ export default class Database {
         let exMember = true;
         if (!user) {
             user = await User.create({
-                id: guildMember.id,
+                key: guildMember.id,
                 ...userData,
             });
             exMember = false
@@ -229,7 +229,7 @@ export default class Database {
             } else {
                 await this.guildMemberUpdate(guildMember, dbMember);
                 if (JSON.stringify(Array.from(guildMember.roles.cache.keys()).sort()) 
-                    != JSON.stringify((await dbMember.getRoles()).map(role => role.id).sort())
+                    != JSON.stringify((await dbMember.getRoles()).map(role => role.key).sort())
                 ) {
                     await dbMember.setRoles(guildMember.roles.cache.keys());
                 }

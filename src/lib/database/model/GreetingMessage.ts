@@ -15,6 +15,6 @@ export default class GreetingMessage extends Model<InferAttributes<GreetingMessa
     @Index
     declare userId: string;
 
-    //@HasOne(() => User, /* foreign key */ 'id')
+    //@HasOne(() => User, /* foreign key */ 'key')
     //declare user: NonAttribute<User>;
 }

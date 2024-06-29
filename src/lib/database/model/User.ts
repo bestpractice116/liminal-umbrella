@@ -14,7 +14,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     @Attribute(DataTypes.STRING)
     @PrimaryKey
     @NotNull
-    declare id: string;
+    declare key: string;
 
     @Attribute(DataTypes.STRING)
     @NotNull
@@ -53,11 +53,11 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     })
     declare roles?: NonAttribute<Role[]>;
     declare getRoles: BelongsToManyGetAssociationsMixin<Role>;
-    declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['id']>;
-    declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['id']>;
-    declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['id']>;
-    declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['id']>;
-    declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['id']>;
+    declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['key']>;
+    declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['key']>;
+    declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;
+    declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['key']>;
+    declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['key']>;
     declare countBooks: BelongsToManyCountAssociationsMixin<Role>;
 
     @HasMany(() => PlannedGame, /* foreign key */ 'owner')
@@ -66,7 +66,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     static async activeUsersMap() : Promise<Map<string, User>> {
         const out = new Map();
         for (const user of await this.findAll({where: {left: false}})) {
-            out.set(user.id, user);
+            out.set(user.key, user);
         }
         return out;
     }

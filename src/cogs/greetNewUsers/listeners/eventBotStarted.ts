@@ -19,7 +19,7 @@ export class greetNewUsersBotStartedListener extends Listener {
     if (!channelName) {
       return;
     }
-		await this.container.database.syncChannelNewMembers(e.guild, channelName!);
+    await this.container.database.syncChannelNewMembers(e.guild, channelName!);
   }
 }
 

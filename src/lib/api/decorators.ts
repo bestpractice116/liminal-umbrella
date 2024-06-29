@@ -18,8 +18,8 @@ class AuthDecorators {
   private static async getUser(request: ApiRequest): Promise<User | null> {
     if (!request.auth) return Promise.resolve(null);
     const u = await User.findOne({
-      where: {id: request.auth.id},
-      attributes: ['id', 'avatarURL', 'nickname'],
+      where: {key: request.auth.id},
+      attributes: ['key', 'avatarURL', 'nickname'],
       include: ['roles'],
     })
     if (u) {

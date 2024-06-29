@@ -8,7 +8,7 @@ export default class Role extends Model<InferAttributes<Role>, InferCreationAttr
     @Attribute(DataTypes.STRING)
     @NotNull
     @PrimaryKey
-    declare id: string;
+    declare key: string;
 
     @Attribute(DataTypes.STRING)
     @NotNull
@@ -50,7 +50,7 @@ export default class Role extends Model<InferAttributes<Role>, InferCreationAttr
         const out = new Map();
         const roles = await Role.findAll();
         for (const role of roles) {
-            out.set(role.id, role);
+            out.set(role.key, role);
         }
         return out;
     }
