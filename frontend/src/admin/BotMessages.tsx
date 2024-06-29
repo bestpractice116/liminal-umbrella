@@ -16,13 +16,11 @@ export default function AdminBotMessages() {
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
         editable: false,
       },
       {
         title: 'Message',
         dataIndex: 'value',
-        key: 'value',
         editable: true,
       },
     ];

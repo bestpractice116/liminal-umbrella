@@ -16,11 +16,11 @@ export abstract class CR extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
-        const stuffs = await this.getModel().findAll({ where: this.getRetrieveWhere() });
+        const items = await this.getModel().findAll({ where: this.getRetrieveWhere() });
         const schemaKeys = getSchemaKeys(this.getSchema().read);
-        response.json(stuffs.map((stuff: any) => schemaKeys.reduce((acc, cv) => {
+        response.json(items.map((item: any) => schemaKeys.reduce((acc, cv) => {
             const out = {...acc} as any
-            out[cv] = stuff.get(cv)
+            out[cv] = item.get(cv)
             return out
         }, {})))
     }

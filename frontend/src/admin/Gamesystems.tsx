@@ -23,13 +23,11 @@ export default function AdminGameSystems() {
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
         editable: true,
       },
       {
         title: 'Description',
         dataIndex: 'description',
-        key: 'description',
         editable: true,
       },
       {

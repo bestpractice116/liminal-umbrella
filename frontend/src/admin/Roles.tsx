@@ -16,13 +16,17 @@ export default function AdminRoles() {
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
         editable: false,
+      },
+      {
+        title: 'Mentionable',
+        dataIndex: 'mentionable',
+        editable: false,
+        render: (mentionable: boolean) => mentionable ? 'Yes' : 'No'
       },
     ];
 
   const columns = getColumns<RoleListItem>(defaultColumns, handleSave);
-
   return <WrapCRUD<RoleListItem> result={result}>
     <>
       <Spin spinning={isMutating} fullscreen />

@@ -23,7 +23,6 @@ export default function AdminBotPlaying() {
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
         editable: true,
       },
       {

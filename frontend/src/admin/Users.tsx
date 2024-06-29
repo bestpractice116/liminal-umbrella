@@ -16,7 +16,16 @@ export default function AdminUsers() {
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
+        editable: false,
+      },
+      {
+        title: 'Username',
+        dataIndex: 'username',
+        editable: false,
+      },
+      {
+        title: 'Nickname',
+        dataIndex: 'nickname',
         editable: false,
       },
     ];
