@@ -17,7 +17,7 @@ export abstract class CR extends Route {
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
         const stuffs = await this.getModel().findAll({ where: this.getRetrieveWhere() });
-        const schemaKeys = getSchemaKeys(this.getSchema().update);
+        const schemaKeys = getSchemaKeys(this.getSchema().read);
         response.json(stuffs.map((stuff: any) => schemaKeys.reduce((acc, cv) => {
             const out = {...acc} as any
             out[cv] = stuff.get(cv)
@@ -40,7 +40,7 @@ export abstract class CR extends Route {
         }
         const item = await this.getModel().create(data);
         this.onMuatation()
-        const schemaKeys = getSchemaKeys(this.getSchema().update);
+        const schemaKeys = getSchemaKeys(this.getSchema().read);
         const datum = schemaKeys.reduce((acc, cv) => { const i = {...acc} as any;
             i[cv] = item.get(cv);
             return i
@@ -78,11 +78,15 @@ export abstract class UD extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.POST](request: ApiRequest, response: ApiResponse) {
+      const updateSchema = this.getSchema().update
+      if (!updateSchema) {
+          return response.notFound()
+      }
       const item = await this.findItem(request.params, response);
       if (!item) {
           return;
       }
-      const { success, error, data } = this.getSchema().update.safeParse(request.body);
+      const { success, error, data } = updateSchema.safeParse(request.body);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return;
@@ -97,10 +101,10 @@ export abstract class UD extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
-      const item = await this.findItem(request.params, response);
-      if (!item) {
-          return;
-      }
+        const item = await this.findItem(request.params, response);
+        if (!item) {
+            return;
+        }
         await item.destroy();
         this.onMuatation()
         response.json({status: "deleted", datum: request.params});

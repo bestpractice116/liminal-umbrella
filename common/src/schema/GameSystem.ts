@@ -1,5 +1,4 @@
 import * as z from 'zod';
-import { createSchemaFieldRule } from 'antd-zod';
 import { SchemaBundle } from './types.js';
 
 const create = z.object({
@@ -12,19 +11,18 @@ const create = z.object({
   description: z.string({
     required_error: "Description is required",
     invalid_type_error: "Description must be a string",
-}).trim().min(2, { message: "Description must be at least 2 characters long"
-}).max(100, { message: "Description must be less than 100 characters"
-}),
+  }).trim().min(2, { message: "Description must be at least 2 characters long"
+  }).max(100, { message: "Description must be less than 100 characters"
+  }),
 });
 const del = z.object({
   key: z.coerce.number().int().positive(),
 })
 const update = create.merge(del)
-const formRule = createSchemaFieldRule(update)
 
 export const GameSystemSchema: SchemaBundle = {
   create: create.readonly(),
   update: update.readonly(),
   delete: del.readonly(),
-  formRule,
+  read: update.readonly(),
 }

@@ -4,10 +4,10 @@ import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema } from 'common/schema';
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import * as z from 'zod';
 
-interface FetchBotMessageItem { key: number, name: string, value: string }
-
-const components = getTableComponents(BotMessageSchema.formRule);
+type FetchBotMessageItem = z.infer<typeof BotMessageSchema.read>
+const components = getTableComponents(BotMessageSchema);
 
 export default function AdminBotMessages() {
   const { result, isMutating, handleSave } = getQueries<FetchBotMessageItem>('/api/botmessages', 'botmessages')

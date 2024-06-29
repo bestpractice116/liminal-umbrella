@@ -3,14 +3,14 @@ import Spin from 'antd/es/spin';
 import Divider from 'antd/es/divider'
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { RoleSchema } from 'common/schema';
+import * as z from 'zod';
 
-interface FetchRoleItem { key: number, name: string }
+type RoleListItem = z.infer<typeof RoleSchema.read>
 
-const formRule = RoleSchema.formRule
-const components = getTableComponents(formRule);
+const components = getTableComponents(RoleSchema);
 
 export default function AdminRoles() {
-  const { result, isMutating, handleSave } = getQueries<FetchRoleItem>('/api/role', 'role')
+  const { result, isMutating, handleSave } = getQueries<RoleListItem>('/api/role', 'role')
 
   const defaultColumns: DefaultColumns = [
       {
@@ -21,9 +21,9 @@ export default function AdminRoles() {
       },
     ];
 
-  const columns = getColumns<FetchRoleItem>(defaultColumns, handleSave);
+  const columns = getColumns<RoleListItem>(defaultColumns, handleSave);
 
-  return <WrapCRUD<FetchRoleItem> result={result}>
+  return <WrapCRUD<RoleListItem> result={result}>
     <>
       <Spin spinning={isMutating} fullscreen />
       <div>

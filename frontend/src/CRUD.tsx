@@ -9,8 +9,11 @@ import Button from 'antd/es/button';
 import Spin from 'antd/es/spin';
 import { EditOutlined } from '@ant-design/icons';
 import * as z from 'zod';
-import { RuleRender, FormRef } from 'rc-field-form/es/interface.js'
+import { FormRef } from 'rc-field-form/es/interface.js'
 import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
+import { SchemaBundle } from 'common/schema';
+import { getZObject } from 'common'
+import { createSchemaFieldRule } from 'antd-zod';
 
 type InputRef = GetRef<typeof Input>
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -51,7 +54,8 @@ export interface TableComponents {
   }
 }
 
-export function getTableComponents(formRule: RuleRender) {
+export function getTableComponents(schema: SchemaBundle) {
+  const formRule = createSchemaFieldRule(getZObject(schema.update || schema.read))
     const EditableContext = getEditableContext()
     const EditableRow: FC<EditableRowProps> = ({index, ...props}) => {
         const [form] = Form.useForm();
@@ -228,24 +232,24 @@ export function getQueries<APIRow>(apipath: string, querykey: string) {
     return { result, isMutating, handleDelete, handleSave, createMutation }
 }
 
-  export function AddRow({createMutation, children}: {createMutation: UseMutationResult<void, Error, any, void>, children: React.ReactNode}) {
-    const [amCreating, setCreating] = useState(false)
-    if (!amCreating) {
-        return <Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
-        Add a row
-        </Button>
-    }
-    return <Form onFinish={(values) => {
-        createMutation.mutate(values)
-        setCreating(false)
-    }}>
-        <>{children}</>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
-            Submit
-        </Button>
-        </Form.Item>
-    </Form>
+export function AddRow({createMutation, children}: {createMutation: UseMutationResult<void, Error, any, void>, children: React.ReactNode}) {
+  const [amCreating, setCreating] = useState(false)
+  if (!amCreating) {
+      return <Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+      Add a row
+      </Button>
+  }
+  return <Form onFinish={(values) => {
+      createMutation.mutate(values)
+      setCreating(false)
+  }}>
+      <>{children}</>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+      <Button type="primary" htmlType="submit">
+          Submit
+      </Button>
+      </Form.Item>
+  </Form>
 }
 
 export function getColumns<Item>(columns: ColumnTypeArray, handleSave: SaveHandler<Item>) {

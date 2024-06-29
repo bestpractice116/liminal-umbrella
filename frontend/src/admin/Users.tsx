@@ -3,15 +3,14 @@ import Spin from 'antd/es/spin';
 import Divider from 'antd/es/divider'
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { UserSchema } from 'common/schema';
+import * as z from 'zod';
 
+type UserListItem = z.infer<typeof UserSchema.read>
 
-interface FetchUserItem { key: number, name: string }
-
-const formRule = UserSchema.formRule
-const components = getTableComponents(formRule);
+const components = getTableComponents(UserSchema);
 
 export default function AdminUsers() {
-  const { result, isMutating, handleSave } = getQueries<FetchUserItem>('/api/user', 'user')
+  const { result, isMutating, handleSave } = getQueries<UserListItem>('/api/user', 'user')
 
   const defaultColumns: DefaultColumns = [
       {
@@ -22,9 +21,9 @@ export default function AdminUsers() {
       },
     ];
 
-  const columns = getColumns<FetchUserItem>(defaultColumns, handleSave);
+  const columns = getColumns<UserListItem>(defaultColumns, handleSave);
 
-  return <WrapCRUD<FetchUserItem> result={result}>
+  return <WrapCRUD<UserListItem> result={result}>
     <>
       <Spin spinning={isMutating} fullscreen />
       <div>

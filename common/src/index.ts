@@ -5,3 +5,10 @@ export function getSchemaKeys(schema: z.ZodObject<any>|z.ZodReadonly<any>): stri
     }
     return Object.keys(schema.shape)
 }
+
+export function getZObject(schema: z.ZodObject<any>|z.ZodReadonly<any>): z.ZodObject<any> {
+    if (schema instanceof z.ZodReadonly) {
+        return schema.unwrap()
+    }
+    return schema
+}

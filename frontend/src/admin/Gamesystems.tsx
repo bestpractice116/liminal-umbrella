@@ -7,12 +7,15 @@ import Divider from 'antd/es/divider';
 import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema } from 'common/schema';
+import { getZObject } from 'common'
 import { getTableComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
+import * as z from 'zod';
+import { createSchemaFieldRule } from 'antd-zod';
 
-interface GameSystemListItem { key: number, name: string, description: string }
+type GameSystemListItem = z.infer<typeof GameSystemSchema.read>
 
-const components = getTableComponents(GameSystemSchema.formRule);
-
+const components = getTableComponents(GameSystemSchema);
+const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!))
 export default function AdminGameSystems() {
   const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem')
 
@@ -73,14 +76,14 @@ export default function AdminGameSystems() {
         <Form.Item
             label="Name"
             name="name"
-            rules={[GameSystemSchema.formRule]}
+            rules={[createFormRule]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Description"
             name="description"
-            rules={[GameSystemSchema.formRule]}
+            rules={[createFormRule]}
           >
             <Input />
           </Form.Item>
