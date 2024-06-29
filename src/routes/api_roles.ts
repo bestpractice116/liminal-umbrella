@@ -8,7 +8,7 @@ export class ApiBotpMessagesList extends CR {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
       super(context, {
         ...options,
-        route: 'api/roles'
+        route: 'api/role'
       });
     }
 
