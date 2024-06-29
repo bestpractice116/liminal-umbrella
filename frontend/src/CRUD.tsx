@@ -44,7 +44,14 @@ interface EditableRowProps {
     index: number;
 }
 
-export function getComponents(formRule: RuleRender) {
+export interface TableComponents {
+  body: {
+    row: FC<EditableRowProps>;
+    cell: FC<EditableCellProps<Item>>;
+  }
+}
+
+export function getTableComponents(formRule: RuleRender) {
     const EditableContext = getEditableContext()
     const EditableRow: FC<EditableRowProps> = ({index, ...props}) => {
         const [form] = Form.useForm();

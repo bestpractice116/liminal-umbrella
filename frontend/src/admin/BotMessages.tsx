@@ -3,11 +3,11 @@ import Spin from 'antd/es/spin';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema } from 'common/schema';
-import { getComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 
 interface FetchBotMessageItem { key: number, name: string, value: string }
 
-const components = getComponents(BotMessageSchema.formRule);
+const components = getTableComponents(BotMessageSchema.formRule);
 
 export default function AdminBotMessages() {
   const { result, isMutating, handleSave } = getQueries<FetchBotMessageItem>('/api/botmessages', 'botmessages')
@@ -43,6 +43,9 @@ export default function AdminBotMessages() {
         Unbalanced brackets (<code>{leftBracket}</code> without the <code>{rightBracket}</code>) will cause errors.</>}
       />
       <Divider />
+      <div>
+        This page is for editing the messages which the bot can send into Discord. Any changes made here will be reflected in the bot's behavior.
+      </div>
       <Table
         components={components}
         rowClassName={() => 'editable-row'}

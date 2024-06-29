@@ -7,11 +7,11 @@ import Divider from 'antd/es/divider';
 import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema } from 'common/schema';
-import { getComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
 
 interface GameSystemListItem { key: number, name: string, description: string }
 
-const components = getComponents(GameSystemSchema.formRule);
+const components = getTableComponents(GameSystemSchema.formRule);
 
 export default function AdminGameSystems() {
   const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem')

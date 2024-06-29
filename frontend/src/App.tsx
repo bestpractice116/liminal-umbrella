@@ -35,18 +35,18 @@ function TopMenu(){
       key: 'admin',
       label: 'Admin',
       children: [
-/*        {
+        /*{
+          key: 'admin/cogs',
+          label: 'Cogs',
+        },*/
+        {
           key: 'admin/users',
           label: 'Users',
         },
         {
-          key: 'admin/cogs',
-          label: 'Cogs',
-        },
-        {
           key: 'admin/roles',
           label: 'Roles',
-        },*/
+        },
         {
           key: 'admin/gamesystems',
           label: 'Gamesystems',
@@ -102,12 +102,12 @@ function PageContent() {
             <Route path="/" element={<ProtectedRoute />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/" element={<ProtectedRoute role="Admin" />}>
-                <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/cogs" element={<AdminCogs />} />
-                <Route path="/admin/roles" element={<AdminRoles />} />
                 <Route path="/admin/gamesystems" element={<AdminGamesystems />} />
                 <Route path="/admin/botplaying" element={<AdminBotplaying />} />
                 <Route path="/admin/botmessages" element={<AdminBotMessages />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/roles" element={<AdminRoles />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

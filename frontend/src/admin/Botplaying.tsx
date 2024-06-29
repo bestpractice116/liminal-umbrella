@@ -6,11 +6,11 @@ import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider'
 import { DeleteOutlined } from '@ant-design/icons';
 import { ActivitySchema, ActivityType } from 'common/schema';
-import { getComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 
 interface FetchBotActivityItem { key: number, name: string, type: ActivityType }
 
-const components = getComponents(ActivitySchema.formRule);
+const components = getTableComponents(ActivitySchema.formRule);
 
 export default function AdminBotPlaying() {
   const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<FetchBotActivityItem>('/api/botplaying', 'bot_playing')
