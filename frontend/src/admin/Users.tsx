@@ -1,6 +1,7 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Divider from 'antd/es/divider'
+import Tag from 'antd/es/tag'
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { UserSchema } from 'common/schema';
 import * as z from 'zod';
@@ -33,6 +34,14 @@ export default function AdminUsers() {
         title: 'Nickname',
         dataIndex: 'nickname',
         editable: false,
+      },
+      {
+        title: 'Roles',
+        dataIndex: 'roles',
+        editable: false,
+        render: (roles: string[]) => roles.filter(role => role !== '@everyone' && role !== 'AllUsers').map(role => <Tag color={'geekblue'} key={role}>
+          {role}
+        </Tag>),
       },
     ];
 

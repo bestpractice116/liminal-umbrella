@@ -21,4 +21,7 @@ export class ApiBotpMessagesList extends CR {
     override findAllInclude() {
         return ['roles']
     }
+    override getRetrieveWhere() {
+        return { bot: false }
+    }
 }
