@@ -15,14 +15,14 @@ const create = z.object({
   }).max(100, { message: "Description must be less than 100 characters"
   }),
 });
-const del = z.object({
+const find = z.object({
   key: z.coerce.number().int().positive(),
 })
-const update = create.merge(del)
 
 export const GameSystemSchema: SchemaBundle = {
   create: create.readonly(),
-  update: update.readonly(),
-  delete: del.readonly(),
-  read: update.readonly(),
+  update: create.readonly(),
+  find: find.readonly(),
+  read: find.merge(create).readonly(),
+  delete: true,
 }

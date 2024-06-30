@@ -17,15 +17,15 @@ const create = z.object({
   }),
   type: z.nativeEnum(ActivityType),
 });
-const del = z.object({
+const find = z.object({
   key: z.coerce.number().int().positive(),
 })
-const update = create.merge(del)
-const read = update
+const read = create.merge(find)
 
 export const ActivitySchema: SchemaBundle = {
   create: create.readonly(),
-  update: update.readonly(),
-  delete: del.readonly(),
+  update: create.readonly(),
+  find: find.readonly(),
+  delete: true,
   read: read.readonly(),
 }

@@ -73,11 +73,11 @@ export abstract class UD extends Route {
     onMuatation() {}
 
     protected async findItem(params: ApiRequest['params'], response: ApiResponse): Promise<any | null> {
-        const deleteSchema = this.getSchema().delete
-        if (!deleteSchema) {
+        const findSchema = this.getSchema().find
+        if (!findSchema) {
             return response.notFound()
         }
-        const { success, error, data } = deleteSchema.safeParse(params);
+        const { success, error, data } = findSchema.safeParse(params);
         if (!success) {
             response.status(HttpCodes.BadRequest).json({status: "error", error: error.issues });
             return null;
@@ -116,6 +116,10 @@ export abstract class UD extends Route {
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
+        const deleteSchema = this.getSchema().delete
+        if (!deleteSchema) {
+          return response.notFound()
+        }
         const item = await this.findItem(request.params, response);
         if (!item) {
             return;
