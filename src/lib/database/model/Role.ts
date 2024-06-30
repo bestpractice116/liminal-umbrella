@@ -1,6 +1,6 @@
 //CREATE TABLE IF NOT EXISTS roles (id text, name text, createdTimestamp integer, hoist integer, mentionable integer, tags string, position integer, rawPosition integer, hexColor text, unicodeEmoji text, icon text, permissions text)
 
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute, BelongsToManyGetAssociationsMixin } from '@sequelize/core';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute } from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey  } from '@sequelize/core/decorators-legacy';
 import User from './User.js';
 
@@ -43,8 +43,6 @@ export default class Role extends Model<InferAttributes<Role>, InferCreationAttr
     declare permissions: string;
 
     declare users?: NonAttribute<User[]>;
-    declare getUsers: BelongsToManyGetAssociationsMixin<User>;
-
 
     static async rolesMap() : Promise<Map<string, Role>> {
         const out = new Map();

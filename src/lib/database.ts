@@ -229,7 +229,7 @@ export default class Database {
             } else {
                 await this.guildMemberUpdate(guildMember, dbMember);
                 if (JSON.stringify(Array.from(guildMember.roles.cache.keys()).sort()) 
-                    != JSON.stringify((await dbMember.getRoles()).map(role => role.key).sort())
+                    != JSON.stringify((await dbMember.roles || []).map(role => role.key).sort())
                 ) {
                     await dbMember.setRoles(guildMember.roles.cache.keys());
                 }

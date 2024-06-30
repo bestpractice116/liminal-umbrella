@@ -4,6 +4,15 @@ import { getSchemaKeys } from 'common';
 import { AuthenticatedAdmin } from '../api/decorators.js';
 import {Sequential} from '../utils.js';
 
+type SequelizeInclude = string | {
+    association: string,
+    required?: boolean,
+    separate?: boolean,
+    include?: SequelizeInclude[],
+    right?: boolean,
+    where?: any,
+}
+
 export abstract class CR extends Route {
     abstract getModel(): any;
     abstract getSchema(): SchemaBundle;
@@ -12,20 +21,23 @@ export abstract class CR extends Route {
     }
     onMuatation() {}
 
+    findAllInclude(): SequelizeInclude[] {
+        return []
+    }
+
     // Get current list
     @AuthenticatedAdmin()
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
-        const items = await this.getModel().findAll({ where: this.getRetrieveWhere() });
+        const items = await this.getModel().findAll({ where: this.getRetrieveWhere(), include: this.findAllInclude() });
         const schemaKeys = getSchemaKeys(this.getSchema().read);
         // FIXME - any
-        response.json(await Promise.all(items.map(async (item: any) => {
-            await schemaKeys.reduce(async (acc, cv) => {
+        response.json(await Promise.all(items.map(async (item: any) => await schemaKeys.reduce(async (acc, cv) => {
                 const out = {...(await acc)} as any
                 out[cv] = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv)
                 return out
             }, {})
-        })))
+        )))
     }
 
     // Add a new one

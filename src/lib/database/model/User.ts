@@ -1,6 +1,6 @@
 import {
     DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute,
-    BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin,
+    BelongsToManySetAssociationsMixin,
     BelongsToManyAddAssociationsMixin, BelongsToManyRemoveAssociationsMixin,
     BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin,
     BelongsToManyCountAssociationsMixin
@@ -52,7 +52,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         through: () => RoleMember,
     })
     declare roles?: NonAttribute<Role[]>;
-    declare getRoles: BelongsToManyGetAssociationsMixin<Role>;
     declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['key']>;
     declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['key']>;
     declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;
@@ -62,7 +61,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     async CRUDRead(key: string) {
         if (key === 'roles') {
-            return (await this.getRoles()).map((role: Role) => role.name);
+            return (await this.roles || []).map((role: Role) => role.name);
         }
         return this.get(key)
     }
@@ -72,7 +71,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     static async activeUsersMap() : Promise<Map<string, User>> {
         const out = new Map();
-        for (const user of await this.findAll({where: {left: false}})) {
+        for (const user of await this.findAll({where: {left: false}, include: ['roles']})) {
             out.set(user.key, user);
         }
         return out;

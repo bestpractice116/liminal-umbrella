@@ -18,4 +18,7 @@ export class ApiBotpMessagesList extends CR {
     getSchema(): SchemaBundle {
       return UserSchema
     }
+    override findAllInclude() {
+        return ['roles']
+    }
 }

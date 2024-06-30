@@ -19,7 +19,7 @@ export class addAllUsersRoleBotStartedListener extends Listener {
       where: { bot: false, left: false },
       include: ['roles'],
     })) {
-      const roles = await user.getRoles();
+      const roles = await user.roles || [];
       if (!roles.find(role => role.name == 'AllUsers')) {
         container.logger.info(`Pre-existing user ${user.nickname} is missing 'AllUsers' Role - adding it.`);
         const dbRole = await Role.findOne({where: { name: 'AllUsers' }});
