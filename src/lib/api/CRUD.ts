@@ -13,6 +13,16 @@ type SequelizeInclude = string | {
     where?: any,
 }
 
+// FIXME - any
+async function getReadObjectFromDbObject(that: any, item: any) {
+    const schemaKeys = getSchemaKeys(that.getSchema().read)
+    return schemaKeys.reduce(async (acc, cv) => {
+        const out = {...(await acc)} as any
+        out[cv] = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv)
+        return out
+    }, {})
+}
+
 export abstract class CR extends Route {
     abstract getModel(): any;
     abstract getSchema(): SchemaBundle;
@@ -30,14 +40,8 @@ export abstract class CR extends Route {
     @Sequential
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
         const items = await this.getModel().findAll({ where: this.getRetrieveWhere(), include: this.findAllInclude() });
-        const schemaKeys = getSchemaKeys(this.getSchema().read);
         // FIXME - any
-        response.json(await Promise.all(items.map(async (item: any) => await schemaKeys.reduce(async (acc, cv) => {
-                const out = {...(await acc)} as any
-                out[cv] = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv)
-                return out
-            }, {})
-        )))
+        response.json(await Promise.all(items.map(async (item: any) => await getReadObjectFromDbObject(this, item))))
     }
 
     // Add a new one
@@ -55,11 +59,7 @@ export abstract class CR extends Route {
         }
         const item = await this.getModel().create(data);
         this.onMuatation()
-        const schemaKeys = getSchemaKeys(this.getSchema().read);
-        const datum = schemaKeys.reduce((acc, cv) => { const i = {...acc} as any;
-            i[cv] = item.get(cv);
-            return i
-        }, {})
+        const datum = await getReadObjectFromDbObject(this, item)
         response.status(HttpCodes.Created).json({status: "ok", datum });
     }
 }
@@ -110,7 +110,8 @@ export abstract class UD extends Route {
         item.set(data);
         await item.save();
         this.onMuatation()
-        response.json({status: "ok", datum: data});
+        const datum = await getReadObjectFromDbObject(this, item)
+        response.json({status: "ok", datum});
     }
 
     @AuthenticatedAdmin()
