@@ -58,7 +58,14 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;
     declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['key']>;
     declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['key']>;
-    declare countBooks: BelongsToManyCountAssociationsMixin<Role>;
+    declare countRoles: BelongsToManyCountAssociationsMixin<Role>;
+
+    async CRUDRead(key: string) {
+        if (key === 'roles') {
+            return (await this.getRoles()).map((role: Role) => role.name);
+        }
+        return this.get(key)
+    }
 
     @HasMany(() => PlannedGame, /* foreign key */ 'owner')
     declare plannedGames?: NonAttribute<PlannedGame>;

@@ -6,6 +6,7 @@ const read = z.object({
     username: z.string({}),
     nickname: z.string({}),
     avatarURL: z.string({}),
+    roles: z.array(z.string()),
     key: z.coerce.number().int().positive(),
 })
 

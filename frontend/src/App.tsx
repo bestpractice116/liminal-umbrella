@@ -14,8 +14,9 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { MaybeDebug, DebugContext } from "./Debug"
 import { ProtectedRoute } from "./ProtectedRoute"
 import HomePage from "./Homepage"
-import { AuthProvider, isAuthenticated, isAdmin, LoginButton, isAuthFetching, LogoutButton } from "./Auth"
+import { AuthProvider, isAuthenticated, isAdmin, isAuthFetching, LogoutButton } from "./Auth"
 
+import Login from "./Login"
 import AdminUsers from "./admin/Users"
 import AdminCogs from "./admin/Cogs"
 import AdminRoles from "./admin/Roles"
@@ -98,7 +99,7 @@ function TopMenu(){
 
 function PageContent() {
   return  <Routes>
-            <Route path="/login" element={<LoginButton />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/" element={<ProtectedRoute role="Admin" />}>

@@ -18,11 +18,14 @@ export abstract class CR extends Route {
     public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
         const items = await this.getModel().findAll({ where: this.getRetrieveWhere() });
         const schemaKeys = getSchemaKeys(this.getSchema().read);
-        response.json(items.map((item: any) => schemaKeys.reduce((acc, cv) => {
-            const out = {...acc} as any
-            out[cv] = item.get(cv)
-            return out
-        }, {})))
+        // FIXME - any
+        response.json(await Promise.all(items.map(async (item: any) => {
+            await schemaKeys.reduce(async (acc, cv) => {
+                const out = {...(await acc)} as any
+                out[cv] = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv)
+                return out
+            }, {})
+        })))
     }
 
     // Add a new one
