@@ -14,6 +14,12 @@ export default function AdminUsers() {
 
   const defaultColumns: DefaultColumns = [
       {
+        title: 'Avatar',
+        dataIndex: 'avatarURL',
+        editable: false,
+        render: (avatarURL: string) => <img src={avatarURL} style={{margin: 0, padding: 0, width: 50}} alt="avatar" />,
+      },
+      {
         title: 'Name',
         dataIndex: 'name',
         editable: false,
