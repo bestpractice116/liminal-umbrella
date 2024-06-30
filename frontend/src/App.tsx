@@ -8,7 +8,7 @@ import Button from "antd/es/button"
 import { UserOutlined } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
 import Tooltip from 'antd/es/tooltip'
-import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 
 import { MaybeDebug, DebugContext } from "./Debug"
@@ -28,6 +28,9 @@ import { ErrorFallback, ErrorBoundary } from "./ErrorFallback";
 
 function TopMenu(){
   const { debug, setDebug } = useContext(DebugContext);
+  const location = useLocation();
+  const { pathname } = location;
+
   const items : any = [];
 
   const admin = isAdmin()
@@ -41,23 +44,23 @@ function TopMenu(){
           label: 'Cogs',
         },*/
         {
-          key: 'admin/users',
+          key: '/admin/users',
           label: 'Users',
         },
         {
-          key: 'admin/roles',
+          key: '/admin/roles',
           label: 'Roles',
         },
         {
-          key: 'admin/gamesystems',
+          key: '/admin/gamesystems',
           label: 'Gamesystems',
         },
         {
-          key: 'admin/botplaying',
+          key: '/admin/botplaying',
           label: 'Bot Playing',
         },
         {
-          key: 'admin/botmessages',
+          key: '/admin/botmessages',
           label: 'Bot Messages',
         },
       ],
@@ -81,14 +84,14 @@ function TopMenu(){
     setDebug(!debug);
   }
   return <Header style={{ display: 'flex', alignItems: 'center' }}>
-    <Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '20px' }} shape="square" size="large" className="avatarIcon" />
+    <Link to="/" children={<Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '20px' }} shape="square" size="large" className="avatarIcon" />} />
     <Menu
       theme="dark"
       mode="horizontal"
-      defaultSelectedKeys={['2']}
       items={items}
       style={{ flex: 1, minWidth: 0 }}
       onClick={handleMenuClick}
+      selectedKeys={[pathname]}
     />
     {admin ? debug ?
       <Button danger type="primary" onClick={onDebugChange}>Debug Off</Button>
