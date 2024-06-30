@@ -5199,6 +5199,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.2.1"
     antd: "npm:^5.18.1"
     antd-zod: "npm:^5.1.0"
+    dayjs: "npm:^1.11.11"
     eslint: "npm:^8.57.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.6"
