@@ -12,7 +12,7 @@ export class verboseLogTickFiveListener extends Listener {
     });
   }
   run (_: TickFive) {
-    container.logger.info("verboseLog cog - tickFive");
+    //container.logger.info("verboseLog cog - tickFive");
     //getChannelAndSend(this.container, `Tick: ${e.firedAt}`)
   }
 }

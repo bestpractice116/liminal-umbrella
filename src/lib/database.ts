@@ -345,7 +345,6 @@ export default class Database {
     }
 
     async setHighestWatermark(watermark: number) {
-        container.logger.debug(`Set highest watermark to ${watermark}`);
         await this.db!.transaction(async () => {
             await Watermark.create({time: watermark});
             await Watermark.destroy({
