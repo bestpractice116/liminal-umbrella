@@ -9,7 +9,6 @@ export class DiscordRedirectRoute extends Route {
   }
 
   public [methods.GET](request: ApiRequest, response: ApiResponse) {
-    console.log(request.query)
     const redirect_uri = request.query.redirect_uri as string;
     if (!redirect_uri) {
         return response.badRequest()
@@ -22,7 +21,6 @@ export class DiscordRedirectRoute extends Route {
         ['client_id', process.env.DISCORD_APPLICATION_ID]
     ]).toString();
     response.statusCode = 302;
-    console.log(oauthURL.toString())
     response.setHeader('Location', oauthURL.toString());
     response.end('')
   }
