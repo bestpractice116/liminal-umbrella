@@ -14,7 +14,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { MaybeDebug, DebugContext } from "./Debug"
 import { ProtectedRoute } from "./ProtectedRoute"
 import HomePage from "./Homepage"
-import { AuthProvider, isAuthenticated, isAdmin, isAuthFetching, LogoutButton } from "./Auth"
+import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, LogoutButton } from "./Auth"
 
 import Login from "./Login"
 import AdminUsers from "./admin/Users"
@@ -23,6 +23,8 @@ import AdminRoles from "./admin/Roles"
 import AdminGamesystems from "./admin/Gamesystems"
 import AdminBotplaying from "./admin/Botplaying"
 import AdminBotMessages from "./admin/BotMessages"
+import NewGame from './dm/NewGame'
+import ViewGames from './dm/ViewGames'
 import NotFound from "./NotFound";
 import { ErrorFallback, ErrorBoundary } from "./ErrorFallback";
 
@@ -33,6 +35,7 @@ function TopMenu(){
 
   const items : any = [];
 
+  const beta = isBotBetaTester()
   const admin = isAdmin()
   if (admin) {
     items.push({
@@ -65,6 +68,24 @@ function TopMenu(){
         },
       ],
     });
+  }
+
+  const dm = isDM()
+  if (dm && beta) {
+    items.push({
+      key: 'dm',
+      label: 'DM',
+      children: [
+        {
+          key: '/dm/newgame',
+          label: 'New Game',
+        },
+        {
+          key: '/dm/viewgame',
+          label: 'View Games',
+        },
+      ]
+    })
   }
 
   const auth = isAuthenticated();
@@ -112,6 +133,10 @@ function PageContent() {
                 <Route path="/admin/botmessages" element={<AdminBotMessages />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/roles" element={<AdminRoles />} />
+              </Route>
+              <Route path="/" element={<ProtectedRoute isBotBetaTester role="Dungeon Master" />}>
+                <Route path="/dm/newgame" element={<NewGame />} />
+                <Route path="/dm/viewgame" element={<ViewGames />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

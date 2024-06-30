@@ -3,11 +3,12 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { AuthContext } from './Auth';
 
 type Props = {
-  redirectPath?: string;
+  redirectPath?: string
   role?: string
+  isBotBetaTester?: boolean
 };
 
-export const ProtectedRoute: FC<Props> = ({ role, redirectPath = "/login" }) => {
+export const ProtectedRoute: FC<Props> = ({ role, isBotBetaTester = false, redirectPath = "/login" }) => {
   const auth = useContext(AuthContext);
   const location = useLocation();
   const redirectTo = location.pathname + location.search + location.hash
@@ -19,6 +20,9 @@ export const ProtectedRoute: FC<Props> = ({ role, redirectPath = "/login" }) => 
     return null
   }
 
+  if (isBotBetaTester && (!auth.data.roles.includes('BotBetaTester')&&!auth.data.roles.includes('Admin'))) {
+    return <Navigate to={redirectPath} replace state={{ redirectTo }} />
+  }
   if (role && (!auth.data.roles.includes(role)&&!auth.data.roles.includes('Admin'))) {
     return <Navigate to={redirectPath} replace state={{ redirectTo }} />
   }

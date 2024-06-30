@@ -126,6 +126,22 @@ export function isAdmin() {
   return !!auth.roles.find((e: any) => e === 'Admin');
 }
 
+export function isDM() {
+  const auth = isAuthenticated();
+  if (!auth) {
+    return false;
+  }
+  return !!auth.roles.find((e: any) => e === 'Admin' || e === 'Dungeon Master');
+}
+
+export function isBotBetaTester() {
+  const auth = isAuthenticated();
+  if (!auth) {
+    return false;
+  }
+  return !!auth.roles.find((e: any) => e === 'Admin' || e === 'BotBetaTester');
+}
+
 export function AuthData() {
   const auth = useContext(AuthContext);
   if (!auth || !auth.data) {
