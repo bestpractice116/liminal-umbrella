@@ -24,3 +24,8 @@ These are all controlled by the envs setup [here](env) - removing any setting wi
 # Random 'Playing...'
 
 Just for fun, the bot has a [list of games](src/cogs/randomActivity/playing.txt) it lists itself as 'Playing' on Discord. This randomly changes [approximately every 4 hours](src/cogs/randomActivity/listeners/eventTickFive.ts#L17).
+
+# RPGBot web interface
+
+-   Dev: https://liminal-umbrella.fly.dev/
+-   Prod: https://rpgbot.fly.dev/
