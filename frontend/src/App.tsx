@@ -116,12 +116,12 @@ function TopMenu() {
 			{admin ? (
 				debug ? (
 					<Button danger type="primary" onClick={onDebugChange}>
-						Debug Off
+						Debug On
 					</Button>
 				) : (
 					<Tooltip title="Note - can break layout">
 						<Button type="dashed" onClick={onDebugChange}>
-							Debug On
+							Debug Off
 						</Button>
 					</Tooltip>
 				)
