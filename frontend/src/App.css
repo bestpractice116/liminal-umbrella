@@ -1,27 +1,27 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 2rem;
+	text-align: center;
 }
 
 .card {
-  padding: 2em;
+	padding: 2em;
 }
 
 .authdata pre {
-  padding: 1em;
-  text-align: left;
+	padding: 1em;
+	text-align: left;
 }
 
 .login-form-button {
-  width: 100%;
+	width: 100%;
 }
 
 .className {
-  margin-right: 20px;
+	margin-right: 20px;
 }
 
 pre {
-  text-align: left;
+	text-align: left;
 }

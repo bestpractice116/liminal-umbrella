@@ -11,7 +11,7 @@ export class GamePostCommand extends Command {
 	public constructor(context: Command.LoaderContext) {
 		super(context, {
 			preconditions: ['BetaOnly']
-		})
+		});
 	}
 
 	// Register Chat Input and Context Menu command
@@ -19,17 +19,17 @@ export class GamePostCommand extends Command {
 		container.logger.error(this.name);
 		// Register Chat Input command
 		registry.registerChatInputCommand((builder) =>
-		builder //
-		  .setName(this.name)
-		  .setDescription('Post a game')
-		  /*.addUserOption((option) =>
+			builder //
+				.setName(this.name)
+				.setDescription('Post a game')
+				/*.addUserOption((option) =>
           	option //
             	.setName('user')
             	.setDescription('User to say hello to')
             	.setRequired(true)
 		  )*/
-		  .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
-		  .setDMPermission(false)
+				.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
+				.setDMPermission(false)
 		);
 	}
 

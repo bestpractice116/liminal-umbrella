@@ -20,49 +20,49 @@ export const up = async (uz: MigrationParams<any>) => {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			primaryKey: true,
-            autoIncrement: true,
+			autoIncrement: true
 		},
 		owner: {
 			type: DataTypes.TEXT,
-			allowNull: false,
+			allowNull: false
 		},
 		name: {
 			type: DataTypes.TEXT,
-			allowNull: true,
+			allowNull: true
 		},
 		system: {
 			type: DataTypes.TEXT,
-			allowNull: true,
+			allowNull: true
 		},
 		datetime: {
 			type: DataTypes.TEXT,
-			allowNull: true,
+			allowNull: true
 		},
 		max_players: {
 			type: DataTypes.INTEGER,
-			allowNull: true,
+			allowNull: true
 		},
 		description: {
 			type: DataTypes.STRING,
-			allowNull: true,
+			allowNull: true
 		},
 		createdAt: {
 			type: DataTypes.TEXT,
-			allowNull: false,
+			allowNull: false
 		},
 		updatedAt: {
 			type: DataTypes.TEXT,
-			allowNull: false,
-		},
+			allowNull: false
+		}
 	});
-    await qi.addIndex('plannedgames', {
-        name: 'planned_games_owner_unique',
-        fields: ['owner'],
-        unique: true,
-    });
+	await qi.addIndex('plannedgames', {
+		name: 'planned_games_owner_unique',
+		fields: ['owner'],
+		unique: true
+	});
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	const qi = uz.context.sequelize.getQueryInterface()
+	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.dropTable('plannedgames');
 };

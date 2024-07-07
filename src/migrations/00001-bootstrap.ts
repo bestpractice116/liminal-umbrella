@@ -3,15 +3,19 @@ import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
 	const sq = uz.context.sequelize;
-    const qi = uz.context.sequelize.getQueryInterface();
-    await sq.transaction(async (transaction: any) => {
-		await qi.createTable('watermarks', {
-			"time": {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
+	const qi = uz.context.sequelize.getQueryInterface();
+	await sq.transaction(async (transaction: any) => {
+		await qi.createTable(
+			'watermarks',
+			{
+				time: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+				}
 			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `Channels` (
 			`id` TEXT NOT NULL PRIMARY KEY,
@@ -24,45 +28,49 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('channels', {
-			id: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
+		await qi.createTable(
+			'channels',
+			{
+				id: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+				},
+				name: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				type: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				parentId: {
+					type: DataTypes.TEXT,
+					allowNull: true
+				},
+				position: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				rawPosition: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				createdTimestamp: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			name: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			type: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			parentId: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-			},
-			position: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			rawPosition: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			createdTimestamp: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `Messages` (
 			`id` TEXT NOT NULL PRIMARY KEY,
@@ -80,77 +88,81 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('messages', {
-			id: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
-			},
-			authorId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				/*references: {
+		await qi.createTable(
+			'messages',
+			{
+				id: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+				},
+				authorId: {
+					type: DataTypes.TEXT,
+					allowNull: false
+					/*references: {
 					table: 'users',
 					key: 'id',
 				},
 				onDelete: 'RESTRICT',
 				onUpdate: 'RESTRICT',*/
-			},
-			channelId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				/*references: {
+				},
+				channelId: {
+					type: DataTypes.TEXT,
+					allowNull: false
+					/*references: {
 					table: 'channels',
 					key: 'id',
 				},
 				onDelete: 'RESTRICT',
 				onUpdate: 'RESTRICT',*/
+				},
+				applicationId: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				type: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				content: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				createdTimestamp: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				editedTimestamp: {
+					type: DataTypes.INTEGER,
+					allowNull: true
+				},
+				hasThread: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				threadId: {
+					type: DataTypes.TEXT,
+					allowNull: true
+				},
+				embedcount: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				pinned: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			applicationId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			type: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			content: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			createdTimestamp: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			editedTimestamp: {
-				type: DataTypes.INTEGER,
-				allowNull: true,
-			},
-			hasThread: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			threadId: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-			},
-			embedcount: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			pinned: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `GameSessions` (
 			`id` TEXT NOT NULL PRIMARY KEY,
@@ -160,65 +172,81 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('gamesessions', {
-			id: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
-			},
-			availableGamesMessageId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				references: {
-					table: 'messages',
-					key: 'id',
+		await qi.createTable(
+			'gamesessions',
+			{
+				id: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
 				},
-				onDelete: 'RESTRICT',
-				onUpdate: 'RESTRICT',
-			},
-			eventId: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-			},
-			channelId: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-				references: {
-					table: 'channels',
-					key: 'id',
+				availableGamesMessageId: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					references: {
+						table: 'messages',
+						key: 'id'
+					},
+					onDelete: 'RESTRICT',
+					onUpdate: 'RESTRICT'
 				},
-				onDelete: 'RESTRICT',
-				onUpdate: 'RESTRICT',
+				eventId: {
+					type: DataTypes.TEXT,
+					allowNull: true
+				},
+				channelId: {
+					type: DataTypes.TEXT,
+					allowNull: true,
+					references: {
+						table: 'channels',
+						key: 'id'
+					},
+					onDelete: 'RESTRICT',
+					onUpdate: 'RESTRICT'
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE UNIQUE INDEX `game_sessions_available_games_message_id_unique` ON `GameSessions` (`availableGamesMessageId`);
 		CREATE UNIQUE INDEX `game_sessions_event_id_unique` ON `GameSessions` (`eventId`);
 		CREATE UNIQUE INDEX `game_sessions_channel_id_unique` ON `GameSessions` (`channelId`);
 		*/
-		await qi.addIndex('gamesessions', {
-			name: 'game_sessions_available_games_message_id_unique',
-			fields: ['availableGamesMessageId'],
-			unique: true,
-		}, { transaction });
-		await qi.addIndex('gamesessions', {
-			name: 'game_sessions_event_id_unique',
-			fields: ['eventId'],
-			unique: true,
-		}, { transaction });
-		await qi.addIndex('gamesessions', {
-			name: 'game_sessions_channel_id_unique',
-			fields: ['channelId'],
-			unique: true,
-		}, { transaction });
+		await qi.addIndex(
+			'gamesessions',
+			{
+				name: 'game_sessions_available_games_message_id_unique',
+				fields: ['availableGamesMessageId'],
+				unique: true
+			},
+			{ transaction }
+		);
+		await qi.addIndex(
+			'gamesessions',
+			{
+				name: 'game_sessions_event_id_unique',
+				fields: ['eventId'],
+				unique: true
+			},
+			{ transaction }
+		);
+		await qi.addIndex(
+			'gamesessions',
+			{
+				name: 'game_sessions_channel_id_unique',
+				fields: ['channelId'],
+				unique: true
+			},
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `GreetingMessages` (`
 			`messageId` TEXT NOT NULL PRIMARY KEY,
@@ -226,47 +254,55 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('greetingmessages', {
-			messageId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
-				/*references: {
+		await qi.createTable(
+			'greetingmessages',
+			{
+				messageId: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+					/*references: {
 					table: 'messages',
 					key: 'id',
 				},
 				onDelete: 'RESTRICT',
 				onUpdate: 'RESTRICT',
 				*/
-			},
-			userId: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-				/*references: {
+				},
+				userId: {
+					type: DataTypes.TEXT,
+					allowNull: true
+					/*references: {
 					table: 'users',
 					key: 'id',
 				},
 				onDelete: 'RESTRICT',
 				onUpdate: 'RESTRICT',
 				*/
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE UNIQUE INDEX `greeting_messages_user_id_unique` ON `GreetingMessages` (`userId`);
 		*/
-		await qi.addIndex('greetingmessages', {
-			name: 'greeting_messages_user_id_unique',
-			fields: ['userId'],
-			unique: true,
-		}, { transaction });
+		await qi.addIndex(
+			'greetingmessages',
+			{
+				name: 'greeting_messages_user_id_unique',
+				fields: ['userId'],
+				unique: true
+			},
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `Roles` (
 			`id` TEXT NOT NULL PRIMARY KEY,
@@ -281,53 +317,57 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('roles', {
-			id: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
+		await qi.createTable(
+			'roles',
+			{
+				id: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+				},
+				name: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				mentionable: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				tags: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				position: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				rawPosition: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				hexcolor: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				unicodeemoji: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				permissions: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			name: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			mentionable: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			tags: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			position: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			rawPosition: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			hexcolor: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			unicodeemoji: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			permissions: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `Users` (
 			`id` TEXT NOT NULL PRIMARY KEY,\
@@ -338,41 +378,45 @@ export const up = async (uz: MigrationParams<any>) => {
 			`createdAt` TEXT NOT NULL,
 			`updatedAt` TEXT NOT NULL);
 		*/
-		await qi.createTable('users', {
-			id: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				primaryKey: true,
+		await qi.createTable(
+			'users',
+			{
+				id: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					primaryKey: true
+				},
+				username: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				nickname: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				rulesaccepted: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				bot: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				left: {
+					type: DataTypes.INTEGER,
+					allowNull: false
+				},
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			username: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			nickname: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			rulesaccepted: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			bot: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			left: {
-				type: DataTypes.INTEGER,
-				allowNull: false,
-			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
+			{ transaction }
+		);
 		/*
 		CREATE TABLE `RoleMembers` (
 			`userId` TEXT NOT NULL REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -381,41 +425,45 @@ export const up = async (uz: MigrationParams<any>) => {
 			`updatedAt` TEXT NOT NULL,
 			PRIMARY KEY (`userId`, `roleId`));
 		*/
-		await qi.createTable('rolemembers', {
-			userId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				references: {
-					table: 'users',
-					key: 'id',
+		await qi.createTable(
+			'rolemembers',
+			{
+				userId: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					references: {
+						table: 'users',
+						key: 'id'
+					},
+					onDelete: 'CASCADE',
+					onUpdate: 'CASCADE'
 				},
-				onDelete: 'CASCADE',
-				onUpdate: 'CASCADE',
-			},
-			roleId: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-				references: {
-					table: 'roles',
-					key: 'id',
+				roleId: {
+					type: DataTypes.TEXT,
+					allowNull: false,
+					references: {
+						table: 'roles',
+						key: 'id'
+					},
+					onDelete: 'CASCADE',
+					onUpdate: 'CASCADE'
 				},
-				onDelete: 'CASCADE',
-				onUpdate: 'CASCADE'
+				createdAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				},
+				updatedAt: {
+					type: DataTypes.TEXT,
+					allowNull: false
+				}
 			},
-			createdAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-			updatedAt: {
-				type: DataTypes.TEXT,
-				allowNull: false,
-			},
-		}, { transaction });
-	})
+			{ transaction }
+		);
+	});
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	const qi = uz.context.sequelize.getQueryInterface()
+	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.dropTable('watermarks');
 	await qi.dropTable('channels');
 	await qi.dropTable('messages');

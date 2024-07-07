@@ -1,5 +1,5 @@
-$schema: "./node_modules/@sapphire/cli/templates/schemas/.sapphirerc.scheme.json"
-projectLanguage: "ts"
+$schema: './node_modules/@sapphire/cli/templates/schemas/.sapphirerc.scheme.json'
+projectLanguage: 'ts'
 locations:
   base: src
   arguments: arguments
@@ -10,4 +10,4 @@ locations:
   routes: routes
 customFileTemplates:
   enabled: false
-  location: ""
+  location: ''

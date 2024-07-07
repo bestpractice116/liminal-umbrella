@@ -4,8 +4,8 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import Database from './lib/database.js';
-import {createEmitter, Emitter} from './lib/typedEvents.js';
-import {emitterSpec} from './lib/events.js';
+import { createEmitter, Emitter } from './lib/typedEvents.js';
+import { emitterSpec } from './lib/events.js';
 import Ticker from './lib/ticker.js';
 import authTransformer from './lib/api/authTransformer.js';
 
@@ -17,20 +17,20 @@ export class MySapphireClient extends SapphireClient {
 	private rootData = getRootData();
 
 	public constructor() {
-		const auth : any = {
+		const auth: any = {
 			id: process.env.DISCORD_APPLICATION_ID,
 			secret: process.env.DISCORD_TOKEN!,
 			scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
 			cookie: 'SAPPHIRE_AUTH',
-			transformers: [authTransformer],
-		}
+			transformers: [authTransformer]
+		};
 		// Only used for local development
 		if (process.env.DOMAIN_OVERWRITE) {
 			auth.DOMAIN_OVERWRITE = process.env.DOMAIN_OVERWRITE;
 		}
 
-	  // We call super our options
-	  	super({
+		// We call super our options
+		super({
 			//defaultPrefix: '!',
 			caseInsensitiveCommands: true,
 			logger: {
@@ -44,7 +44,7 @@ export class MySapphireClient extends SapphireClient {
 				GatewayIntentBits.GuildMessageReactions,
 				GatewayIntentBits.Guilds,
 				GatewayIntentBits.MessageContent,
-				GatewayIntentBits.GuildMembers,
+				GatewayIntentBits.GuildMembers
 			],
 			loadMessageCommandListeners: true,
 			api: {
@@ -53,36 +53,36 @@ export class MySapphireClient extends SapphireClient {
 			},
 			makeCache: Options.cacheWithLimits({
 				...Options.DefaultMakeCacheSettings,
-				MessageManager: 101, // Note this is 1 more than the amount we fetch at once in database.ts
+				MessageManager: 101 // Note this is 1 more than the amount we fetch at once in database.ts
 			}),
 			sweepers: {
 				...Options.DefaultSweeperSettings,
 				messages: {
 					interval: 300, // Every 5m.
-					lifetime: 300, // Remove messages older than 5 minutes.
-				},
-			},
+					lifetime: 300 // Remove messages older than 5 minutes.
+				}
+			}
 		});
 		for (const d of readdirSync(join(this.rootData.root, 'cogs'))) {
 			container.logger.info('Registering cog: ' + d);
 			this.stores.registerPath(join(this.rootData.root, 'cogs', d));
 		}
-		console.log(this.stores.get('listeners').get('PluginServerNoMatch'))
+		console.log(this.stores.get('listeners').get('PluginServerNoMatch'));
 	}
 
-	public override async login(token?: string) : Promise<string> {
+	public override async login(token?: string): Promise<string> {
 		container.events = createEmitter<emitterSpec>();
 		container.database = new Database(container.events);
 		container.ticker = new Ticker(container.events);
 		return super.login(token);
-	  }
+	}
 }
 
 declare module '@sapphire/pieces' {
 	interface Container {
-	  database: Database;
-	  events: Emitter<emitterSpec>;
-	  ticker: Ticker;
-	  guild: Guild | null;
+		database: Database;
+		events: Emitter<emitterSpec>;
+		ticker: Ticker;
+		guild: Guild | null;
 	}
 }

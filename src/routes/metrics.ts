@@ -1,10 +1,10 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Route, methods, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import promClient from 'prom-client'
+import promClient from 'prom-client';
 
 const register = new promClient.Registry();
 register.setDefaultLabels({
-  app: process.env.FLY_APP_NAME || 'local-test-bot',
+	app: process.env.FLY_APP_NAME || 'local-test-bot'
 });
 promClient.collectDefaultMetrics({ register });
 
@@ -12,6 +12,6 @@ promClient.collectDefaultMetrics({ register });
 export class UserRoute extends Route {
 	public async [methods.GET](_: ApiRequest, response: ApiResponse) {
 		response.setHeader('Content-Type', register.contentType);
-  		return response.respond(await register.metrics());
+		return response.respond(await register.metrics());
 	}
 }

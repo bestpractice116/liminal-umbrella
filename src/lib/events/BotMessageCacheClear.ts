@@ -1,1 +1,1 @@
-export class BotMessageCacheClear{}
+export class BotMessageCacheClear {}

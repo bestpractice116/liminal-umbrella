@@ -1,10 +1,10 @@
 {
-   "date": "20/03/24",
-   "description": "Simple introduction game for players who are totally new and DnD 5e curious. This game is specifically for folks we have never played before.\n\nEverything needed (dice etc) will be provided, and you will be guided through the basic rules and game mechanics.\n\nPre-generated characters will be available (just turn up and play) or if you have a specific character concept or would like a crack at generating your own character in advance then we can help arrange that.",
-   "dm_contact": "<@887976032542543932>",
-   "location": "Harlequins",
-   "name": "New player training game",
-   "spaces_free": 3,
-   "spaces_total": 3,
-   "type": "One shot"
+	"date": "20/03/24",
+	"description": "Simple introduction game for players who are totally new and DnD 5e curious. This game is specifically for folks we have never played before.\n\nEverything needed (dice etc) will be provided, and you will be guided through the basic rules and game mechanics.\n\nPre-generated characters will be available (just turn up and play) or if you have a specific character concept or would like a crack at generating your own character in advance then we can help arrange that.",
+	"dm_contact": "<@887976032542543932>",
+	"location": "Harlequins",
+	"name": "New player training game",
+	"spaces_free": 3,
+	"spaces_total": 3,
+	"type": "One shot"
 }

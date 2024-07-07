@@ -4,14 +4,14 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@seq
 import { Table, Attribute, NotNull } from '@sequelize/core/decorators-legacy';
 
 @Table({
-    noPrimaryKey: true,
+	noPrimaryKey: true
 })
 export default class RoleMember extends Model<InferAttributes<RoleMember>, InferCreationAttributes<RoleMember>> {
-    @Attribute(DataTypes.STRING)
-    @NotNull
-    declare userKey: string;
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare userKey: string;
 
-    @Attribute(DataTypes.STRING)
-    @NotNull
-    declare roleKey: string;
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare roleKey: string;
 }

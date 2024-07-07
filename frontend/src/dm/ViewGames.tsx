@@ -1,3 +1,3 @@
 export default function ViewGames() {
-    return <div>View Games</div>
+	return <div>View Games</div>;
 }

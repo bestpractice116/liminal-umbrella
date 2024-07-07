@@ -1,15 +1,17 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 
 export class OauthRoute extends Route {
-  public constructor(context: Route.LoaderContext, options: Route.Options) {
-    super(context, {
-      ...options,
-      route: 'oauth/authorize'
-    });
-  }
+	public constructor(context: Route.LoaderContext, options: Route.Options) {
+		super(context, {
+			...options,
+			route: 'oauth/authorize'
+		});
+	}
 
-  public [methods.GET](_request: ApiRequest, response: ApiResponse) {
-    response.html(200, `
+	public [methods.GET](_request: ApiRequest, response: ApiResponse) {
+		response.html(
+			200,
+			`
 <!doctype html>
 <html>
   <head>
@@ -48,7 +50,7 @@ export class OauthRoute extends Route {
   <script>doRedirect()</script>
   <div id="error"></div>
 </body>
-    `);
-  }
-
+    `
+		);
+	}
 }

@@ -1,4 +1,4 @@
 module.exports = {
-  preset: "ts-jest",
-  resolver: "ts-jest-resolver",
+	preset: 'ts-jest',
+	resolver: 'ts-jest-resolver'
 };

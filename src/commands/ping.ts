@@ -8,9 +8,9 @@ import { ApplicationCommandType, Message } from 'discord.js';
 export class PingCommand extends Command {
 	public constructor(context: Command.LoaderContext) {
 		super(context, {
-		  preconditions: ['AdminOnly'],
-		  runIn: CommandOptionsRunTypeEnum.Dm,
-		})
+			preconditions: ['AdminOnly'],
+			runIn: CommandOptionsRunTypeEnum.Dm
+		});
 	}
 	// Register Chat Input and Context Menu command
 	public override registerApplicationCommands(registry: Command.Registry) {
@@ -23,7 +23,7 @@ export class PingCommand extends Command {
 		// Register Context Menu command available from any message
 		registry.registerContextMenuCommand({
 			name: this.name,
-			type: ApplicationCommandType.Message,
+			type: ApplicationCommandType.Message
 		});
 
 		// Register Context Menu command available from any user

@@ -4,21 +4,20 @@ import { BotStarted } from '../lib/events/index.js';
 import {Sequential} from '../lib/utils.js';
 import { Op } from '@sequelize/core';*/
 
-
 export class BotStartedEvent extends Listener {
-  public constructor(context: Listener.LoaderContext, options: Listener.Options) {
-    super(context, {
-      ...options,
-      name: 'eventsBotStarted',
-      emitter: container.events,
-      event: 'botStarted'
-    });
-  }
+	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
+		super(context, {
+			...options,
+			name: 'eventsBotStarted',
+			emitter: container.events,
+			event: 'botStarted'
+		});
+	}
 
-  async run (e: BotStarted) {
-    this.container.ticker.start(e.guild);
+	async run(e: BotStarted) {
+		this.container.ticker.start(e.guild);
 
-    /*
+		/*
     // Example - how to do a slow data migration piecewise without stopping the bot...
     // See also migrations 00002 and 00003
     let count = 0;
@@ -53,9 +52,9 @@ export class BotStartedEvent extends Listener {
     } while (users.length > 0);
     container.logger.info(`Finished updates to ${count} Users`);
     */
-  }
+	}
 
-  /*
+	/*
   // Helper method to get a chunk of rows to work on
   @Sequential
   async getSome(): Promise<User[]> {

@@ -5,23 +5,23 @@ export const up = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.changeColumn('users', 'name', {
 		type: DataTypes.STRING,
-		allowNull: false,
+		allowNull: false
 	});
 	await qi.changeColumn('users', 'avatarURL', {
 		type: DataTypes.STRING,
-		allowNull: false,
+		allowNull: false
 	});
 	await qi.changeColumn('users', 'joinedDiscordAt', {
 		type: DataTypes.INTEGER,
-		allowNull: false,
+		allowNull: false
 	});
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	const qi = uz.context.sequelize.getQueryInterface()
+	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.changeColumn('users', 'name', {
 		type: DataTypes.STRING,
-		allowNull: true,
+		allowNull: true
 	});
 	await qi.changeColumn('users', 'avatarURL', {
 		type: DataTypes.STRING,
@@ -29,6 +29,6 @@ export const down = async (uz: MigrationParams<any>) => {
 	});
 	await qi.changeColumn('users', 'joinedDiscordAt', {
 		type: DataTypes.INTEGER,
-		allowNull: true,
+		allowNull: true
 	});
 };

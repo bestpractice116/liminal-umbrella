@@ -1,10 +1,10 @@
-# liminal-umbrella 
+# liminal-umbrella
 
 This is a a Discord bot using the [sapphire framework][sapphire] written in TypeScript
 
 https://discord.com/api/oauth2/authorize?client_id=XXX&permissions=406881299711&scope=bot%20applications.commands
 
-## How to deploy it 
+## How to deploy it
 
 ### Prerequisite
 
@@ -39,3 +39,4 @@ $ cd frontend ; yarn run dev
 
 http://127.0.0.1:5173/
 
+```

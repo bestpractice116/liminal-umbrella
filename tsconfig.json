@@ -2,7 +2,7 @@
 	"extends": ["@sapphire/ts-config", "@sapphire/ts-config/extra-strict", "@sapphire/ts-config/decorators"],
 	"module": "ESNext",
 	"ts-node": {
-		"esm": true,
+		"esm": true
 	},
 	"allowImportingTsExtensions": true,
 	"compilerOptions": {
@@ -11,12 +11,12 @@
 		"tsBuildInfoFile": "dist/.tsbuildinfo",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"strict": true,
+		"strict": true
 	},
 	"include": ["src", "common/dist"],
-        "references": [
-    		{
-		    "path": "./common"
-		},
-  	]
+	"references": [
+		{
+			"path": "./common"
+		}
+	]
 }

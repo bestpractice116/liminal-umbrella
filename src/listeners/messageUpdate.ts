@@ -1,6 +1,6 @@
 import { Listener } from '@sapphire/framework';
 import { Message } from 'discord.js';
-import {Sequential} from '../lib/utils.js';
+import { Sequential } from '../lib/utils.js';
 
 export class MessageUpdateEvent extends Listener {
 	@Sequential
@@ -8,7 +8,7 @@ export class MessageUpdateEvent extends Listener {
 		if (!newMessage.guildId) {
 			return;
 		}
-        this.container.database.indexMessage(newMessage);
-        return
+		this.container.database.indexMessage(newMessage);
+		return;
 	}
 }

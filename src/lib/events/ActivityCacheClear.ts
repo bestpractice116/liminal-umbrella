@@ -1,1 +1,1 @@
-export class ActivityCacheClear{}
+export class ActivityCacheClear {}

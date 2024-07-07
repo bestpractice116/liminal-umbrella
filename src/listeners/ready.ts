@@ -3,8 +3,8 @@ import { Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
-import {Sequential} from '../lib/utils.js';
-import {BotStarted} from '../lib/events/index.js';
+import { Sequential } from '../lib/utils.js';
+import { BotStarted } from '../lib/events/index.js';
 import { Methods } from '@sapphire/plugin-api';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -18,7 +18,7 @@ export class ReadyEvent extends Listener {
 		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
 			this.container.guild = guild;
 			await this.container.database.doMigrations(guild);
-			await this.container.database.getHighestWatermark()
+			await this.container.database.getHighestWatermark();
 			const start = Date.now();
 			await this.container.database.sync(guild);
 			await this.container.database.syncChannelGameListings(guild, 'game_listings');

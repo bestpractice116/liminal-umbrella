@@ -7,7 +7,7 @@ import {
 } from '@sapphire/framework';
 import { cyan } from 'colorette';
 import type { APIUser, Guild, User } from 'discord.js';
-import { limitConcurrency } from "limit-concurrency-decorator";
+import { limitConcurrency } from 'limit-concurrency-decorator';
 
 export function logSuccessCommand(payload: ContextMenuCommandSuccessPayload | ChatInputCommandSuccessPayload | MessageCommandSuccessPayload): void {
 	let successLoggerData: ReturnType<typeof getSuccessLoggerData>;

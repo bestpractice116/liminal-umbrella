@@ -5,14 +5,14 @@ export const up = async (uz: MigrationParams<any>) => {
 	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.changeColumn('messages', 'pinned', {
 		type: DataTypes.INTEGER,
-		allowNull: false,
+		allowNull: false
 	});
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	const qi = uz.context.sequelize.getQueryInterface()
+	const qi = uz.context.sequelize.getQueryInterface();
 	await qi.changeColumn('messages', 'pinned', {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-        });
+		type: DataTypes.INTEGER,
+		allowNull: true
+	});
 };
