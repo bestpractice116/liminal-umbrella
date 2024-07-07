@@ -19,7 +19,7 @@ export class MySapphireClient extends SapphireClient {
 	public constructor() {
 		const auth: any = {
 			id: process.env.DISCORD_APPLICATION_ID,
-			secret: process.env.DISCORD_TOKEN!,
+			secret: process.env.DISCORD_OAUTH_CLIENT_SECRET!,
 			scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
 			cookie: 'SAPPHIRE_AUTH',
 			transformers: [authTransformer]

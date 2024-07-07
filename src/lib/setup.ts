@@ -17,7 +17,7 @@ declare module '@skyra/env-utilities' {
 		DISCORD_APPLICATION_ID: IntegerString;
 		DISCORD_PUBLIC_KEY: string;
 		DISCORD_GUILD_ID: string;
-		DISCORD_TOKEN: string;
+		DISCORD_OAUTH_CLIENT_SECRET: string;
 		DATABASE_NAME: string;
 		GREET_USERS_CHANNEL: string | undefined;
 	}

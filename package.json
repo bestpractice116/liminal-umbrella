@@ -57,7 +57,7 @@
 		"build": "tsc",
 		"watch": "tsc -w",
 		"start": "node --use-strict dist/index.js --experimental-specifier-resolution=node",
-		"dev": "yarn run build && yarn run start",
+		"dev": "yarn workspace common run build && yarn run build && yarn run start",
 		"watch:start": "tsc-watch --onSuccess \"npm run start\"",
 		"format": "prettier --write \"src/\""
 	},
