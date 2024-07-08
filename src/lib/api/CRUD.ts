@@ -39,11 +39,11 @@ export abstract class CR extends Route {
 
 	// Get current list
 	@AuthenticatedAdmin()
-	auth_GET() {}
+	async auth_GET(_request: ApiRequest, _response: ApiResponse) {}
 
 	@Sequential
-	public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
-		this.auth_GET();
+	public async [methods.GET](request: ApiRequest, response: ApiResponse) {
+		await this.auth_GET(request, response);
 		if (response.writableEnded) {
 			return;
 		}
@@ -54,11 +54,11 @@ export abstract class CR extends Route {
 
 	// Add a new one
 	@AuthenticatedAdmin()
-	auth_CREATE() {}
+	async auth_CREATE(_request: ApiRequest, _response: ApiResponse) {}
 
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
-		this.auth_CREATE();
+		await this.auth_CREATE(request, response);
 		if (response.writableEnded) {
 			return;
 		}
@@ -106,11 +106,11 @@ export abstract class UD extends Route {
 	}
 
 	@AuthenticatedAdmin()
-	auth_UPDATE() {}
+	async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
-		this.auth_UPDATE();
+		await this.auth_UPDATE(request, response);
 		if (response.writableEnded) {
 			return;
 		}
@@ -136,11 +136,11 @@ export abstract class UD extends Route {
 	}
 
 	@AuthenticatedAdmin()
-	auth_DELETE() {}
+	async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
 	@Sequential
 	public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
-		this.auth_DELETE();
+		await this.auth_DELETE(request, response);
 		if (response.writableEnded) {
 			return;
 		}

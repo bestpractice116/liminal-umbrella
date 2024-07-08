@@ -3,6 +3,7 @@ import { GameSystem } from '../lib/database/model.js';
 import { GameSystemSchema } from 'common/schema';
 import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
+import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 
 export class ApiGameSystemList extends CR {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -18,4 +19,7 @@ export class ApiGameSystemList extends CR {
 	getSchema(): SchemaBundle {
 		return GameSystemSchema;
 	}
+
+	@AuthenticatedWithRole('Dungeon Master', true)
+	override async auth_GET() {}
 }

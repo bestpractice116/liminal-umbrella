@@ -21,6 +21,7 @@ import { User, Role, Channel, Message, Watermark } from './database/model.js';
 import { TypedEvent } from '../lib/typedEvents.js';
 import { UserJoined, UserLeft, UserChangedNickname, MessageUpdated, MessageAdded } from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
+import { arrayStrictEquals } from '@sapphire/utilities';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -197,6 +198,9 @@ export default class Database {
 		if (newAvatar != user.avatarURL) {
 			user.avatarURL = newAvatar;
 			changed = true;
+		}
+		if (!arrayStrictEquals(Array.from(guildMember.roles.cache.keys()).sort(), ((await user.roles) || []).map((role) => role.name).sort())) {
+			await user.setRoles(guildMember.roles.cache.keys());
 		}
 		if (changed) {
 			user.save();

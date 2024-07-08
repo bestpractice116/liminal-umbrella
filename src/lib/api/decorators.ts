@@ -43,12 +43,17 @@ class AuthDecorators {
 		(_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
 	);
 
-	static AuthenticatedWithRole = (roles: string | string[]) =>
+	static AuthenticatedWithRole = (roles: string | string[], beta: boolean) =>
 		createFunctionPrecondition(
 			(request: ApiRequest, response: ApiResponse) =>
 				!response.writableEnded &&
 				this.getUser(request).then((user) => {
-					if (!!user || !!user!.roles) return false;
+					if (!user || !user!.roles) return false;
+					if (beta) {
+						if (!user.roles!.find((r) => r.name === 'BotBetaTester')) {
+							return false;
+						}
+					}
 					for (const role of Array(roles)) {
 						if (user!.roles!.some((r) => r.name === role)) return true;
 					}
@@ -62,4 +67,4 @@ export const Authenticated = () => AuthDecorators.Authenticated;
 
 export const AuthenticatedAdmin = () => AuthDecorators.AuthenticatedAdmin;
 
-export const AuthenticatedWithRole = (roles: string | string[]) => AuthDecorators.AuthenticatedWithRole(roles);
+export const AuthenticatedWithRole = (roles: string | string[], beta?: boolean) => AuthDecorators.AuthenticatedWithRole(roles, !!beta);
