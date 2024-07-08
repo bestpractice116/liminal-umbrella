@@ -4,7 +4,7 @@ import { GameSystemSchema } from 'common/schema';
 import type { SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
 
-export class ApiGaneSystemEdit extends UD {
+export class ApiGameSystemEdit extends UD {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
 		super(context, {
 			...options,

@@ -32,18 +32,21 @@ class AuthDecorators {
 	}
 
 	static Authenticated = createFunctionPrecondition(
-		(request: ApiRequest) => this.getUser(request).then((user) => !!user),
-		(_request: ApiRequest, response: ApiResponse) => response.error(HttpCodes.Unauthorized)
+		(request: ApiRequest, response: ApiResponse) => !response.writableEnded && this.getUser(request).then((user) => !!user),
+		(_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
 	);
 
 	static AuthenticatedAdmin = createFunctionPrecondition(
-		(request: ApiRequest) => this.getUser(request).then((user) => !!user && !!user.roles && !!user!.roles.some((role) => role.name === 'Admin')),
-		(_request: ApiRequest, response: ApiResponse) => response.error(HttpCodes.Unauthorized)
+		(request: ApiRequest, response: ApiResponse) =>
+			!response.writableEnded &&
+			this.getUser(request).then((user) => !!user && !!user.roles && !!user!.roles.some((role) => role.name === 'Admin')),
+		(_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
 	);
 
 	static AuthenticatedWithRole = (roles: string | string[]) =>
 		createFunctionPrecondition(
-			(request: ApiRequest) =>
+			(request: ApiRequest, response: ApiResponse) =>
+				!response.writableEnded &&
 				this.getUser(request).then((user) => {
 					if (!!user || !!user!.roles) return false;
 					for (const role of Array(roles)) {
@@ -51,7 +54,7 @@ class AuthDecorators {
 					}
 					return user!.roles!.some((role) => role.name === 'Admin');
 				}),
-			(_request: ApiRequest, response: ApiResponse) => response.error(HttpCodes.Unauthorized)
+			(_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
 		);
 }
 

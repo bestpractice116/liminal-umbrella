@@ -4,7 +4,7 @@ import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { RoleSchema } from 'common/schema';
 
-export class ApiBotpMessagesList extends CR {
+export class ApiRolesList extends CR {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
 		super(context, {
 			...options,

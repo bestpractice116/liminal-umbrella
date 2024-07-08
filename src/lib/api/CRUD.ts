@@ -39,8 +39,14 @@ export abstract class CR extends Route {
 
 	// Get current list
 	@AuthenticatedAdmin()
+	auth_GET() {}
+
 	@Sequential
 	public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
+		this.auth_GET();
+		if (response.writableEnded) {
+			return;
+		}
 		const items = await this.getModel().findAll({ where: this.getRetrieveWhere(), include: this.findAllInclude() });
 		// FIXME - any
 		response.json(await Promise.all(items.map(async (item: any) => await getReadObjectFromDbObject(this, item))));
@@ -48,8 +54,15 @@ export abstract class CR extends Route {
 
 	// Add a new one
 	@AuthenticatedAdmin()
+	auth_CREATE() {}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
+		this.auth_CREATE();
+		if (response.writableEnded) {
+			return;
+		}
+
 		const createSchema = this.getSchema().create;
 		if (!createSchema) {
 			return response.notFound();
@@ -93,8 +106,14 @@ export abstract class UD extends Route {
 	}
 
 	@AuthenticatedAdmin()
+	auth_UPDATE() {}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
+		this.auth_UPDATE();
+		if (response.writableEnded) {
+			return;
+		}
 		const updateSchema = this.getSchema().update;
 		if (!updateSchema) {
 			return response.notFound();
@@ -117,8 +136,14 @@ export abstract class UD extends Route {
 	}
 
 	@AuthenticatedAdmin()
+	auth_DELETE() {}
+
 	@Sequential
 	public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
+		this.auth_DELETE();
+		if (response.writableEnded) {
+			return;
+		}
 		const deleteSchema = this.getSchema().delete;
 		if (!deleteSchema) {
 			return response.notFound();
