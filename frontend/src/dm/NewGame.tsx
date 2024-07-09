@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Button from 'antd/es/button/button';
@@ -6,8 +7,13 @@ import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import type { FormProps } from 'antd/es/form/Form';
-import { type GameSystemListItem } from 'common/schema';
-import { getQueries, WrapCRUD } from '../CRUD.js';
+import { type GameSystemListItem, GameSchema } from 'common/schema';
+import { getQueries, WrapCRUD, getCreateQueryMutation, AddRow } from '../CRUD.js';
+import Spin from 'antd/es/spin';
+import { getZObject } from 'common';
+import { createSchemaFieldRule } from 'antd-zod';
+
+const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
 
 export default function PostGame() {
 	return <GetGameSystems />;
@@ -24,6 +30,8 @@ function GetGameSystems() {
 }
 
 function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
+	const [isCreating, setIsCreating] = useState(false);
+	const createMutation = getCreateQueryMutation('', '', setIsCreating);
 	type FieldType = {
 		title?: string;
 		type?: string;
@@ -36,13 +44,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		maxplayers?: string;
 	};
 
-	const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-		console.log('Success:', values);
-	};
-
-	const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-		console.log('Failed:', errorInfo);
-	};
 	const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
 		console.log(date, dateString);
 	};
@@ -55,50 +56,53 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		{ value: 'campaign', label: <span>Ongoing campaign</span> },
 		{ value: 'dropin', label: <span>Drop in and out campaign</span> }
 	];
+
+	/*
+	
+					<Form.Item label="Name" name="name" rules={[createFormRule]}>
+						<Input />
+					</Form.Item>
+					<Form.Item name="type" initialValue="playing">
+						<Input type="hidden" />
+					</Form.Item>
+				
+				*/
 	return (
-		<Form
-			name="basic"
-			labelCol={{ span: 8 }}
-			wrapperCol={{ span: 16 }}
-			style={{ maxWidth: 600 }}
-			initialValues={{ remember: true }}
-			onFinish={onFinish}
-			onFinishFailed={onFinishFailed}
-			autoComplete="off"
-		>
-			<Form.Item<FieldType> label="Title" name="title" rules={[{ required: true, message: 'Please input a game title!' }]}>
+		<AddRow createMutation={createMutation}>
+			<Spin spinning={isCreating} fullscreen />
+			<Form.Item<FieldType> label="Title" name="title" rules={[createFormRule]}>
 				<Input />
 			</Form.Item>
 
-			<Form.Item<FieldType> label="Type of Adventure" name="type">
+			<Form.Item<FieldType> label="Type of Adventure" name="type" rules={[createFormRule]}>
 				<Select options={gametypes} />
 			</Form.Item>
 
-			<Form.Item<FieldType> label="Game System" name="gamesystem">
+			<Form.Item<FieldType> label="Game System" name="gamesystem" rules={[createFormRule]}>
 				<Select options={gamesystems_items} />
 			</Form.Item>
 
-			<Form.Item<FieldType> name="date" label="Date">
+			<Form.Item<FieldType> name="date" label="Date" rules={[createFormRule]}>
 				<DatePicker onChange={onDateChange} minDate={dayjs().add(1, 'day')} format={'dddd D MMM (YYYY-MM-DD)'} />
 			</Form.Item>
 
-			<Form.Item<FieldType> name="starttime" label="Start Time">
+			<Form.Item<FieldType> name="starttime" label="Start Time" rules={[createFormRule]}>
 				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} defaultValue={dayjs('18:00', 'HH:mm')} size="large" />
 			</Form.Item>
 
-			<Form.Item<FieldType> name="endtime" label="End Time">
+			<Form.Item<FieldType> name="endtime" label="End Time" rules={[createFormRule]}>
 				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} defaultValue={dayjs('22:00', 'HH:mm')} size="large" />
 			</Form.Item>
 
-			<Form.Item<FieldType> label="Location" name="location" rules={[{ required: true, message: 'Please input a location!' }]}>
+			<Form.Item<FieldType> label="Location" name="location" rules={[createFormRule]}>
 				<Input />
 			</Form.Item>
 
-			<Form.Item<FieldType> label="Description" name="description" rules={[{ required: true, message: 'Please input a short description' }]}>
+			<Form.Item<FieldType> label="Description" name="description" rules={[createFormRule]}>
 				<Input.TextArea />
 			</Form.Item>
 
-			<Form.Item<FieldType> label="Max Players" name="maxplayers" rules={[{ required: true, message: 'Please input max number of players' }]}>
+			<Form.Item<FieldType> label="Max Players" name="maxplayers" rules={[createFormRule]}>
 				<Select
 					defaultValue={4}
 					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
@@ -112,6 +116,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					Submit
 				</Button>
 			</Form.Item>
-		</Form>
+		</AddRow>
 	);
 }

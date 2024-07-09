@@ -134,6 +134,39 @@ export type QuerySet<T> = {
 	createMutation: UseMutationResult<void, Error, any, void>;
 };
 
+export function getCreateQueryMutation(apipath: string, querykey: string, setIsMutating: (isMutating: boolean) => void) {
+	const queryClient = useQueryClient();
+	const { showBoundary } = useErrorBoundary();
+	const createMutation = useMutation({
+		mutationFn: async (r: any) => {
+			return fetch(
+				apipath,
+				{
+					method: FetchMethods.Post,
+					body: JSON.stringify(r),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				},
+				FetchResultTypes.JSON
+			)
+				.then((data: any) => {
+					queryClient.setQueryData([querykey], (old: any) => {
+						return [...old, data.datum];
+					});
+				})
+				.catch((e) => showBoundary(e));
+		},
+		onMutate: () => {
+			setIsMutating(true);
+		},
+		onSettled: () => {
+			setIsMutating(false);
+		}
+	});
+	return createMutation;
+}
+
 export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
 	const queryClient = useQueryClient();
 	const { showBoundary } = useErrorBoundary();
@@ -228,33 +261,7 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 		});
 		return true;
 	};
-	const createMutation = useMutation({
-		mutationFn: async (r: any) => {
-			return fetch(
-				apipath,
-				{
-					method: FetchMethods.Post,
-					body: JSON.stringify(r),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				},
-				FetchResultTypes.JSON
-			)
-				.then((data: any) => {
-					queryClient.setQueryData([querykey], (old: any) => {
-						return [...old, data.datum];
-					});
-				})
-				.catch((e) => showBoundary(e));
-		},
-		onMutate: () => {
-			setIsMutating(true);
-		},
-		onSettled: () => {
-			setIsMutating(false);
-		}
-	});
+	const createMutation = getCreateQueryMutation(apipath, querykey, setIsMutating);
 	return { result, isMutating, handleDelete, handleSave, createMutation };
 }
 
