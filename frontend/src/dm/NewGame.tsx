@@ -6,9 +6,8 @@ import TimePicker from 'antd/es/time-picker';
 import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
-import type { FormProps } from 'antd/es/form/Form';
 import { type GameSystemListItem, GameSchema } from 'common/schema';
-import { getQueries, WrapCRUD, getCreateQueryMutation, AddRow } from '../CRUD.js';
+import { getQueries, WrapCRUD, getCreateQueryMutation, CreateForm } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -68,7 +67,7 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 				
 				*/
 	return (
-		<AddRow createMutation={createMutation}>
+		<CreateForm createMutation={createMutation}>
 			<Spin spinning={isCreating} fullscreen />
 			<Form.Item<FieldType> label="Title" name="title" rules={[createFormRule]}>
 				<Input />
@@ -116,6 +115,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					Submit
 				</Button>
 			</Form.Item>
-		</AddRow>
+		</CreateForm>
 	);
 }

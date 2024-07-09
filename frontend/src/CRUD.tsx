@@ -265,15 +265,15 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 	return { result, isMutating, handleDelete, handleSave, createMutation };
 }
 
-export function AddRow({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
-	const [amCreating, setCreating] = useState(false);
-	if (!amCreating) {
-		return (
-			<Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
-				Add a row
-			</Button>
-		);
-	}
+export function CreateForm({
+	createMutation,
+	setCreating,
+	children
+}: {
+	createMutation: UseMutationResult<void, Error, any, void>;
+	setCreating: React.Dispatch<React.SetStateAction<boolean>>;
+	children: React.ReactNode;
+}) {
 	return (
 		<Form
 			onFinish={(values) => {
@@ -289,6 +289,18 @@ export function AddRow({ createMutation, children }: { createMutation: UseMutati
 			</Form.Item>
 		</Form>
 	);
+}
+
+export function AddRow({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
+	const [amCreating, setCreating] = useState(false);
+	if (!amCreating) {
+		return (
+			<Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+				Add a row
+			</Button>
+		);
+	}
+	return CreateForm({ createMutation, setCreating, children });
 }
 
 export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {
