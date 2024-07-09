@@ -19,4 +19,4 @@ export const UserSchema: SchemaBundle = {
 	find: find.readonly(),
 	delete: false
 };
-export type UserListItem = z.infer<typeof UserSchema.read>;
+export type UserListItem = z.infer<typeof read>;

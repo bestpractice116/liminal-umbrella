@@ -54,12 +54,13 @@ const create = z.object({
 const find = z.object({
 	key: z.coerce.number().int().positive()
 });
+const read = find.merge(create);
 
 export const GameSchema: SchemaBundle = {
 	create: create.readonly(),
 	update: create.readonly(),
 	find: find.readonly(),
-	read: find.merge(create).readonly(),
+	read: read.readonly(),
 	delete: true
 };
-export type GameListItem = z.infer<typeof GameSchema.read>;
+export type GameListItem = z.infer<typeof read>;

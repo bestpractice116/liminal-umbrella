@@ -15,18 +15,20 @@ export default function PostGame() {
 
 function GetGameSystems() {
 	const { result } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
 	return (
 		<WrapCRUD result={result}>
-			<PostGameForm />
+			<PostGameForm gamesystems={gamesystems} />
 		</WrapCRUD>
 	);
 }
 
-function PostGameForm() {
+function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	type FieldType = {
 		title?: string;
 		type?: string;
 		description?: string;
+		gamesystem: string;
 		starttime: dayjs.ConfigType;
 		endtime: dayjs.ConfigType;
 		date?: dayjs.ConfigType;
@@ -44,6 +46,9 @@ function PostGameForm() {
 	const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
 		console.log(date, dateString);
 	};
+	const gamesystems_items = gamesystems.map((system) => {
+		return { value: system.name, label: <span>{system.description}</span> };
+	});
 	// One shot/Ongoing campaign/Drop in and out campaign
 	const gametypes = [
 		{ value: 'oneshot', label: <span>One shot</span> },
@@ -67,6 +72,10 @@ function PostGameForm() {
 
 			<Form.Item<FieldType> label="Type of Adventure" name="type">
 				<Select options={gametypes} />
+			</Form.Item>
+
+			<Form.Item<FieldType> label="Game System" name="gamesystem">
+				<Select options={gamesystems_items} />
 			</Form.Item>
 
 			<Form.Item<FieldType> name="date" label="Date">

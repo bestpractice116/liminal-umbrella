@@ -22,11 +22,12 @@ const update = z.object({
 		.min(2, { message: 'Value must be at least 2 characters long' })
 		.max(1000, { message: 'Value must be less than 1000 characters' })
 });
+const read = find.merge(update);
 
 export const BotMessageSchema: SchemaBundle = {
 	update: update.readonly(),
-	read: find.merge(update).readonly(),
+	read: read.readonly(),
 	find: find.readonly(),
 	delete: false
 };
-export type BotMessageListItem = z.infer<typeof BotMessageSchema.read>;
+export type BotMessageListItem = z.infer<typeof read>;

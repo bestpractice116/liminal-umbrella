@@ -31,4 +31,4 @@ export const ActivitySchema: SchemaBundle = {
 	delete: true,
 	read: read.readonly()
 };
-export type BotActivityListItem = z.infer<typeof ActivitySchema.read>;
+export type BotActivityListItem = z.infer<typeof read>;

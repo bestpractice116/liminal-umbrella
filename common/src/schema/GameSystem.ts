@@ -22,12 +22,13 @@ const create = z.object({
 const find = z.object({
 	key: z.coerce.number().int().positive()
 });
+const read = find.merge(create);
 
 export const GameSystemSchema: SchemaBundle = {
 	create: create.readonly(),
 	update: create.readonly(),
 	find: find.readonly(),
-	read: find.merge(create).readonly(),
+	read: read.readonly(),
 	delete: true
 };
-export type GameSystemListItem = z.infer<typeof GameSystemSchema.read>;
+export type GameSystemListItem = z.infer<typeof read>;
