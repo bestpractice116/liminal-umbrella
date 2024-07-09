@@ -2,9 +2,9 @@ import * as z from 'zod';
 import { SchemaBundle } from './types.js';
 
 export enum GameType {
-	Oneshot = 'One shot',
-	Ongoing = 'Ongoing Campaign',
-	Dropin = 'Drop In Campaign'
+	oneshot = 'One shot',
+	ongoing = 'Ongoing Campaign',
+	dropin = 'Drop In Campaign'
 }
 
 const create = z.object({

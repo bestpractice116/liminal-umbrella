@@ -267,18 +267,18 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 
 export function CreateForm({
 	createMutation,
-	setCreating,
+	setIsCreating,
 	children
 }: {
 	createMutation: UseMutationResult<void, Error, any, void>;
-	setCreating: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 }) {
 	return (
 		<Form
 			onFinish={(values) => {
 				createMutation.mutate(values);
-				setCreating(false);
+				setIsCreating(false);
 			}}
 		>
 			<>{children}</>

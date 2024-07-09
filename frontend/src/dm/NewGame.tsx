@@ -67,7 +67,7 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 				
 				*/
 	return (
-		<CreateForm createMutation={createMutation}>
+		<CreateForm createMutation={createMutation} setIsCreating={setIsCreating}>
 			<Spin spinning={isCreating} fullscreen />
 			<Form.Item<FieldType> label="Title" name="title" rules={[createFormRule]}>
 				<Input />
