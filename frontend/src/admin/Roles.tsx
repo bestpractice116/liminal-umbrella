@@ -2,10 +2,7 @@ import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Divider from 'antd/es/divider';
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
-import { RoleSchema } from 'common/schema';
-import * as z from 'zod';
-
-type RoleListItem = z.infer<typeof RoleSchema.read>;
+import { RoleSchema, type RoleListItem } from 'common/schema';
 
 const components = getTableComponents(RoleSchema);
 

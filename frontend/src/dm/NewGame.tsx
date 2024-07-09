@@ -6,8 +6,23 @@ import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import type { FormProps } from 'antd/es/form/Form';
+import { type GameSystemListItem } from 'common/schema';
+import { getQueries, WrapCRUD } from '../CRUD.js';
 
 export default function PostGame() {
+	return <GetGameSystems />;
+}
+
+function GetGameSystems() {
+	const { result } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	return (
+		<WrapCRUD result={result}>
+			<PostGameForm />
+		</WrapCRUD>
+	);
+}
+
+function PostGameForm() {
 	type FieldType = {
 		title?: string;
 		type?: string;

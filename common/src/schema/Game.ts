@@ -62,3 +62,4 @@ export const GameSchema: SchemaBundle = {
 	read: find.merge(create).readonly(),
 	delete: true
 };
+export type GameListItem = z.infer<typeof GameSchema.read>;

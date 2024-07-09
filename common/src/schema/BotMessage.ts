@@ -29,3 +29,4 @@ export const BotMessageSchema: SchemaBundle = {
 	find: find.readonly(),
 	delete: false
 };
+export type BotMessageListItem = z.infer<typeof BotMessageSchema.read>;

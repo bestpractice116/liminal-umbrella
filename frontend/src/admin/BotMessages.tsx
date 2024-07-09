@@ -2,15 +2,13 @@ import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
-import { BotMessageSchema } from 'common/schema';
+import { BotMessageSchema, type BotMessageListItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
-import * as z from 'zod';
 
-type FetchBotMessageItem = z.infer<typeof BotMessageSchema.read>;
 const components = getTableComponents(BotMessageSchema);
 
 export default function AdminBotMessages() {
-	const { result, isMutating, handleSave } = getQueries<FetchBotMessageItem>('/api/botmessages', 'botmessages');
+	const { result, isMutating, handleSave } = getQueries<BotMessageListItem>('/api/botmessages', 'botmessages');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -25,13 +23,13 @@ export default function AdminBotMessages() {
 		}
 	];
 
-	const columns = getColumns<FetchBotMessageItem>(defaultColumns, handleSave);
+	const columns = getColumns<BotMessageListItem>(defaultColumns, handleSave);
 
 	const codeexample = '${this....}';
 	const leftBracket = '${';
 	const rightBracket = '}';
 	return (
-		<WrapCRUD<FetchBotMessageItem> result={result}>
+		<WrapCRUD<BotMessageListItem> result={result}>
 			<>
 				<Spin spinning={isMutating} fullscreen />
 				<Result

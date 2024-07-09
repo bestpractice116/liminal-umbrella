@@ -126,7 +126,15 @@ export function getTableComponents(schema: SchemaBundle) {
 	return components;
 }
 
-export function getQueries<APIRow>(apipath: string, querykey: string) {
+export type QuerySet<T> = {
+	result: UseQueryResult<T[], Error>;
+	isMutating: boolean;
+	handleDelete: Function;
+	handleSave: Function;
+	createMutation: UseMutationResult<void, Error, any, void>;
+};
+
+export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
 	const queryClient = useQueryClient();
 	const { showBoundary } = useErrorBoundary();
 	const [isMutating, setIsMutating] = useState(false);
@@ -276,7 +284,8 @@ export function AddRow({ createMutation, children }: { createMutation: UseMutati
 	);
 }
 
-export function getColumns<Item>(columns: ColumnTypeArray, handleSave: SaveHandler<Item>) {
+export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {
+	const handleSave: SaveHandler<Item> = _handleSave as SaveHandler<Item>;
 	return columns.map((col) => {
 		if (!col.editable) {
 			return col;

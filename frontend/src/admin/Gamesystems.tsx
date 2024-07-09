@@ -6,13 +6,10 @@ import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider';
 import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
-import { GameSystemSchema } from 'common/schema';
+import { GameSystemSchema, type GameSystemListItem } from 'common/schema';
 import { getZObject } from 'common';
 import { getTableComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
-import * as z from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
-
-type GameSystemListItem = z.infer<typeof GameSystemSchema.read>;
 
 const components = getTableComponents(GameSystemSchema);
 const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!));

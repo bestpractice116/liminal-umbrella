@@ -5,19 +5,16 @@ import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider';
 import { DeleteOutlined } from '@ant-design/icons';
-import { ActivitySchema } from 'common/schema';
+import { ActivitySchema, type BotActivityListItem } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { getTableComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
-import * as z from 'zod';
-
-type FetchBotActivityItem = z.infer<typeof ActivitySchema.read>;
 
 const components = getTableComponents(ActivitySchema);
 const createFormRule = createSchemaFieldRule(getZObject(ActivitySchema.create!));
 
 export default function AdminBotPlaying() {
-	const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<FetchBotActivityItem>('/api/botplaying', 'bot_playing');
+	const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<BotActivityListItem>('/api/botplaying', 'bot_playing');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -38,10 +35,10 @@ export default function AdminBotPlaying() {
 		}
 	];
 
-	const columns = getColumns<FetchBotActivityItem>(defaultColumns, handleSave);
+	const columns = getColumns<BotActivityListItem>(defaultColumns, handleSave);
 
 	return (
-		<WrapCRUD<FetchBotActivityItem> result={result}>
+		<WrapCRUD<BotActivityListItem> result={result}>
 			<>
 				<Spin spinning={isMutating} fullscreen />
 				<div>

@@ -16,3 +16,4 @@ export const RoleSchema: SchemaBundle = {
 	find: find.readonly(),
 	delete: false
 };
+export type RoleListItem = z.infer<typeof RoleSchema.read>;
