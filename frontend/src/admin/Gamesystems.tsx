@@ -8,13 +8,13 @@ import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema, type GameSystemListItem } from 'common/schema';
 import { getZObject } from 'common';
-import { getTableComponents, ColumnTypes, getQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
 
 const components = getTableComponents(GameSystemSchema);
 const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!));
 export default function AdminGameSystems() {
-	const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 
 	const defaultColumns: ColumnTypeArray = [
 		{

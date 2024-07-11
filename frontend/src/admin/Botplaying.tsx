@@ -8,13 +8,13 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { ActivitySchema, type BotActivityListItem } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
-import { getTableComponents, ColumnTypes, getQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 
 const components = getTableComponents(ActivitySchema);
 const createFormRule = createSchemaFieldRule(getZObject(ActivitySchema.create!));
 
 export default function AdminBotPlaying() {
-	const { result, isMutating, handleDelete, handleSave, createMutation } = getQueries<BotActivityListItem>('/api/botplaying', 'bot_playing');
+	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<BotActivityListItem>('/api/botplaying', 'bot_playing');
 
 	const defaultColumns: DefaultColumns = [
 		{

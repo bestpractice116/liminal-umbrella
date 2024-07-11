@@ -6,7 +6,7 @@ import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import { type GameSystemListItem, GameSchema } from 'common/schema';
-import { getQueries, WrapCRUD, getCreateMutation, CreateForm } from '../CRUD.js';
+import { getListQueries, WrapCRUD, getCreateMutation, CreateForm } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -18,7 +18,7 @@ export default function PostGame() {
 }
 
 function GetGameSystems() {
-	const { result } = getQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	const { result } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
 	return (
 		<WrapCRUD result={result}>

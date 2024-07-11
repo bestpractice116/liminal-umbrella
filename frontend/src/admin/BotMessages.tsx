@@ -3,12 +3,12 @@ import Spin from 'antd/es/spin';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema, type BotMessageListItem } from 'common/schema';
-import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 
 const components = getTableComponents(BotMessageSchema);
 
 export default function AdminBotMessages() {
-	const { result, isMutating, handleSave } = getQueries<BotMessageListItem>('/api/botmessages', 'botmessages');
+	const { result, isMutating, handleSave } = getListQueries<BotMessageListItem>('/api/botmessages', 'botmessages');
 
 	const defaultColumns: DefaultColumns = [
 		{

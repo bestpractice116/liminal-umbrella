@@ -2,13 +2,13 @@ import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Divider from 'antd/es/divider';
 import Tag from 'antd/es/tag';
-import { getTableComponents, ColumnTypes, getQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { UserSchema, type UserListItem } from 'common/schema';
 
 const components = getTableComponents(UserSchema);
 
 export default function AdminUsers() {
-	const { result, isMutating, handleSave } = getQueries<UserListItem>('/api/user', 'user');
+	const { result, isMutating, handleSave } = getListQueries<UserListItem>('/api/user', 'user');
 
 	const defaultColumns: DefaultColumns = [
 		{

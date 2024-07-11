@@ -14,7 +14,6 @@ import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
 import { SchemaBundle } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
-import { DebugContext } from './Debug';
 import { Store } from 'rc-field-form/lib/interface';
 
 type InputRef = GetRef<typeof Input>;
@@ -145,13 +144,9 @@ function zodErrorConvertor(data: any, request: any, onSuccess: (data: any, reque
 }
 
 export function getCreateMutation(apipath: string, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
-	const { debug } = useContext(DebugContext);
 	const { showBoundary } = useErrorBoundary();
 	const createMutation = useMutation({
 		mutationFn: async (r: any) => {
-			if (debug) {
-				console.debug(`POST to ${apipath} with `, r);
-			}
 			return fetch(
 				apipath,
 				{
@@ -265,7 +260,7 @@ export function mutationErrorToFormError(form: FormInstance<any>, e: any) {
 	}
 }
 
-export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
+export function getListQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
 	const queryClient = useQueryClient();
 	const [isMutating, setIsMutating] = useState(false);
 	const result = getFetchQuery<Array<APIRow>>(apipath, querykey);
@@ -313,17 +308,12 @@ export function CreateForm({
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
 }) {
-	const { debug } = useContext(DebugContext);
-
 	const [form] = Form.useForm();
 	return (
 		<Form
 			form={form}
 			initialValues={initialValues}
 			onFinish={(values) => {
-				if (debug) {
-					console.debug('CreateForm onFinish values: ', values);
-				}
 				createMutation.mutate(values, {
 					onError: (e) => {
 						mutationErrorToFormError(form, e);
