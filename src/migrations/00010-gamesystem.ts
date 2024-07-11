@@ -153,10 +153,6 @@ export const up = async (uz: MigrationParams<any>) => {
 			},
 			{ transaction }
 		);
-		for (const i of await PlannedGame.findAll()) {
-			i.set('system', 0);
-			await i.save();
-		}
 		await qi.changeColumn(
 			'plannedgames',
 			'system',
@@ -169,6 +165,9 @@ export const up = async (uz: MigrationParams<any>) => {
 };
 
 export const down = async (uz: MigrationParams<any>) => {
+	const sq = uz.context.sequelize;
 	const qi = uz.context.sequelize.getQueryInterface();
-	await qi.dropTable('gamesystems');
+	await sq.transaction(async (transaction: any) => {
+		await qi.dropTable('gamesystems', { transaction });
+	});
 };

@@ -50,10 +50,9 @@ Brief description: Max 50 words.  Please give a simple description of the scenar
 
 export default class PlannedGame extends Model<InferAttributes<PlannedGame>, InferCreationAttributes<PlannedGame>> {
 	@Attribute(DataTypes.INTEGER)
-	@NotNull
 	@AutoIncrement
 	@PrimaryKey
-	declare id: CreationOptional<number>;
+	declare key: CreationOptional<number>;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
@@ -65,13 +64,22 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	declare name: string | null;
 
 	@Attribute(DataTypes.INTEGER)
-	declare system: number | null;
+	declare gamesystem: number | null;
 
 	@Attribute(DataTypes.STRING)
-	declare datetime: string | null;
+	declare type: string | null;
+
+	@Attribute(DataTypes.STRING)
+	declare date: string | null;
+
+	@Attribute(DataTypes.STRING)
+	declare starttime: string | null;
+
+	@Attribute(DataTypes.STRING)
+	declare endtime: string | null;
 
 	@Attribute(DataTypes.INTEGER)
-	declare max_players: number | null;
+	declare maxplayers: number | null;
 
 	@Attribute(DataTypes.INTEGER)
 	@Default(0)
@@ -85,20 +93,20 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	declare location: string | null;
 
 	format(): string {
-		const out = [`Advanture Name: ${this.name}`, `Type: One shot`];
-		if (this.system) {
-			out.push(`Game system: ${this.system}`);
+		const out = [`Advanture Name: ${this.name}`, `Type: ${this.type}`];
+		if (this.gamesystem) {
+			out.push(`Game system: ${this.gamesystem}`);
 		}
-		if (this.datetime) {
+		if (this.date) {
 			const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
-			const d = new Date(this.datetime);
-			out.push(`Date, day and time of play: ${formatter.format(d)} (${this.datetime})`); // FIXME format
+			const d = new Date(this.date);
+			out.push(`Date, day and time of play: ${formatter.format(d)} (${this.date})`); // FIXME format
 		}
 		if (this.location) {
 			out.push(`Location: ${this.location}`);
 		}
-		if (this.max_players) {
-			out.push(`Spaces currently available: ${this.signed_up_players}/${this.max_players}`);
+		if (this.maxplayers) {
+			out.push(`Spaces currently available: ${this.signed_up_players}/${this.maxplayers}`);
 		}
 		out.push(`DM Contact: ${userMention(this.owner)}`);
 		out.push(`Brief description: ${this.description}`);
@@ -163,12 +171,12 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 	async showEditForm(interaction: ReplyableInteraction) {
 		const components = [];
-		if (!this.system) {
+		if (!this.gamesystem) {
 			const menu = new StringSelectMenuBuilder().setCustomId('post-game-system').setPlaceholder('Game system');
 			await GameSystem.addGameSystemOptions(menu);
 			components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu));
 		}
-		if (!this.datetime) {
+		if (!this.date) {
 			const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
 			const now = new Date();
 			const days = Array.from({ length: 25 }, (_, days) => days + 1).map((days) => {
@@ -191,7 +199,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 		const row = new ActionRowBuilder<ButtonBuilder>();
 		const save = new ButtonBuilder().setCustomId('game-post-do-it').setLabel('Post Game').setStyle(ButtonStyle.Success).setDisabled(true);
-		if (this.system && this.datetime) {
+		if (this.gamesystem && this.date) {
 			save.setDisabled(false);
 		}
 		row.addComponents(save);

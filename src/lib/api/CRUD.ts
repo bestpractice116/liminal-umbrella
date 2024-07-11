@@ -56,6 +56,11 @@ export abstract class CR extends Route {
 	@AuthenticatedAdmin()
 	async auth_CREATE(_request: ApiRequest, _response: ApiResponse) {}
 
+	async CREATE_coerce(request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
+		data.owner = request.auth;
+		return data;
+	}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
 		await this.auth_CREATE(request, response);
@@ -72,7 +77,12 @@ export abstract class CR extends Route {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return;
 		}
-		const item = await this.getModel().create(data);
+		const dbData = await this.CREATE_coerce(request, response, data);
+		if (response.writableEnded) {
+			return;
+		}
+		console.log(dbData);
+		const item = await this.getModel().create(dbData);
 		this.onMuatation();
 		const datum = await getReadObjectFromDbObject(this, item);
 		response.status(HttpCodes.Created).json({ status: 'ok', datum });

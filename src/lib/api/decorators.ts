@@ -49,6 +49,9 @@ class AuthDecorators {
 				!response.writableEnded &&
 				this.getUser(request).then((user) => {
 					if (!user || !user!.roles) return false;
+					if (user!.roles!.some((role) => role.name === 'Admin')) {
+						return true;
+					}
 					if (beta) {
 						if (!user.roles!.find((r) => r.name === 'BotBetaTester')) {
 							return false;
@@ -57,7 +60,7 @@ class AuthDecorators {
 					for (const role of Array(roles)) {
 						if (user!.roles!.some((r) => r.name === role)) return true;
 					}
-					return user!.roles!.some((role) => role.name === 'Admin');
+					return false;
 				}),
 			(_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
 		);

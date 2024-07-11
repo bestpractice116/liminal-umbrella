@@ -14,6 +14,8 @@ import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
 import { SchemaBundle } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
+import { DebugContext } from './Debug';
+import { Store } from 'rc-field-form/lib/interface';
 
 type InputRef = GetRef<typeof Input>;
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -135,10 +137,14 @@ export type QuerySet<T> = {
 };
 
 export function getCreateQueryMutation(apipath: string, querykey: string, setIsMutating: (isMutating: boolean) => void) {
+	const { debug } = useContext(DebugContext);
 	const queryClient = useQueryClient();
 	const { showBoundary } = useErrorBoundary();
 	const createMutation = useMutation({
 		mutationFn: async (r: any) => {
+			if (debug) {
+				console.debug(`POST to ${apipath} with `, r);
+			}
 			return fetch(
 				apipath,
 				{
@@ -268,15 +274,23 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 export function CreateForm({
 	createMutation,
 	setIsCreating,
-	children
+	children,
+	initialValues
 }: {
 	createMutation: UseMutationResult<void, Error, any, void>;
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
+	initialValues?: Store | undefined;
 }) {
+	const { debug } = useContext(DebugContext);
+
 	return (
 		<Form
+			initialValues={initialValues}
 			onFinish={(values) => {
+				if (debug) {
+					console.debug('CreateForm onFinish values: ', values);
+				}
 				createMutation.mutate(values);
 				setIsCreating(false);
 			}}

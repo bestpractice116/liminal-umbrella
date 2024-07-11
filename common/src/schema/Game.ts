@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
-import { type Dayjs } from 'dayjs';
+import { dayJsCoerce } from '../index.js';
 
 export enum GameType {
 	oneshot = 'oneshot',
@@ -30,23 +30,9 @@ const create = z.object({
 		required_error: 'Game system is required',
 		invalid_type_error: 'Game system must be a string'
 	}),
-	date: z.preprocess((val) => (val as Dayjs).toDate(), z.date()),
-	startttime: z
-		.string({
-			required_error: 'Start time required',
-			invalid_type_error: 'Start time must be a string'
-		})
-		.trim()
-		.min(4, { message: 'Start time must be at least 4 characters long' })
-		.max(5, { message: 'Start time must be less than 6 characters' }),
-	endttime: z
-		.string({
-			required_error: 'End time required',
-			invalid_type_error: 'End time must be a string'
-		})
-		.trim()
-		.min(4, { message: 'End time must be at least 4 characters long' })
-		.max(5, { message: 'End time must be less than 6 characters' }),
+	date: z.preprocess(dayJsCoerce, z.date()),
+	starttime: z.preprocess(dayJsCoerce, z.date()),
+	endtime: z.preprocess(dayJsCoerce, z.date()),
 	location: z
 		.string({
 			required_error: 'Location is required',

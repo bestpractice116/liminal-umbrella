@@ -56,7 +56,15 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	];
 
 	return (
-		<CreateForm createMutation={createMutation} setIsCreating={setIsCreating}>
+		<CreateForm
+			createMutation={createMutation}
+			setIsCreating={setIsCreating}
+			initialValues={{
+				starttime: dayjs('18:00', 'HH:mm'),
+				endtime: dayjs('22:00', 'HH:mm'),
+				maxplayers: 4
+			}}
+		>
 			<Spin spinning={isCreating} fullscreen />
 			<Form.Item<FieldType> label="Title" name="title" rules={[createFormRule]}>
 				<Input />
@@ -75,11 +83,11 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 			</Form.Item>
 
 			<Form.Item<FieldType> name="starttime" label="Start Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} defaultValue={dayjs('18:00', 'HH:mm')} size="large" />
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
 			</Form.Item>
 
 			<Form.Item<FieldType> name="endtime" label="End Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} defaultValue={dayjs('22:00', 'HH:mm')} size="large" />
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
 			</Form.Item>
 
 			<Form.Item<FieldType> label="Location" name="location" rules={[createFormRule]}>
@@ -92,7 +100,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 
 			<Form.Item<FieldType> label="Max Players" name="maxplayers" rules={[createFormRule]}>
 				<Select
-					defaultValue={4}
 					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
 						return { value: idx, label: <span>{idx}</span> };
 					})}
