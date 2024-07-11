@@ -292,15 +292,15 @@ export function CreateForm({
 }
 
 export function AddRow({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
-	const [amCreating, setCreating] = useState(false);
-	if (!amCreating) {
+	const [isCreating, setIsCreating] = useState(false);
+	if (!isCreating) {
 		return (
-			<Button onClick={() => setCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+			<Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
 				Add a row
 			</Button>
 		);
 	}
-	return CreateForm({ createMutation, setCreating, children });
+	return CreateForm({ createMutation, setIsCreating, children });
 }
 
 export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {
