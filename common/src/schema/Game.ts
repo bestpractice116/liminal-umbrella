@@ -1,10 +1,11 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
+import { type Dayjs } from 'dayjs';
 
 export enum GameType {
-	oneshot = 'One shot',
-	ongoing = 'Ongoing Campaign',
-	dropin = 'Drop In Campaign'
+	oneshot = 'oneshot',
+	ongoing = 'ongoing',
+	dropin = 'dropin'
 }
 
 const create = z.object({
@@ -29,14 +30,7 @@ const create = z.object({
 		required_error: 'Game system is required',
 		invalid_type_error: 'Game system must be a string'
 	}),
-	date: z
-		.string({
-			required_error: 'Date required',
-			invalid_type_error: 'Date must be a string'
-		})
-		.trim()
-		.min(4, { message: 'Date must be at least 4 characters long' })
-		.max(100, { message: 'Date must be less than 100 characters' }),
+	date: z.preprocess((val) => (val as Dayjs).toDate(), z.date()),
 	startttime: z
 		.string({
 			required_error: 'Start time required',

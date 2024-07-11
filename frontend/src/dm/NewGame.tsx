@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
-import Button from 'antd/es/button/button';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
@@ -30,7 +29,7 @@ function GetGameSystems() {
 
 function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	const [isCreating, setIsCreating] = useState(false);
-	const createMutation = getCreateQueryMutation('', '', setIsCreating);
+	const createMutation = getCreateQueryMutation('/api/game', 'game', setIsCreating);
 	type FieldType = {
 		title?: string;
 		type?: string;
