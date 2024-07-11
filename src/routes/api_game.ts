@@ -1,5 +1,5 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import { PlannedGame } from '../lib/database/model.js';
+import { GameSystem, PlannedGame } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { GameSchema } from 'common/schema';
@@ -23,10 +23,15 @@ export class ApiGameList extends CR {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_CREATE() {}
 
-	override async CREATE_coerce(request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
+	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
+		const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
+		if (!gamesystem) {
+			return response.badRequest('Cannot find game system');
+		}
 		return {
 			...data,
-			owner: request.auth!.id
+			owner: request.auth!.id,
+			gamesystem: gamesystem.key
 		};
 	}
 }

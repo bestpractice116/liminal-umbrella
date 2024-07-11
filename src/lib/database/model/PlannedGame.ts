@@ -69,14 +69,14 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	@Attribute(DataTypes.STRING)
 	declare type: string | null;
 
-	@Attribute(DataTypes.STRING)
-	declare date: string | null;
+	@Attribute(DataTypes.DATE)
+	declare date: Date | null;
 
-	@Attribute(DataTypes.STRING)
-	declare starttime: string | null;
+	@Attribute(DataTypes.DATE)
+	declare starttime: Date | null;
 
-	@Attribute(DataTypes.STRING)
-	declare endtime: string | null;
+	@Attribute(DataTypes.DATE)
+	declare endtime: Date | null;
 
 	@Attribute(DataTypes.INTEGER)
 	declare maxplayers: number | null;

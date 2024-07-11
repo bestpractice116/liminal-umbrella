@@ -6,7 +6,7 @@ import DatePicker, { type DatePickerProps } from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import { type GameSystemListItem, GameSchema } from 'common/schema';
-import { getQueries, WrapCRUD, getCreateQueryMutation, CreateForm } from '../CRUD.js';
+import { getQueries, WrapCRUD, getCreateMutation, CreateForm } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -29,7 +29,7 @@ function GetGameSystems() {
 
 function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	const [isCreating, setIsCreating] = useState(false);
-	const createMutation = getCreateQueryMutation('/api/game', 'game', setIsCreating);
+	const createMutation = getCreateMutation('/api/game', setIsCreating, (_data: any) => {});
 	type FieldType = {
 		title?: string;
 		type?: string;

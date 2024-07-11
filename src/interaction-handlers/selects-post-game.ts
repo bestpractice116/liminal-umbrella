@@ -25,7 +25,7 @@ export class SelectsPostGamenHandler extends InteractionHandler {
 			gamerow?.set({ gamesystem: Number(interaction.values[0]) });
 		}
 		if (interaction.customId == 'post-game-date') {
-			gamerow?.set({ date: interaction.values[0] });
+			gamerow?.set({ date: new Date(interaction.values[0]) });
 		}
 		gamerow?.save();
 		const pingMessage = await gamerow?.showEditForm(interaction);

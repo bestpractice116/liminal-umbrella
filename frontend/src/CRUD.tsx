@@ -136,9 +136,16 @@ export type QuerySet<T> = {
 	createMutation: UseMutationResult<void, Error, any, void>;
 };
 
-export function getCreateQueryMutation(apipath: string, querykey: string, setIsMutating: (isMutating: boolean) => void) {
+function zodErrorConvertor(data: any, request: any, onSuccess: (data: any, request: any) => void) {
+	if (data.status && data.status !== 'ok' && data.error) {
+		console.error('Error updating data', data);
+		throw new z.ZodError(data.error);
+	}
+	onSuccess(data, request);
+}
+
+export function getCreateMutation(apipath: string, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
 	const { debug } = useContext(DebugContext);
-	const queryClient = useQueryClient();
 	const { showBoundary } = useErrorBoundary();
 	const createMutation = useMutation({
 		mutationFn: async (r: any) => {
@@ -156,11 +163,7 @@ export function getCreateQueryMutation(apipath: string, querykey: string, setIsM
 				},
 				FetchResultTypes.JSON
 			)
-				.then((data: any) => {
-					queryClient.setQueryData([querykey], (old: any) => {
-						return [...old, data.datum];
-					});
-				})
+				.then((data) => zodErrorConvertor(data, r, onCreate))
 				.catch((e) => showBoundary(e));
 		},
 		onMutate: () => {
@@ -173,44 +176,23 @@ export function getCreateQueryMutation(apipath: string, querykey: string, setIsM
 	return createMutation;
 }
 
-export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
-	const queryClient = useQueryClient();
-	const { showBoundary } = useErrorBoundary();
-	const [isMutating, setIsMutating] = useState(false);
-	const result = useQuery({
+export function getFetchQuery<T>(apipath: string, querykey: string): UseQueryResult<T, Error> {
+	return useQuery({
 		queryKey: [querykey],
-		queryFn: (): Promise<Array<APIRow>> => {
+		queryFn: (): Promise<T> => {
 			return fetch(apipath, FetchResultTypes.JSON);
 		},
 		throwOnError: true
 	});
-	const deleteMutation = useMutation({
-		mutationFn: async (r: any) => {
-			return fetch(
-				`${apipath}/${r.key}`,
-				{
-					method: FetchMethods.Delete
-				},
-				FetchResultTypes.JSON
-			)
-				.then((_data) => {
-					queryClient.setQueryData([querykey], (old: any) => {
-						return old.filter((item: any) => item.key !== r.key);
-					});
-				})
-				.catch((e) => showBoundary(e));
-		},
-		onMutate: () => {
-			setIsMutating(true);
-		},
-		onSettled: () => {
-			setIsMutating(false);
-		}
-	});
-	const handleDelete = (key: React.Key) => {
-		deleteMutation.mutate({ key });
-	};
-	const updateMutation = useMutation({
+}
+
+export function getUpdateMutation(
+	apipath: string,
+	setIsMutating: (isMutating: boolean) => void,
+	onSuccess: (data: any, row: any) => void
+): UseMutationResult<void, Error, any, void> {
+	const { showBoundary } = useErrorBoundary();
+	return useMutation({
 		mutationFn: async (r: any) => {
 			return fetch(
 				`${apipath}/${r.key}`,
@@ -223,19 +205,35 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 				},
 				FetchResultTypes.JSON
 			)
-				.then((data: any) => {
-					if (data.status !== 'ok') {
-						console.error('Error updating data', data);
-						throw new z.ZodError(data.error);
-					}
-					queryClient.setQueryData([querykey], (old: any) => {
-						return old.map((item: any) => {
-							if (item.key === r.key) {
-								return data.datum;
-							}
-							return item;
-						});
-					});
+				.then((data) => zodErrorConvertor(data, r, onSuccess))
+				.catch((e) => showBoundary(e));
+		},
+		onMutate: () => {
+			setIsMutating(true);
+		},
+		onSettled: () => {
+			setIsMutating(false);
+		}
+	});
+}
+
+export function getDeleteMutation(
+	apipath: string,
+	setIsMutating: (isMutating: boolean) => void,
+	onSuccess: (data: any, row: any) => void
+): UseMutationResult<void, Error, any, void> {
+	const { showBoundary } = useErrorBoundary();
+	return useMutation({
+		mutationFn: async (r: any) => {
+			return fetch(
+				`${apipath}/${r.key}`,
+				{
+					method: FetchMethods.Delete
+				},
+				FetchResultTypes.JSON
+			)
+				.then((data) => {
+					onSuccess(data, r);
 				})
 				.catch((e) => showBoundary(e));
 		},
@@ -246,28 +244,61 @@ export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<
 			setIsMutating(false);
 		}
 	});
+}
+
+export function mutationErrorToFormError(form: FormInstance<any>, e: any) {
+	const { showBoundary } = useErrorBoundary();
+	try {
+		if (e instanceof z.ZodError) {
+			const formatted = (e as z.ZodError).format();
+			const f = Object.entries(formatted)
+				.filter(([key, _]) => key !== '_errors')
+				.map(([key, value]) => {
+					return { name: key, errors: (value as any)._errors };
+				});
+			form.setFields(f);
+		} else {
+			showBoundary(e);
+		}
+	} catch (e) {
+		showBoundary(e);
+	}
+}
+
+export function getQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
+	const queryClient = useQueryClient();
+	const [isMutating, setIsMutating] = useState(false);
+	const result = getFetchQuery<Array<APIRow>>(apipath, querykey);
+	const deleteMutation = getDeleteMutation(apipath, setIsMutating, (_data) => {
+		queryClient.setQueryData([querykey], (old: any, row: any) => {
+			return old.filter((item: any) => item.key !== row.key);
+		});
+	});
+	const handleDelete = (key: React.Key) => {
+		deleteMutation.mutate({ key });
+	};
+	const updateMutation = getUpdateMutation(apipath, setIsMutating, (data: any) => {
+		queryClient.setQueryData([querykey], (old: any) => {
+			return old.map((item: any, row: any) => {
+				if (item.key === row.key) {
+					return data.datum;
+				}
+				return item;
+			});
+		});
+	});
 	const handleSave = (row: APIRow, form: FormInstance<any>, toggleEdit: Function): Boolean => {
 		updateMutation.mutate(row, {
-			onError: (e) => {
-				try {
-					const formatted = (e as z.ZodError).format();
-					const f = Object.entries(formatted)
-						.filter(([key, _]) => key !== '_errors')
-						.map(([key, value]) => {
-							return { name: key, errors: (value as any)._errors };
-						});
-					form.setFields(f);
-				} catch (e) {
-					showBoundary(e);
-				}
-			},
-			onSuccess: () => {
-				toggleEdit();
-			}
+			onError: (e) => mutationErrorToFormError(form, e),
+			onSuccess: () => toggleEdit()
 		});
 		return true;
 	};
-	const createMutation = getCreateQueryMutation(apipath, querykey, setIsMutating);
+	const createMutation = getCreateMutation(apipath, setIsMutating, (data: any) => {
+		queryClient.setQueryData([querykey], (old: any) => {
+			return [...(old || []), data.datum];
+		});
+	});
 	return { result, isMutating, handleDelete, handleSave, createMutation };
 }
 
@@ -284,15 +315,22 @@ export function CreateForm({
 }) {
 	const { debug } = useContext(DebugContext);
 
+	const [form] = Form.useForm();
 	return (
 		<Form
+			form={form}
 			initialValues={initialValues}
 			onFinish={(values) => {
 				if (debug) {
 					console.debug('CreateForm onFinish values: ', values);
 				}
-				createMutation.mutate(values);
-				setIsCreating(false);
+				createMutation.mutate(values, {
+					onError: (e) => {
+						mutationErrorToFormError(form, e);
+						setIsCreating(false);
+					},
+					onSuccess: () => setIsCreating(false)
+				});
 			}}
 		>
 			<>{children}</>
