@@ -8,7 +8,7 @@ export enum GameType {
 }
 
 const create = z.object({
-	name: z
+	title: z
 		.string({
 			required_error: 'Name is required',
 			invalid_type_error: 'Name must be a string'
@@ -25,6 +25,18 @@ const create = z.object({
 		.min(50, { message: 'Description must be at least 50 characters long' })
 		.max(2000, { message: 'Description must be less than 2000 characters' }),
 	type: z.nativeEnum(GameType),
+	gamesystem: z.string({
+		required_error: 'Game system is required',
+		invalid_type_error: 'Game system must be a string'
+	}),
+	date: z
+		.string({
+			required_error: 'Date required',
+			invalid_type_error: 'Date must be a string'
+		})
+		.trim()
+		.min(4, { message: 'Date must be at least 4 characters long' })
+		.max(100, { message: 'Date must be less than 100 characters' }),
 	startttime: z
 		.string({
 			required_error: 'Start time required',

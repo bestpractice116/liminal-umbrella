@@ -56,16 +56,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		{ value: 'dropin', label: <span>Drop in and out campaign</span> }
 	];
 
-	/*
-	
-					<Form.Item label="Name" name="name" rules={[createFormRule]}>
-						<Input />
-					</Form.Item>
-					<Form.Item name="type" initialValue="playing">
-						<Input type="hidden" />
-					</Form.Item>
-				
-				*/
 	return (
 		<CreateForm createMutation={createMutation} setIsCreating={setIsCreating}>
 			<Spin spinning={isCreating} fullscreen />
@@ -108,12 +98,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 						return { value: idx, label: <span>{idx}</span> };
 					})}
 				/>
-			</Form.Item>
-
-			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="primary" htmlType="submit">
-					Submit
-				</Button>
 			</Form.Item>
 		</CreateForm>
 	);

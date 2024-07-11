@@ -15,7 +15,7 @@ export class verboseLogUserJoinedListener extends Listener {
 	}
 	async run(e: UserJoined) {
 		const relative = time(e.joinedDiscordAt, TimestampStyles.RelativeTime);
-		const exampleEmbed = new EmbedBuilder()
+		const joinedEmbed = new EmbedBuilder()
 			.setColor(0x00ff00)
 			.setAuthor({ name: 'Member Joined', iconURL: e.avatarURL })
 			.setDescription(userMention(e.id))
@@ -29,6 +29,6 @@ export class verboseLogUserJoinedListener extends Listener {
 			.setTimestamp()
 			.setFooter({ text: `ID: ${e.id}` });
 
-		await getChannelAndEmbed(exampleEmbed);
+		await getChannelAndEmbed(joinedEmbed);
 	}
 }
