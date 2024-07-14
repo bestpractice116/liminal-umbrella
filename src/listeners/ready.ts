@@ -6,7 +6,6 @@ import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colore
 import { Sequential } from '../lib/utils.js';
 import { BotStarted } from '../lib/events/index.js';
 import { Methods } from '@sapphire/plugin-api';
-
 const dev = process.env.NODE_ENV !== 'production';
 
 @ApplyOptions<Listener.Options>({ once: true })
@@ -15,7 +14,7 @@ export class ReadyEvent extends Listener {
 
 	@Sequential
 	public override async run(client: Client) {
-		client.guilds.fetch(process.env.DISCORD_GUILD_ID).then(async (guild) => {
+		client.guilds.fetch(this.container.guildId).then(async (guild) => {
 			this.container.guild = guild;
 			await this.container.database.doMigrations(guild);
 			await this.container.database.getHighestWatermark();

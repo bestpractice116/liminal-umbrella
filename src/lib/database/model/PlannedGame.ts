@@ -11,6 +11,7 @@ import {
 } from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, Default, BelongsTo } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
+import GameSession from './GameSession.js';
 import { Command, container } from '@sapphire/framework';
 import {
 	userMention,
@@ -33,8 +34,11 @@ import {
 	ChannelType,
 	GuildScheduledEventEntityType,
 	GuildScheduledEventPrivacyLevel,
-	ThreadAutoArchiveDuration
+	ThreadAutoArchiveDuration,
+	Snowflake,
+	TextChannel
 } from 'discord.js';
+import { gameChannelLink } from '../../discord.js';
 
 export type ReplyableInteraction =
 	| ChatInputCommandInteraction
@@ -236,14 +240,45 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		return interaction.reply({ content: this.format(), fetchReply: true, ephemeral: true, components });
 	}
 
-	async postGame(interaction: ReplyableInteraction) {
-		await this.postGameListing();
-		await this.postEvent(interaction);
-		await this.createGameThread();
+	async postGame() {
+		const db = await container.database.getdb();
+		let channelId: string | undefined;
+		let gameListingsMessageId: string | undefined;
+		let eventId: string | undefined;
+		try {
+			await db.transaction(async () => {
+				channelId = await this.createGameThread();
+				gameListingsMessageId = await this.postGameListing();
+				eventId = await this.postEvent(channelId);
+				await GameSession.create({
+					owner: this.owner,
+					gameListingsMessageId,
+					eventId,
+					channelId
+				});
+				//await this.destroy();
+			});
+		} catch (e) {
+			console.log(`Caught error posting Game: ${e}`);
+			if (channelId) {
+				const channel = container.client.channels.cache.find((channel) => channel.id === channelId);
+				await channel?.delete();
+			}
+			if (gameListingsMessageId) {
+				const channel = this.getGameListingChannel();
+				const msg = await channel?.messages.fetch(gameListingsMessageId);
+				await msg?.delete();
+			}
+			if (eventId) {
+				const event = container.guild?.scheduledEvents.cache.find((event) => event.id === eventId);
+				await event?.delete();
+			}
+			throw e;
+		}
 	}
 
-	async postEvent(interaction: ReplyableInteraction) {
-		await interaction.guild?.scheduledEvents.create({
+	async postEvent(channelId: Snowflake): Promise<Snowflake> {
+		const event = await container.guild?.scheduledEvents.create({
 			description: this.description!,
 			entityType: GuildScheduledEventEntityType.External,
 			name: this.name!,
@@ -251,34 +286,48 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			scheduledEndTime: new Date(Date.now() + 1000000 + 1000 * 60 * 60), // 1hr
 			privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
 			entityMetadata: {
-				location: 'FIXME'
+				location: gameChannelLink(channelId)
 			}
 		});
+		return event!.id;
 	}
 
-	async postGameListing() {
+	getGameListingChannel(): TextChannel | undefined {
 		const channel_name = 'game_listings';
 		const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
 		if (channel && channel.type == ChannelType.GuildText) {
-			await channel.send(this.format());
+			return channel;
 		}
+		return undefined;
 	}
 
-	async createGameThread() {
+	async postGameListing(): Promise<Snowflake> {
+		const channel = this.getGameListingChannel();
+		if (channel && channel.type == ChannelType.GuildText) {
+			const msg = await channel.send(this.format());
+			return msg.id;
+		}
+		throw new Error('Could not find game_listings channel');
+	}
+
+	async createGameThread(): Promise<Snowflake> {
+		console.log('CREATE THREAD');
 		const channel_name = 'one_shots';
-		const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
+		const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildForum && channel.name === channel_name);
 		if (channel && channel.type == ChannelType.GuildForum) {
-			await channel.threads.create({
-				name: 'Food Talk',
+			const thread = await channel.threads.create({
+				name: this.name!,
 				autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
 				message: {
 					content: this.format()
 				},
-				reason: 'Needed a thread for a game'
+				reason: `Game: ${this.name!} by ${userMention(this.owner)}`
 			});
-		} else {
-			console.log(`Could not find channel: ${channel_name}`);
+			// https://discord.com/channels/1205971443523788840/1261979494898733197
+			console.log(`Thread URL https://discord.com/channels/${container.guildId}/${thread.id}`);
+			return thread.id;
 		}
+		throw new Error('Could not find one_shots channel');
 	}
 
 	async handleEditForm(interaction: ReplyableInteraction, msg: Message) {
@@ -295,7 +344,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			//}
 		}
 		if (input.customId === 'game-post-do-it') {
-			await this.postGame(interaction);
+			await this.postGame();
 			/*const confirm = await this.getConfirmInput(msg);
             if (confirm) {
                 return interaction.editReply({content: 'Game posted', components: []});
