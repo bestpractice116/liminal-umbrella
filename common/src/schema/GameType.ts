@@ -3,3 +3,9 @@ export const gametypes: { [key: string]: string } = {
 	campaign: 'Ongoing campaign',
 	dropin: 'Drop in and out campaign'
 };
+
+export const gametypesEnabled: { [key: string]: boolean } = {
+	oneshot: true,
+	campaign: false,
+	dropin: false
+};

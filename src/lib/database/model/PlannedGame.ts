@@ -123,7 +123,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		if (this.starttime) {
 			const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
 			const d = new Date(this.starttime);
-			out.push(`Date, day and time of play: ${formatter.format(d)}`); // FIXME format
+			const startTime = this.starttime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+			const endTime = this.endtime!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+			out.push(`Date, day and time of play: ${formatter.format(d)} ${startTime}-${endTime}`);
 		}
 		if (this.location) {
 			out.push(`Location: ${this.location}`);

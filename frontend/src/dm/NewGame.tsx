@@ -7,7 +7,7 @@ import DatePicker from 'antd/es/date-picker';
 import Button from 'antd/es/button';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
-import { type GameSystemListItem, type GameListItem, GameSchema, gametypes } from 'common/schema';
+import { type GameSystemListItem, type GameListItem, GameSchema, gametypes, gametypesEnabled } from 'common/schema';
 import { getListQueries, WrapCRUD, getCreateMutation, CreateForm, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
@@ -44,17 +44,17 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
 	// One shot/Ongoing campaign/Drop in and out campaign
-	const gametypes_items: { value: string; label: any }[] = Object.entries(gametypes).map(([k, v]) => {
-		return { value: k, label: <span>{v}</span> };
+	const gametypes_items: { value: string; label: any; disabled: boolean }[] = Object.entries(gametypes).map(([k, v]) => {
+		return { value: k, label: <span>{v}</span>, disabled: !gametypesEnabled[k] };
 	});
 	let initialvalues: any = {
 		starttime: dayjs('18:00', 'HH:mm'),
 		endtime: dayjs('22:00', 'HH:mm'),
-		maxplayers: 4
+		maxplayers: 4,
+		type: 'oneshot'
 	};
 	let hasGame = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
-		console.log(result.data[0]);
 		const res = GameSchema.read.safeParse(result.data[0]);
 		if (!res.success) {
 			console.log(res.error);
@@ -63,7 +63,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 			hasGame = true;
 		}
 	}
-	console.log(initialvalues);
 	if (!result.isFetched) {
 		return <Spin spinning={true} fullscreen />;
 	}
@@ -77,13 +76,12 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 			return;
 		}
 		const data = formRef.current!.getFieldsValue();
-		console.log('save', data);
 		setIsCreating(true);
 		mutation.mutate(data, {
 			onSuccess: () => {
 				setIsCreating(false);
 			},
-			onError: (e) => {
+			onError: (_e) => {
 				setIsCreating(false);
 			}
 		});
