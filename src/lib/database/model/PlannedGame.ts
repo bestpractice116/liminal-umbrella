@@ -259,7 +259,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					description: this.description!,
 					location: this.location!
 				});
-				//await this.destroy();
+				await this.destroy();
 			});
 		} catch (e) {
 			console.log(`Caught error posting Game: ${e}`);
