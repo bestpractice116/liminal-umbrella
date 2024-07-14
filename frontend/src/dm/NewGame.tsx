@@ -14,39 +14,58 @@ import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useErrorBoundary } from '../ErrorFallback';
+import { UseQueryResult, UseMutationResult } from '@tanstack/react-query';
 
 const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
 
-export default function PostGame() {
-	return <GetGameSystems />;
-}
-
-function GetGameSystems() {
+function GameSystemsSelect({ save }: { save: () => void }) {
 	const { result } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
+	const loading = result.isFetching;
+
 	return (
 		<WrapCRUD result={result}>
-			<PostGameForm gamesystems={gamesystems} />
+			<GameSystemsSelectHTML gamesystems={gamesystems} save={save} loading={loading} />
 		</WrapCRUD>
 	);
 }
 
-function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
-	const { showBoundary } = useErrorBoundary();
-	const [isCreating, setIsCreating] = useState(false);
-	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
-	const createMutation = getCreateMutation('/api/game', setIsCreating, (_data: any) => {});
-	const updateMutation = getUpdateMutation('/api/game', setIsCreating, () => {
-		console.log('updated');
-	});
-
+function GameSystemsSelectHTML({ gamesystems, save, loading }: { gamesystems: GameSystemListItem[]; save: () => void; loading: boolean }) {
 	const gamesystems_items = gamesystems.map((system) => {
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
-	// One shot/Ongoing campaign/Drop in and out campaign
+	return (
+		<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
+			<Select options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} />
+		</Form.Item>
+	);
+}
+
+function GameTypeSelect({ save }: { save: () => void }) {
 	const gametypes_items: { value: string; label: any; disabled: boolean }[] = Object.entries(gametypes).map(([k, v]) => {
 		return { value: k, label: <span>{v}</span>, disabled: !gametypesEnabled[k] };
 	});
+
+	return (
+		<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
+			<Select options={gametypes_items} onBlur={save} onSelect={save} />
+		</Form.Item>
+	);
+}
+
+export default function PostGame() {
+	const { showBoundary } = useErrorBoundary();
+	const formRef = createRef<FormRef>();
+	const [isCreating, setIsCreating] = useState(false);
+	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
+	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
+		console.log('DID CREATE WITH ', data);
+		formRef.current!.setFieldValue('key', data!.datum!.key);
+	});
+	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, () => {
+		console.log('updated');
+	});
+
 	let initialvalues: any = {
 		starttime: dayjs('18:00', 'HH:mm'),
 		endtime: dayjs('22:00', 'HH:mm'),
@@ -61,7 +80,6 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		} else {
 			initialvalues = res.data;
 			hasGame = true;
-			console.log('Set has game');
 		}
 	}
 	if (!result.isFetched) {
@@ -70,8 +88,10 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	let mutation = createMutation;
 	if (hasGame) {
 		mutation = updateMutation;
+		console.log('Choosing update mutation');
+	} else {
+		console.log('choosing create mustation');
 	}
-	const formRef = createRef<FormRef>();
 	const save = () => {
 		if (!formRef.current) {
 			return;
@@ -79,16 +99,20 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		const data = formRef.current!.getFieldsValue();
 		setIsCreating(true);
 		mutation.mutate(data, {
-			onSuccess: () => {
+			onSuccess: (data) => {
+				// FIXME
+				console.log('Got create success', data);
+				//formRef.current!.setFieldValue('key', data!.datum!.key);
 				setIsCreating(false);
 			},
 			onError: (_e) => {
+				//FIXME
+				console.log('Got create error');
 				setIsCreating(false);
 			}
 		});
 	};
 	const postgame = () => {
-		console.log('postgame');
 		const data = formRef.current!.getFieldsValue();
 		setIsCreating(true);
 		mutation.mutate(data, {
@@ -104,8 +128,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					},
 					FetchResultTypes.JSON
 				)
-					.then((data) => {
+					.then(() => {
 						console.log('POSTED GAME ', data);
+						formRef.current!.setFieldValue('key', data!.datum!.key);
 						setIsCreating(false);
 					})
 					.catch((e) => showBoundary(e));
@@ -116,6 +141,43 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		});
 	};
 
+	return (
+		<PostGameForm
+			hasGame={hasGame}
+			isCreating={isCreating}
+			save={save}
+			postgame={postgame}
+			setIsCreating={setIsCreating}
+			formRef={formRef}
+			result={result}
+			mutation={mutation}
+			initialvalues={initialvalues}
+		/>
+	);
+}
+
+function PostGameForm({
+	hasGame,
+	isCreating,
+	save,
+	postgame,
+	setIsCreating,
+	formRef,
+	result,
+	mutation,
+	initialvalues
+}: {
+	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
+	save: () => void;
+	postgame: () => void;
+	hasGame: boolean;
+	isCreating: boolean;
+	formRef: React.RefObject<FormRef>;
+	result: UseQueryResult<Array<GameListItem>>;
+	mutation: UseMutationResult<void, Error, any, void>;
+	initialvalues: { [key: string]: any };
+}) {
+	console.log('initial ', initialvalues);
 	return (
 		<>
 			Has game: {hasGame ? 'Yes' : 'No'}
@@ -129,13 +191,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					<Input onPressEnter={save} onBlur={save} />
 				</Form.Item>
 
-				<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-					<Select options={gametypes_items} onBlur={save} onSelect={save} />
-				</Form.Item>
+				<GameTypeSelect save={save} />
 
-				<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
-					<Select options={gamesystems_items} onBlur={save} onSelect={save} />
-				</Form.Item>
+				<GameSystemsSelect save={save} />
 
 				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
 					<DatePicker

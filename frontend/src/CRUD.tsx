@@ -143,8 +143,9 @@ function zodErrorConvertor(data: any, request: any, onSuccess: (data: any, reque
 	onSuccess(data, request);
 }
 
-export function getCreateMutation(apipath: string, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
+export function getCreateMutation(apipath: string, querykey: string, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
 	const { showBoundary } = useErrorBoundary();
+	const queryClient = useQueryClient();
 	const createMutation = useMutation({
 		mutationFn: async (r: any) => {
 			return fetch(
@@ -158,7 +159,10 @@ export function getCreateMutation(apipath: string, setIsMutating: (isMutating: b
 				},
 				FetchResultTypes.JSON
 			)
-				.then((data) => zodErrorConvertor(data, r, onCreate))
+				.then((data) => {
+					queryClient.invalidateQueries({ queryKey: [querykey] });
+					return zodErrorConvertor(data, r, onCreate);
+				})
 				.catch((e) => showBoundary(e));
 		},
 		onMutate: () => {
@@ -183,10 +187,12 @@ export function getFetchQuery<T>(apipath: string, querykey: string): UseQueryRes
 
 export function getUpdateMutation(
 	apipath: string,
+	querykey: string,
 	setIsMutating: (isMutating: boolean) => void,
 	onSuccess: (data: any, row: any) => void
 ): UseMutationResult<void, Error, any, void> {
 	const { showBoundary } = useErrorBoundary();
+	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (r: any) => {
 			return fetch(
@@ -200,7 +206,10 @@ export function getUpdateMutation(
 				},
 				FetchResultTypes.JSON
 			)
-				.then((data) => zodErrorConvertor(data, r, onSuccess))
+				.then((data) => {
+					queryClient.invalidateQueries({ queryKey: [querykey] });
+					return zodErrorConvertor(data, r, onSuccess);
+				})
 				.catch((e) => showBoundary(e));
 		},
 		onMutate: () => {
@@ -272,7 +281,7 @@ export function getListQueries<APIRow>(apipath: string, querykey: string): Query
 	const handleDelete = (key: React.Key) => {
 		deleteMutation.mutate({ key });
 	};
-	const updateMutation = getUpdateMutation(apipath, setIsMutating, (data: any) => {
+	const updateMutation = getUpdateMutation(apipath, querykey, setIsMutating, (data: any) => {
 		queryClient.setQueryData([querykey], (old: any) => {
 			return old.map((item: any, row: any) => {
 				if (item.key === row.key) {
@@ -289,7 +298,7 @@ export function getListQueries<APIRow>(apipath: string, querykey: string): Query
 		});
 		return true;
 	};
-	const createMutation = getCreateMutation(apipath, setIsMutating, (data: any) => {
+	const createMutation = getCreateMutation(apipath, querykey, setIsMutating, (data: any) => {
 		queryClient.setQueryData([querykey], (old: any) => {
 			return [...(old || []), data.datum];
 		});
