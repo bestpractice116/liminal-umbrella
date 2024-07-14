@@ -22,7 +22,7 @@ export class SelectsPostGamenHandler extends InteractionHandler {
 	public async run(interaction: StringSelectMenuInteraction) {
 		const gamerow = await PlannedGame.findGameFromInteraction(interaction);
 		if (interaction.customId == 'post-game-system') {
-			gamerow?.set({ gamesystem: Number(interaction.values[0]) });
+			//gamerow?.set({ gamesystem: Number(interaction.values[0]) });
 		}
 		if (interaction.customId == 'post-game-date') {
 			gamerow?.set({ date: new Date(interaction.values[0]) });

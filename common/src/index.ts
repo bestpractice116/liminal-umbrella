@@ -17,10 +17,12 @@ export function getZObject(schema: z.ZodObject<any> | z.ZodReadonly<any>): z.Zod
 
 export function dayJsCoerce(val: unknown) {
 	if (val instanceof dayjs) {
-		return (val as dayjs.Dayjs).toDate();
-	}
-	if (val instanceof Date) {
 		return val;
 	}
-	return new Date(val as string);
+	if (val instanceof Date) {
+		return dayjs(val);
+	}
+	return dayjs(val as string);
 }
+
+export const zodDay = z.custom<dayjs.Dayjs>((val) => val instanceof dayjs, 'Invalid date');

@@ -1,7 +1,16 @@
 ///CREATE TABLE IF NOT EXISTS channels (name text, type text, id text, parentId text, position integer, rawPosition integer, createdTimestamp integer, nsfw integer, lastMessageId text, topic text, rateLimitPerUser integer, bitrate integer, rtcRegion text, userLimit integer)")
 
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, Default } from '@sequelize/core/decorators-legacy';
+import {
+	DataTypes,
+	Model,
+	InferAttributes,
+	InferCreationAttributes,
+	CreationOptional,
+	NonAttribute,
+	BelongsToGetAssociationMixin
+} from '@sequelize/core';
+import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, Default, BelongsTo } from '@sequelize/core/decorators-legacy';
+import GameSystem from './GameSystem.js';
 import { Command, container } from '@sapphire/framework';
 import {
 	userMention,
@@ -26,7 +35,6 @@ import {
 	GuildScheduledEventPrivacyLevel,
 	ThreadAutoArchiveDuration
 } from 'discord.js';
-import GameSystem from './GameSystem.js';
 
 export type ReplyableInteraction =
 	| ChatInputCommandInteraction
@@ -63,8 +71,13 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	@Attribute(DataTypes.STRING)
 	declare name: string | null;
 
+	@BelongsTo(() => GameSystem, 'gamesystem')
+	declare gamesystemOb?: NonAttribute<GameSystem>;
+	declare getGamesystemOb: BelongsToGetAssociationMixin<GameSystem>;
+
 	@Attribute(DataTypes.INTEGER)
-	declare gamesystem: number | null;
+	@NotNull
+	declare gamesystem: number;
 
 	@Attribute(DataTypes.STRING)
 	declare type: string | null;
@@ -91,6 +104,18 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 	@Attribute(DataTypes.STRING)
 	declare location: string | null;
+
+	async CRUDRead(name: string) {
+		console.log('Enter CRUDRead for ', name);
+		if (name == 'gamesystem') {
+			console.log('HERE');
+			if (this.gamesystem) {
+				return (await this.getGamesystemOb())!.name;
+			}
+		}
+		console.log('Return CRUDRead');
+		return this.get(name);
+	}
 
 	format(): string {
 		const out = [`Advanture Name: ${this.name}`, `Type: ${this.type}`];
@@ -128,7 +153,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		console.log(`LOOKING FOR GAME ${dbGame}`);
 		if (!dbGame) {
 			const game = await this.create({
-				owner: interaction.user.id
+				owner: interaction.user.id,
+				gamesystem: 1 // FIXME
 			});
 			return game.showDescriptionModal(interaction);
 		} else {

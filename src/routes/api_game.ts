@@ -4,6 +4,7 @@ import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { GameSchema } from 'common/schema';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
+import { isAdmin } from '../lib/api/auth.js';
 
 export class ApiGameList extends CR {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -21,6 +22,9 @@ export class ApiGameList extends CR {
 	}
 
 	@AuthenticatedWithRole('Dungeon Master', true)
+	override async auth_GET() {}
+
+	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_CREATE() {}
 
 	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
@@ -33,5 +37,12 @@ export class ApiGameList extends CR {
 			owner: request.auth!.id,
 			gamesystem: gamesystem.key
 		};
+	}
+
+	override async getRetrieveWhere(request: ApiRequest) {
+		if (isAdmin(request)) {
+			return {};
+		}
+		return { owner: request.auth!.id };
 	}
 }

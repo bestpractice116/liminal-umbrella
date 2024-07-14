@@ -1,12 +1,13 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@sequelize/core';
-import { Attribute, NotNull, Unique, PrimaryKey, AutoIncrement } from '@sequelize/core/decorators-legacy';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute, CreationOptional } from '@sequelize/core';
+import { Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, HasMany } from '@sequelize/core/decorators-legacy';
 import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import PlannedGame from './PlannedGame.js';
 
 export default class GameSystem extends Model<InferAttributes<GameSystem>, InferCreationAttributes<GameSystem>> {
 	@Attribute(DataTypes.INTEGER)
 	@PrimaryKey
 	@AutoIncrement
-	declare key: number | null;
+	declare key: CreationOptional<number>;
 
 	@Attribute(DataTypes.STRING)
 	@Unique
@@ -16,6 +17,14 @@ export default class GameSystem extends Model<InferAttributes<GameSystem>, Infer
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare description: string;
+
+	@HasMany(() => PlannedGame, {
+		foreignKey: 'gamesystem',
+		inverse: {
+			as: 'gamesystemOb'
+		}
+	})
+	declare plannedgames?: NonAttribute<PlannedGame[]>;
 
 	static async addGameSystemOptions(menu: StringSelectMenuBuilder) {
 		await this.findAll().then((gameSystemRows) => {

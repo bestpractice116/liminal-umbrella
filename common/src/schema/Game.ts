@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
-import { dayJsCoerce } from '../index.js';
+import { dayJsCoerce, zodDay } from '../index.js';
 
 export enum GameType {
 	oneshot = 'oneshot',
@@ -9,7 +9,7 @@ export enum GameType {
 }
 
 const create = z.object({
-	title: z
+	name: z
 		.string({
 			required_error: 'Name is required',
 			invalid_type_error: 'Name must be a string'
@@ -30,9 +30,9 @@ const create = z.object({
 		required_error: 'Game system is required',
 		invalid_type_error: 'Game system must be a string'
 	}),
-	date: z.preprocess(dayJsCoerce, z.date()),
-	starttime: z.preprocess(dayJsCoerce, z.date()),
-	endtime: z.preprocess(dayJsCoerce, z.date()),
+	date: z.preprocess(dayJsCoerce, zodDay),
+	starttime: z.preprocess(dayJsCoerce, zodDay),
+	endtime: z.preprocess(dayJsCoerce, zodDay),
 	location: z
 		.string({
 			required_error: 'Location is required',

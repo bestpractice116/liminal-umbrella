@@ -11,7 +11,8 @@
 		"tsBuildInfoFile": "dist/.tsbuildinfo",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"strict": true
+		"strict": true,
+		"skipLibCheck": true
 	},
 	"include": ["src", "common/dist"],
 	"references": [

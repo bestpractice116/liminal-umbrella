@@ -28,7 +28,7 @@ async function getReadObjectFromDbObject(that: any, item: any) {
 export abstract class CR extends Route {
 	abstract getModel(): any;
 	abstract getSchema(): SchemaBundle;
-	getRetrieveWhere(): any {
+	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
 	onMuatation() {}
@@ -47,9 +47,10 @@ export abstract class CR extends Route {
 		if (response.writableEnded) {
 			return;
 		}
-		const items = await this.getModel().findAll({ where: this.getRetrieveWhere(), include: this.findAllInclude() });
+		const items = await this.getModel().findAll({ where: await this.getRetrieveWhere(request), include: this.findAllInclude() });
 		// FIXME - any
-		response.json(await Promise.all(items.map(async (item: any) => await getReadObjectFromDbObject(this, item))));
+		const res = await Promise.all(items.map(async (item: any) => await getReadObjectFromDbObject(this, item)));
+		response.json(res);
 	}
 
 	// Add a new one
@@ -81,7 +82,6 @@ export abstract class CR extends Route {
 		if (response.writableEnded) {
 			return;
 		}
-		console.log(dbData);
 		const item = await this.getModel().create(dbData);
 		this.onMuatation();
 		const datum = await getReadObjectFromDbObject(this, item);
@@ -92,27 +92,27 @@ export abstract class CR extends Route {
 export abstract class UD extends Route {
 	abstract getModel(): any;
 	abstract getSchema(): SchemaBundle;
-	getRetrieveWhere(): any {
+	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
 	onMuatation() {}
 
-	protected async findItem(params: ApiRequest['params'], response: ApiResponse): Promise<any | null> {
+	protected async findItem(request: ApiRequest, response: ApiResponse): Promise<any | null> {
 		const findSchema = this.getSchema().find;
 		if (!findSchema) {
 			return response.notFound();
 		}
-		const { success, error, data } = findSchema.safeParse(params);
+		const { success, error, data } = findSchema.safeParse(request.params);
 		if (!success) {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return null;
 		}
-		const item = await this.getModel().findOne({ where: data });
+		const item = await this.getModel().findOne({ where: { ...data, ...(await this.getRetrieveWhere(request)) } });
 		if (!item) {
 			response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
 			return null;
 		}
-		return item;
+		return await getReadObjectFromDbObject(this, item);
 	}
 
 	@AuthenticatedAdmin()
@@ -128,7 +128,7 @@ export abstract class UD extends Route {
 		if (!updateSchema) {
 			return response.notFound();
 		}
-		const item = await this.findItem(request.params, response);
+		const item = await this.findItem(request, response);
 		if (!item) {
 			return;
 		}
@@ -158,7 +158,7 @@ export abstract class UD extends Route {
 		if (!deleteSchema) {
 			return response.notFound();
 		}
-		const item = await this.findItem(request.params, response);
+		const item = await this.findItem(request, response);
 		if (!item) {
 			return;
 		}
