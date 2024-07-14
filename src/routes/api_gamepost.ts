@@ -39,7 +39,16 @@ export class ApiGamePost extends Route {
 			return null;
 		}
 
-		console.log(item);
+		const startTime = item.starttime!;
+		startTime.setFullYear(item.date!.getFullYear());
+		startTime.setMonth(item.date!.getMonth());
+		startTime.setDate(item.date!.getDate());
+		const endTime = item.endtime!;
+		endTime.setFullYear(item.date!.getFullYear());
+		endTime.setMonth(item.date!.getMonth());
+		endTime.setDate(item.date!.getDate());
+		item.set({ starttime: startTime, endtime: endTime });
+		await item.save();
 
 		return this.doGamePost(item, response);
 	}

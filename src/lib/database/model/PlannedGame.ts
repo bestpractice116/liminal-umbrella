@@ -9,6 +9,7 @@ import {
 	NonAttribute,
 	BelongsToGetAssociationMixin
 } from '@sequelize/core';
+import { gametypes } from 'common/schema';
 import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import GameSession from './GameSession.js';
@@ -105,26 +106,24 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	declare location: string | null;
 
 	async CRUDRead(name: string) {
-		console.log('Enter CRUDRead for ', name);
 		if (name == 'gamesystem') {
-			console.log('HERE');
 			if (this.gamesystem) {
 				return (await this.getGamesystemOb())!.name;
 			}
 		}
-		console.log('Return CRUDRead');
 		return this.get(name);
 	}
 
-	format(): string {
-		const out = [`Advanture Name: ${this.name}`, `Type: ${this.type}`];
+	async format(): Promise<string> {
+		const gs = await this.getGamesystemOb();
+		const out = [`Advanture Name: ${this.name}`, `Type: ${gametypes[this.type!]}`];
 		if (this.gamesystem) {
-			out.push(`Game system: ${this.gamesystem}`);
+			out.push(`Game system: ${gs!.description}`);
 		}
-		if (this.date) {
+		if (this.starttime) {
 			const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
-			const d = new Date(this.date);
-			out.push(`Date, day and time of play: ${formatter.format(d)} (${this.date})`); // FIXME format
+			const d = new Date(this.starttime);
+			out.push(`Date, day and time of play: ${formatter.format(d)}`); // FIXME format
 		}
 		if (this.location) {
 			out.push(`Location: ${this.location}`);
@@ -149,7 +148,6 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 	static async runCommand(interaction: Command.ChatInputCommandInteraction) {
 		const dbGame = await this.findGameFromInteraction(interaction);
-		console.log(`LOOKING FOR GAME ${dbGame}`);
 		if (!dbGame) {
 			const game = await this.create({
 				owner: interaction.user.id,
@@ -232,7 +230,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		row.addComponents(discard);
 		components.push(row);
 
-		return interaction.reply({ content: this.format(), fetchReply: true, ephemeral: true, components });
+		return interaction.reply({ content: await this.format(), fetchReply: true, ephemeral: true, components });
 	}
 
 	async postGame() {
@@ -250,8 +248,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					gameListingsMessageId,
 					eventId,
 					channelId,
+					name: this.name,
 					gamesystem: this.gamesystem,
-					type: this.type!!,
+					type: this.type!,
 					starttime: this.starttime!,
 					endtime: this.endtime!,
 					maxplayers: this.maxplayers!,
@@ -307,7 +306,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	async postGameListing(): Promise<Snowflake> {
 		const channel = this.getGameListingChannel();
 		if (channel && channel.type == ChannelType.GuildText) {
-			const msg = await channel.send(this.format());
+			const msg = await channel.send(await this.format());
 			return msg.id;
 		}
 		throw new Error('Could not find game_listings channel');
@@ -321,7 +320,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 				name: this.name!,
 				autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
 				message: {
-					content: this.format()
+					content: await this.format()
 				},
 				reason: `Game: ${this.name!} by ${userMention(this.owner)}`
 			});

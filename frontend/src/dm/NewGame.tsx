@@ -7,7 +7,7 @@ import DatePicker from 'antd/es/date-picker';
 import Button from 'antd/es/button';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
-import { type GameSystemListItem, type GameListItem, GameSchema } from 'common/schema';
+import { type GameSystemListItem, type GameListItem, GameSchema, gametypes } from 'common/schema';
 import { getListQueries, WrapCRUD, getCreateMutation, CreateForm, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
@@ -44,11 +44,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
 	// One shot/Ongoing campaign/Drop in and out campaign
-	const gametypes = [
-		{ value: 'oneshot', label: <span>One shot</span> },
-		{ value: 'campaign', label: <span>Ongoing campaign</span> },
-		{ value: 'dropin', label: <span>Drop in and out campaign</span> }
-	];
+	const gametypes_items: { value: string; label: any }[] = Object.entries(gametypes).map(([k, v]) => {
+		return { value: k, label: <span>{v}</span> };
+	});
 	let initialvalues: any = {
 		starttime: dayjs('18:00', 'HH:mm'),
 		endtime: dayjs('22:00', 'HH:mm'),
@@ -75,6 +73,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	}
 	const formRef = createRef<FormRef>();
 	const save = () => {
+		if (!formRef.current) {
+			return;
+		}
 		const data = formRef.current!.getFieldsValue();
 		console.log('save', data);
 		setIsCreating(true);
@@ -128,7 +129,7 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-				<Select options={gametypes} onBlur={save} onSelect={save} />
+				<Select options={gametypes_items} onBlur={save} onSelect={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
