@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, createRef } from 'react';
 import Form from 'antd/es/form';
+import { FormRef } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import { type GameSystemListItem, type GameListItem, GameSchema } from 'common/schema';
-import { getListQueries, WrapCRUD, getCreateMutation, CreateForm, getFetchQuery } from '../CRUD.js';
+import { getListQueries, WrapCRUD, getCreateMutation, CreateForm, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -31,6 +32,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	const [isCreating, setIsCreating] = useState(false);
 	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
 	const createMutation = getCreateMutation('/api/game', setIsCreating, (_data: any) => {});
+	const updateMutation = getUpdateMutation('/api/game', setIsCreating, () => {
+		console.log('updated');
+	});
 
 	const gamesystems_items = gamesystems.map((system) => {
 		return { value: system.name, label: <span>{system.description}</span> };
@@ -46,6 +50,7 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 		endtime: dayjs('22:00', 'HH:mm'),
 		maxplayers: 4
 	};
+	let hasGame = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
 		console.log(result.data[0]);
 		const res = GameSchema.read.safeParse(result.data[0]);
@@ -53,45 +58,68 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 			console.log(res.error);
 		} else {
 			initialvalues = res.data;
+			hasGame = true;
 		}
 	}
 	console.log(initialvalues);
 	if (!result.isFetched) {
 		return <Spin spinning={true} fullscreen />;
 	}
+	let mutation = createMutation;
+	if (hasGame) {
+		mutation = updateMutation;
+	}
+	const formRef = createRef<FormRef>();
+	const save = () => {
+		const data = formRef.current!.getFieldsValue();
+		console.log('save', data);
+
+		mutation.mutate(data);
+	};
+
 	return (
-		<CreateForm createMutation={createMutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
+		<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
 			<Spin spinning={isCreating || result.isFetching} fullscreen />
+			<Form.Item<GameListItem> name="key">
+				<Input type="hidden" />
+			</Form.Item>
+
 			<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]}>
-				<Input />
+				<Input onPressEnter={save} onBlur={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-				<Select options={gametypes} />
+				<Select options={gametypes} onBlur={save} onSelect={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
-				<Select options={gamesystems_items} />
+				<Select options={gamesystems_items} onBlur={save} onSelect={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
-				<DatePicker minDate={dayjs().add(1, 'day')} format={'dddd D MMM (YYYY-MM-DD)'} />
+				<DatePicker
+					minDate={dayjs().add(1, 'day')}
+					format={'dddd D MMM (YYYY-MM-DD)'}
+					onChange={(val) => {
+						if (val) save();
+					}}
+				/>
 			</Form.Item>
 
 			<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]}>
-				<Input />
+				<Input onPressEnter={save} onBlur={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Description" name="description" rules={[createFormRule]}>
-				<Input.TextArea />
+				<Input.TextArea onBlur={save} />
 			</Form.Item>
 
 			<Form.Item<GameListItem> label="Max Players" name="maxplayers" rules={[createFormRule]}>
@@ -99,6 +127,8 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
 						return { value: idx, label: <span>{idx}</span> };
 					})}
+					onBlur={save}
+					onChange={save}
 				/>
 			</Form.Item>
 		</CreateForm>

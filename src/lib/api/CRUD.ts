@@ -113,11 +113,15 @@ export abstract class UD extends Route {
 			response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
 			return null;
 		}
-		return await getReadObjectFromDbObject(this, item);
+		return item;
 	}
 
 	@AuthenticatedAdmin()
 	async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
+
+	async UPDATE_coerce(_request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
+		return data;
+	}
 
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
@@ -138,8 +142,12 @@ export abstract class UD extends Route {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return;
 		}
-		// TODO - No XSS
-		item.set(data);
+		console.log(item, data);
+		const dbData = await this.UPDATE_coerce(request, response, data);
+		if (response.writableEnded) {
+			return;
+		}
+		item.set(dbData);
 		await item.save();
 		this.onMuatation();
 		const datum = await getReadObjectFromDbObject(this, item);

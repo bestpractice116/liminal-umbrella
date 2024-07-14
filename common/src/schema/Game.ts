@@ -4,7 +4,7 @@ import { dayJsCoerce, zodDay } from '../index.js';
 
 export enum GameType {
 	oneshot = 'oneshot',
-	ongoing = 'ongoing',
+	campaign = 'campaign',
 	dropin = 'dropin'
 }
 

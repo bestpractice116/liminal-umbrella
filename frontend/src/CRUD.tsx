@@ -1,4 +1,4 @@
-import { createContext, type FC, useState, useContext, useRef, useEffect } from 'react';
+import { createContext, type FC, useState, useContext, useRef, useEffect, createRef, type RefObject } from 'react';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient, useQuery, useMutation, UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { GetRef } from 'antd/es/_util/type';
@@ -301,15 +301,20 @@ export function CreateForm({
 	createMutation,
 	setIsCreating,
 	children,
-	initialValues
+	initialValues,
+	formRef
 }: {
 	createMutation: UseMutationResult<void, Error, any, void>;
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
+	formRef?: RefObject<FormRef>;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
 
+	if (!formRef) {
+		formRef = createRef<FormRef>();
+	}
 	const [form] = Form.useForm();
 	const values = Form.useWatch([], form);
 
@@ -318,8 +323,10 @@ export function CreateForm({
 			.then(() => setSubmittable(true))
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
+
 	return (
 		<Form
+			ref={formRef}
 			form={form}
 			initialValues={initialValues}
 			onFinish={(values) => {
