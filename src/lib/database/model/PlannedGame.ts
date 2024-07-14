@@ -9,7 +9,7 @@ import {
 	NonAttribute,
 	BelongsToGetAssociationMixin
 } from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, Default, BelongsTo } from '@sequelize/core/decorators-legacy';
+import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import GameSession from './GameSession.js';
 import { Command, container } from '@sapphire/framework';
@@ -98,11 +98,6 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	@Attribute(DataTypes.INTEGER)
 	declare maxplayers: number | null;
 
-	@Attribute(DataTypes.INTEGER)
-	@Default(0)
-	@NotNull
-	declare signed_up_players: number | null;
-
 	@Attribute(DataTypes.STRING)
 	declare description: string | null;
 
@@ -135,7 +130,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			out.push(`Location: ${this.location}`);
 		}
 		if (this.maxplayers) {
-			out.push(`Spaces currently available: ${this.signed_up_players}/${this.maxplayers}`);
+			out.push(`Spaces currently available: ${this.maxplayers}/${this.maxplayers}`);
 		}
 		out.push(`DM Contact: ${userMention(this.owner)}`);
 		out.push(`Brief description: ${this.description}`);
@@ -254,7 +249,15 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					owner: this.owner,
 					gameListingsMessageId,
 					eventId,
-					channelId
+					channelId,
+					gamesystem: this.gamesystem,
+					type: this.type!!,
+					starttime: this.starttime!,
+					endtime: this.endtime!,
+					maxplayers: this.maxplayers!,
+					signed_up_players: 0,
+					description: this.description!,
+					location: this.location!
 				});
 				//await this.destroy();
 			});
