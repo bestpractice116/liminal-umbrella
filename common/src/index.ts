@@ -1,5 +1,10 @@
 import * as z from 'zod';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any>): string[] {
 	if (schema instanceof z.ZodReadonly) {

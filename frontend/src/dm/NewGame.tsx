@@ -74,6 +74,18 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 				<Select options={gamesystems_items} />
 			</Form.Item>
 
+			<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
+				<DatePicker minDate={dayjs().add(1, 'day')} format={'dddd D MMM (YYYY-MM-DD)'} />
+			</Form.Item>
+
+			<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]}>
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
+			</Form.Item>
+
+			<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]}>
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" />
+			</Form.Item>
+
 			<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]}>
 				<Input />
 			</Form.Item>

@@ -79,6 +79,7 @@ export abstract class CR extends Route {
 			return;
 		}
 		const dbData = await this.CREATE_coerce(request, response, data);
+		console.log(dbData);
 		if (response.writableEnded) {
 			return;
 		}

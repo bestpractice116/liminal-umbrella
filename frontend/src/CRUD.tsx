@@ -308,7 +308,16 @@ export function CreateForm({
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
 }) {
+	const [isSubmittable, setSubmittable] = useState(false);
+
 	const [form] = Form.useForm();
+	const values = Form.useWatch([], form);
+
+	useEffect(() => {
+		form.validateFields({ validateOnly: true })
+			.then(() => setSubmittable(true))
+			.catch(() => setSubmittable(false));
+	}, [form, values]);
 	return (
 		<Form
 			form={form}
@@ -325,7 +334,7 @@ export function CreateForm({
 		>
 			<>{children}</>
 			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="primary" htmlType="submit">
+				<Button type="primary" htmlType="submit" disabled={!isSubmittable}>
 					Submit
 				</Button>
 			</Form.Item>
