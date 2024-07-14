@@ -1,4 +1,3 @@
-import { DataTypes } from '@sequelize/core';
 import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
