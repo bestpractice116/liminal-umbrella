@@ -7,3 +7,5 @@ export type SchemaBundle = {
 	find?: z.ZodReadonly<any>;
 	read: z.ZodReadonly<any>;
 };
+
+export type AnyZodSchema = z.ZodObject<any> | z.ZodReadonly<any> | z.ZodOptional<any>;

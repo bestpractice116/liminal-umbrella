@@ -1,5 +1,5 @@
 import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@sapphire/plugin-api';
-import type { SchemaBundle } from 'common/schema';
+import type { SchemaBundle, AnyZodSchema } from 'common/schema';
 import { getSchemaKeys } from 'common';
 import { AuthenticatedAdmin } from '../api/decorators.js';
 import { Sequential } from '../utils.js';
@@ -62,6 +62,10 @@ export abstract class CR extends Route {
 		return data;
 	}
 
+	getSchemaCreate(): AnyZodSchema | undefined {
+		return this.getSchema().create;
+	}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
 		await this.auth_CREATE(request, response);
@@ -69,7 +73,7 @@ export abstract class CR extends Route {
 			return;
 		}
 
-		const createSchema = this.getSchema().create;
+		const createSchema = this.getSchemaCreate();
 		if (!createSchema) {
 			return response.notFound();
 		}
@@ -79,7 +83,6 @@ export abstract class CR extends Route {
 			return;
 		}
 		const dbData = await this.CREATE_coerce(request, response, data);
-		console.log(dbData);
 		if (response.writableEnded) {
 			return;
 		}
@@ -96,10 +99,14 @@ export abstract class UD extends Route {
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
-	onMuatation() {}
+	onMuatation(_item: any) {}
+
+	getSchemaFind(): AnyZodSchema | undefined {
+		return this.getSchema().find;
+	}
 
 	protected async findItem(request: ApiRequest, response: ApiResponse): Promise<any | null> {
-		const findSchema = this.getSchema().find;
+		const findSchema = this.getSchemaFind();
 		if (!findSchema) {
 			return response.notFound();
 		}
@@ -123,13 +130,17 @@ export abstract class UD extends Route {
 		return data;
 	}
 
+	getSchemaUpdate(): AnyZodSchema | undefined {
+		return this.getSchema().update;
+	}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
 		await this.auth_UPDATE(request, response);
 		if (response.writableEnded) {
 			return;
 		}
-		const updateSchema = this.getSchema().update;
+		const updateSchema = this.getSchemaUpdate();
 		if (!updateSchema) {
 			return response.notFound();
 		}
@@ -149,7 +160,7 @@ export abstract class UD extends Route {
 		}
 		item.set(dbData);
 		await item.save();
-		this.onMuatation();
+		this.onMuatation(item);
 		const datum = await getReadObjectFromDbObject(this, item);
 		response.json({ status: 'ok', datum });
 	}
@@ -157,13 +168,17 @@ export abstract class UD extends Route {
 	@AuthenticatedAdmin()
 	async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
+	getSchemaDelete(): AnyZodSchema | undefined {
+		return this.getSchema().update;
+	}
+
 	@Sequential
 	public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
 		await this.auth_DELETE(request, response);
 		if (response.writableEnded) {
 			return;
 		}
-		const deleteSchema = this.getSchema().delete;
+		const deleteSchema = this.getSchemaDelete();
 		if (!deleteSchema) {
 			return response.notFound();
 		}
@@ -172,7 +187,7 @@ export abstract class UD extends Route {
 			return;
 		}
 		await item.destroy();
-		this.onMuatation();
+		this.onMuatation(item);
 		response.json({ status: 'deleted', datum: request.params });
 	}
 }
