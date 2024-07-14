@@ -285,8 +285,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			description: this.description!,
 			entityType: GuildScheduledEventEntityType.External,
 			name: this.name!,
-			scheduledStartTime: new Date(Date.now() + 1000000),
-			scheduledEndTime: new Date(Date.now() + 1000000 + 1000 * 60 * 60), // 1hr
+			scheduledStartTime: this.starttime!,
+			scheduledEndTime: this.endtime!,
 			privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
 			entityMetadata: {
 				location: gameChannelLink(channelId)
@@ -314,7 +314,6 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	}
 
 	async createGameThread(): Promise<Snowflake> {
-		console.log('CREATE THREAD');
 		const channel_name = 'one_shots';
 		const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildForum && channel.name === channel_name);
 		if (channel && channel.type == ChannelType.GuildForum) {
@@ -326,17 +325,13 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 				},
 				reason: `Game: ${this.name!} by ${userMention(this.owner)}`
 			});
-			// https://discord.com/channels/1205971443523788840/1261979494898733197
-			console.log(`Thread URL https://discord.com/channels/${container.guildId}/${thread.id}`);
 			return thread.id;
 		}
 		throw new Error('Could not find one_shots channel');
 	}
 
 	async handleEditForm(interaction: ReplyableInteraction, msg: Message) {
-		console.log('HANDLE EDIT FORM');
 		const input = await msg.awaitMessageComponent();
-		console.log('GOT MESSAGE');
 		if (input.customId === 'discard') {
 			//const confirm = await this.getConfirmInput(msg);
 			//if (confirm) {
