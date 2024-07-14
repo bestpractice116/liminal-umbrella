@@ -15,19 +15,24 @@ type SequelizeInclude =
 			where?: any;
 	  };
 
-// FIXME - any
-async function getReadObjectFromDbObject(that: any, item: any) {
-	const schemaKeys = getSchemaKeys(that.getSchema().read);
-	return schemaKeys.reduce(async (acc, cv) => {
-		const out = { ...(await acc) } as any;
-		out[cv] = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv);
-		return out;
-	}, {});
-}
-
-export abstract class CR extends Route {
+abstract class CRUDBase extends Route {
 	abstract getModel(): any;
 	abstract getSchema(): SchemaBundle;
+
+	async getReadObjectFromDbObject(item: any) {
+		const schemaKeys = getSchemaKeys(this.getSchema().read);
+		return schemaKeys.reduce(async (acc, cv) => {
+			const out = { ...(await acc) } as any;
+			const val = item.CRUDRead ? await item.CRUDRead(cv) : item.get(cv);
+			if (typeof val !== 'undefined' && val !== null) {
+				out[cv] = val;
+			}
+			return out;
+		}, {});
+	}
+}
+
+export abstract class CR extends CRUDBase {
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
@@ -49,7 +54,7 @@ export abstract class CR extends Route {
 		}
 		const items = await this.getModel().findAll({ where: await this.getRetrieveWhere(request), include: this.findAllInclude() });
 		// FIXME - any
-		const res = await Promise.all(items.map(async (item: any) => await getReadObjectFromDbObject(this, item)));
+		const res = await Promise.all(items.map(async (item: any) => await this.getReadObjectFromDbObject(item)));
 		response.json(res);
 	}
 
@@ -77,7 +82,9 @@ export abstract class CR extends Route {
 		if (!createSchema) {
 			return response.notFound();
 		}
+		console.log('In create with ', createSchema);
 		const { success, error, data } = createSchema.safeParse(request.body);
+		console.log('Error ', error);
 		if (!success) {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return;
@@ -88,14 +95,12 @@ export abstract class CR extends Route {
 		}
 		const item = await this.getModel().create(dbData);
 		this.onMuatation();
-		const datum = await getReadObjectFromDbObject(this, item);
+		const datum = await this.getReadObjectFromDbObject(item);
 		response.status(HttpCodes.Created).json({ status: 'ok', datum });
 	}
 }
 
-export abstract class UD extends Route {
-	abstract getModel(): any;
-	abstract getSchema(): SchemaBundle;
+export abstract class UD extends CRUDBase {
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
@@ -161,7 +166,7 @@ export abstract class UD extends Route {
 		item.set(dbData);
 		await item.save();
 		this.onMuatation(item);
-		const datum = await getReadObjectFromDbObject(this, item);
+		const datum = await this.getReadObjectFromDbObject(item);
 		response.json({ status: 'ok', datum });
 	}
 

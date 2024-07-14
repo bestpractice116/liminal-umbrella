@@ -55,12 +55,13 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	};
 	let hasGame = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
-		const res = GameSchema.read.safeParse(result.data[0]);
+		const res = getZObject(GameSchema.read).partial().safeParse(result.data[0]);
 		if (!res.success) {
 			console.log(res.error);
 		} else {
 			initialvalues = res.data;
 			hasGame = true;
+			console.log('Set has game');
 		}
 	}
 	if (!result.isFetched) {
@@ -116,62 +117,65 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	};
 
 	return (
-		<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
-			<Spin spinning={isCreating || result.isFetching} fullscreen />
-			<Form.Item<GameListItem> name="key">
-				<Input type="hidden" />
-			</Form.Item>
+		<>
+			Has game: {hasGame ? 'Yes' : 'No'}
+			<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
+				<Spin spinning={isCreating || result.isFetching} fullscreen />
+				<Form.Item<GameListItem> name="key">
+					<Input type="hidden" />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]}>
-				<Input onPressEnter={save} onBlur={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]}>
+					<Input onPressEnter={save} onBlur={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-				<Select options={gametypes_items} onBlur={save} onSelect={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
+					<Select options={gametypes_items} onBlur={save} onSelect={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
-				<Select options={gamesystems_items} onBlur={save} onSelect={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
+					<Select options={gamesystems_items} onBlur={save} onSelect={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
-				<DatePicker
-					minDate={dayjs().add(1, 'day')}
-					format={'dddd D MMM (YYYY-MM-DD)'}
-					onChange={(val) => {
-						if (val) save();
-					}}
-				/>
-			</Form.Item>
+				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
+					<DatePicker
+						minDate={dayjs().add(1, 'day')}
+						format={'dddd D MMM (YYYY-MM-DD)'}
+						onChange={(val) => {
+							if (val) save();
+						}}
+					/>
+				</Form.Item>
 
-			<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]}>
+					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]}>
+					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]}>
-				<Input onPressEnter={save} onBlur={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]}>
+					<Input onPressEnter={save} onBlur={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Description" name="description" rules={[createFormRule]}>
-				<Input.TextArea onBlur={save} />
-			</Form.Item>
+				<Form.Item<GameListItem> label="Description" name="description" rules={[createFormRule]}>
+					<Input.TextArea onBlur={save} />
+				</Form.Item>
 
-			<Form.Item<GameListItem> label="Max Players" name="maxplayers" rules={[createFormRule]}>
-				<Select
-					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
-						return { value: idx, label: <span>{idx}</span> };
-					})}
-					onBlur={save}
-					onChange={save}
-				/>
-			</Form.Item>
-			<Form.Item label="Post">
-				<Button onClick={postgame}>Post</Button>
-			</Form.Item>
-		</CreateForm>
+				<Form.Item<GameListItem> label="Max Players" name="maxplayers" rules={[createFormRule]}>
+					<Select
+						options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
+							return { value: idx, label: <span>{idx}</span> };
+						})}
+						onBlur={save}
+						onChange={save}
+					/>
+				</Form.Item>
+				<Form.Item label="Post">
+					<Button onClick={postgame}>Post</Button>
+				</Form.Item>
+			</CreateForm>
+		</>
 	);
 }

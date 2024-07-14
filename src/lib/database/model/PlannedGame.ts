@@ -81,8 +81,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	declare getGamesystemOb: BelongsToGetAssociationMixin<GameSystem>;
 
 	@Attribute(DataTypes.INTEGER)
-	@NotNull
-	declare gamesystem: number;
+	declare gamesystem: number | null;
 
 	@Attribute(DataTypes.STRING)
 	declare type: string | null;
@@ -250,8 +249,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					gameListingsMessageId,
 					eventId,
 					channelId,
-					name: this.name,
-					gamesystem: this.gamesystem,
+					name: this.name!,
+					gamesystem: this.gamesystem!,
 					type: this.type!,
 					starttime: this.starttime!,
 					endtime: this.endtime!,

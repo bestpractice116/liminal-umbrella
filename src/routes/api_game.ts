@@ -2,7 +2,8 @@ import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSystem, PlannedGame } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
-import { GameSchema } from 'common/schema';
+import { GameSchema, AnyZodSchema } from 'common/schema';
+import { getZObject } from 'common';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
@@ -27,16 +28,23 @@ export class ApiGameList extends CR {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_CREATE() {}
 
+	override getSchemaCreate(): AnyZodSchema | undefined {
+		return getZObject(this.getSchema().create!).partial();
+	}
+
 	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-		const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
-		if (!gamesystem) {
-			return response.badRequest('Cannot find game system');
-		}
-		return {
+		const out = {
 			...data,
-			owner: request.auth!.id,
-			gamesystem: gamesystem.key
+			owner: request.auth!.id
 		};
+		if (data.gamesystem) {
+			const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
+			if (!gamesystem) {
+				return response.badRequest('Cannot find game system');
+			}
+			out['gamesystem'] = gamesystem.key;
+		}
+		return out;
 	}
 
 	override async getRetrieveWhere(request: ApiRequest) {

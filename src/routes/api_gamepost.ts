@@ -23,7 +23,6 @@ export class ApiGamePost extends Route {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
-		console.log('In GAMEPOST');
 		const findSchema = GameSchema.find;
 		if (!findSchema) {
 			return response.notFound();
