@@ -4,6 +4,7 @@ import type { SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
 import { GameSchema } from 'common/schema';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
+import { isAdmin } from '../lib/api/auth.js';
 
 export class ApiGameEdit extends UD {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -33,4 +34,11 @@ export class ApiGameEdit extends UD {
 
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_DELETE() {}
+
+	override async getRetrieveWhere(request: ApiRequest) {
+		if (isAdmin(request)) {
+			return {};
+		}
+		return { owner: request.auth!.id };
+	}
 }

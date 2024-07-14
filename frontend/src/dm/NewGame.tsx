@@ -4,6 +4,7 @@ import { FormRef } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker from 'antd/es/date-picker';
+import Button from 'antd/es/button';
 import Select from 'antd/es/select';
 import dayjs from 'dayjs';
 import { type GameSystemListItem, type GameListItem, GameSchema } from 'common/schema';
@@ -11,6 +12,8 @@ import { getListQueries, WrapCRUD, getCreateMutation, CreateForm, getFetchQuery,
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
+import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
+import { useErrorBoundary } from '../ErrorFallback';
 
 const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
 
@@ -29,6 +32,7 @@ function GetGameSystems() {
 }
 
 function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
+	const { showBoundary } = useErrorBoundary();
 	const [isCreating, setIsCreating] = useState(false);
 	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
 	const createMutation = getCreateMutation('/api/game', setIsCreating, (_data: any) => {});
@@ -73,8 +77,43 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 	const save = () => {
 		const data = formRef.current!.getFieldsValue();
 		console.log('save', data);
-
-		mutation.mutate(data);
+		setIsCreating(true);
+		mutation.mutate(data, {
+			onSuccess: () => {
+				setIsCreating(false);
+			},
+			onError: (e) => {
+				setIsCreating(false);
+			}
+		});
+	};
+	const postgame = () => {
+		console.log('postgame');
+		const data = formRef.current!.getFieldsValue();
+		setIsCreating(true);
+		mutation.mutate(data, {
+			onSuccess: () => {
+				return fetch(
+					'/api/gamepost',
+					{
+						method: FetchMethods.Post,
+						body: JSON.stringify({ key: data.key }),
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					},
+					FetchResultTypes.JSON
+				)
+					.then((data) => {
+						console.log('POSTED GAME ', data);
+						setIsCreating(false);
+					})
+					.catch((e) => showBoundary(e));
+			},
+			onError: () => {
+				setIsCreating(false);
+			}
+		});
 	};
 
 	return (
@@ -130,6 +169,9 @@ function PostGameForm({ gamesystems }: { gamesystems: GameSystemListItem[] }) {
 					onBlur={save}
 					onChange={save}
 				/>
+			</Form.Item>
+			<Form.Item label="Post">
+				<Button onClick={postgame}>Post</Button>
 			</Form.Item>
 		</CreateForm>
 	);
