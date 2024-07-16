@@ -70,7 +70,7 @@ export default function PostGame() {
 		});
 	});
 	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, () => {
-		console.log('updated');
+		//console.log('updated');
 	});
 
 	let initialvalues: any = {
@@ -131,8 +131,15 @@ export default function PostGame() {
 				)
 					.then((data: any) => {
 						// FIXME - any
-						setPostId(data.datum.key);
+						queryClient.resetQueries(
+							{
+								queryKey: ['game'],
+								exact: true
+							},
+							{ throwOnError: true }
+						);
 						setIsCreating(false);
+						setPostId(data.datum.key);
 					})
 					.catch((e) => showBoundary(e));
 			},
@@ -180,7 +187,6 @@ function PostGameForm({
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialvalues: { [key: string]: any };
 }) {
-	console.log('initial ', initialvalues);
 	return (
 		<>
 			<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>

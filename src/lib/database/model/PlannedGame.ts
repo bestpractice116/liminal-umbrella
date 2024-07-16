@@ -10,7 +10,7 @@ import {
 	BelongsToGetAssociationMixin
 } from '@sequelize/core';
 import { gametypes } from 'common/schema';
-import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo } from '@sequelize/core/decorators-legacy';
+import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo, DeletedAt } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import GameSession from './GameSession.js';
 import { Command, container } from '@sapphire/framework';
@@ -103,6 +103,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 	@Attribute(DataTypes.STRING)
 	declare location: string | null;
+
+	@DeletedAt
+	declare deletedAt: Date | null;
 
 	async CRUDRead(name: string) {
 		if (name == 'gamesystem') {

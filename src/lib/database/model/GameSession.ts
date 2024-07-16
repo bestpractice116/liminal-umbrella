@@ -7,7 +7,7 @@ import {
 	CreationOptional,
 	BelongsToGetAssociationMixin
 } from '@sequelize/core';
-import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo, Default } from '@sequelize/core/decorators-legacy';
+import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo, Default, DeletedAt } from '@sequelize/core/decorators-legacy';
 import Message from './Message.js';
 import GameSystem from './GameSystem.js';
 
@@ -72,4 +72,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 
 	@Attribute(DataTypes.STRING)
 	declare location: string;
+
+	@DeletedAt
+	declare deletedAt: Date | null;
 }

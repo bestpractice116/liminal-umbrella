@@ -1,5 +1,5 @@
 import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@sequelize/core';
-import { Attribute, AutoIncrement, NotNull, PrimaryKey, Table, Unique } from '@sequelize/core/decorators-legacy';
+import { Attribute, AutoIncrement, NotNull, PrimaryKey, Table, Unique, DeletedAt } from '@sequelize/core/decorators-legacy';
 import { ActivityType } from 'common/schema';
 
 @Table({ tableName: 'activities' })
@@ -17,4 +17,7 @@ export default class Activity extends Model<InferAttributes<Activity>, InferCrea
 	@Attribute(DataTypes.ENUM('playing', 'streaming', 'listening', 'watching'))
 	@NotNull
 	declare type: ActivityType;
+
+	@DeletedAt
+	declare deletedAt: Date | null;
 }
