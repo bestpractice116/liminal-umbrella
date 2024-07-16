@@ -82,9 +82,7 @@ export abstract class CR extends CRUDBase {
 		if (!createSchema) {
 			return response.notFound();
 		}
-		console.log('In create with ', createSchema);
 		const { success, error, data } = createSchema.safeParse(request.body);
-		console.log('Error ', error);
 		if (!success) {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return;
@@ -158,7 +156,6 @@ export abstract class UD extends CRUDBase {
 			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
 			return;
 		}
-		console.log(item, data);
 		const dbData = await this.UPDATE_coerce(request, response, data);
 		if (response.writableEnded) {
 			return;
