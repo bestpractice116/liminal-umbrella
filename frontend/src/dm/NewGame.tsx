@@ -168,7 +168,7 @@ export default function PostGame() {
 	);
 }
 
-function PostGameForm({
+export function PostGameForm({
 	isCreating,
 	save,
 	postgame,

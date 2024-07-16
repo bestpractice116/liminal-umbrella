@@ -127,6 +127,19 @@ export abstract class UD extends CRUDBase {
 	}
 
 	@AuthenticatedAdmin()
+	async auth_GET(_request: ApiRequest, _response: ApiResponse) {}
+
+	@Sequential
+	public async [methods.GET](request: ApiRequest, response: ApiResponse) {
+		await this.auth_GET(request, response);
+		if (response.writableEnded) {
+			return;
+		}
+		const item = await this.findItem(request, response);
+		response.json(await this.getReadObjectFromDbObject(item));
+	}
+
+	@AuthenticatedAdmin()
 	async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 
 	async UPDATE_coerce(_request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
