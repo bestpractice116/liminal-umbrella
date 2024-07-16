@@ -14,7 +14,7 @@ import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useErrorBoundary } from '../ErrorFallback';
-import { UseQueryResult, UseMutationResult, useQueryClient } from '@tanstack/react-query';
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 
 const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
@@ -161,7 +161,7 @@ export default function PostGame() {
 			postgame={postgame}
 			setIsCreating={setIsCreating}
 			formRef={formRef}
-			result={result}
+			isFetching={result.isFetching}
 			mutation={mutation}
 			initialvalues={initialvalues}
 		/>
@@ -174,7 +174,7 @@ export function PostGameForm({
 	postgame,
 	setIsCreating,
 	formRef,
-	result,
+	isFetching,
 	mutation,
 	initialvalues
 }: {
@@ -183,14 +183,14 @@ export function PostGameForm({
 	postgame: () => void;
 	isCreating: boolean;
 	formRef: React.RefObject<FormRef>;
-	result: UseQueryResult<Array<GameListItem>>;
+	isFetching: boolean;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialvalues: { [key: string]: any };
 }) {
 	return (
 		<>
 			<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
-				<Spin spinning={isCreating || result.isFetching} fullscreen />
+				<Spin spinning={isCreating || isFetching} fullscreen />
 				<Form.Item<GameListItem> name="key">
 					<Input type="hidden" />
 				</Form.Item>

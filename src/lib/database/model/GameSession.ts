@@ -75,4 +75,13 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 
 	@DeletedAt
 	declare deletedAt: Date | null;
+
+	async CRUDRead(name: string) {
+		if (name == 'gamesystem') {
+			if (this.gamesystem) {
+				return (await this.getGamesystemOb())!.name;
+			}
+		}
+		return this.get(name);
+	}
 }

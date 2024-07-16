@@ -2,15 +2,15 @@ import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSession } from '../lib/database/model.js';
 import { GameSchema } from 'common/schema';
 import type { SchemaBundle } from 'common/schema';
-import { CR } from '../lib/api/CRUD.js';
+import { UD } from '../lib/api/CRUD.js';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
-export class ApiGameSessionsList extends CR {
+export class ApiGameSessions extends UD {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
 		super(context, {
 			...options,
-			route: 'api/gamesessions'
+			route: 'api/gamesessions/:key'
 		});
 	}
 
@@ -28,7 +28,10 @@ export class ApiGameSessionsList extends CR {
 		return { owner: request.auth!.id };
 	}
 
-	override async auth_CREATE(_request: ApiRequest, response: ApiResponse) {
+	override async auth_DELETE(_request: ApiRequest, response: ApiResponse) {
 		response.notFound();
 	}
+
+	@AuthenticatedWithRole('Dungeon Master', true)
+	override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 }
