@@ -14,7 +14,8 @@ import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useErrorBoundary } from '../ErrorFallback';
-import { UseQueryResult, UseMutationResult } from '@tanstack/react-query';
+import { UseQueryResult, UseMutationResult, useQueryClient } from '@tanstack/react-query';
+import { Navigate } from 'react-router-dom';
 
 const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
 
@@ -23,6 +24,7 @@ function GameSystemsSelect({ save }: { save: () => void }) {
 	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
 	const loading = result.isFetching;
 
+	// FIXME - do we need the WrapCRUD spinner here, or is loading component enough
 	return (
 		<WrapCRUD result={result}>
 			<GameSystemsSelectHTML gamesystems={gamesystems} save={save} loading={loading} />
@@ -56,11 +58,16 @@ function GameTypeSelect({ save }: { save: () => void }) {
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
 	const formRef = createRef<FormRef>();
+	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
+	const [postId, setPostId] = useState(-1);
 	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
+	const queryClient = useQueryClient();
 	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
-		console.log('DID CREATE WITH ', data);
 		formRef.current!.setFieldValue('key', data!.datum!.key);
+		queryClient.setQueryData(['game'], (old: any) => {
+			return [...(old || []), data.datum];
+		});
 	});
 	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, () => {
 		console.log('updated');
@@ -88,9 +95,6 @@ export default function PostGame() {
 	let mutation = createMutation;
 	if (hasGame) {
 		mutation = updateMutation;
-		console.log('Choosing update mutation');
-	} else {
-		console.log('choosing create mustation');
 	}
 	const save = () => {
 		if (!formRef.current) {
@@ -99,15 +103,11 @@ export default function PostGame() {
 		const data = formRef.current!.getFieldsValue();
 		setIsCreating(true);
 		mutation.mutate(data, {
-			onSuccess: (data) => {
-				// FIXME
-				console.log('Got create success', data);
-				//formRef.current!.setFieldValue('key', data!.datum!.key);
+			// FIXME - why do we have some logic in getCreateMutation and some here.
+			onSuccess: (_data) => {
 				setIsCreating(false);
 			},
 			onError: (_e) => {
-				//FIXME
-				console.log('Got create error');
 				setIsCreating(false);
 			}
 		});
@@ -117,6 +117,7 @@ export default function PostGame() {
 		setIsCreating(true);
 		mutation.mutate(data, {
 			onSuccess: () => {
+				// FIXME pull this out to it's own function?
 				return fetch(
 					'/api/gamepost',
 					{
@@ -128,22 +129,26 @@ export default function PostGame() {
 					},
 					FetchResultTypes.JSON
 				)
-					.then(() => {
-						console.log('POSTED GAME ', data);
-						formRef.current!.setFieldValue('key', data!.datum!.key);
+					.then((data: any) => {
+						// FIXME - any
+						setPostId(data.datum.key);
 						setIsCreating(false);
 					})
 					.catch((e) => showBoundary(e));
 			},
-			onError: () => {
+			onError: (e) => {
 				setIsCreating(false);
+				throw e;
 			}
 		});
 	};
 
+	if (postId > 0) {
+		return <Navigate to={`/dm/viewgame/${postId}`} />;
+	}
+
 	return (
 		<PostGameForm
-			hasGame={hasGame}
 			isCreating={isCreating}
 			save={save}
 			postgame={postgame}
@@ -157,7 +162,6 @@ export default function PostGame() {
 }
 
 function PostGameForm({
-	hasGame,
 	isCreating,
 	save,
 	postgame,
@@ -170,7 +174,6 @@ function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	postgame: () => void;
-	hasGame: boolean;
 	isCreating: boolean;
 	formRef: React.RefObject<FormRef>;
 	result: UseQueryResult<Array<GameListItem>>;
@@ -180,7 +183,6 @@ function PostGameForm({
 	console.log('initial ', initialvalues);
 	return (
 		<>
-			Has game: {hasGame ? 'Yes' : 'No'}
 			<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
 				<Spin spinning={isCreating || result.isFetching} fullscreen />
 				<Form.Item<GameListItem> name="key">

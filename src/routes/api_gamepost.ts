@@ -54,8 +54,8 @@ export class ApiGamePost extends Route {
 
 	async doGamePost(plannedgame: PlannedGame, response: ApiResponse) {
 		try {
-			await plannedgame.postGame();
-			response.status(HttpCodes.Created).json({ status: 'ok', datum: { key: plannedgame.key } });
+			const key = await plannedgame.postGame();
+			response.status(HttpCodes.Created).json({ status: 'ok', datum: { key } });
 		} catch (e) {
 			response.status(HttpCodes.InternalServerError).json({ status: 'error', error: e });
 		}

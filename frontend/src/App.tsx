@@ -25,6 +25,7 @@ import AdminBotplaying from './admin/Botplaying';
 import AdminBotMessages from './admin/BotMessages';
 import NewGame from './dm/NewGame';
 import ViewGames from './dm/ViewGames';
+import ViewGame from './dm/ViewGame';
 import NotFound from './NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
 
@@ -81,7 +82,7 @@ function TopMenu() {
 					label: 'New Game'
 				},
 				{
-					key: '/dm/viewgame',
+					key: '/dm/viewgames',
 					label: 'View Games'
 				}
 			]
@@ -148,7 +149,8 @@ function PageContent() {
 				</Route>
 				<Route path="/" element={<ProtectedRoute isBotBetaTester role="Dungeon Master" />}>
 					<Route path="/dm/newgame" element={<NewGame />} />
-					<Route path="/dm/viewgame" element={<ViewGames />} />
+					<Route path="/dm/viewgames" element={<ViewGames />} />
+					<Route path="/dm/viewgame/:key" element={<ViewGame />} />
 				</Route>
 			</Route>
 			<Route path="*" element={<NotFound />} />

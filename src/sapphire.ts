@@ -70,7 +70,7 @@ export class MySapphireClient extends SapphireClient {
 	}
 
 	public override async login(token?: string): Promise<string> {
-		container.guildId = process.env.DISCORD_GUILD_ID
+		container.guildId = process.env.DISCORD_GUILD_ID;
 		container.events = createEmitter<emitterSpec>();
 		container.database = new Database(container.events);
 		container.ticker = new Ticker(container.events);

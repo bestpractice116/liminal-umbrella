@@ -234,17 +234,17 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		return interaction.reply({ content: await this.format(), fetchReply: true, ephemeral: true, components });
 	}
 
-	async postGame() {
+	async postGame(): Promise<number> {
 		const db = await container.database.getdb();
 		let channelId: string | undefined;
 		let gameListingsMessageId: string | undefined;
 		let eventId: string | undefined;
 		try {
-			await db.transaction(async () => {
+			return await db.transaction(async () => {
 				channelId = await this.createGameThread();
 				gameListingsMessageId = await this.postGameListing();
 				eventId = await this.postEvent(channelId);
-				await GameSession.create({
+				const session = await GameSession.create({
 					owner: this.owner,
 					gameListingsMessageId,
 					eventId,
@@ -260,6 +260,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					location: this.location!
 				});
 				await this.destroy();
+				return session.key;
 			});
 		} catch (e) {
 			console.log(`Caught error posting Game: ${e}`);
