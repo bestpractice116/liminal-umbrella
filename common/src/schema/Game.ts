@@ -46,7 +46,11 @@ const create = z.object({
 const find = z.object({
 	key: z.coerce.number().int().positive()
 });
-const read = find.merge(create);
+const read = find.merge(create).merge(
+	z.object({
+		owner: z.string({})
+	})
+);
 
 export const GameSchema: SchemaBundle = {
 	create: create.readonly(),
