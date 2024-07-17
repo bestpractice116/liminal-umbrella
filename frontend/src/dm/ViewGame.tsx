@@ -11,7 +11,6 @@ export default function ViewGame() {
 	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, `gamesessions/${key}`);
 
 	const save = () => {};
-	const postgame = () => {};
 	const formRef = createRef<FormRef>();
 	const [isCreating, setIsCreating] = useState(false);
 	const updateMutation = getUpdateMutation(`/api/gamesessions/${key}`, `gamesessions/${key}`, setIsCreating, () => {
@@ -33,11 +32,9 @@ export default function ViewGame() {
 			<PostGameForm
 				mutation={updateMutation}
 				initialvalues={res.data!}
-				isFetching={result.isFetching}
+				isLoading={isCreating || result.isFetching}
 				formRef={formRef}
-				isCreating={isCreating}
 				save={save}
-				postgame={postgame}
 				setIsCreating={setIsCreating}
 			/>
 		</div>

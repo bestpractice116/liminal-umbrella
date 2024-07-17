@@ -156,41 +156,41 @@ export default function PostGame() {
 
 	return (
 		<PostGameForm
-			isCreating={isCreating}
+			isLoading={isCreating || result.isFetching}
 			save={save}
-			postgame={postgame}
 			setIsCreating={setIsCreating}
 			formRef={formRef}
-			isFetching={result.isFetching}
 			mutation={mutation}
 			initialvalues={initialvalues}
-		/>
+		>
+			<Form.Item label="Post">
+				<Button onClick={postgame}>Post</Button>
+			</Form.Item>
+		</PostGameForm>
 	);
 }
 
 export function PostGameForm({
-	isCreating,
 	save,
-	postgame,
 	setIsCreating,
 	formRef,
-	isFetching,
+	isLoading,
 	mutation,
-	initialvalues
+	initialvalues,
+	children = <></>
 }: {
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
-	postgame: () => void;
-	isCreating: boolean;
+	isLoading: boolean;
 	formRef: React.RefObject<FormRef>;
-	isFetching: boolean;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialvalues: { [key: string]: any };
+	children?: React.ReactNode;
 }) {
 	return (
 		<>
-			<CreateForm formRef={formRef} createMutation={mutation} setIsCreating={setIsCreating} initialValues={initialvalues}>
-				<Spin spinning={isCreating || isFetching} fullscreen />
+			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues}>
+				<Spin spinning={isLoading} fullscreen />
 				<Form.Item<GameListItem> name="key">
 					<Input type="hidden" />
 				</Form.Item>
@@ -238,9 +238,7 @@ export function PostGameForm({
 						onChange={save}
 					/>
 				</Form.Item>
-				<Form.Item label="Post">
-					<Button onClick={postgame}>Post</Button>
-				</Form.Item>
+				{children}
 			</CreateForm>
 		</>
 	);

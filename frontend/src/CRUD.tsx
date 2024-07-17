@@ -307,17 +307,19 @@ export function getListQueries<APIRow>(apipath: string, querykey: string): Query
 }
 
 export function CreateForm({
-	createMutation,
-	setIsCreating,
+	mutation,
+	setIsMutating,
 	children,
 	initialValues,
-	formRef
+	formRef,
+	submitButton = true
 }: {
-	createMutation: UseMutationResult<void, Error, any, void>;
-	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
+	mutation: UseMutationResult<void, Error, any, void>;
+	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
 	formRef?: RefObject<FormRef>;
+	submitButton?: boolean;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
 
@@ -339,21 +341,24 @@ export function CreateForm({
 			form={form}
 			initialValues={initialValues}
 			onFinish={(values) => {
-				createMutation.mutate(values, {
+				mutation.mutate(values, {
 					onError: (e) => {
 						mutationErrorToFormError(form, e);
-						setIsCreating(false);
 					},
-					onSuccess: () => setIsCreating(false)
+					onSuccess: () => setIsMutating(false)
 				});
 			}}
 		>
 			<>{children}</>
-			<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-				<Button type="primary" htmlType="submit" disabled={!isSubmittable}>
-					Submit
-				</Button>
-			</Form.Item>
+			{submitButton ? (
+				<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+					<Button type="primary" htmlType="submit" disabled={!isSubmittable}>
+						Submit
+					</Button>
+				</Form.Item>
+			) : (
+				<></>
+			)}
 		</Form>
 	);
 }
@@ -367,7 +372,7 @@ export function AddRow({ createMutation, children }: { createMutation: UseMutati
 			</Button>
 		);
 	}
-	return CreateForm({ createMutation, setIsCreating, children });
+	return CreateForm({ mutation: createMutation, setIsMutating: setIsCreating, children });
 }
 
 export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {
