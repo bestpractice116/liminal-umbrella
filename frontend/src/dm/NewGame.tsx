@@ -19,7 +19,7 @@ import { Navigate } from 'react-router-dom';
 
 const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
 
-function GameSystemsSelect({ save }: { save: () => void }) {
+function GameSystemsSelect({ save, disabled }: { save: () => void; disabled: boolean }) {
 	const { result } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
 	const loading = result.isFetching;
@@ -27,30 +27,40 @@ function GameSystemsSelect({ save }: { save: () => void }) {
 	// FIXME - do we need the WrapCRUD spinner here, or is loading component enough
 	return (
 		<WrapCRUD result={result}>
-			<GameSystemsSelectHTML gamesystems={gamesystems} save={save} loading={loading} />
+			<GameSystemsSelectHTML gamesystems={gamesystems} save={save} loading={loading} disabled={disabled} />
 		</WrapCRUD>
 	);
 }
 
-function GameSystemsSelectHTML({ gamesystems, save, loading }: { gamesystems: GameSystemListItem[]; save: () => void; loading: boolean }) {
+function GameSystemsSelectHTML({
+	gamesystems,
+	save,
+	loading,
+	disabled
+}: {
+	gamesystems: GameSystemListItem[];
+	save: () => void;
+	loading: boolean;
+	disabled: boolean;
+}) {
 	const gamesystems_items = gamesystems.map((system) => {
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
 	return (
 		<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
-			<Select options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} />
+			<Select options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} disabled={disabled} />
 		</Form.Item>
 	);
 }
 
-function GameTypeSelect({ save }: { save: () => void }) {
+function GameTypeSelect({ save, disabled }: { save: () => void; disabled: boolean }) {
 	const gametypes_items: { value: string; label: any; disabled: boolean }[] = Object.entries(gametypes).map(([k, v]) => {
 		return { value: k, label: <span>{v}</span>, disabled: !gametypesEnabled[k] };
 	});
 
 	return (
 		<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-			<Select options={gametypes_items} onBlur={save} onSelect={save} />
+			<Select options={gametypes_items} onBlur={save} onSelect={save} disabled={disabled} />
 		</Form.Item>
 	);
 }
@@ -177,7 +187,8 @@ export function PostGameForm({
 	isLoading,
 	mutation,
 	initialvalues,
-	children = <></>
+	children = <></>,
+	createForm = true
 }: {
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
@@ -186,6 +197,7 @@ export function PostGameForm({
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialvalues: { [key: string]: any };
 	children?: React.ReactNode;
+	createForm?: boolean;
 }) {
 	return (
 		<>
@@ -199,9 +211,9 @@ export function PostGameForm({
 					<Input onPressEnter={save} onBlur={save} />
 				</Form.Item>
 
-				<GameTypeSelect save={save} />
+				<GameTypeSelect save={save} disabled={!createForm} />
 
-				<GameSystemsSelect save={save} />
+				<GameSystemsSelect save={save} disabled={!createForm} />
 
 				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
 					<DatePicker

@@ -17,12 +17,13 @@ export default function ViewGame() {
 		//console.log('updated');
 	});
 
-	console.log('RESULT DATA ', result.data!);
 	if (!result.data) {
 		return <div>loading</div>;
 	}
+	// FIXME - clean this up
 	const res = getZObject(GameSchema.read).partial().safeParse(result.data);
-	console.log('RES', res);
+	const initialValues = res.data!;
+	initialValues.date = initialValues.starttime.clone();
 	return (
 		<div>
 			View one game: {key}
@@ -31,11 +32,12 @@ export default function ViewGame() {
 			the Discord listings
 			<PostGameForm
 				mutation={updateMutation}
-				initialvalues={res.data!}
+				initialvalues={initialValues}
 				isLoading={isCreating || result.isFetching}
 				formRef={formRef}
 				save={save}
 				setIsCreating={setIsCreating}
+				createForm={false}
 			/>
 		</div>
 	);
