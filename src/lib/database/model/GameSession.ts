@@ -11,6 +11,8 @@ import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo
 import Message from './Message.js';
 import GameSystem from './GameSystem.js';
 import { container } from '@sapphire/framework';
+import { ThreadChannel, ChannelType, userMention, ThreadOnlyChannel } from 'discord.js';
+import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
 	@Attribute(DataTypes.INTEGER)
@@ -96,8 +98,25 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
-	async updateGameThread() {}
-	async updateGameListing() {}
+	async updateGameThread() {
+		const channel = await getOneShotsChannel();
+		await channel?.setTopic(this.name);
+		// FIXME
+		/*
+		if (channel?.parent?.isThreadOnly()) {
+			channel?.parent?
+		messages.fetch(this.id, options);
+		const message = channel;
+		message.setawait format(this)
+				},
+				reason: `Game: ${this.name!} by ${userMention(this.owner)}`
+			});*/
+	}
+	async updateGameListing() {
+		const channel = getGameListingChannel();
+		const message = await channel?.messages.fetch(this.gameListingsMessageId);
+		return message?.edit(await format(this));
+	}
 	async updateEvent() {
 		return container.guild?.scheduledEvents.fetch(this.get('eventId')).then((event) => {
 			console.log({ name: this.name, description: this.description, scheduledStartTime: this.starttime, scheduledEndTime: this.endtime });
