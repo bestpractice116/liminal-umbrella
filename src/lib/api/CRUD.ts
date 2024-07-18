@@ -173,6 +173,7 @@ export abstract class UD extends CRUDBase {
 			return;
 		}
 		item.set(dbData);
+		item.CRUDSave ? await item.CRUDSave() : item.save();
 		await item.save();
 		this.onMuatation(item);
 		const datum = await this.getReadObjectFromDbObject(item);

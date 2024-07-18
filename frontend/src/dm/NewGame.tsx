@@ -206,6 +206,10 @@ export function PostGameForm({
 
 	const getValidateStatus = (name: string) => {
 		if (createForm) return undefined;
+		console.log(
+			`Field ${name} FORM ${typeof formData[name]} ${formData[name]} INIT ${typeof initialvalues[name]}} ${initialvalues[name]} compares: `,
+			`${formData[name]}` != `${initialvalues[name]}`
+		);
 		// This is gross, but this seems like the easiest way to compare dayjs objects.
 		return `${formData[name]}` != `${initialvalues[name]}` ? 'error' : undefined;
 	};

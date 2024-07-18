@@ -10,6 +10,7 @@ import {
 import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo, Default, DeletedAt } from '@sequelize/core/decorators-legacy';
 import Message from './Message.js';
 import GameSystem from './GameSystem.js';
+import { container } from '@sapphire/framework';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
 	@Attribute(DataTypes.INTEGER)
@@ -40,7 +41,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	declare channelId: string;
 
 	@Attribute(DataTypes.STRING)
-	declare name: string | null;
+	declare name: string;
 
 	@BelongsTo(() => GameSystem, 'gamesystem')
 	declare gamesystemOb?: NonAttribute<GameSystem>;
@@ -83,5 +84,24 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 			}
 		}
 		return this.get(name);
+	}
+
+	async CRUDSave() {
+		const db = await container.database.getdb();
+		return db.transaction(async () => {
+			await this.updateGameThread();
+			await this.updateGameListing();
+			await this.updateEvent();
+			return this.save();
+		});
+	}
+
+	async updateGameThread() {}
+	async updateGameListing() {}
+	async updateEvent() {
+		return container.guild?.scheduledEvents.fetch(this.get('eventId')).then((event) => {
+			console.log({ name: this.name, description: this.description, scheduledStartTime: this.starttime, scheduledEndTime: this.endtime });
+			return event.edit({ name: this.name, description: this.description, scheduledStartTime: this.starttime, scheduledEndTime: this.endtime });
+		});
 	}
 }

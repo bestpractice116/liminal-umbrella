@@ -28,6 +28,7 @@ export class ApiGameSessions extends UD {
 		return { owner: request.auth!.id };
 	}
 
+	// FIXME - allow
 	override async auth_DELETE(_request: ApiRequest, response: ApiResponse) {
 		response.notFound();
 	}
@@ -36,7 +37,17 @@ export class ApiGameSessions extends UD {
 	override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 
 	override async UPDATE_coerce(_request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-		const out = { ...data };
+		const date = new Date(data.date);
+		const starttime = new Date(data.starttime!);
+		starttime.setFullYear(date.getFullYear());
+		starttime.setMonth(date.getMonth());
+		starttime.setDate(date.getDate());
+		const endtime = new Date(data.endtime)!;
+		endtime.setFullYear(date.getFullYear());
+		endtime.setMonth(date.getMonth());
+		endtime.setDate(date.getDate());
+
+		const out = { ...data, starttime, endtime };
 		if (data.gamesystem) {
 			const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
 			if (!gamesystem) {
