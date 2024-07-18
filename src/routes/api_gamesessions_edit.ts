@@ -1,5 +1,5 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import { GameSession } from '../lib/database/model.js';
+import { GameSession, GameSystem } from '../lib/database/model.js';
 import { GameSchema } from 'common/schema';
 import type { SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
@@ -34,4 +34,16 @@ export class ApiGameSessions extends UD {
 
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
+
+	override async UPDATE_coerce(_request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
+		const out = { ...data };
+		if (data.gamesystem) {
+			const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
+			if (!gamesystem) {
+				return response.badRequest('Cannot find game system');
+			}
+			out['gamesystem'] = gamesystem.key;
+		}
+		return out;
+	}
 }

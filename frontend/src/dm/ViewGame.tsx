@@ -13,8 +13,8 @@ export default function ViewGame() {
 	const save = () => {};
 	const formRef = createRef<FormRef>();
 	const [isCreating, setIsCreating] = useState(false);
-	const updateMutation = getUpdateMutation(`/api/gamesessions/${key}`, `gamesessions/${key}`, setIsCreating, () => {
-		//console.log('updated');
+	const updateMutation = getUpdateMutation(`/api/gamesessions`, `gamesessions/${key}`, setIsCreating, () => {
+		console.log('updated');
 	});
 
 	if (!result.data) {
@@ -26,8 +26,6 @@ export default function ViewGame() {
 	initialValues.date = initialValues.starttime.clone();
 	return (
 		<div>
-			View one game: {key}
-			<br />
 			This page will contain the details / ability to edit things about an existing game you have already posted, and saving edits will update
 			the Discord listings
 			<PostGameForm

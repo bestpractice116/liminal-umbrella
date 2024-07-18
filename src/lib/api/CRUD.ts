@@ -62,8 +62,7 @@ export abstract class CR extends CRUDBase {
 	@AuthenticatedAdmin()
 	async auth_CREATE(_request: ApiRequest, _response: ApiResponse) {}
 
-	async CREATE_coerce(request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
-		data.owner = request.auth;
+	async CREATE_coerce(_request: ApiRequest, _response: ApiResponse, data: any): Promise<any> {
 		return data;
 	}
 

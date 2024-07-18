@@ -199,6 +199,16 @@ export function PostGameForm({
 	children?: React.ReactNode;
 	createForm?: boolean;
 }) {
+	const [formData, setFormData] = useState(initialvalues);
+	const hasChanged = () => {
+		setFormData(formRef.current?.getFieldsValue());
+	};
+
+	const getValidateStatus = (name: string) => {
+		if (createForm) return undefined;
+		// This is gross, but this seems like the easiest way to compare dayjs objects.
+		return `${formData[name]}` != `${initialvalues[name]}` ? 'error' : undefined;
+	};
 	return (
 		<>
 			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues}>
@@ -207,47 +217,60 @@ export function PostGameForm({
 					<Input type="hidden" />
 				</Form.Item>
 
-				<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]}>
-					<Input onPressEnter={save} onBlur={save} />
+				<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]} validateStatus={getValidateStatus('name')}>
+					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} />
 				</Form.Item>
 
 				<GameTypeSelect save={save} disabled={!createForm} />
 
 				<GameSystemsSelect save={save} disabled={!createForm} />
 
-				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]}>
+				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]} validateStatus={getValidateStatus('date')}>
 					<DatePicker
 						minDate={dayjs().add(1, 'day')}
 						format={'dddd D MMM (YYYY-MM-DD)'}
 						onChange={(val) => {
-							if (val) save();
+							if (val) {
+								hasChanged();
+								save();
+							}
 						}}
 					/>
 				</Form.Item>
 
-				<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]}>
-					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
+				<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]} validateStatus={getValidateStatus('starttime')}>
+					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={hasChanged} />
 				</Form.Item>
 
-				<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]}>
-					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={save} />
+				<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]} validateStatus={getValidateStatus('endtime')}>
+					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={hasChanged} onChange={hasChanged} />
 				</Form.Item>
 
-				<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]}>
-					<Input onPressEnter={save} onBlur={save} />
+				<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]} validateStatus={getValidateStatus('location')}>
+					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} />
 				</Form.Item>
 
-				<Form.Item<GameListItem> label="Description" name="description" rules={[createFormRule]}>
-					<Input.TextArea onBlur={save} />
+				<Form.Item<GameListItem>
+					label="Description"
+					name="description"
+					rules={[createFormRule]}
+					validateStatus={getValidateStatus('description')}
+				>
+					<Input.TextArea onBlur={save} onChange={hasChanged} />
 				</Form.Item>
 
-				<Form.Item<GameListItem> label="Max Players" name="maxplayers" rules={[createFormRule]}>
+				<Form.Item<GameListItem>
+					label="Max Players"
+					name="maxplayers"
+					rules={[createFormRule]}
+					validateStatus={getValidateStatus('maxplayers')}
+				>
 					<Select
 						options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
 							return { value: idx, label: <span>{idx}</span> };
 						})}
 						onBlur={save}
-						onChange={save}
+						onChange={hasChanged}
 					/>
 				</Form.Item>
 				{children}

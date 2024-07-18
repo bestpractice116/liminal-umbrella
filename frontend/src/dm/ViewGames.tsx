@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { GameSchema, type GameListItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { isAdmin } from '../Auth.js';
+import dayjs from 'dayjs';
 const components = getTableComponents(GameSchema);
 
 export default function ViewGames() {
@@ -15,7 +16,7 @@ export default function ViewGames() {
 		{
 			title: 'Edit',
 			dataIndex: 'edit',
-			render: (_foo, record) => {
+			render: (_, record) => {
 				return (
 					<Link to={`../viewgame/${record.key}`} relative="path">
 						<EditOutlined />
@@ -37,6 +38,12 @@ export default function ViewGames() {
 			title: 'Gamesystem',
 			dataIndex: 'gamesystem',
 			editable: false
+		},
+		{
+			title: 'Date & Time',
+			dataIndex: 'starttime',
+			editable: false,
+			render: (_, record) => dayjs(record.starttime).format('ddd, MMM D h:mm A - ') + dayjs(record.endtime).format('h:mm A')
 		}
 	];
 	if (admin) {
@@ -52,7 +59,6 @@ export default function ViewGames() {
 		<WrapCRUD<GameListItem> result={result}>
 			<>
 				<Spin spinning={isMutating} fullscreen />
-				<div>FIXME</div>
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}
