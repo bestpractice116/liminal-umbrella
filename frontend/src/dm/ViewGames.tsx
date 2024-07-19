@@ -1,5 +1,6 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
+import Button from 'antd/es/button';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { GameSchema, type GameListItem } from 'common/schema';
@@ -56,17 +57,24 @@ export default function ViewGames() {
 
 	const columns = getColumns<GameListItem>(defaultColumns, handleSave);
 	return (
-		<WrapCRUD<GameListItem> result={result}>
-			<>
-				<Spin spinning={isMutating} fullscreen />
-				<Table
-					components={components}
-					rowClassName={() => 'editable-row'}
-					bordered
-					dataSource={result.data!}
-					columns={columns as ColumnTypes}
-				/>
-			</>
-		</WrapCRUD>
+		<>
+			<Link to={`../newgame`} relative="path">
+				<Button type="primary" style={{ marginBottom: 16 }}>
+					Create new game
+				</Button>
+			</Link>
+			<WrapCRUD<GameListItem> result={result}>
+				<>
+					<Spin spinning={isMutating} fullscreen />
+					<Table
+						components={components}
+						rowClassName={() => 'editable-row'}
+						bordered
+						dataSource={result.data!}
+						columns={columns as ColumnTypes}
+					/>
+				</>
+			</WrapCRUD>
+		</>
 	);
 }
