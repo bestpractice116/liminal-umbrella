@@ -11,7 +11,6 @@ import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo
 import Message from './Message.js';
 import GameSystem from './GameSystem.js';
 import { container } from '@sapphire/framework';
-import { ThreadChannel, ChannelType, userMention, ThreadOnlyChannel } from 'discord.js';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
