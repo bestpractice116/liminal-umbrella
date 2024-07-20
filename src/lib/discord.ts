@@ -18,7 +18,7 @@ export function getGameListingChannel(): TextChannel | undefined {
 
 export function getOneShotsChannel(): ForumChannel | undefined {
 	const channel_name = 'one_shots';
-	const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
+	const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildForum && channel.name === channel_name);
 	if (channel && channel.type == ChannelType.GuildForum) {
 		return channel;
 	}
