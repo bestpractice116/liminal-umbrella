@@ -21,7 +21,7 @@ export class ApiUsersList extends CR {
 	override findAllInclude() {
 		return ['roles'];
 	}
-	override async getRetrieveWhere() {
+	override async findAllWhere() {
 		return { bot: false };
 	}
 }

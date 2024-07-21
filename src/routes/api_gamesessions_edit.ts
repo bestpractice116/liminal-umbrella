@@ -33,8 +33,24 @@ export class ApiGameSessions extends UD {
 		response.notFound();
 	}
 
+	override DELETE_disallowed(item: any): string | undefined {
+		const now = new Date(Date.now());
+		if (item.startTime < now) {
+			return 'Cannot delete game sessions which start in the past';
+		}
+		return;
+	}
+
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
+
+	override UPDATE_disallowed(item: any): string | undefined {
+		const now = new Date(Date.now());
+		if (item.starttime < now) {
+			return 'Cannot update game sessions which start in the past';
+		}
+		return;
+	}
 
 	override async UPDATE_coerce(_request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
 		const date = new Date(data.date);
@@ -46,6 +62,14 @@ export class ApiGameSessions extends UD {
 		endtime.setFullYear(date.getFullYear());
 		endtime.setMonth(date.getMonth());
 		endtime.setDate(date.getDate());
+
+		const now = new Date(Date.now());
+		if (starttime < now) {
+			// Session started in the past, not valid
+		}
+		if (endtime < starttime) {
+			// End time cannot be before start time, not valid
+		}
 
 		const out = { ...data, starttime, endtime };
 		if (data.gamesystem) {

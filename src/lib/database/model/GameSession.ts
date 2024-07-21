@@ -90,13 +90,9 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	async CRUDSave() {
 		const db = await container.database.getdb();
 		return db.transaction(async () => {
-			console.log('ABOUT TO DO updateGameThread');
 			await this.updateGameThread();
-			console.log('Did updategamethread');
 			await this.updateGameListing();
-			console.log('done updateGameListing');
 			await this.updateEvent();
-			console.log('done updateevent');
 			return this.save();
 		});
 	}
@@ -107,16 +103,12 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		const thread = await channel.threads.fetch(this.channelId);
 		if (!thread) return;
 		if (this.name !== thread.name) {
-			console.log('do setName');
 			await thread.setName(this.name);
-			console.log('DID setName');
 		}
 		const firstMessage = await thread.fetchStarterMessage();
 		if (!firstMessage) return;
 		if (this.description !== firstMessage.content) {
-			console.log('Update description');
 			await firstMessage.edit(this.description);
-			console.log('DID Update description');
 		}
 	}
 

@@ -5,6 +5,7 @@ import { PostGameForm } from './NewGame';
 import { type GameListItem, GameSchema } from 'common/schema';
 import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
+import dayjs from 'dayjs';
 
 export default function ViewGame() {
 	const { key } = useParams();
@@ -25,6 +26,8 @@ export default function ViewGame() {
 	const initialValues = res.data!;
 	initialValues.date = initialValues.starttime.clone().hour(12).minute(0).second(0).millisecond(0);
 	console.log(`InitialValues starttime is ${initialValues.starttime}`);
+	const now = dayjs(Date.now());
+	const editable = initialValues.starttime > now;
 	return (
 		<div>
 			This page will contain the details / ability to edit things about an existing game you have already posted, and saving edits will update
@@ -37,6 +40,7 @@ export default function ViewGame() {
 				save={save}
 				setIsCreating={setIsCreating}
 				createForm={false}
+				disabled={!editable}
 			/>
 		</div>
 	);

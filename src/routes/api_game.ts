@@ -47,7 +47,7 @@ export class ApiGameList extends CR {
 		return out;
 	}
 
-	override async getRetrieveWhere(request: ApiRequest) {
+	override async findAllWhere(request: ApiRequest) {
 		if (isAdmin(request)) {
 			return {};
 		}

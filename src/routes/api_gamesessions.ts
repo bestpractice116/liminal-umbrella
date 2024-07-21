@@ -23,9 +23,12 @@ export class ApiGameSessionsList extends CR {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_GET() {}
 
-	override async getRetrieveWhere(request: ApiRequest) {
+	override async findAllWhere(request: ApiRequest) {
 		if (isAdmin(request)) return {};
 		return { owner: request.auth!.id };
+	}
+	override findAllOrder(): string[][] {
+		return [['starttime', 'DESC']];
 	}
 
 	override async auth_CREATE(_request: ApiRequest, response: ApiResponse) {

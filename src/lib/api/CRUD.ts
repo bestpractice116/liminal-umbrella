@@ -33,8 +33,11 @@ abstract class CRUDBase extends Route {
 }
 
 export abstract class CR extends CRUDBase {
-	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
+	async findAllWhere(_request: ApiRequest): Promise<any> {
 		return {};
+	}
+	findAllOrder(): string[][] {
+		return [];
 	}
 	onMuatation() {}
 
@@ -52,7 +55,11 @@ export abstract class CR extends CRUDBase {
 		if (response.writableEnded) {
 			return;
 		}
-		const items = await this.getModel().findAll({ where: await this.getRetrieveWhere(request), include: this.findAllInclude() });
+		const items = await this.getModel().findAll({
+			where: await this.findAllWhere(request),
+			include: this.findAllInclude(),
+			order: this.findAllOrder()
+		});
 		// FIXME - any
 		const res = await Promise.all(items.map(async (item: any) => await this.getReadObjectFromDbObject(item)));
 		response.json(res);
@@ -149,6 +156,10 @@ export abstract class UD extends CRUDBase {
 		return this.getSchema().update;
 	}
 
+	public UPDATE_disallowed(_item: any): string | undefined {
+		return;
+	}
+
 	@Sequential
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
 		await this.auth_UPDATE(request, response);
@@ -161,7 +172,11 @@ export abstract class UD extends CRUDBase {
 		}
 		const item = await this.findItem(request, response);
 		if (!item) {
-			return;
+			return response.notFound();
+		}
+		const update_error = this.UPDATE_disallowed(item);
+		if (update_error) {
+			return response.error(HttpCodes.MethodNotAllowed, update_error);
 		}
 		const { success, error, data } = updateSchema.safeParse(request.body);
 		if (!success) {
@@ -187,6 +202,10 @@ export abstract class UD extends CRUDBase {
 		return this.getSchema().update;
 	}
 
+	public DELETE_disallowed(_item: any): string | undefined {
+		return;
+	}
+
 	@Sequential
 	public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
 		await this.auth_DELETE(request, response);
@@ -199,7 +218,11 @@ export abstract class UD extends CRUDBase {
 		}
 		const item = await this.findItem(request, response);
 		if (!item) {
-			return;
+			return response.notFound();
+		}
+		const delete_error = this.DELETE_disallowed(item);
+		if (delete_error) {
+			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
 		await item.destroy();
 		this.onMuatation(item);

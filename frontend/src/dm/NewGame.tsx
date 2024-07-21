@@ -188,7 +188,8 @@ export function PostGameForm({
 	mutation,
 	initialvalues,
 	children = <></>,
-	createForm = true
+	createForm = true,
+	disabled = false
 }: {
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
@@ -198,6 +199,7 @@ export function PostGameForm({
 	initialvalues: { [key: string]: any };
 	children?: React.ReactNode;
 	createForm?: boolean;
+	disabled?: boolean;
 }) {
 	const [formData, setFormData] = useState(initialvalues);
 	const hasChanged = () => {
@@ -215,19 +217,19 @@ export function PostGameForm({
 	};
 	return (
 		<>
-			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues}>
+			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues} submitButton={!disabled}>
 				<Spin spinning={isLoading} fullscreen />
 				<Form.Item<GameListItem> name="key">
 					<Input type="hidden" />
 				</Form.Item>
 
 				<Form.Item<GameListItem> label="Name" name="name" rules={[createFormRule]} validateStatus={getValidateStatus('name')}>
-					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} />
+					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
 				</Form.Item>
 
-				<GameTypeSelect save={save} disabled={!createForm} />
+				<GameTypeSelect save={save} disabled={disabled || !createForm} />
 
-				<GameSystemsSelect save={save} disabled={!createForm} />
+				<GameSystemsSelect save={save} disabled={disabled || !createForm} />
 
 				<Form.Item<GameListItem> name="date" label="Date" rules={[createFormRule]} validateStatus={getValidateStatus('date')}>
 					<DatePicker
@@ -239,19 +241,36 @@ export function PostGameForm({
 								save();
 							}
 						}}
+						disabled={disabled}
 					/>
 				</Form.Item>
 
 				<Form.Item<GameListItem> name="starttime" label="Start Time" rules={[createFormRule]} validateStatus={getValidateStatus('starttime')}>
-					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={save} onChange={hasChanged} />
+					<TimePicker
+						showNow={false}
+						minuteStep={15}
+						format={'HH:mm'}
+						size="large"
+						onBlur={save}
+						onChange={hasChanged}
+						disabled={disabled}
+					/>
 				</Form.Item>
 
 				<Form.Item<GameListItem> name="endtime" label="End Time" rules={[createFormRule]} validateStatus={getValidateStatus('endtime')}>
-					<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="large" onBlur={hasChanged} onChange={hasChanged} />
+					<TimePicker
+						showNow={false}
+						minuteStep={15}
+						format={'HH:mm'}
+						size="large"
+						onBlur={hasChanged}
+						onChange={hasChanged}
+						disabled={disabled}
+					/>
 				</Form.Item>
 
 				<Form.Item<GameListItem> label="Location" name="location" rules={[createFormRule]} validateStatus={getValidateStatus('location')}>
-					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} />
+					<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
 				</Form.Item>
 
 				<Form.Item<GameListItem>
@@ -260,7 +279,7 @@ export function PostGameForm({
 					rules={[createFormRule]}
 					validateStatus={getValidateStatus('description')}
 				>
-					<Input.TextArea onBlur={save} onChange={hasChanged} />
+					<Input.TextArea onBlur={save} onChange={hasChanged} disabled={disabled} />
 				</Form.Item>
 
 				<Form.Item<GameListItem>
@@ -275,6 +294,7 @@ export function PostGameForm({
 						})}
 						onBlur={save}
 						onChange={hasChanged}
+						disabled={disabled}
 					/>
 				</Form.Item>
 				{children}
