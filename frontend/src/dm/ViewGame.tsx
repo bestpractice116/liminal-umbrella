@@ -11,6 +11,7 @@ import { type DefaultColumns } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Typeography from 'antd/es/typography';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
+import { DeleteOutlined } from '@ant-design/icons';
 const Title = Typeography.Title;
 
 function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
@@ -21,6 +22,20 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 			key: 'nickname',
 			render: (_, record) => {
 				return <UserRecord user={record as AutoCompleteUser} />;
+			}
+		},
+		{
+			title: 'Delete',
+			dataIndex: 'delete',
+			key: 'delete',
+			render: (_, record) => {
+				return (
+					<DeleteOutlined
+						onClick={() => {
+							alert(`Delete ${record.key}`);
+						}}
+					/>
+				);
 			}
 		}
 	];
