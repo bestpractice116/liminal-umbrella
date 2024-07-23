@@ -1,11 +1,11 @@
 import { useState, createRef } from 'react';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import { useParams } from 'react-router-dom';
-import { PostGameForm } from './NewGame';
 import { type GameListItem, GameSchema } from 'common/schema';
 import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
 import dayjs from 'dayjs';
+import PostGameForm from './PostGameForm.js';
 
 export default function ViewGame() {
 	const { key } = useParams();
