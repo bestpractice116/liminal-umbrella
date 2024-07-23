@@ -48,6 +48,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
+	@NotNull
 	declare gameListingsMessageId: string;
 	/** Defined by {@link Message.gameSession} */
 	declare gameListingsMessage?: NonAttribute<Message>;
@@ -55,14 +56,17 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
+	@NotNull
 	declare eventId: string;
 
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
+	@NotNull
 	declare channelId: string;
 
 	@Attribute(DataTypes.STRING)
+	@NotNull
 	declare name: string;
 
 	@BelongsTo(() => GameSystem, 'gamesystem')
@@ -74,15 +78,19 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	declare gamesystem: number;
 
 	@Attribute(DataTypes.STRING)
+	@NotNull
 	declare type: string;
 
 	@Attribute(DataTypes.DATE)
+	@NotNull
 	declare starttime: Date;
 
 	@Attribute(DataTypes.DATE)
+	@NotNull
 	declare endtime: Date;
 
 	@Attribute(DataTypes.INTEGER)
+	@NotNull
 	declare maxplayers: number;
 
 	@Attribute(DataTypes.INTEGER)
@@ -91,9 +99,11 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	declare signed_up_players: number;
 
 	@Attribute(DataTypes.STRING)
+	@NotNull
 	declare description: string;
 
 	@Attribute(DataTypes.STRING)
+	@NotNull
 	declare location: string;
 
 	@DeletedAt

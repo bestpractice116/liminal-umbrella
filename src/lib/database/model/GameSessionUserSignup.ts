@@ -10,10 +10,10 @@ export default class GameSessionUserSignup extends Model<InferAttributes<GameSes
 	@Attribute(DataTypes.INTEGER)
 	@NotNull
 	@Index
-	declare session_key: number;
+	declare gameSessionKey: number;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	@Index
-	declare user_key: string;
+	declare userKey: string;
 }
