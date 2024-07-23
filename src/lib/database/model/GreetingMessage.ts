@@ -9,10 +9,9 @@ export default class GreetingMessage extends Model<InferAttributes<GreetingMessa
 	declare messageId: string;
 
 	@Attribute(DataTypes.STRING)
-	@NotNull
 	@Unique
 	@Index
-	declare userId: string;
+	declare userId?: string;
 
 	//@HasOne(() => User, /* foreign key */ 'key')
 	//declare user: NonAttribute<User>;

@@ -1,6 +1,5 @@
 import { DataTypes } from '@sequelize/core';
 import type { MigrationParams } from 'umzug';
-import { PlannedGame } from '../lib/database/model.js';
 
 export const up = async (uz: MigrationParams<any>) => {
 	const sq = uz.context.sequelize;
@@ -140,9 +139,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			],
 			{ transaction }
 		);
-		for (const i of await PlannedGame.findAll()) {
-			await i.destroy();
-		}
+		await sq.query('DELETE FROM plannedgames', { raw: true, transaction });
 		await qi.removeColumn('plannedgames', 'system', { transaction });
 		await qi.addColumn(
 			'plannedgames',

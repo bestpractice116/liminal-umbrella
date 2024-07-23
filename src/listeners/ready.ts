@@ -16,6 +16,10 @@ export class ReadyEvent extends Listener {
 	public override async run(client: Client) {
 		client.guilds.fetch(this.container.guildId).then(async (guild) => {
 			this.container.guild = guild;
+			/*
+			const db = await this.container.database.getdb();
+			await db.sync()
+		       	*/
 			await this.container.database.doMigrations(guild);
 			await this.container.database.getHighestWatermark();
 			const start = Date.now();

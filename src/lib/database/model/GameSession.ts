@@ -5,11 +5,32 @@ import {
 	InferCreationAttributes,
 	NonAttribute,
 	CreationOptional,
-	BelongsToGetAssociationMixin
+	BelongsToGetAssociationMixin,
+	BelongsToManyGetAssociationsMixin,
+	BelongsToManySetAssociationsMixin,
+	BelongsToManyAddAssociationMixin,
+	BelongsToManyAddAssociationsMixin,
+	BelongsToManyRemoveAssociationMixin,
+	BelongsToManyRemoveAssociationsMixin,
+	BelongsToManyCountAssociationsMixin,
+	BelongsToManyHasAssociationMixin,
+	BelongsToManyHasAssociationsMixin
 } from '@sequelize/core';
-import { Index, Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, BelongsTo, Default, DeletedAt } from '@sequelize/core/decorators-legacy';
+import {
+	Index,
+	Attribute,
+	NotNull,
+	Unique,
+	PrimaryKey,
+	AutoIncrement,
+	BelongsTo,
+	Default,
+	DeletedAt,
+	BelongsToMany
+} from '@sequelize/core/decorators-legacy';
 import Message from './Message.js';
 import GameSystem from './GameSystem.js';
+import User from './User.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
 
@@ -77,6 +98,23 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 
 	@DeletedAt
 	declare deletedAt: Date | null;
+
+	@BelongsToMany(() => User, {
+		through: 'GameSessionUserSignup',
+		inverse: {
+			as: 'signedupGameSessions'
+		}
+	})
+	declare signedupUsers?: NonAttribute<User[]>;
+	declare getSignedupUsers: BelongsToManyGetAssociationsMixin<User>;
+	declare setSignedupUsers: BelongsToManySetAssociationsMixin<User, User['key']>;
+	declare addSignedupUser: BelongsToManyAddAssociationMixin<User, User['key']>;
+	declare addSignedupUsers: BelongsToManyAddAssociationsMixin<User, User['key']>;
+	declare removeSignedupUser: BelongsToManyRemoveAssociationMixin<User, User['key']>;
+	declare removeSignedupUsers: BelongsToManyRemoveAssociationsMixin<User, User['key']>;
+	declare hasSignedupUser: BelongsToManyHasAssociationMixin<User, User['key']>;
+	declare hasSignedupUsers: BelongsToManyHasAssociationsMixin<User, User['key']>;
+	declare countSignedupUsers: BelongsToManyCountAssociationsMixin<User>;
 
 	async CRUDRead(name: string) {
 		if (name == 'gamesystem') {

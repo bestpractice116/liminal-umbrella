@@ -42,15 +42,18 @@ export const up = async (uz: MigrationParams<any>) => {
 			},
 			{ transaction }
 		);
-		await qi.bulkInsert('botmessages', [
-			{
-				name: 'NEW_USER_GREETING',
-				value: '<@${e.id}> Welcome to Preston RPG Community.  If you have read the rules and altered your name as asked then an Admin will be along shortly to give access to the rest of the server.',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			},
+		await qi.bulkInsert(
+			'botmessages',
+			[
+				{
+					name: 'NEW_USER_GREETING',
+					value: '<@${e.id}> Welcome to Preston RPG Community.  If you have read the rules and altered your name as asked then an Admin will be along shortly to give access to the rest of the server.',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}
+			],
 			{ transaction }
-		]);
+		);
 	});
 };
 
