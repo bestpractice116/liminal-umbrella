@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { AutoComplete, AutoCompleteProps } from 'antd';
-import { useMutation, useQuery, FetchMethods } from '@tanstack/react-query';
-import { fetch, FetchResultTypes } from '@sapphire/fetch';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import UserRecord from './UserRecord.js';
 import { type AutoCompleteUser } from './UserRecord.js';
 type ListOfAutoCompleteUsers = Array<AutoCompleteUser>;
@@ -39,21 +39,6 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 			);
 		}
 	});
-	const removeUserFromGameMutation = useMutation({
-		mutationFn: (r: AddUserToGameParameters) => {
-			return fetch(
-				'/api/gamesessionadduser',
-				{
-					method: FetchMethods.Delete,
-					body: JSON.stringify(r),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				},
-				FetchResultTypes.JSON
-			);
-		}
-	});
 
 	const data = result.data || [];
 	const opt: AutoCompleteProps['options'] = data.map((user: AutoCompleteUser) => {
@@ -64,7 +49,7 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 		console.log('onSelect', nickname);
 		addUserToGameMutation.mutate({
 			gameSessionId: 2,
-			userId: ho8ojoe
+			userId: 'ho8ojoe'
 		});
 	};
 

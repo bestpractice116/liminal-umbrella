@@ -12,9 +12,31 @@ import FindUserSearchBox from './FindUser.js';
 import Typeography from 'antd/es/typography';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { DeleteOutlined } from '@ant-design/icons';
+import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
+import { useMutation } from '@tanstack/react-query';
+
 const Title = Typeography.Title;
 
+type RemoveUserFromGameParameters = {
+	key: string;
+};
+
 function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
+	const removeUserFromGameMutation = useMutation({
+		mutationFn: (r: RemoveUserFromGameParameters) => {
+			return fetch(
+				'/api/gamesessionremove0user',
+				{
+					method: FetchMethods.Delete,
+					body: JSON.stringify(r),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				},
+				FetchResultTypes.JSON
+			);
+		}
+	});
 	const columns: DefaultColumns = [
 		{
 			title: 'Name',
@@ -32,7 +54,7 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 				return (
 					<DeleteOutlined
 						onClick={() => {
-							alert(`Delete ${record.key}`);
+							removeUserFromGameMutation.mutate({ key: record.key });
 						}}
 					/>
 				);
