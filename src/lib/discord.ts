@@ -42,7 +42,8 @@ export async function format(game: PlannedGame | GameSession): Promise<string> {
 		out.push(`Location: ${game.location}`);
 	}
 	if (game.maxplayers) {
-		out.push(`Spaces currently available: ${game.maxplayers}/${game.maxplayers}`);
+		const taken = game.maxplayers - (await game.countSignedupUsers());
+		out.push(`Spaces currently available: ${taken}/${game.maxplayers}`);
 	}
 	out.push(`DM Contact: ${userMention(game.owner)}`);
 	out.push(`Brief description: ${game.description}`);

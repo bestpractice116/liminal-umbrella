@@ -18,7 +18,6 @@ export default function ViewGames() {
 			title: 'Edit',
 			dataIndex: 'edit',
 			render: (_, record) => {
-				console.log(record);
 				if (new Date(record.starttime) < new Date(Date.now())) return <></>;
 				return (
 					<Link to={`../viewgame/${record.key}`} relative="path">
@@ -41,6 +40,12 @@ export default function ViewGames() {
 			title: 'Gamesystem',
 			dataIndex: 'gamesystem',
 			editable: false
+		},
+		{
+			title: 'Players',
+			dataIndex: 'players',
+			editable: false,
+			render: (_, record) => `${(record.signedupplayers || []).length} / ${record.maxplayers}`
 		},
 		{
 			title: 'Date & Time',

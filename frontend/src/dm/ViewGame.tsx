@@ -6,6 +6,44 @@ import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
 import dayjs from 'dayjs';
 import PostGameForm from './PostGameForm.js';
+import Table from 'antd/es/table';
+import { type DefaultColumns } from '../CRUD.js';
+import FindUserSearchBox from './FindUser.js';
+import { UserOutlined } from '@ant-design/icons';
+import Avatar from 'antd/es/avatar/avatar';
+import Typeography from 'antd/es/typography';
+const Title = Typeography.Title;
+
+function UsersSignedUpTable({ users }: { users: { key: string; nickname: string }[] }) {
+	const columns: DefaultColumns = [
+		{
+			title: 'Name',
+			dataIndex: 'nickname',
+			key: 'nickname',
+			render: (_, record) => {
+				return (
+					<span>
+						<Avatar
+							icon={<UserOutlined />}
+							src={record.avatarURL}
+							style={{ marginRight: '20px' }}
+							shape="square"
+							size="large"
+							className="avatarIcon"
+						/>
+						{record.nickname}
+					</span>
+				);
+			}
+		}
+	];
+	return (
+		<>
+			<Title>Signed up Players</Title>
+			<Table dataSource={users} columns={columns} />
+		</>
+	);
+}
 
 export default function ViewGame() {
 	const { key } = useParams();
@@ -25,7 +63,6 @@ export default function ViewGame() {
 	const res = getZObject(GameSchema.read).partial().safeParse(result.data);
 	const initialValues = res.data!;
 	initialValues.date = initialValues.starttime.clone().hour(12).minute(0).second(0).millisecond(0);
-	console.log(`InitialValues starttime is ${initialValues.starttime}`);
 	const now = dayjs(Date.now());
 	const editable = initialValues.starttime > now;
 	return (
@@ -42,6 +79,8 @@ export default function ViewGame() {
 				createForm={false}
 				disabled={!editable}
 			/>
+			<UsersSignedUpTable users={res.data!.signedupplayers} />
+			<FindUserSearchBox />
 		</div>
 	);
 }

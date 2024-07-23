@@ -48,7 +48,14 @@ const find = z.object({
 });
 const read = find.merge(create).merge(
 	z.object({
-		owner: z.string({})
+		owner: z.string({}),
+		signedupplayers: z.array(
+			z.object({
+				key: z.string(),
+				nickname: z.string(),
+				avatarURL: z.string()
+			})
+		)
 	})
 );
 

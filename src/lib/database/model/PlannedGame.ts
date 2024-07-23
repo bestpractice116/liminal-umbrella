@@ -342,4 +342,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		}
 		return false;
 	}
+
+	async countSignedupUsers(): Promise<number> {
+		return 0;
+	}
 }

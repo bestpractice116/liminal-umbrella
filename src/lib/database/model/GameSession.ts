@@ -28,7 +28,6 @@ import {
 	DeletedAt,
 	BelongsToMany
 } from '@sequelize/core/decorators-legacy';
-import Message from './Message.js';
 import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
@@ -50,8 +49,6 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Unique
 	@NotNull
 	declare gameListingsMessageId: string;
-	/** Defined by {@link Message.gameSession} */
-	declare gameListingsMessage?: NonAttribute<Message>;
 
 	@Attribute(DataTypes.STRING)
 	@Index
@@ -131,6 +128,11 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 			if (this.gamesystem) {
 				return (await this.getGamesystemOb())!.name;
 			}
+		}
+		if (name == 'signedupplayers') {
+			return (await this.getSignedupUsers()).map((user: User) => {
+				return { key: user.key, nickname: user.nickname, avatarURL: user.avatarURL };
+			});
 		}
 		return this.get(name);
 	}
