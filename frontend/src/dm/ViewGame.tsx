@@ -9,31 +9,18 @@ import PostGameForm from './PostGameForm.js';
 import Table from 'antd/es/table';
 import { type DefaultColumns } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
-import { UserOutlined } from '@ant-design/icons';
-import Avatar from 'antd/es/avatar/avatar';
 import Typeography from 'antd/es/typography';
+import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 const Title = Typeography.Title;
 
-function UsersSignedUpTable({ users }: { users: { key: string; nickname: string }[] }) {
+function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 	const columns: DefaultColumns = [
 		{
 			title: 'Name',
 			dataIndex: 'nickname',
 			key: 'nickname',
 			render: (_, record) => {
-				return (
-					<span>
-						<Avatar
-							icon={<UserOutlined />}
-							src={record.avatarURL}
-							style={{ marginRight: '20px' }}
-							shape="square"
-							size="large"
-							className="avatarIcon"
-						/>
-						{record.nickname}
-					</span>
-				);
+				return <UserRecord user={record as AutoCompleteUser} />;
 			}
 		}
 	];
@@ -79,8 +66,8 @@ export default function ViewGame() {
 				createForm={false}
 				disabled={!editable}
 			/>
-			<UsersSignedUpTable users={res.data!.signedupplayers} />
-			<FindUserSearchBox />
+			<UsersSignedUpTable users={res.data!.signedupplayers as AutoCompleteUser[]} />
+			<FindUserSearchBox exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.nickname)} />
 		</div>
 	);
 }
