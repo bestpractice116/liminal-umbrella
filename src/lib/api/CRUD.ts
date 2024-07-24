@@ -15,6 +15,15 @@ type SequelizeInclude =
 			where?: any;
 	  };
 
+export function zodParseOrError(schema: AnyZodSchema, input: unknown, response: ApiResponse): any {
+	const { success, error, data } = schema.safeParse(input);
+	if (!success) {
+		response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
+		return null;
+	}
+	return data;
+}
+
 abstract class CRUDBase extends Route {
 	abstract getModel(): any;
 	abstract getSchema(): SchemaBundle;
@@ -88,11 +97,8 @@ export abstract class CR extends CRUDBase {
 		if (!createSchema) {
 			return response.notFound();
 		}
-		const { success, error, data } = createSchema.safeParse(request.body);
-		if (!success) {
-			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
-			return;
-		}
+		const data = zodParseOrError(createSchema, request.body, response);
+		if (!data) return;
 		const dbData = await this.CREATE_coerce(request, response, data);
 		if (response.writableEnded) {
 			return;
@@ -119,11 +125,8 @@ export abstract class UD extends CRUDBase {
 		if (!findSchema) {
 			return response.notFound();
 		}
-		const { success, error, data } = findSchema.safeParse(request.params);
-		if (!success) {
-			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
-			return null;
-		}
+		const data = zodParseOrError(findSchema, request.params, response);
+		if (!data) return;
 		const item = await this.getModel().findOne({ where: { ...data, ...(await this.getRetrieveWhere(request)) } });
 		if (!item) {
 			response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
@@ -178,11 +181,8 @@ export abstract class UD extends CRUDBase {
 		if (update_error) {
 			return response.error(HttpCodes.MethodNotAllowed, update_error);
 		}
-		const { success, error, data } = updateSchema.safeParse(request.body);
-		if (!success) {
-			response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
-			return;
-		}
+		const data = zodParseOrError(updateSchema, request.body, response);
+		if (!data) return;
 		const dbData = await this.UPDATE_coerce(request, response, data);
 		if (response.writableEnded) {
 			return;

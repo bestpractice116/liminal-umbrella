@@ -53,7 +53,8 @@ const read = find.merge(create).merge(
 			z.object({
 				key: z.string(),
 				nickname: z.string(),
-				avatarURL: z.string()
+				avatarURL: z.string(),
+				username: z.string()
 			})
 		)
 	})

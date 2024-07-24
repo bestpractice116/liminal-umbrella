@@ -131,7 +131,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		}
 		if (name == 'signedupplayers') {
 			return (await this.getSignedupUsers()).map((user: User) => {
-				return { key: user.key, nickname: user.nickname, avatarURL: user.avatarURL };
+				return { key: user.key, nickname: user.nickname, avatarURL: user.avatarURL, username: user.username };
 			});
 		}
 		return this.get(name);

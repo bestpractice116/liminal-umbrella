@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import UserRecord from './UserRecord.js';
 import { type AutoCompleteUser } from './UserRecord.js';
+
 type ListOfAutoCompleteUsers = Array<AutoCompleteUser>;
 
 type AddUserToGameParameters = {
@@ -19,10 +20,16 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 	const result = useQuery({
 		queryKey: ['user', searchText],
 		queryFn: (): Promise<ListOfAutoCompleteUsers> => {
-			return fetch('/api/userautocomplete', FetchResultTypes.JSON);
+			return fetch(
+				'/api/userautocomplete?' +
+					new URLSearchParams({
+						searchText
+					}),
+				FetchResultTypes.JSON
+			);
 		},
 		throwOnError: true,
-		enabled: searchText.length > 2
+		enabled: searchText.length >= 2
 	});
 	const addUserToGameMutation = useMutation({
 		mutationFn: (r: AddUserToGameParameters) => {
@@ -58,7 +65,7 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 			<AutoComplete
 				value={value}
 				options={opt}
-				style={{ width: 200 }}
+				style={{ width: 300 }}
 				onSelect={onSelect}
 				onSearch={(text) => setValue(text)}
 				onChange={setValue}
