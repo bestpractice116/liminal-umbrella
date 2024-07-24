@@ -28,6 +28,11 @@ export default function AdminGameSystems() {
 			editable: true
 		},
 		{
+			title: 'Tag',
+			dataIndex: 'tag',
+			editable: true
+		},
+		{
 			title: 'operation',
 			dataIndex: 'operation',
 			render: (_, record) =>
