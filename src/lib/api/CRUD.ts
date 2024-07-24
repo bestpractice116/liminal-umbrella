@@ -15,6 +15,12 @@ type SequelizeInclude =
 			where?: any;
 	  };
 
+export enum MutationOperation {
+	CREATE,
+	UPDATE,
+	DELETE
+}
+
 export function zodParseOrError(schema: AnyZodSchema, input: unknown, response: ApiResponse): any {
 	const { success, error, data } = schema.safeParse(input);
 	if (!success) {
@@ -68,7 +74,7 @@ export abstract class CR extends CRUDBase {
 	findAllOrder(): string[][] {
 		return [];
 	}
-	async onMutation(_item: any) {}
+	async onMutation(_item: any, _op: MutationOperation) {}
 
 	findAllInclude(): SequelizeInclude[] {
 		return [];
@@ -124,7 +130,7 @@ export abstract class CR extends CRUDBase {
 			return;
 		}
 		const item = await this.getModel().create(dbData);
-		await this.onMutation(item);
+		await this.onMutation(item, MutationOperation.CREATE);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.status(HttpCodes.Created).json({ status: 'ok', datum });
 	}
@@ -165,7 +171,7 @@ export abstract class CR extends CRUDBase {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
 		await item.destroy();
-		await this.onMutation(item);
+		await this.onMutation(item, MutationOperation.DELETE);
 		response.json({ status: 'deleted', datum: request.body });
 	}
 }
@@ -174,7 +180,7 @@ export abstract class UD extends CRUDBase {
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
-	async onMutation(_item: any) {}
+	async onMutation(_item: any, _op: MutationOperation) {}
 
 	getSchemaFind(): AnyZodSchema | undefined {
 		return this.getSchema().find;
@@ -239,7 +245,7 @@ export abstract class UD extends CRUDBase {
 		item.set(dbData);
 		item.CRUDSave ? await item.CRUDSave() : item.save();
 		await item.save();
-		await this.onMutation(item);
+		await this.onMutation(item, MutationOperation.UPDATE);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.json({ status: 'ok', datum });
 	}
@@ -269,7 +275,7 @@ export abstract class UD extends CRUDBase {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
 		await item.destroy();
-		await this.onMutation(item);
+		await this.onMutation(item, MutationOperation.DELETE);
 		response.json({ status: 'deleted', datum: request.params });
 	}
 }

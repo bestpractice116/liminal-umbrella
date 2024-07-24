@@ -2,7 +2,7 @@ import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSessionUserSignup, GameSession, User } from '../lib/database/model.js';
 import { GameSessionUserSignupSchema, type GameSessionUserSignupCreate } from 'common/schema';
 import { type SchemaBundle } from 'common/schema';
-import { CR } from '../lib/api/CRUD.js';
+import { CR, MutationOperation } from '../lib/api/CRUD.js';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
@@ -79,8 +79,14 @@ export class ApiGameSessionUserSignupsList extends CR {
 		return;
 	}
 
-	override async onMutation(item: GameSessionUserSignup) {
+	override async onMutation(item: GameSessionUserSignup, op: MutationOperation) {
 		const session = await item.getSignedupGameSession();
+		if (op == MutationOperation.DELETE) {
+			await session?.removeMemberFromGameThread(item.userKey);
+		}
+		if (op == MutationOperation.CREATE) {
+			await session?.addMemberToGameThread(item.userKey);
+		}
 		await session?.updateGameListing();
 	}
 }

@@ -147,10 +147,14 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
-	async updateGameThread() {
+	async getGameThread() {
 		const channel = await getOneShotsChannel();
-		if (!channel) return;
-		const thread = await channel.threads.fetch(this.channelId);
+		if (!channel) return null;
+		return (await channel.threads.fetch(this.channelId)) || null;
+	}
+
+	async updateGameThread() {
+		const thread = await this.getGameThread();
 		if (!thread) return;
 		if (this.name !== thread.name) {
 			await thread.setName(this.name);
@@ -160,6 +164,18 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		if (this.description !== firstMessage.content) {
 			await firstMessage.edit(this.description);
 		}
+	}
+
+	async addMemberToGameThread(id: string) {
+		const thread = await this.getGameThread();
+		if (!thread) return;
+		await thread.members.add(id);
+	}
+
+	async removeMemberFromGameThread(id: string) {
+		const thread = await this.getGameThread();
+		if (!thread) return;
+		await thread.members.remove(id);
 	}
 
 	async updateGameListing() {

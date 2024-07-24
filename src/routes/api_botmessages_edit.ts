@@ -2,7 +2,7 @@ import { Route } from '@sapphire/plugin-api';
 import { BotMessage } from '../lib/database/model.js';
 import { BotMessageSchema } from 'common/schema';
 import type { SchemaBundle } from 'common/schema';
-import { UD } from '../lib/api/CRUD.js';
+import { UD, type MutationOperation } from '../lib/api/CRUD.js';
 import { BotMessageCacheClear } from '../lib/events/index.js';
 
 export class ApiBotpMessagesEdit extends UD {
@@ -19,7 +19,7 @@ export class ApiBotpMessagesEdit extends UD {
 	getSchema(): SchemaBundle {
 		return BotMessageSchema;
 	}
-	override async onMutation() {
+	override async onMutation(_item: any, _up: MutationOperation) {
 		this.container.events.emit('botMessageCacheClear', new BotMessageCacheClear());
 	}
 }
