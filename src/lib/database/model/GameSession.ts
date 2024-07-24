@@ -32,6 +32,7 @@ import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
+import dayjs from 'dayjs';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
 	@Attribute(DataTypes.INTEGER)
@@ -164,8 +165,11 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	async updateGameThread() {
 		const thread = await this.getGameThread();
 		if (!thread) return;
-		if (this.name !== thread.name) {
-			await thread.setName(this.name);
+		const starttime = dayjs(this.starttime);
+		const endtime = dayjs(this.endtime);
+		const name = `${this.name} (${starttime.format('DD/MM/YYYY HH:mm')}-${endtime.format('HH:mm')})`;
+		if (name !== thread.name) {
+			await thread.setName(name);
 		}
 		const firstMessage = await thread.fetchStarterMessage();
 		if (!firstMessage) return;

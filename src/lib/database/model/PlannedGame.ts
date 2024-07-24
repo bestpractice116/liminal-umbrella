@@ -38,6 +38,7 @@ import {
 	Snowflake
 } from 'discord.js';
 import { gameChannelLink, getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
+import dayjs from 'dayjs';
 
 export type ReplyableInteraction =
 	| ChatInputCommandInteraction
@@ -281,8 +282,10 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
 	async createGameThread(): Promise<Snowflake> {
 		const channel = await getOneShotsChannel();
+		const starttime = dayjs(this.starttime!);
+		const endtime = dayjs(this.endtime!);
 		const thread = await channel?.threads.create({
-			name: this.name!,
+			name: `${this.name!} (${starttime.format('DD/MM/YYYY HH:mm')}-${endtime.format('HH:mm')})`,
 			autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
 			message: {
 				content: this.description!
