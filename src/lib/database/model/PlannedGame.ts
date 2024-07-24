@@ -290,16 +290,24 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	}
 
 	async createGameThread(): Promise<Snowflake> {
+		const gamesystem = await this.getGamesystemOb();
 		const channel = await getOneShotsChannel();
+		const possibleTags = channel!.availableTags;
+		const tag = possibleTags.find((tag) => tag.name == gamesystem?.tag);
+		if (!tag) {
+			throw new Error(`Cannot find tag: ${gamesystem?.tag}`);
+		}
 		const starttime = dayjs(this.starttime!);
 		const endtime = dayjs(this.endtime!);
+		const tags: Snowflake[] = [tag.id];
 		const thread = await channel?.threads.create({
 			name: `${this.name!} (${starttime.format('DD/MM/YYYY HH:mm')}-${endtime.format('HH:mm')})`,
 			autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
 			message: {
 				content: this.description!
 			},
-			reason: `Game: ${this.name!} by ${userMention(this.owner)}`
+			reason: `Game: ${this.name!} by ${userMention(this.owner)}`,
+			appliedTags: tags
 		});
 		return thread!.id;
 	}
