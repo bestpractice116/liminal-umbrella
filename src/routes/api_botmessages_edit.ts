@@ -19,7 +19,7 @@ export class ApiBotpMessagesEdit extends UD {
 	getSchema(): SchemaBundle {
 		return BotMessageSchema;
 	}
-	override async onMuatation() {
+	override async onMutation() {
 		this.container.events.emit('botMessageCacheClear', new BotMessageCacheClear());
 	}
 }

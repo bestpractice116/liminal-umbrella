@@ -68,7 +68,7 @@ export abstract class CR extends CRUDBase {
 	findAllOrder(): string[][] {
 		return [];
 	}
-	async onMuatation(_item: any) {}
+	async onMutation(_item: any) {}
 
 	findAllInclude(): SequelizeInclude[] {
 		return [];
@@ -124,7 +124,7 @@ export abstract class CR extends CRUDBase {
 			return;
 		}
 		const item = await this.getModel().create(dbData);
-		await this.onMuatation(item);
+		await this.onMutation(item);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.status(HttpCodes.Created).json({ status: 'ok', datum });
 	}
@@ -165,7 +165,7 @@ export abstract class CR extends CRUDBase {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
 		await item.destroy();
-		await this.onMuatation(item);
+		await this.onMutation(item);
 		response.json({ status: 'deleted', datum: request.body });
 	}
 }
@@ -174,7 +174,7 @@ export abstract class UD extends CRUDBase {
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
 		return {};
 	}
-	async onMuatation(_item: any) {}
+	async onMutation(_item: any) {}
 
 	getSchemaFind(): AnyZodSchema | undefined {
 		return this.getSchema().find;
@@ -239,7 +239,7 @@ export abstract class UD extends CRUDBase {
 		item.set(dbData);
 		item.CRUDSave ? await item.CRUDSave() : item.save();
 		await item.save();
-		await this.onMuatation(item);
+		await this.onMutation(item);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.json({ status: 'ok', datum });
 	}
@@ -269,7 +269,7 @@ export abstract class UD extends CRUDBase {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
 		await item.destroy();
-		await this.onMuatation(item);
+		await this.onMutation(item);
 		response.json({ status: 'deleted', datum: request.params });
 	}
 }

@@ -78,4 +78,6 @@ export class ApiGameSessionUserSignupsList extends CR {
 		}
 		return;
 	}
+
+	override async onMutation(_item: any) {}
 }
