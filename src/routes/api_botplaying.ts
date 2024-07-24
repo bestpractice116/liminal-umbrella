@@ -19,7 +19,7 @@ export class ApiBotplayingList extends CR {
 	getSchema(): SchemaBundle {
 		return ActivitySchema;
 	}
-	override onMuatation() {
+	override async onMuatation() {
 		this.container.events.emit('activityCacheClear', new ActivityCacheClear());
 	}
 }
