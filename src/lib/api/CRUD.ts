@@ -55,6 +55,9 @@ abstract class CRUDBase extends Route {
 	abstract getSchema(): SchemaBundle;
 
 	async getReadObjectFromDbObject(item: any) {
+		if (!item) {
+			return item;
+		}
 		const schemaKeys = getSchemaKeys(this.getSchema().read);
 		return schemaKeys.reduce(async (acc, cv) => {
 			const out = { ...(await acc) } as any;
