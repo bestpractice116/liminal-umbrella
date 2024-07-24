@@ -285,7 +285,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			name: this.name!,
 			autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
 			message: {
-				content: await format(this)
+				content: this.description!
 			},
 			reason: `Game: ${this.name!} by ${userMention(this.owner)}`
 		});
