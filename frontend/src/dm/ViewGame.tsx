@@ -18,7 +18,15 @@ import NotFound from '../NotFound.js';
 
 const Title = Typeography.Title;
 
-function UsersSignedUpTable({ gameSessionKey, users }: { gameSessionKey: number; users: AutoCompleteUser[] }) {
+function UsersSignedUpTable({
+	deleteDisabled,
+	gameSessionKey,
+	users
+}: {
+	deleteDisabled: boolean;
+	gameSessionKey: number;
+	users: AutoCompleteUser[];
+}) {
 	const queryClient = useQueryClient();
 	const removeUserFromGameMutation = useMutation({
 		mutationFn: (r: GameSessionUserSignupDelete) => {
@@ -47,8 +55,10 @@ function UsersSignedUpTable({ gameSessionKey, users }: { gameSessionKey: number;
 				console.log(record);
 				return <UserRecord user={record as AutoCompleteUser} />;
 			}
-		},
-		{
+		}
+	];
+	if (!deleteDisabled) {
+		columns.push({
 			title: 'Delete',
 			dataIndex: 'delete',
 			key: 'delete',
@@ -61,8 +71,8 @@ function UsersSignedUpTable({ gameSessionKey, users }: { gameSessionKey: number;
 					/>
 				);
 			}
-		}
-	];
+		});
+	}
 	return (
 		<>
 			<Title>Signed up Players</Title>
@@ -98,6 +108,8 @@ export default function ViewGame() {
 	initialValues.date = initialValues.starttime.clone().hour(12).minute(0).second(0).millisecond(0);
 	const now = dayjs(Date.now());
 	const editable = initialValues.starttime > now;
+	const signedUpUsers: AutoCompleteUser[] = initialValues.signedupplayers;
+	const full = initialValues.maxplayers <= signedUpUsers.length;
 	return (
 		<div>
 			This page will contain the details / ability to edit things about an existing game you have already posted, and saving edits will update
@@ -112,8 +124,19 @@ export default function ViewGame() {
 				createForm={false}
 				disabled={!editable}
 			/>
-			<UsersSignedUpTable gameSessionKey={key} users={res.data!.signedupplayers as AutoCompleteUser[]} />
-			Add user: <FindUserSearchBox gameSessionKey={key} exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)} />
+			<UsersSignedUpTable deleteDisabled={!editable} gameSessionKey={key} users={signedUpUsers} />
+			{editable ? (
+				<>
+					Add user:&nbsp;
+					<FindUserSearchBox
+						disabled={full}
+						gameSessionKey={key}
+						exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)}
+					/>
+				</>
+			) : (
+				<></>
+			)}
 		</div>
 	);
 }

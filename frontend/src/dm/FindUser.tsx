@@ -17,7 +17,7 @@ function findUserFromKey(key: string, users: ListOfAutoCompleteUsers): AutoCompl
 	return users.find((user) => user.key == key);
 }
 
-function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; exclude?: string[] }) {
+function SearchBox({ disabled, gameSessionKey, exclude = [] }: { disabled: boolean; gameSessionKey: number; exclude?: string[] }) {
 	const queryClient = useQueryClient();
 	const [value, setValue] = useState('');
 	const [searchText] = useDebounce(value, 250);
@@ -80,7 +80,8 @@ function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; e
 				onSelect={onSelect}
 				onSearch={setValue}
 				onChange={onChange}
-				placeholder="Add user"
+				placeholder={disabled ? 'Game is full' : 'Type name'}
+				disabled={disabled}
 				filterOption={(_inputValue, option) => !exclude.find((maybeExclude) => maybeExclude == option?.value)}
 			/>
 			<br />
