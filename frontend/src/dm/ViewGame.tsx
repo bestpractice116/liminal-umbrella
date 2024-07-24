@@ -52,7 +52,6 @@ function UsersSignedUpTable({
 			dataIndex: 'nickname',
 			key: 'nickname',
 			render: (_, record) => {
-				console.log(record);
 				return <UserRecord user={record as AutoCompleteUser} />;
 			}
 		}
@@ -89,7 +88,6 @@ export default function ViewGame() {
 	}
 	const key = data.key as number;
 	const queryKey = ['gamesessions', key];
-	console.log('Query game session key: ', ['gamesessions', `${key}`]);
 	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};

@@ -84,16 +84,21 @@ export default function PostGameForm({
 }) {
 	const [formData, setFormData] = useState(initialvalues);
 	const hasChanged = () => {
-		setFormData(formRef.current?.getFieldsValue());
+		const values = formRef.current?.getFieldsValue();
+		values.date = values.date.clone().hour(12).minute(0).second(0).millisecond(0);
+		values.starttime = values.starttime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
+		values.endtime = values.endtime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
+		setFormData(values);
 	};
 
 	const getValidateStatus = (name: string) => {
 		if (createForm) return undefined;
-		console.log(
-			`Field ${name} FORM ${typeof formData[name]} ${formData[name]} INIT ${typeof initialvalues[name]}} ${initialvalues[name]} compares: `,
-			`${formData[name]}` != `${initialvalues[name]}`
-		);
-		// This is gross, but this seems like the easiest way to compare dayjs objects.
+		if (name == 'starttime' || name == 'endtime') {
+			return formData[name].format('HH:mm') != initialvalues[name].format('HH:mm') ? 'error' : undefined;
+		}
+		if (name == 'date') {
+			return formData[name].format('YYYY-MM-DD') != initialvalues[name].format('YYYY-MM-DD') ? 'error' : undefined;
+		}
 		return `${formData[name]}` != `${initialvalues[name]}` ? 'error' : undefined;
 	};
 	return (
