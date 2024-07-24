@@ -14,6 +14,7 @@ import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { DeleteOutlined } from '@ant-design/icons';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useMutation } from '@tanstack/react-query';
+import NotFound from '../NotFound.js';
 
 const Title = Typeography.Title;
 
@@ -71,7 +72,12 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 }
 
 export default function ViewGame() {
-	const { key } = useParams();
+	const findSchema = GameSchema.find!;
+	const { data, error } = findSchema.safeParse(useParams());
+	if (error) {
+		return <NotFound />;
+	}
+	const key = data.key as number;
 	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, `gamesessions/${key}`);
 
 	const save = () => {};
@@ -105,7 +111,7 @@ export default function ViewGame() {
 				disabled={!editable}
 			/>
 			<UsersSignedUpTable users={res.data!.signedupplayers as AutoCompleteUser[]} />
-			<FindUserSearchBox exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.nickname)} />
+			Add user: <FindUserSearchBox gameSessionKey={key} exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)} />
 		</div>
 	);
 }

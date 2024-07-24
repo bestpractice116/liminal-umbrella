@@ -9,11 +9,15 @@ import { type AutoCompleteUser } from './UserRecord.js';
 type ListOfAutoCompleteUsers = Array<AutoCompleteUser>;
 
 type AddUserToGameParameters = {
-	gameSessionId: number;
-	userId: string;
+	gameSessionKey: number;
+	userKey: string;
 };
 
-function SearchBox({ exclude = [] }: { exclude?: string[] }) {
+function findUserFromKey(key: string, users: ListOfAutoCompleteUsers): AutoCompleteUser | undefined {
+	return users.find((user) => user.key == key);
+}
+
+function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; exclude?: string[] }) {
 	const [value, setValue] = useState('');
 	const [searchText] = useDebounce(value, 250);
 
@@ -49,17 +53,19 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 
 	const data = result.data || [];
 	const opt: AutoCompleteProps['options'] = data.map((user: AutoCompleteUser) => {
-		return { label: <UserRecord user={user} size="small" />, value: user.nickname };
+		return { label: <UserRecord user={user} size="small" />, value: user.key };
 	});
 
-	const onSelect = (nickname: string) => {
-		console.log('onSelect', nickname);
+	const onSelect = (userKey: string) => {
 		addUserToGameMutation.mutate({
-			gameSessionId: 2,
-			userId: 'ho8ojoe'
+			gameSessionKey,
+			userKey
 		});
 	};
-
+	const onChange = (userKey: string) => {
+		const user = findUserFromKey(userKey, data);
+		if (user) setValue(user.nickname);
+	};
 	return (
 		<>
 			<AutoComplete
@@ -67,8 +73,8 @@ function SearchBox({ exclude = [] }: { exclude?: string[] }) {
 				options={opt}
 				style={{ width: 300 }}
 				onSelect={onSelect}
-				onSearch={(text) => setValue(text)}
-				onChange={setValue}
+				onSearch={setValue}
+				onChange={onChange}
 				placeholder="Add user"
 				filterOption={(_inputValue, option) => !exclude.find((maybeExclude) => maybeExclude == option?.value)}
 			/>
