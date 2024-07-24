@@ -70,7 +70,7 @@ export class ApiGameSessionUserSignupsList extends CR {
 	override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
 	public override async DELETE_disallowed(item: GameSessionUserSignup, request: ApiRequest): Promise<string | undefined> {
-		if (!isAdmin(request)) return;
+		if (isAdmin(request)) return;
 		const session = await item.getSignedupGameSession();
 		if (!session) return; // Should not be possible, but if the game session had gone away, allow deleting the link!
 		if (session.owner != request.auth!.id) {
