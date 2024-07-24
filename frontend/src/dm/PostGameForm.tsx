@@ -85,9 +85,15 @@ export default function PostGameForm({
 	const [formData, setFormData] = useState(initialvalues);
 	const hasChanged = () => {
 		const values = formRef.current?.getFieldsValue();
-		values.date = values.date.clone().hour(12).minute(0).second(0).millisecond(0);
-		values.starttime = values.starttime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
-		values.endtime = values.endtime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
+		if (values.date) {
+			values.date = values.date.clone().hour(12).minute(0).second(0).millisecond(0);
+			if (values.starttime) {
+				values.starttime = values.starttime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
+			}
+			if (values.endtime) {
+				values.endtime = values.endtime.clone().year(values.date.year()).month(values.date.month()).day(values.date.day());
+			}
+		}
 		setFormData(values);
 	};
 
