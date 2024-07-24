@@ -99,10 +99,10 @@ export default function PostGameForm({
 
 	const getValidateStatus = (name: string) => {
 		if (createForm) return undefined;
-		if (name == 'starttime' || name == 'endtime') {
+		if ((name == 'starttime' || name == 'endtime') && formData[name] && initialvalues[name]) {
 			return formData[name].format('HH:mm') != initialvalues[name].format('HH:mm') ? 'error' : undefined;
 		}
-		if (name == 'date') {
+		if (name == 'date' && formData[name] && initialvalues[name]) {
 			return formData[name].format('YYYY-MM-DD') != initialvalues[name].format('YYYY-MM-DD') ? 'error' : undefined;
 		}
 		return `${formData[name]}` != `${initialvalues[name]}` ? 'error' : undefined;
