@@ -38,13 +38,15 @@ export default function PostGame() {
 		type: 'oneshot'
 	};
 	let hasGame = false;
+	let isPostable = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
-		const res = getZObject(GameSchema.read).partial().safeParse(result.data[0]);
+		const res = getZObject(GameSchema.read!).partial().safeParse(result.data[0]);
 		if (!res.success) {
 			console.log(res.error);
 		} else {
 			initialvalues = res.data;
 			hasGame = true;
+			isPostable = getZObject(GameSchema.create!).safeParse(result.data[0]).success;
 		}
 	}
 	if (!result.isFetched) {
@@ -122,7 +124,9 @@ export default function PostGame() {
 			initialvalues={initialvalues}
 		>
 			<Form.Item label="Post">
-				<Button onClick={postgame}>Post</Button>
+				<Button disabled={!isPostable} onClick={postgame}>
+					Post
+				</Button>
 			</Form.Item>
 		</PostGameForm>
 	);

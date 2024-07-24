@@ -109,7 +109,7 @@ export default function PostGameForm({
 	};
 	return (
 		<>
-			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues} submitButton={!disabled}>
+			<CreateForm formRef={formRef} mutation={mutation} setIsMutating={setIsCreating} initialValues={initialvalues} submitButton={false}>
 				<Spin spinning={isLoading} fullscreen />
 				<Form.Item<GameListItem> name="key">
 					<Input type="hidden" />
