@@ -38,7 +38,7 @@ function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; e
 	const addUserToGameMutation = useMutation({
 		mutationFn: (r: AddUserToGameParameters) => {
 			return fetch(
-				'/api/gamesessionadduser',
+				'/api/gamesessionusersignups',
 				{
 					method: FetchMethods.Post,
 					body: JSON.stringify(r),

@@ -26,7 +26,7 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 	const removeUserFromGameMutation = useMutation({
 		mutationFn: (r: RemoveUserFromGameParameters) => {
 			return fetch(
-				'/api/gamesessionremoveuser',
+				'/api/gamesessionusersignups',
 				{
 					method: FetchMethods.Delete,
 					body: JSON.stringify(r),

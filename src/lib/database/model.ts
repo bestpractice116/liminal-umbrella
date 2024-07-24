@@ -9,5 +9,6 @@ import GameSystem from './model/GameSystem.js';
 import Activity from './model/Activity.js';
 import BotMessage from './model/BotMessage.js';
 import GameSession from './model/GameSession.js';
+import GameSessionUserSignup from './model/GameSessionUserSignup.js';
 
-export { User, Role, RoleMember, Channel, Message, Watermark, PlannedGame, GameSystem, Activity, BotMessage, GameSession };
+export { User, Role, RoleMember, Channel, Message, Watermark, PlannedGame, GameSystem, Activity, BotMessage, GameSession, GameSessionUserSignup };
