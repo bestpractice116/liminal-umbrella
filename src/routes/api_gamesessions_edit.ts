@@ -33,7 +33,7 @@ export class ApiGameSessions extends UD {
 		response.notFound();
 	}
 
-	override DELETE_disallowed(item: any): string | undefined {
+	override async DELETE_disallowed(item: any, _request: ApiRequest): Promise<string | undefined> {
 		const now = new Date(Date.now());
 		if (item.startTime < now) {
 			return 'Cannot delete game sessions which start in the past';

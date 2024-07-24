@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { AutoComplete, AutoCompleteProps } from 'antd';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import UserRecord from './UserRecord.js';
 import { type AutoCompleteUser } from './UserRecord.js';
@@ -18,6 +18,7 @@ function findUserFromKey(key: string, users: ListOfAutoCompleteUsers): AutoCompl
 }
 
 function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; exclude?: string[] }) {
+	const queryClient = useQueryClient();
 	const [value, setValue] = useState('');
 	const [searchText] = useDebounce(value, 250);
 
@@ -47,7 +48,11 @@ function SearchBox({ gameSessionKey, exclude = [] }: { gameSessionKey: number; e
 					}
 				},
 				FetchResultTypes.JSON
-			);
+			).then((data) => {
+				queryClient.invalidateQueries({ queryKey: ['gamesessions', `${r.gameSessionKey}`] });
+				setValue('');
+				return data;
+			});
 		}
 	});
 

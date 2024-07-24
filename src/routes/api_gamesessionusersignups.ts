@@ -1,12 +1,12 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSessionUserSignup, GameSession, User } from '../lib/database/model.js';
 import { GameSessionUserSignupSchema, type GameSessionUserSignupCreate } from 'common/schema';
-import type { SchemaBundle } from 'common/schema';
+import { type SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
-export class ApiGameSessionsList extends CR {
+export class ApiGameSessionUserSignupsList extends CR {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
 		super(context, {
 			...options,
@@ -57,5 +57,18 @@ export class ApiGameSessionsList extends CR {
 			return response.notFound('Tried to sign up unknown user for game session');
 		}
 		return data;
+	}
+
+	@AuthenticatedWithRole('Dungeon Master', true)
+	override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
+
+	public override async DELETE_disallowed(item: GameSessionUserSignup, request: ApiRequest): Promise<string | undefined> {
+		if (!isAdmin(request)) return;
+		const session = await item.getSignedupGameSession();
+		if (!session) return; // Should not be possible, but if the game session had gone away, allow deleting the link!
+		if (session.owner != request.auth!.id) {
+			return 'You cannot delete signups for a game which you do not own';
+		}
+		return;
 	}
 }

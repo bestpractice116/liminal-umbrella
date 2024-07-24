@@ -1,7 +1,7 @@
 import { useState, createRef } from 'react';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import { useParams } from 'react-router-dom';
-import { type GameListItem, GameSchema } from 'common/schema';
+import { type GameListItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
 import dayjs from 'dayjs';
@@ -13,18 +13,15 @@ import Typeography from 'antd/es/typography';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { DeleteOutlined } from '@ant-design/icons';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import NotFound from '../NotFound.js';
 
 const Title = Typeography.Title;
 
-type RemoveUserFromGameParameters = {
-	key: string;
-};
-
-function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
+function UsersSignedUpTable({ gameSessionKey, users }: { gameSessionKey: number; users: AutoCompleteUser[] }) {
+	const queryClient = useQueryClient();
 	const removeUserFromGameMutation = useMutation({
-		mutationFn: (r: RemoveUserFromGameParameters) => {
+		mutationFn: (r: GameSessionUserSignupDelete) => {
 			return fetch(
 				'/api/gamesessionusersignups',
 				{
@@ -35,7 +32,10 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 					}
 				},
 				FetchResultTypes.JSON
-			);
+			).then((data) => {
+				queryClient.invalidateQueries({ queryKey: ['gamesessions', `${r.gameSessionKey}`] });
+				return data;
+			});
 		}
 	});
 	const columns: DefaultColumns = [
@@ -56,7 +56,7 @@ function UsersSignedUpTable({ users }: { users: AutoCompleteUser[] }) {
 				return (
 					<DeleteOutlined
 						onClick={() => {
-							removeUserFromGameMutation.mutate({ key: record.key });
+							removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey });
 						}}
 					/>
 				);
@@ -78,12 +78,14 @@ export default function ViewGame() {
 		return <NotFound />;
 	}
 	const key = data.key as number;
-	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, `gamesessions/${key}`);
+	const queryKey = ['gamesessions', key];
+	console.log('Query game session key: ', ['gamesessions', `${key}`]);
+	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};
 	const formRef = createRef<FormRef>();
 	const [isCreating, setIsCreating] = useState(false);
-	const updateMutation = getUpdateMutation(`/api/gamesessions`, `gamesessions/${key}`, setIsCreating, () => {
+	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
 		console.log('updated');
 	});
 
@@ -110,7 +112,7 @@ export default function ViewGame() {
 				createForm={false}
 				disabled={!editable}
 			/>
-			<UsersSignedUpTable users={res.data!.signedupplayers as AutoCompleteUser[]} />
+			<UsersSignedUpTable gameSessionKey={key} users={res.data!.signedupplayers as AutoCompleteUser[]} />
 			Add user: <FindUserSearchBox gameSessionKey={key} exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)} />
 		</div>
 	);

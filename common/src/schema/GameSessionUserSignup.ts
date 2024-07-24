@@ -10,15 +10,17 @@ const create = z.object({
 		.trim(),
 	gameSessionKey: z.number().int('Must be an integer').min(1, { message: 'gameSessionKey must be positive integer' })
 });
-const find = z.object({
-	key: z.coerce.number().int().positive()
-});
-const read = find.merge(create);
+const read = create.merge(
+	z.object({
+		key: z.coerce.number().int().positive()
+	})
+);
 
 export const GameSessionUserSignupSchema: SchemaBundle = {
 	create: create.readonly(),
-	find: find.readonly(),
+	find: create.readonly(),
 	read: read.readonly(),
 	delete: true
 };
 export type GameSessionUserSignupCreate = z.infer<typeof create>;
+export type GameSessionUserSignupDelete = z.infer<typeof create>;

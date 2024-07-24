@@ -143,7 +143,7 @@ function zodErrorConvertor(data: any, request: any, onSuccess: (data: any, reque
 	onSuccess(data, request);
 }
 
-export function getCreateMutation(apipath: string, querykey: string, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
+export function getCreateMutation(apipath: string, querykey: QueryKey, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
 	const { showBoundary } = useErrorBoundary();
 	const queryClient = useQueryClient();
 	const createMutation = useMutation({
@@ -160,7 +160,7 @@ export function getCreateMutation(apipath: string, querykey: string, setIsMutati
 				FetchResultTypes.JSON
 			)
 				.then((data) => {
-					queryClient.invalidateQueries({ queryKey: [querykey] });
+					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
 					return zodErrorConvertor(data, r, onCreate);
 				})
 				.catch((e) => showBoundary(e));
@@ -175,9 +175,20 @@ export function getCreateMutation(apipath: string, querykey: string, setIsMutati
 	return createMutation;
 }
 
-export function getFetchQuery<T>(apipath: string, querykey: string): UseQueryResult<T, Error> {
+type QueryKeyElement = string | number;
+export type QueryKey = QueryKeyElement | QueryKeyElement[];
+
+function coerceQueryKey(key: QueryKey): string[] {
+	if (typeof key === 'number') {
+		// Array.from works on single strings, but not numbers, as they're not iterable
+		return [`${key}`];
+	}
+	return Array.from(key, (v: QueryKeyElement) => `${v}`);
+}
+
+export function getFetchQuery<T>(apipath: string, querykey: QueryKey): UseQueryResult<T, Error> {
 	return useQuery({
-		queryKey: [querykey],
+		queryKey: coerceQueryKey(querykey),
 		queryFn: (): Promise<T> => {
 			return fetch(apipath, FetchResultTypes.JSON);
 		},
@@ -187,7 +198,7 @@ export function getFetchQuery<T>(apipath: string, querykey: string): UseQueryRes
 
 export function getUpdateMutation(
 	apipath: string,
-	querykey: string,
+	querykey: QueryKey,
 	setIsMutating: (isMutating: boolean) => void,
 	onSuccess: (data: any, row: any) => void
 ): UseMutationResult<void, Error, any, void> {
@@ -207,7 +218,7 @@ export function getUpdateMutation(
 				FetchResultTypes.JSON
 			)
 				.then((data) => {
-					queryClient.invalidateQueries({ queryKey: [querykey] });
+					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
 					return zodErrorConvertor(data, r, onSuccess);
 				})
 				.catch((e) => showBoundary(e));
@@ -269,12 +280,12 @@ export function mutationErrorToFormError(form: FormInstance<any>, e: any) {
 	}
 }
 
-export function getListQueries<APIRow>(apipath: string, querykey: string): QuerySet<APIRow> {
+export function getListQueries<APIRow>(apipath: string, querykey: QueryKey): QuerySet<APIRow> {
 	const queryClient = useQueryClient();
 	const [isMutating, setIsMutating] = useState(false);
 	const result = getFetchQuery<Array<APIRow>>(apipath, querykey);
 	const deleteMutation = getDeleteMutation(apipath, setIsMutating, (_data) => {
-		queryClient.setQueryData([querykey], (old: any, row: any) => {
+		queryClient.setQueryData(coerceQueryKey(querykey), (old: any, row: any) => {
 			return old.filter((item: any) => item.key !== row.key);
 		});
 	});

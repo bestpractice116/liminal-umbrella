@@ -24,6 +24,26 @@ export function zodParseOrError(schema: AnyZodSchema, input: unknown, response: 
 	return data;
 }
 
+export async function findItem(
+	findSchema: AnyZodSchema | undefined,
+	params: any,
+	model: any,
+	where: any,
+	response: ApiResponse
+): Promise<any | null> {
+	if (!findSchema) {
+		return response.notFound();
+	}
+	const data = zodParseOrError(findSchema, params, response);
+	if (!data) return;
+	const item = await model.findOne({ where: { ...data, ...where } });
+	if (!item) {
+		response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
+		return null;
+	}
+	return item;
+}
+
 abstract class CRUDBase extends Route {
 	abstract getModel(): any;
 	abstract getSchema(): SchemaBundle;
@@ -48,7 +68,7 @@ export abstract class CR extends CRUDBase {
 	findAllOrder(): string[][] {
 		return [];
 	}
-	onMuatation() {}
+	onMuatation(_item: any) {}
 
 	findAllInclude(): SequelizeInclude[] {
 		return [];
@@ -104,9 +124,49 @@ export abstract class CR extends CRUDBase {
 			return;
 		}
 		const item = await this.getModel().create(dbData);
-		this.onMuatation();
+		this.onMuatation(item);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.status(HttpCodes.Created).json({ status: 'ok', datum });
+	}
+
+	// We don't allow delete using params in the body by default.
+	@AuthenticatedAdmin()
+	async auth_DELETE(_request: ApiRequest, response: ApiResponse) {
+		return response.notFound();
+	}
+
+	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
+		return {};
+	}
+
+	public async DELETE_disallowed(_item: any, _request: ApiRequest): Promise<string | undefined> {
+		return;
+	}
+
+	protected async findItem(request: ApiRequest, response: ApiResponse): Promise<any | null> {
+		return findItem(this.getSchema().find, request.body, this.getModel(), await this.getRetrieveWhere(request), response);
+	}
+
+	@Sequential
+	public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
+		await this.auth_DELETE(request, response);
+		if (response.writableEnded) {
+			return;
+		}
+		if (!this.getSchema().delete) {
+			return response.notFound();
+		}
+		const item = await this.findItem(request, response);
+		if (!item) {
+			return response.notFound();
+		}
+		const delete_error = await this.DELETE_disallowed(item, request);
+		if (delete_error) {
+			return response.error(HttpCodes.MethodNotAllowed, delete_error);
+		}
+		await item.destroy();
+		this.onMuatation(item);
+		response.json({ status: 'deleted', datum: request.body });
 	}
 }
 
@@ -121,18 +181,7 @@ export abstract class UD extends CRUDBase {
 	}
 
 	protected async findItem(request: ApiRequest, response: ApiResponse): Promise<any | null> {
-		const findSchema = this.getSchemaFind();
-		if (!findSchema) {
-			return response.notFound();
-		}
-		const data = zodParseOrError(findSchema, request.params, response);
-		if (!data) return;
-		const item = await this.getModel().findOne({ where: { ...data, ...(await this.getRetrieveWhere(request)) } });
-		if (!item) {
-			response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
-			return null;
-		}
-		return item;
+		return findItem(this.getSchemaFind(), request.params, this.getModel(), await this.getRetrieveWhere(request), response);
 	}
 
 	@AuthenticatedAdmin()
@@ -198,11 +247,7 @@ export abstract class UD extends CRUDBase {
 	@AuthenticatedAdmin()
 	async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
-	getSchemaDelete(): AnyZodSchema | undefined {
-		return this.getSchema().update;
-	}
-
-	public DELETE_disallowed(_item: any): string | undefined {
+	public async DELETE_disallowed(_item: any, _request: ApiRequest): Promise<string | undefined> {
 		return;
 	}
 
@@ -212,15 +257,14 @@ export abstract class UD extends CRUDBase {
 		if (response.writableEnded) {
 			return;
 		}
-		const deleteSchema = this.getSchemaDelete();
-		if (!deleteSchema) {
+		if (!this.getSchema().delete) {
 			return response.notFound();
 		}
 		const item = await this.findItem(request, response);
 		if (!item) {
 			return response.notFound();
 		}
-		const delete_error = this.DELETE_disallowed(item);
+		const delete_error = await this.DELETE_disallowed(item, request);
 		if (delete_error) {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}

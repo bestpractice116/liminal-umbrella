@@ -9,12 +9,14 @@ import {
 	BelongsToManyRemoveAssociationsMixin,
 	BelongsToManyHasAssociationMixin,
 	BelongsToManyHasAssociationsMixin,
-	BelongsToManyCountAssociationsMixin
+	BelongsToManyCountAssociationsMixin,
+	HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany } from '@sequelize/core/decorators-legacy';
 import Role from './Role.js';
 import RoleMember from './RoleMember.js';
 import PlannedGame from './PlannedGame.js';
+import GameSession from './GameSession.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	@Attribute(DataTypes.STRING)
@@ -74,6 +76,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
 	@HasMany(() => PlannedGame, /* foreign key */ 'owner')
 	declare plannedGames?: NonAttribute<PlannedGame>;
+	declare getPlannedGames: HasManyGetAssociationsMixin<PlannedGame>;
+
+	declare signedupGameSessions: NonAttribute<GameSession[]>;
+	declare getSignedupGameSessions: HasManyGetAssociationsMixin<GameSession>;
 
 	static async activeUsersMap(): Promise<Map<string, User>> {
 		const out = new Map();

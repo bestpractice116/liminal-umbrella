@@ -1,5 +1,15 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from '@sequelize/core';
+import {
+	DataTypes,
+	Model,
+	InferAttributes,
+	InferCreationAttributes,
+	CreationOptional,
+	NonAttribute,
+	BelongsToGetAssociationMixin
+} from '@sequelize/core';
 import { Index, Attribute, NotNull, PrimaryKey, AutoIncrement } from '@sequelize/core/decorators-legacy';
+import GameSession from './GameSession.js';
+import User from './User.js';
 
 export default class GameSessionUserSignup extends Model<InferAttributes<GameSessionUserSignup>, InferCreationAttributes<GameSessionUserSignup>> {
 	@Attribute(DataTypes.INTEGER)
@@ -16,4 +26,9 @@ export default class GameSessionUserSignup extends Model<InferAttributes<GameSes
 	@NotNull
 	@Index
 	declare userKey: string;
+
+	declare signedupGameSession: NonAttribute<GameSession>;
+	declare getSignedupGameSession: BelongsToGetAssociationMixin<GameSession>;
+	declare signedupUser?: NonAttribute<User>;
+	declare getSignedupUser: BelongsToGetAssociationMixin<User>;
 }
