@@ -18,6 +18,10 @@ export default class GameSystem extends Model<InferAttributes<GameSystem>, Infer
 	@NotNull
 	declare description: string;
 
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare tag: string;
+
 	@DeletedAt
 	declare deletedAt: Date | null;
 

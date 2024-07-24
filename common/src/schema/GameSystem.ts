@@ -17,7 +17,15 @@ const create = z.object({
 		})
 		.trim()
 		.min(2, { message: 'Description must be at least 2 characters long' })
-		.max(100, { message: 'Description must be less than 100 characters' })
+		.max(100, { message: 'Description must be less than 100 characters' }),
+	tag: z
+		.string({
+			required_error: 'Tagis required',
+			invalid_type_error: 'Tag must be a string'
+		})
+		.trim()
+		.min(5, { message: 'Tag must be at least 5 characters long' })
+		.max(50, { message: 'Tag must be less than 50 characters' })
 });
 const find = z.object({
 	key: z.coerce.number().int().positive()
