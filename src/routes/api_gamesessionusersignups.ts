@@ -56,6 +56,13 @@ export class ApiGameSessionUserSignupsList extends CR {
 		if (!user) {
 			return response.notFound('Tried to sign up unknown user for game session');
 		}
+		const currentUsers = await session.getSignedupUsers();
+		if (!!currentUsers.find((currentUser) => currentUser.key == user.key)) {
+			return response.badRequest('This player is already signed up to this game');
+		}
+		if (session.maxplayers <= currentUsers.length) {
+			return response.badRequest('Game already has maximum number of players, cannot add more');
+		}
 		return data;
 	}
 
