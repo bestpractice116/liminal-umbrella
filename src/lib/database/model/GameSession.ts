@@ -44,6 +44,10 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Index
 	declare owner: string;
 
+	@BelongsTo(() => User, 'owner')
+	declare ownerOb?: NonAttribute<User>;
+	declare getOwnerOb: BelongsToGetAssociationMixin<User>;
+
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
@@ -66,13 +70,13 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@NotNull
 	declare name: string;
 
-	@BelongsTo(() => GameSystem, 'gamesystem')
-	declare gamesystemOb?: NonAttribute<GameSystem>;
-	declare getGamesystemOb: BelongsToGetAssociationMixin<GameSystem>;
-
 	@Attribute(DataTypes.INTEGER)
 	@NotNull
 	declare gamesystem: number;
+
+	@BelongsTo(() => GameSystem, 'gamesystem')
+	declare gamesystemOb?: NonAttribute<GameSystem>;
+	declare getGamesystemOb: BelongsToGetAssociationMixin<GameSystem>;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
@@ -133,6 +137,10 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 			return (await this.getSignedupUsers()).map((user: User) => {
 				return { key: user.key, nickname: user.nickname, avatarURL: user.avatarURL, username: user.username };
 			});
+		}
+		if (name == 'owner') {
+			const user = await this.getOwnerOb();
+			return { key: user!.key, nickname: user!.nickname, avatarURL: user!.avatarURL, username: user!.username };
 		}
 		return this.get(name);
 	}

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { GameSchema, type GameListItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { isAdmin } from '../Auth.js';
+import UserRecord from './UserRecord.js';
 import dayjs from 'dayjs';
 const components = getTableComponents(GameSchema);
 
@@ -58,7 +59,8 @@ export default function ViewGames() {
 		defaultColumns.push({
 			title: 'Owner',
 			dataIndex: 'owner',
-			editable: false
+			editable: false,
+			render: (_, record) => <UserRecord user={record.owner} />
 		});
 	}
 

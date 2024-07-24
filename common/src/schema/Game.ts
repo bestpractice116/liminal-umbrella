@@ -46,17 +46,16 @@ const create = z.object({
 const find = z.object({
 	key: z.coerce.number().int().positive()
 });
+const user = z.object({
+	key: z.string(),
+	nickname: z.string(),
+	avatarURL: z.string(),
+	username: z.string()
+});
 const read = find.merge(create).merge(
 	z.object({
-		owner: z.string({}),
-		signedupplayers: z.array(
-			z.object({
-				key: z.string(),
-				nickname: z.string(),
-				avatarURL: z.string(),
-				username: z.string()
-			})
-		)
+		owner: user,
+		signedupplayers: z.array(user)
 	})
 );
 
