@@ -24,7 +24,7 @@ const create = z.object({
 		})
 		.trim()
 		.min(50, { message: 'Description must be at least 50 characters long' })
-		.max(2000, { message: 'Description must be less than 2000 characters' }),
+		.max(500, { message: 'Description must be less than 500 characters' }),
 	type: z.nativeEnum(GameType),
 	gamesystem: z.string({
 		required_error: 'Game system is required',
