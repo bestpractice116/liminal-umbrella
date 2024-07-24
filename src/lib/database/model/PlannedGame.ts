@@ -12,6 +12,7 @@ import {
 import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import GameSession from './GameSession.js';
+import User from './User.js';
 import { Command, container } from '@sapphire/framework';
 import {
 	userMention,
@@ -72,6 +73,10 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	@Unique
 	declare owner: string;
 
+	@BelongsTo(() => User, 'owner')
+	declare ownerOb?: NonAttribute<User>;
+	declare getOwnerOb: BelongsToGetAssociationMixin<User>;
+
 	@Attribute(DataTypes.STRING)
 	declare name: string | null;
 
@@ -108,6 +113,10 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			if (this.gamesystem) {
 				return (await this.getGamesystemOb())!.name;
 			}
+		}
+		if (name == 'owner') {
+			const user = await this.getOwnerOb();
+			return { key: user!.key, nickname: user!.nickname, avatarURL: user!.avatarURL, username: user!.username };
 		}
 		return this.get(name);
 	}
