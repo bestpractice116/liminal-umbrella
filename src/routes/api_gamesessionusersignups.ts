@@ -79,5 +79,8 @@ export class ApiGameSessionUserSignupsList extends CR {
 		return;
 	}
 
-	override async onMutation(_item: any) {}
+	override async onMutation(item: GameSessionUserSignup) {
+		const session = await item.getSignedupGameSession();
+		await session?.updateGameListing();
+	}
 }
