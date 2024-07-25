@@ -5,9 +5,21 @@ import Menu from 'antd/es/menu/menu';
 import ConfigProvider from 'antd/es/config-provider';
 import Avatar from 'antd/es/avatar/avatar';
 import Button from 'antd/es/button';
-import { UserOutlined, BugOutlined } from '@ant-design/icons';
+import {
+	UserOutlined,
+	BugOutlined,
+	SettingOutlined,
+	TeamOutlined,
+	ExportOutlined,
+	EyeOutlined,
+	PlayCircleOutlined,
+	MessageOutlined,
+	UsergroupAddOutlined,
+	AppstoreAddOutlined
+} from '@ant-design/icons';
 import Spin from 'antd/es/spin';
 import Tooltip from 'antd/es/tooltip';
+import Flex from 'antd/es/flex';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
@@ -42,6 +54,7 @@ function TopMenu() {
 		items.push({
 			key: 'admin',
 			label: 'Admin',
+			icon: <SettingOutlined />,
 			children: [
 				/*{
           key: 'admin/cogs',
@@ -49,23 +62,28 @@ function TopMenu() {
         },*/
 				{
 					key: '/admin/users',
-					label: 'Users'
+					label: 'Users',
+					icon: <UserOutlined />
 				},
 				{
 					key: '/admin/roles',
-					label: 'Roles'
+					label: 'Roles',
+					icon: <UsergroupAddOutlined />
 				},
 				{
 					key: '/admin/gamesystems',
-					label: 'Gamesystems'
+					label: 'Gamesystems',
+					icon: <AppstoreAddOutlined />
 				},
 				{
 					key: '/admin/botplaying',
-					label: 'Bot Playing'
+					label: 'Bot Playing',
+					icon: <PlayCircleOutlined />
 				},
 				{
 					key: '/admin/botmessages',
-					label: 'Bot Messages'
+					label: 'Bot Messages',
+					icon: <MessageOutlined />
 				}
 			]
 		});
@@ -76,14 +94,17 @@ function TopMenu() {
 		items.push({
 			key: 'dm',
 			label: 'DM',
+			icon: <TeamOutlined />,
 			children: [
 				{
 					key: '/dm/newgame',
-					label: 'New Game'
+					label: 'New Game',
+					icon: <ExportOutlined />
 				},
 				{
 					key: '/dm/viewgames',
-					label: 'View Games'
+					label: 'View Games',
+					icon: <EyeOutlined />
 				}
 			]
 		});
@@ -113,23 +134,25 @@ function TopMenu() {
 					<Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '20px' }} shape="square" size="large" className="avatarIcon" />
 				}
 			/>
-			<Menu theme="dark" mode="horizontal" items={items} style={{ flex: 1, minWidth: 0 }} onClick={handleMenuClick} selectedKeys={[pathname]} />
-			{admin ? (
-				debug ? (
-					<Button danger icon={<BugOutlined />} type="primary" onClick={onDebugChange}>
-						Debug On
-					</Button>
-				) : (
-					<Tooltip title="Note - can break layout">
-						<Button icon={<BugOutlined />} type="dashed" onClick={onDebugChange}>
-							Debug Off
+			<Menu style={{ margin: 10 }} theme="dark" mode="horizontal" items={items} onClick={handleMenuClick} selectedKeys={[pathname]} />
+			<Flex style={{ flex: 1 }} justify="flex-end">
+				{admin ? (
+					debug ? (
+						<Button danger icon={<BugOutlined />} type="primary" onClick={onDebugChange}>
+							Debug On
 						</Button>
-					</Tooltip>
-				)
-			) : (
-				<></>
-			)}
-			<LogoutButton />
+					) : (
+						<Tooltip title="Note - can break layout">
+							<Button icon={<BugOutlined />} type="dashed" onClick={onDebugChange}>
+								Debug Off
+							</Button>
+						</Tooltip>
+					)
+				) : (
+					<></>
+				)}
+				<LogoutButton />
+			</Flex>
 		</Header>
 	);
 }
@@ -198,7 +221,17 @@ function App() {
 	return (
 		<Router>
 			<QueryClientProvider client={queryClient}>
-				<ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
+				<ConfigProvider
+					theme={{
+						token: { colorPrimary: '#00b96b' },
+						components: {
+							Menu: {
+								darkItemBg: '#303030',
+								darkItemSelectedBg: '#00b96b'
+							}
+						}
+					}}
+				>
 					<AuthProvider>
 						<Page />
 					</AuthProvider>

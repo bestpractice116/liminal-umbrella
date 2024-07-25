@@ -66,7 +66,7 @@ function UsersSignedUpTable({
 			render: (_, record) => {
 				return (
 					<Popconfirm
-						title="Sure to Remove user?"
+						title="Remove player from game?"
 						onConfirm={() => removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey })}
 					>
 						<a>

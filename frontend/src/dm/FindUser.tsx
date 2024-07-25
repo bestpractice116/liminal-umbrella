@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import UserRecord from './UserRecord.js';
 import { type AutoCompleteUser } from './UserRecord.js';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 type ListOfAutoCompleteUsers = Array<AutoCompleteUser>;
 
@@ -80,6 +81,7 @@ function SearchBox({ disabled, gameSessionKey, exclude = [] }: { disabled: boole
 				onSelect={onSelect}
 				onSearch={setValue}
 				onChange={onChange}
+				suffixIcon={<PlusCircleOutlined />}
 				placeholder={disabled ? 'Game is full' : 'Type name'}
 				disabled={disabled}
 				filterOption={(_inputValue, option) => !exclude.find((maybeExclude) => maybeExclude == option?.value)}
