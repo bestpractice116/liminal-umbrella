@@ -10,9 +10,9 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@ant-design/icons": "^5.3.7",
+		"@ant-design/icons": "^5.4.0",
 		"@tanstack/react-query": "^5.45.1",
-		"antd": "^5.18.1",
+		"antd": "^5.19.3",
 		"antd-zod": "^5.1.0",
 		"dayjs": "^1.11.11",
 		"react": "^18.2.0",
