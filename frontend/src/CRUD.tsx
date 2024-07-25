@@ -353,7 +353,7 @@ export function CreateForm({
 			ref={formRef}
 			form={form}
 			initialValues={initialValues}
-			labelCol={{ span: 5 }}
+			labelCol={{ span: 3 }}
 			onFinish={(values) => {
 				mutation.mutate(values, {
 					onError: (e) => {

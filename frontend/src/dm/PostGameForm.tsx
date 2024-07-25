@@ -8,7 +8,6 @@ import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
-import { type FormItemLayout } from 'antd/es/form/Form.js';
 import { type GameListItem, GameSchema } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
