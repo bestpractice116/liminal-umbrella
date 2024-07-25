@@ -5,7 +5,7 @@ import Menu from 'antd/es/menu/menu';
 import ConfigProvider from 'antd/es/config-provider';
 import Avatar from 'antd/es/avatar/avatar';
 import Button from 'antd/es/button';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, BugOutlined } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
 import Tooltip from 'antd/es/tooltip';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
@@ -116,12 +116,12 @@ function TopMenu() {
 			<Menu theme="dark" mode="horizontal" items={items} style={{ flex: 1, minWidth: 0 }} onClick={handleMenuClick} selectedKeys={[pathname]} />
 			{admin ? (
 				debug ? (
-					<Button danger type="primary" onClick={onDebugChange}>
+					<Button danger icon={<BugOutlined />} type="primary" onClick={onDebugChange}>
 						Debug On
 					</Button>
 				) : (
 					<Tooltip title="Note - can break layout">
-						<Button type="dashed" onClick={onDebugChange}>
+						<Button icon={<BugOutlined />} type="dashed" onClick={onDebugChange}>
 							Debug Off
 						</Button>
 					</Tooltip>

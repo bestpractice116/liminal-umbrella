@@ -1,5 +1,4 @@
 import { useState, createRef } from 'react';
-import Form from 'antd/es/form';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import Button from 'antd/es/button';
 import dayjs from '../dayjs.js';
@@ -12,6 +11,7 @@ import { useErrorBoundary } from '../ErrorFallback';
 import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
+import { CheckCircleOutlined } from '@ant-design/icons';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
@@ -122,11 +122,9 @@ export default function PostGame() {
 			mutation={mutation}
 			initialvalues={initialvalues}
 		>
-			<Form.Item label="Post">
-				<Button disabled={!isPostable} onClick={postgame}>
-					Post Game
-				</Button>
-			</Form.Item>
+			<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={postgame}>
+				Post Game
+			</Button>
 		</PostGameForm>
 	);
 }

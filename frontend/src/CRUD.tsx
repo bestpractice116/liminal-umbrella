@@ -15,6 +15,7 @@ import { SchemaBundle } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { Store } from 'rc-field-form/lib/interface';
+import { SaveOutlined } from '@ant-design/icons';
 
 type InputRef = GetRef<typeof Input>;
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -366,7 +367,7 @@ export function CreateForm({
 			<>{children}</>
 			{submitButton ? (
 				<Form.Item>
-					<Button type="primary" htmlType="submit" disabled={!isSubmittable}>
+					<Button icon={<SaveOutlined />} type="primary" htmlType="submit" disabled={!isSubmittable}>
 						{submitButtonText}
 					</Button>
 				</Form.Item>
