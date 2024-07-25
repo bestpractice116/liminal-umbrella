@@ -1,6 +1,8 @@
 import List from 'antd/es/list';
 import { Link } from 'react-router-dom';
 import Button from 'antd/es/button';
+import Flex from 'antd/es/flex';
+import Space from 'antd/es/space';
 import { useContext } from 'react';
 import { AuthData, isAuthenticated, isDM } from './Auth';
 import { DebugContext } from './Debug';
@@ -20,18 +22,20 @@ function HomePage() {
 					Please see the menus at the top to find your way around.
 				</div>
 				{dm ? (
-					<>
-						<Link to={`./dm/newgame`} relative="path">
-							<Button type="primary" style={{ marginBottom: 16 }}>
-								Create new game
-							</Button>
-						</Link>
-						<Link to={`./dm/viewgames`} relative="path">
-							<Button type="primary" style={{ marginBottom: 16 }}>
-								View games
-							</Button>
-						</Link>
-					</>
+					<Flex justify="center">
+						<Space>
+							<Link to={`./dm/newgame`} relative="path">
+								<Button type="primary" style={{ marginBottom: 16 }}>
+									Create new game
+								</Button>
+							</Link>
+							<Link to={`./dm/viewgames`} relative="path">
+								<Button type="primary" style={{ marginBottom: 16 }}>
+									View games
+								</Button>
+							</Link>
+						</Space>
+					</Flex>
 				) : (
 					<></>
 				)}
