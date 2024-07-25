@@ -8,41 +8,50 @@ export enum GameType {
 	dropin = 'dropin'
 }
 
-const create = z.object({
-	name: z
-		.string({
-			required_error: 'Name is required',
-			invalid_type_error: 'Name must be a string'
-		})
-		.trim()
-		.min(2, { message: 'Name must be at least 2 characters long' })
-		.max(100, { message: 'Name must be less than 100 characters' }),
-	description: z
-		.string({
-			required_error: 'Description is required',
-			invalid_type_error: 'Description must be a string'
-		})
-		.trim()
-		.min(50, { message: 'Description must be at least 50 characters long' })
-		.max(500, { message: 'Description must be less than 500 characters' }),
-	type: z.nativeEnum(GameType),
+export const gameSystemSchema = z.object({
 	gamesystem: z.string({
 		required_error: 'Game system is required',
 		invalid_type_error: 'Game system must be a string'
-	}),
-	date: z.preprocess(dayJsCoerce, zodDay),
-	starttime: z.preprocess(dayJsCoerce, zodDay),
-	endtime: z.preprocess(dayJsCoerce, zodDay),
-	location: z
-		.string({
-			required_error: 'Location is required',
-			invalid_type_error: 'Location must be a string'
-		})
-		.trim()
-		.min(2, { message: 'Location must be at least 2 characters long' })
-		.max(200, { message: 'Location must be less than 200 characters' }),
-	maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })
+	})
 });
+
+export const gameTypeSchema = z.object({
+	type: z.nativeEnum(GameType)
+});
+
+const create = z
+	.object({
+		name: z
+			.string({
+				required_error: 'Name is required',
+				invalid_type_error: 'Name must be a string'
+			})
+			.trim()
+			.min(2, { message: 'Name must be at least 2 characters long' })
+			.max(100, { message: 'Name must be less than 100 characters' }),
+		description: z
+			.string({
+				required_error: 'Description is required',
+				invalid_type_error: 'Description must be a string'
+			})
+			.trim()
+			.min(50, { message: 'Description must be at least 50 characters long' })
+			.max(500, { message: 'Description must be less than 500 characters' }),
+		date: z.preprocess(dayJsCoerce, zodDay),
+		starttime: z.preprocess(dayJsCoerce, zodDay),
+		endtime: z.preprocess(dayJsCoerce, zodDay),
+		location: z
+			.string({
+				required_error: 'Location is required',
+				invalid_type_error: 'Location must be a string'
+			})
+			.trim()
+			.min(2, { message: 'Location must be at least 2 characters long' })
+			.max(200, { message: 'Location must be less than 200 characters' }),
+		maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })
+	})
+	.merge(gameSystemSchema)
+	.merge(gameTypeSchema);
 const find = z.object({
 	key: z.coerce.number().int().positive()
 });

@@ -114,8 +114,6 @@ export default function ViewGame() {
 	const full = initialValues.maxplayers <= signedUpUsers.length;
 	return (
 		<div>
-			This page will contain the details / ability to edit things about an existing game you have already posted, and saving edits will update
-			the Discord listings
 			<PostGameForm
 				mutation={updateMutation}
 				initialvalues={initialValues}
@@ -125,6 +123,7 @@ export default function ViewGame() {
 				setIsCreating={setIsCreating}
 				createForm={false}
 				disabled={!editable}
+				submitButtonText={'Update Game Listing'}
 			/>
 			<UsersSignedUpTable deleteDisabled={!editable} gameSessionKey={key} users={signedUpUsers} />
 			{editable ? (

@@ -125,7 +125,7 @@ export default function PostGame() {
 		>
 			<Form.Item label="Post">
 				<Button disabled={!isPostable} onClick={postgame}>
-					Post
+					Post Game
 				</Button>
 			</Form.Item>
 		</PostGameForm>

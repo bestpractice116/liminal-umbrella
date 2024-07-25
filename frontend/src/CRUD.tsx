@@ -323,7 +323,8 @@ export function CreateForm({
 	children,
 	initialValues,
 	formRef,
-	submitButton = true
+	submitButton = true,
+	submitButtonText = 'Submit'
 }: {
 	mutation: UseMutationResult<void, Error, any, void>;
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
@@ -331,6 +332,7 @@ export function CreateForm({
 	initialValues?: Store | undefined;
 	formRef?: RefObject<FormRef>;
 	submitButton?: boolean;
+	submitButtonText?: string;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
 
@@ -362,9 +364,9 @@ export function CreateForm({
 		>
 			<>{children}</>
 			{submitButton ? (
-				<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+				<Form.Item>
 					<Button type="primary" htmlType="submit" disabled={!isSubmittable}>
-						Submit
+						{submitButtonText}
 					</Button>
 				</Form.Item>
 			) : (
