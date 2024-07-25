@@ -32,6 +32,7 @@ import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
+import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
 import dayjs from '../../dayjs.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
@@ -156,6 +157,16 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
+	async CRUDDestroy() {
+		const db = await container.database.getdb();
+		return db.transaction(async () => {
+			await this.deleteGameThread();
+			await this.deleteGameListing();
+			await this.cancelEvent();
+			return this.destroy();
+		});
+	}
+
 	async getGameThread() {
 		const channel = await getOneShotsChannel();
 		if (!channel) return null;
@@ -178,30 +189,61 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		}
 	}
 
+	async deleteGameThread() {
+		const thread = await this.getGameThread();
+		await thread?.delete();
+	}
+
 	async addMemberToGameThread(id: string) {
 		const thread = await this.getGameThread();
-		if (!thread) return;
-		await thread.members.add(id);
+		await thread?.members.add(id);
 	}
 
 	async removeMemberFromGameThread(id: string) {
 		const thread = await this.getGameThread();
-		if (!thread) return;
-		await thread.members.remove(id);
+		await thread?.members.remove(id);
+	}
+
+	async getGameListing(): Promise<Message | undefined> {
+		const channel = getGameListingChannel();
+		return await channel?.messages.fetch(this.gameListingsMessageId);
 	}
 
 	async updateGameListing() {
-		const channel = getGameListingChannel();
-		const message = await channel?.messages.fetch(this.gameListingsMessageId);
+		const message = await this.getGameListing();
 		if (!message) return;
 		const newContents = await format(this);
 		if (newContents !== message?.content) {
 			await message.edit(newContents);
 		}
 	}
+
+	async deleteGameListing() {
+		const message = await this.getGameListing();
+		await message?.delete();
+	}
+
+	async getEvent(): Promise<GuildScheduledEvent | undefined> {
+		return await container.guild?.scheduledEvents.fetch(this.get('eventId'));
+	}
+
 	async updateEvent() {
-		const event = await container.guild?.scheduledEvents.fetch(this.get('eventId'));
-		if (!event) return;
-		await event.edit({ name: this.name, description: this.description, scheduledStartTime: this.starttime, scheduledEndTime: this.endtime });
+		const event = await this.getEvent();
+		await event?.edit({
+			name: this.name,
+			description: this.description,
+			scheduledStartTime: this.starttime,
+			scheduledEndTime: this.endtime
+		});
+	}
+
+	async cancelEvent() {
+		const event = await this.getEvent();
+		if (event?.status == GuildScheduledEventStatus.Scheduled) {
+			await event.setStatus(GuildScheduledEventStatus.Canceled);
+		}
+		if (event?.status == GuildScheduledEventStatus.Active) {
+			await event.setStatus(GuildScheduledEventStatus.Completed);
+		}
 	}
 }
