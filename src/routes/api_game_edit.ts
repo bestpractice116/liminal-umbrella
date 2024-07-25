@@ -2,8 +2,7 @@ import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSystem, PlannedGame } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
-import { NewGameSchema, AnyZodSchema } from 'common/schema';
-import { getZObject } from 'common';
+import { NewGameSchema } from 'common/schema';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
