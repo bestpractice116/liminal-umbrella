@@ -62,31 +62,19 @@ async function doLogoutCallback(): Promise<LogoutFetchResult> {
 	);
 }
 
-export function LogoutButton() {
+export function getLogoutMutation() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const logoutCallbackMutation = useMutation({
+	const mutation = useMutation({
 		mutationFn: doLogoutCallback,
 		onSuccess: (_) => {
 			queryClient.setQueryData(['auth'], { error: 'Unauthorized' });
 			navigate('/login', { replace: true, state: { redirectTo: '/' } });
 		}
 	});
-	if (!isAuthenticated()) {
-		return null;
-	}
-	return (
-		<Button
-			style={{ marginLeft: '20px' }}
-			icon={<LogoutOutlined />}
-			type="primary"
-			onClick={() => {
-				logoutCallbackMutation.mutate();
-			}}
-		>
-			Logout
-		</Button>
-	);
+	return () => {
+		mutation.mutate();
+	};
 }
 
 export function LoginButton() {

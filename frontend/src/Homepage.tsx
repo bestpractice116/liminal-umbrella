@@ -18,8 +18,6 @@ function HomePage() {
 				<div className="card">
 					{debug ? <AuthData /> : <></>}
 					Welcome {auth.user.nickname} to the Preston RPG Discord bot!
-					<br />
-					Please see the menus at the top to find your way around.
 				</div>
 				{dm ? (
 					<Flex justify="center">

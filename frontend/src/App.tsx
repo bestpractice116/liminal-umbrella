@@ -4,7 +4,6 @@ import Layout, { Header, Footer, Content } from 'antd/es/layout/layout';
 import Menu from 'antd/es/menu/menu';
 import ConfigProvider from 'antd/es/config-provider';
 import Avatar from 'antd/es/avatar/avatar';
-import Button from 'antd/es/button';
 import {
 	UserOutlined,
 	BugOutlined,
@@ -15,18 +14,17 @@ import {
 	PlayCircleOutlined,
 	MessageOutlined,
 	UsergroupAddOutlined,
-	AppstoreAddOutlined
+	AppstoreAddOutlined,
+	LogoutOutlined
 } from '@ant-design/icons';
 import Spin from 'antd/es/spin';
-import Tooltip from 'antd/es/tooltip';
-import Flex from 'antd/es/flex';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { MaybeDebug, DebugContext } from './Debug';
 import { ProtectedRoute } from './ProtectedRoute';
 import HomePage from './Homepage';
-import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, LogoutButton } from './Auth';
+import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, getLogoutMutation } from './Auth';
 
 import Login from './Login';
 import AdminUsers from './admin/Users';
@@ -44,7 +42,12 @@ import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
 function TopMenu() {
 	const { debug, setDebug } = useContext(DebugContext);
 	const location = useLocation();
+	const doLogout = getLogoutMutation();
 	const { pathname } = location;
+	const auth = isAuthenticated();
+
+	const avatarSrc = auth ? auth.user.avatarURL : null;
+	const avatarIcon = auth ? null : <UserOutlined />;
 
 	const items: any = [];
 
@@ -110,49 +113,58 @@ function TopMenu() {
 		});
 	}
 
-	const auth = isAuthenticated();
-
-	const avatarSrc = auth ? auth.user.avatarURL : null;
-	const avatarIcon = auth ? null : <UserOutlined />;
+	if (admin) {
+		items.push({
+			icon: <BugOutlined />,
+			key: debug ? 'debug-off' : 'debug-on',
+			label: debug ? 'Debug On' : 'Debug Off',
+			danger: debug ? true : false
+		});
+	}
+	if (isAuthenticated()) {
+		items.push({
+			key: 'logout',
+			icon: <LogoutOutlined />,
+			label: 'Logout'
+		});
+	}
 
 	const navigate = useNavigate();
 
 	const handleMenuClick = ({ key }: any) => {
+		if (key == 'debug-on') {
+			setDebug(true);
+			return;
+		}
+		if (key == 'debug-off') {
+			setDebug(false);
+			return;
+		}
+		if (key == 'logout') {
+			doLogout();
+			return;
+		}
 		if (key) {
 			navigate(key);
 		}
 	};
 
-	const onDebugChange = () => {
-		setDebug(!debug);
-	};
 	return (
-		<Header style={{ display: 'flex', alignItems: 'center' }}>
+		<Header style={{ padding: '0 1em', display: 'flex', alignItems: 'center' }}>
 			<Link
 				to="/"
 				children={
-					<Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '20px' }} shape="square" size="large" className="avatarIcon" />
+					<Avatar icon={avatarIcon} src={avatarSrc} style={{ marginRight: '1em' }} shape="square" size="large" className="avatarIcon" />
 				}
 			/>
-			<Menu style={{ margin: 10 }} theme="dark" mode="horizontal" items={items} onClick={handleMenuClick} selectedKeys={[pathname]} />
-			<Flex style={{ flex: 1 }} justify="flex-end">
-				{admin ? (
-					debug ? (
-						<Button danger icon={<BugOutlined />} type="primary" onClick={onDebugChange}>
-							Debug On
-						</Button>
-					) : (
-						<Tooltip title="Note - can break layout">
-							<Button icon={<BugOutlined />} type="dashed" onClick={onDebugChange}>
-								Debug Off
-							</Button>
-						</Tooltip>
-					)
-				) : (
-					<></>
-				)}
-				<LogoutButton />
-			</Flex>
+			<Menu
+				style={{ minWidth: 0, flex: 'auto' }}
+				theme="dark"
+				mode="horizontal"
+				items={items}
+				onClick={handleMenuClick}
+				selectedKeys={[pathname]}
+			/>
 		</Header>
 	);
 }
@@ -221,13 +233,7 @@ function App() {
 			<QueryClientProvider client={queryClient}>
 				<ConfigProvider
 					theme={{
-						token: { colorPrimary: '#00b96b' },
-						components: {
-							Menu: {
-								darkItemBg: '#303030',
-								darkItemSelectedBg: '#00b96b'
-							}
-						}
+						token: { colorPrimary: '#00b96b' }
 					}}
 				>
 					<AuthProvider>
