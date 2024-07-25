@@ -1,12 +1,13 @@
 import { useState, createRef } from 'react';
 import { FormRef } from 'rc-field-form/es/interface.js';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { type GameListItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
-import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
+import { getDeleteMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
 import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
 import Table from 'antd/es/table';
+import Button from 'antd/es/button';
 import { type DefaultColumns } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Typeography from 'antd/es/typography';
@@ -85,6 +86,8 @@ function UsersSignedUpTable({
 }
 
 export default function ViewGame() {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const findSchema = GameSchema.find!;
 	const { data, error } = findSchema.safeParse(useParams());
 	if (error) {
@@ -100,6 +103,14 @@ export default function ViewGame() {
 	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
 		console.log('updated');
 	});
+	const deleteMutation = getDeleteMutation(
+		'/api/gamesessions',
+		(_isMutating: boolean) => {},
+		(_data: any, row: any) => {
+			queryClient.removeQueries({ queryKey: ['gamesessions', `${row.key}`] });
+			navigate('/dm/viewgames');
+		}
+	);
 
 	if (!result.data) {
 		return <div>loading</div>;
@@ -125,15 +136,22 @@ export default function ViewGame() {
 				disabled={!editable}
 				submitButtonText={'Update Game Listing'}
 			/>
-			<UsersSignedUpTable deleteDisabled={!editable} gameSessionKey={key} users={signedUpUsers} />
+			<UsersSignedUpTable deleteDisabled={!editable || isCreating} gameSessionKey={key} users={signedUpUsers} />
 			{editable ? (
 				<>
 					Add user:&nbsp;
 					<FindUserSearchBox
-						disabled={full}
+						disabled={full || isCreating}
 						gameSessionKey={key}
 						exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)}
 					/>
+					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => deleteMutation.mutate({ key })}>
+						<a>
+							<Button danger disabled={isCreating} icon={<DeleteOutlined />}>
+								Cancel game
+							</Button>
+						</a>
+					</Popconfirm>
 				</>
 			) : (
 				<></>

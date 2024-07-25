@@ -166,8 +166,8 @@ export abstract class CR extends CRUDBase {
 			return response.notFound();
 		}
 		const item = await this.findItem(request, response);
-		if (!item) {
-			return response.notFound();
+		if (response.writableEnded) {
+			return;
 		}
 		const delete_error = await this.DELETE_disallowed(item, request);
 		if (delete_error) {
@@ -203,6 +203,9 @@ export abstract class UD extends CRUDBase {
 			return;
 		}
 		const item = await this.findItem(request, response);
+		if (response.writableEnded) {
+			return;
+		}
 		response.json(await this.getReadObjectFromDbObject(item));
 	}
 
@@ -232,8 +235,8 @@ export abstract class UD extends CRUDBase {
 			return response.notFound();
 		}
 		const item = await this.findItem(request, response);
-		if (!item) {
-			return response.notFound();
+		if (response.writableEnded) {
+			return;
 		}
 		const update_error = this.UPDATE_disallowed(item);
 		if (update_error) {
@@ -269,8 +272,8 @@ export abstract class UD extends CRUDBase {
 			return response.notFound();
 		}
 		const item = await this.findItem(request, response);
-		if (!item) {
-			return response.notFound();
+		if (response.writableEnded) {
+			return;
 		}
 		const delete_error = await this.DELETE_disallowed(item, request);
 		if (delete_error) {
