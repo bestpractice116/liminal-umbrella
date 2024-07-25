@@ -15,7 +15,7 @@ export default function GameTypeSelect({ save, disabled }: GameTypeSelectInputs)
 
 	return (
 		<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
-			<Select options={gametypes_items} onBlur={save} onSelect={save} disabled={disabled} />
+			<Select style={{ textAlign: 'left' }} options={gametypes_items} onBlur={save} onSelect={save} disabled={disabled} />
 		</Form.Item>
 	);
 }

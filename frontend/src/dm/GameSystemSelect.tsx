@@ -36,7 +36,7 @@ function GameSystemsSelectHTML({
 	});
 	return (
 		<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
-			<Select options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} disabled={disabled} />
+			<Select style={{ textAlign: 'left' }} options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} disabled={disabled} />
 		</Form.Item>
 	);
 }
