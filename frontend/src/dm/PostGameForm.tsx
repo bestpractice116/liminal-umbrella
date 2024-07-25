@@ -148,7 +148,7 @@ export default function PostGameForm({
 
 			<GameSystemSelect save={save} disabled={disabled || !createForm} />
 
-			<FormItem wrapperCol={{ style: { maxWidth: 275 }, offset: 0, span: 20 }} name="date" label="Date">
+			<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
 				<DatePicker
 					style={{ width: '250px', paddingRight: '20px' }}
 					minDate={dayjs().add(1, 'day')}
@@ -162,8 +162,8 @@ export default function PostGameForm({
 					disabled={disabled}
 				/>
 			</FormItem>
-			<TimeControl wrapperCol={{ style: { maxWidth: 150 }, span: 19 }} name="starttime" label="Start Time" />
-			<TimeControl wrapperCol={{ style: { maxWidth: 150 }, span: 19 }} name="endtime" label="End Time" />
+			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="starttime" label="Start Time" />
+			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="endtime" label="End Time" />
 			<FormItem label="Location" name="location">
 				<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
 			</FormItem>
