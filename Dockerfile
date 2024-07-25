@@ -47,6 +47,8 @@ COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 # Copy built application
 COPY --from=build /app /app
 
+ENV TZ=Europe/London
+
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 8080
 CMD [ "yarn", "run", "start" ]
