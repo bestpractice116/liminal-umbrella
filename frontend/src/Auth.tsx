@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext } from 'react';
 import { Button } from 'antd';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
+import { LogoutOutlined } from '@ant-design/icons';
 
 export type AuthQueryData = {
 	user: {
@@ -76,6 +77,8 @@ export function LogoutButton() {
 	}
 	return (
 		<Button
+			style={{ marginLeft: '20px' }}
+			icon={<LogoutOutlined />}
 			type="primary"
 			onClick={() => {
 				logoutCallbackMutation.mutate();

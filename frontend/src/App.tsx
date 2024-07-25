@@ -129,6 +129,7 @@ function TopMenu() {
 			) : (
 				<></>
 			)}
+			<LogoutButton />
 		</Header>
 	);
 }
@@ -165,7 +166,6 @@ function AuthLoadingSpinner() {
 	return (
 		<>
 			<PageContent />
-			<LogoutButton />
 		</>
 	);
 }
