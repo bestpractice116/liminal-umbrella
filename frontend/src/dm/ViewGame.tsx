@@ -10,6 +10,7 @@ import Table from 'antd/es/table';
 import { type DefaultColumns } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Typeography from 'antd/es/typography';
+import Popconfirm from 'antd/es/popconfirm';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { DeleteOutlined } from '@ant-design/icons';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
@@ -63,11 +64,14 @@ function UsersSignedUpTable({
 			key: 'delete',
 			render: (_, record) => {
 				return (
-					<DeleteOutlined
-						onClick={() => {
-							removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey });
-						}}
-					/>
+					<Popconfirm
+						title="Sure to Remove user?"
+						onConfirm={() => removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey })}
+					>
+						<a>
+							<DeleteOutlined />
+						</a>
+					</Popconfirm>
 				);
 			}
 		});
