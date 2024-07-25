@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { type GameListItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
-import dayjs from 'dayjs';
+import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
 import Table from 'antd/es/table';
 import { type DefaultColumns } from '../CRUD.js';

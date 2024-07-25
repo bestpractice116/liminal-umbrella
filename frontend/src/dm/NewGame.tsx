@@ -2,7 +2,7 @@ import { useState, createRef } from 'react';
 import Form from 'antd/es/form';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import Button from 'antd/es/button';
-import dayjs from 'dayjs';
+import dayjs from '../dayjs.js';
 import { type GameListItem, GameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';

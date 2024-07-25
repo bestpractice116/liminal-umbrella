@@ -5,7 +5,7 @@ import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker from 'antd/es/date-picker';
 import Select from 'antd/es/select';
-import dayjs from 'dayjs';
+import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { type GameSystemListItem, type GameListItem, GameSchema, gametypes, gametypesEnabled } from 'common/schema';
 import { getListQueries, WrapCRUD, CreateForm } from '../CRUD.js';

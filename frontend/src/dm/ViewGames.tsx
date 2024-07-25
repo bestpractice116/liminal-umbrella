@@ -7,7 +7,7 @@ import { GameSchema, type GameListItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { isAdmin } from '../Auth.js';
 import UserRecord from './UserRecord.js';
-import dayjs from 'dayjs';
+import dayjs from '../dayjs.js';
 const components = getTableComponents(GameSchema);
 
 export default function ViewGames() {
