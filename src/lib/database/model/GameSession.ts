@@ -32,7 +32,7 @@ import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
-import dayjs from 'dayjs';
+import dayjs from '../../dayjs.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
 	@Attribute(DataTypes.INTEGER)

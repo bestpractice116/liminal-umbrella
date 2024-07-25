@@ -39,7 +39,7 @@ import {
 	Snowflake
 } from 'discord.js';
 import { gameChannelLink, getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
-import dayjs from 'dayjs';
+import dayjs from '../../dayjs.js';
 
 export type ReplyableInteraction =
 	| ChatInputCommandInteraction
