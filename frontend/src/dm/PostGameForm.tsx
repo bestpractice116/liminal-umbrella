@@ -54,6 +54,7 @@ export default function PostGameForm({
 			}
 		}
 		setFormData(values);
+		save()
 	};
 
 	const getValidateStatus = (name: string) => {
@@ -118,7 +119,6 @@ export default function PostGameForm({
 					format={'HH:mm'}
 					size="middle"
 					onBlur={hasChanged}
-					onChange={hasChanged}
 					disabled={disabled}
 				/>
 			</FormItem>
@@ -140,12 +140,12 @@ export default function PostGameForm({
 			</Form.Item>
 
 			<FormItem label="Name" name="name">
-				<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
+				<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
 			</FormItem>
 
-			<GameTypeSelect save={save} disabled={disabled || !createForm} />
+			<GameTypeSelect save={hasChanged} disabled={disabled || !createForm} />
 
-			<GameSystemSelect save={save} disabled={disabled || !createForm} />
+			<GameSystemSelect save={hasChanged} disabled={disabled || !createForm} />
 
 			<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
 				<DatePicker
@@ -155,7 +155,6 @@ export default function PostGameForm({
 					onChange={(val) => {
 						if (val) {
 							hasChanged();
-							save();
 						}
 					}}
 					disabled={disabled}
@@ -164,11 +163,11 @@ export default function PostGameForm({
 			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="starttime" label="Start Time" />
 			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="endtime" label="End Time" />
 			<FormItem label="Location" name="location">
-				<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
+				<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
 			</FormItem>
 
 			<FormItem label="Description" name="description">
-				<Input.TextArea rows={6} size={'large'} onBlur={save} onChange={hasChanged} disabled={disabled} />
+				<Input.TextArea rows={6} size={'large'} onBlur={hasChanged} disabled={disabled} />
 			</FormItem>
 
 			<FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} label="Max Players" name="maxplayers">
@@ -176,8 +175,7 @@ export default function PostGameForm({
 					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
 						return { value: idx, label: <span>{idx}</span> };
 					})}
-					onBlur={save}
-					onChange={hasChanged}
+					onBlur={hasChanged}
 					disabled={disabled}
 				/>
 			</FormItem>
