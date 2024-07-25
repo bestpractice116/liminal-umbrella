@@ -7,7 +7,8 @@ import DatePicker from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
-import Flex from 'antd/es/flex';
+import { ColProps } from 'antd/es/col';
+import { type FormItemLayout } from 'antd/es/form/Form.js';
 import { type GameListItem, GameSchema } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -71,23 +72,47 @@ export default function PostGameForm({
 		name,
 		label,
 		children,
-		style
+		style,
+		labelCol,
+		wrapperCol
 	}: {
 		name: NamePath<GameListItem>;
 		label: string;
 		children: React.ReactNode;
 		style?: React.CSSProperties;
+		labelCol?: ColProps;
+		wrapperCol?: ColProps;
 	}) => {
 		return (
-			<Form.Item<GameListItem> style={style} name={name} label={label} rules={[createFormRule]} validateStatus={getValidateStatus(`${name}`)}>
+			<Form.Item<GameListItem>
+				wrapperCol={wrapperCol}
+				labelCol={labelCol}
+				style={style}
+				name={name}
+				label={label}
+				rules={[createFormRule]}
+				validateStatus={getValidateStatus(`${name}`)}
+			>
 				{children}
 			</Form.Item>
 		);
 	};
 
-	const TimeControl = ({ name, label }: { name: NamePath<GameListItem>; label: string }) => {
+	const TimeControl = ({
+		name,
+		label,
+		labelCol,
+		wrapperCol,
+		style
+	}: {
+		name: NamePath<GameListItem>;
+		label: string;
+		labelCol?: ColProps;
+		wrapperCol?: ColProps;
+		style?: React.CSSProperties;
+	}) => {
 		return (
-			<FormItem name={name} label={label} style={{ paddingLeft: '20px' }}>
+			<FormItem style={style} labelCol={labelCol} wrapperCol={wrapperCol} name={name} label={label}>
 				<TimePicker
 					showNow={false}
 					minuteStep={15}
@@ -123,24 +148,22 @@ export default function PostGameForm({
 
 			<GameSystemSelect save={save} disabled={disabled || !createForm} />
 
-			<Flex>
-				<FormItem name="date" label="Date">
-					<DatePicker
-						minDate={dayjs().add(1, 'day')}
-						format={'dddd D MMM (YYYY-MM-DD)'}
-						onChange={(val) => {
-							if (val) {
-								hasChanged();
-								save();
-							}
-						}}
-						disabled={disabled}
-					/>
-				</FormItem>
-
-				<TimeControl name="starttime" label="Start Time" />
-				<TimeControl name="endtime" label="End Time" />
-			</Flex>
+			<FormItem wrapperCol={{ style: { maxWidth: 275 }, offset: 0, span: 20 }} name="date" label="Date">
+				<DatePicker
+					style={{ width: '250px', paddingRight: '20px' }}
+					minDate={dayjs().add(1, 'day')}
+					format={'dddd D MMM (YYYY-MM-DD)'}
+					onChange={(val) => {
+						if (val) {
+							hasChanged();
+							save();
+						}
+					}}
+					disabled={disabled}
+				/>
+			</FormItem>
+			<TimeControl wrapperCol={{ style: { maxWidth: 150 }, span: 19 }} name="starttime" label="Start Time" />
+			<TimeControl wrapperCol={{ style: { maxWidth: 150 }, span: 19 }} name="endtime" label="End Time" />
 			<FormItem label="Location" name="location">
 				<Input onPressEnter={save} onBlur={save} onChange={hasChanged} disabled={disabled} />
 			</FormItem>
@@ -149,7 +172,7 @@ export default function PostGameForm({
 				<Input.TextArea rows={6} size={'large'} onBlur={save} onChange={hasChanged} disabled={disabled} />
 			</FormItem>
 
-			<FormItem label="Max Players" name="maxplayers">
+			<FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} label="Max Players" name="maxplayers">
 				<Select
 					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
 						return { value: idx, label: <span>{idx}</span> };
