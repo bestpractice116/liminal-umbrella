@@ -28,10 +28,8 @@ export class ApiGameSessions extends UD {
 		return { owner: request.auth!.id };
 	}
 
-	// FIXME - allow
-	override async auth_DELETE(_request: ApiRequest, response: ApiResponse) {
-		response.notFound();
-	}
+	@AuthenticatedWithRole('Dungeon Master', true)
+	override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
 	override async DELETE_disallowed(item: any, _request: ApiRequest): Promise<string | undefined> {
 		const now = new Date(Date.now());

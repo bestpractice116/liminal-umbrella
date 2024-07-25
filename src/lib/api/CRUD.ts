@@ -246,8 +246,7 @@ export abstract class UD extends CRUDBase {
 			return;
 		}
 		item.set(dbData);
-		item.CRUDSave ? await item.CRUDSave() : item.save();
-		await item.save();
+		item.CRUDSave ? await item.CRUDSave() : await item.save();
 		await this.onMutation(item, MutationOperation.UPDATE);
 		const datum = await this.getReadObjectFromDbObject(item);
 		response.json({ status: 'ok', datum });
@@ -277,7 +276,7 @@ export abstract class UD extends CRUDBase {
 		if (delete_error) {
 			return response.error(HttpCodes.MethodNotAllowed, delete_error);
 		}
-		await item.destroy();
+		item.CRUDDestroy ? await item.CRUDDestroy() : await item.destroy();
 		await this.onMutation(item, MutationOperation.DELETE);
 		response.json({ status: 'deleted', datum: request.params });
 	}
