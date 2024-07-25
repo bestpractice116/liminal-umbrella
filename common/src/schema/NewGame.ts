@@ -34,10 +34,10 @@ const find = z.object({
 });
 
 export const NewGameSchema: SchemaBundle = {
-	create: create.readonly(),
-	update: create.readonly(),
+	create: create.partial().readonly(),
+	update: create.partial().readonly(),
 	find: find.readonly(),
-	read: create.merge(find).partial().readonly(),
+	read: create.partial().merge(find).readonly(),
 	delete: true
 };
 export type NewGameListItem = z.infer<typeof create>;

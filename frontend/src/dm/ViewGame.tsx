@@ -105,7 +105,7 @@ export default function ViewGame() {
 		return <div>loading</div>;
 	}
 	// FIXME - clean this up
-	const res = getZObject(GameSchema.read).partial().safeParse(result.data);
+	const res = getZObject(GameSchema.read).safeParse(result.data);
 	const initialValues = res.data!;
 	initialValues.date = initialValues.starttime.clone().hour(12).minute(0).second(0).millisecond(0);
 	const now = dayjs(Date.now());

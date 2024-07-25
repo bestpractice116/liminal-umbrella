@@ -35,10 +35,6 @@ export class ApiGameEdit extends UD {
 		return data;
 	}
 
-	override getSchemaUpdate(): AnyZodSchema | undefined {
-		return getZObject(this.getSchema().update!).partial();
-	}
-
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_DELETE() {}
 

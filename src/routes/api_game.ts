@@ -28,10 +28,6 @@ export class ApiGameList extends CR {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_CREATE() {}
 
-	override getSchemaCreate(): AnyZodSchema | undefined {
-		return getZObject(this.getSchema().create!).partial();
-	}
-
 	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
 		const out = {
 			...data,
