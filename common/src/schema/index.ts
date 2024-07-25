@@ -6,4 +6,5 @@ export * from './Role.js';
 export * from './Game.js';
 export * from './GameType.js';
 export * from './GameSessionUserSignup.js';
+export * from './NewGame.js';
 export * from './types.js';

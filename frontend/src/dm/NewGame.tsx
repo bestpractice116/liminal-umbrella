@@ -3,7 +3,7 @@ import Form from 'antd/es/form';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import Button from 'antd/es/button';
 import dayjs from '../dayjs.js';
-import { type GameListItem, GameSchema } from 'common/schema';
+import { type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
@@ -19,7 +19,7 @@ export default function PostGame() {
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);
-	const result = getFetchQuery<Array<GameListItem>>('/api/game', 'game');
+	const result = getFetchQuery<Array<NewGameListItem>>('/api/game', 'game');
 	const queryClient = useQueryClient();
 	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
 		formRef.current!.setFieldValue('key', data!.datum!.key);
@@ -40,7 +40,7 @@ export default function PostGame() {
 	let hasGame = false;
 	let isPostable = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
-		const res = getZObject(GameSchema.read!).partial().safeParse(result.data[0]);
+		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
 		if (!res.success) {
 			console.log(res.error);
 		} else {
@@ -113,7 +113,6 @@ export default function PostGame() {
 	if (postId > 0) {
 		return <Navigate to={`/dm/viewgame/${postId}`} />;
 	}
-
 	return (
 		<PostGameForm
 			isLoading={isCreating || result.isFetching}
