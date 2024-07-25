@@ -182,15 +182,11 @@ function PageContent() {
 	);
 }
 
-function AuthLoadingSpinner() {
+function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 	if (isAuthFetching()) {
 		return <Spin size="large" />;
 	}
-	return (
-		<>
-			<PageContent />
-		</>
-	);
+	return children;
 }
 
 function Page() {
@@ -198,15 +194,17 @@ function Page() {
 		<MaybeDebug>
 			<Layout>
 				<TopMenu />
-				<Content style={{ padding: '0 48px' }}>
+				<Content>
 					<div
 						style={{
 							minHeight: 280,
-							padding: 24
+							padding: '1em'
 						}}
 					>
 						<ErrorBoundary FallbackComponent={ErrorFallback}>
-							<AuthLoadingSpinner />
+							<AuthLoadingSpinner>
+								<PageContent />
+							</AuthLoadingSpinner>
 						</ErrorBoundary>
 					</div>
 				</Content>
