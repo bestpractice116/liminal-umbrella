@@ -43,7 +43,6 @@ export default function PostGameForm({
 	disabled?: boolean;
 	submitButtonText?: string;
 }) {
-	console.log('Just in PostGameForm with: ', initialValues);
 	useEffect(() => {
 		formRef.current?.setFieldsValue(initialValues);
 	}, [initialValues]);
@@ -74,7 +73,6 @@ export default function PostGameForm({
 		if (name == 'date' && getFormData()[name] && initialValues[name]) {
 			return getFormData()[name].format('YYYY-MM-DD') != initialValues[name].format('YYYY-MM-DD') ? 'error' : undefined;
 		}
-		console.log(`getValidateStatus for ${name} - formData: ${getFormData()[name]}, initialValues: ${initialValues[name]}`);
 		return `${getFormData()[name]}` != `${initialValues[name]}` ? 'error' : undefined;
 	};
 
@@ -127,7 +125,6 @@ export default function PostGameForm({
 			</FormItem>
 		);
 	};
-	console.log('About to include CreateForm: ', initialValues);
 	return (
 		<div>
 			{' '}

@@ -145,7 +145,6 @@ export default function ViewGame() {
 	if (result.isSuccess) {
 		try {
 			initialValues = getZObject(GameSchema.read).parse(result.data) as GameReadItem;
-			console.log('Res ', initialValues);
 		} catch (e: any) {
 			console.log('error ', e);
 			showBoundary(zodErrorConvertor(e));

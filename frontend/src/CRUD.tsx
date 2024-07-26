@@ -360,7 +360,6 @@ export function CreateForm({
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
 
-	console.log('In form initialValues: ', initialValues);
 	return (
 		<Form
 			style={style}
