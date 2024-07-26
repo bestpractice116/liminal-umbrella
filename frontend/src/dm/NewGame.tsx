@@ -81,7 +81,6 @@ export default function PostGame() {
 		setIsCreating(true);
 		mutation.mutate(data, {
 			onSuccess: () => {
-				console.log('Doing gamepost fetch');
 				// FIXME pull this out to it's own function?
 				return fetch(
 					'/api/gamepost',
@@ -96,7 +95,6 @@ export default function PostGame() {
 				)
 					.then((data: any) => {
 						// FIXME - any
-						console.log('In .then() from fetch. About to resetQueries');
 						queryClient.resetQueries(
 							{
 								queryKey: ['game'],
@@ -104,14 +102,12 @@ export default function PostGame() {
 							},
 							{ throwOnError: true }
 						);
-						console.log('Done resetQueries');
 						setIsCreating(false);
 						setPostId(data.datum.key);
 					})
 					.catch((e) => showBoundary(e));
 			},
 			onError: (e) => {
-				console.error('onError from mutate ', e);
 				setIsCreating(false);
 				throw e;
 			}
