@@ -64,9 +64,11 @@ export class ApiGameSessions extends UD {
 		const now = new Date(Date.now());
 		if (starttime < now) {
 			// Session started in the past, not valid
+			return response.badRequest('Session start is in the past, cannot edit');
 		}
 		if (endtime < starttime) {
 			// End time cannot be before start time, not valid
+			return response.badRequest('End time cannot be before start time - invalid game');
 		}
 
 		const out = { ...data, starttime, endtime };
