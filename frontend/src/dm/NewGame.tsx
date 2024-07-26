@@ -11,10 +11,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { useBoundary } from '../ErrorFallback.js';
+import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
-	const { showBoundary } = useBoundary();
+	const { showBoundary } = useErrorBoundary();
 	const formRef = createRef<FormRef>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
