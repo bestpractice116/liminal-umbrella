@@ -203,12 +203,14 @@ export function useErrorBoundary<TError = any>(): UseErrorBoundaryApi<TError> {
 				context.resetErrorBoundary();
 				setState({ error: null, errorInfo: null, hasError: false });
 			},
-			showBoundary: (error: TError, info?: ErrorInfo | undefined) =>
+			showBoundary: (error: TError, info?: ErrorInfo | undefined) => {
+				console.error('Called showBoundary with error ', error, ' errorInfo ', info);
 				setState({
 					error,
 					errorInfo: info || null,
 					hasError: true
-				})
+				});
+			}
 		}),
 		[context.resetErrorBoundary]
 	);

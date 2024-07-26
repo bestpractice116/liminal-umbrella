@@ -137,11 +137,17 @@ export type QuerySet<T> = {
 	createMutation: UseMutationResult<void, Error, any, void>;
 };
 
-export function zodErrorConvertor(data: any, onSuccess?: () => void) {
+export function zodErrorConvertor(data: any): Error | undefined {
 	if (data.status && data.status !== 'ok' && data.error) {
 		console.error('Error updating data', data);
-		throw new z.ZodError(data.error);
+		return new z.ZodError(data.error);
 	}
+	return;
+}
+
+export function zodErrorConvertorThrow(data: any, onSuccess?: () => void) {
+	const maybeError = zodErrorConvertor(data);
+	if (maybeError) throw maybeError;
 	if (onSuccess) onSuccess();
 }
 
@@ -160,15 +166,14 @@ export function getCreateMutation(apipath: string, querykey: QueryKey, setIsMuta
 					}
 				},
 				FetchResultTypes.JSON
-			)
-				.then((data) => {
-					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
-					throw zodErrorConvertor(data, () => {
-						onCreate(data);
-					});
-				})
-				.catch((e) => showBoundary(e));
+			).then((data) => {
+				queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
+				zodErrorConvertorThrow(data, () => {
+					onCreate(data);
+				});
+			});
 		},
+		onError: (e) => showBoundary(e),
 		onMutate: () => {
 			setIsMutating(true);
 		},
@@ -220,15 +225,14 @@ export function getUpdateMutation(
 					}
 				},
 				FetchResultTypes.JSON
-			)
-				.then((data) => {
-					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
-					throw zodErrorConvertor(data, () => {
-						onSuccess(data, r);
-					});
-				})
-				.catch((e) => showBoundary(e));
+			).then((data) => {
+				queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
+				zodErrorConvertorThrow(data, () => {
+					onSuccess(data, r);
+				});
+			});
 		},
+		onError: (e) => showBoundary(e),
 		onMutate: () => {
 			setIsMutating(true);
 		},

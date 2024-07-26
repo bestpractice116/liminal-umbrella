@@ -11,8 +11,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
+import { useBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
+	const { showBoundary } = useBoundary();
 	const formRef = createRef<FormRef>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
@@ -91,18 +93,22 @@ export default function PostGame() {
 						}
 					},
 					FetchResultTypes.JSON
-				).then((data: any) => {
-					// FIXME - any
-					queryClient.resetQueries(
-						{
-							queryKey: ['game'],
-							exact: true
-						},
-						{ throwOnError: true }
-					);
-					setIsCreating(false);
-					setPostId(data.datum.key);
-				});
+				)
+					.then((data: any) => {
+						// FIXME - any
+						console.log('In .then() from fetch. About to resetQueries');
+						queryClient.resetQueries(
+							{
+								queryKey: ['game'],
+								exact: true
+							},
+							{ throwOnError: true }
+						);
+						console.log('Done resetQueries');
+						setIsCreating(false);
+						setPostId(data.datum.key);
+					})
+					.catch((e) => showBoundary(e));
 			},
 			onError: (e) => {
 				console.error('onError from mutate ', e);
