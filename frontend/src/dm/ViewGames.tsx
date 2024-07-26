@@ -99,11 +99,11 @@ export default function ViewGames() {
 	const columns = getColumns<GameListItem>(defaultColumns, handleSave);
 	return (
 		<>
-			<Link to={`../newgame`} relative="path">
-				<Button type="primary" style={{ marginBottom: 16 }}>
-					Create new game
-				</Button>
-			</Link>
+			<div style={{ margin: '1em', padding: 0 }}>
+				<Link to={`../newgame`} relative="path">
+					<Button type="primary">Create new game</Button>
+				</Link>
+			</div>
 			<WrapCRUD<GameListItem> result={result}>
 				<>
 					<Spin spinning={isMutating} fullscreen />

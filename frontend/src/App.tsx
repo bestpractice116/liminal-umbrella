@@ -201,12 +201,17 @@ function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 	return children;
 }
 
-function Page() {
-	var isMobile = true;
+function checkIsMobile(): boolean {
+	var isMobile = false;
 
 	if ('maxTouchPoints' in navigator) {
 		isMobile = navigator.maxTouchPoints > 0;
 	}
+	return isMobile;
+}
+
+function Page() {
+	const isMobile = checkIsMobile();
 	const style: AnyObject = {
 		minHeight: 280,
 		paddingLeft: 0,
