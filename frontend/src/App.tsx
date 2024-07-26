@@ -202,6 +202,11 @@ function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 }
 
 function Page() {
+	var isMobile = false;
+
+	if ('maxTouchPoints' in navigator) {
+		isMobile = navigator.maxTouchPoints > 0;
+	}
 	return (
 		<MaybeDebug>
 			<Layout>
@@ -210,7 +215,7 @@ function Page() {
 					<div
 						style={{
 							minHeight: 280,
-							padding: '1em'
+							padding: isMobile ? 0 : '1em'
 						}}
 					>
 						<ErrorBoundary FallbackComponent={ErrorFallback}>
