@@ -187,7 +187,16 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	async getGameThread() {
 		const channel = await getOneShotsChannel();
 		if (!channel) return null;
-		return (await channel.threads.fetch(this.channelId)) || null;
+		try {
+			return await channel.threads.fetch(this.channelId);
+		} catch (e: any) {
+			if (e.code === 10003) {
+				// 'Unknown Channel' - thread has already been deleted, skip
+				return null;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	async updateGameThread() {
