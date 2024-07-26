@@ -32,7 +32,7 @@ import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
-import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
+import { GuildScheduledEvent, Message, GuildScheduledEventStatus, AnyThreadChannel } from 'discord.js';
 import dayjs from '../../dayjs.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
@@ -184,7 +184,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
-	async getGameThread() {
+	async getGameThread(): Promise<AnyThreadChannel | null> {
 		const channel = await getOneShotsChannel();
 		if (!channel) return null;
 		try {
@@ -230,9 +230,18 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		await thread?.members.remove(id);
 	}
 
-	async getGameListing(): Promise<Message | undefined> {
+	async getGameListing(): Promise<Message | null> {
 		const channel = getGameListingChannel();
-		return await channel?.messages.fetch(this.gameListingsMessageId);
+		try {
+			return (await channel?.messages.fetch(this.gameListingsMessageId)) || null;
+		} catch (e: any) {
+			if (e.code === 10008) {
+				// 'Unknown Message' - message has already been deleted, skip
+				return null;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	async updateGameListing() {
