@@ -7,14 +7,12 @@ import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js'
 import Spin from 'antd/es/spin';
 import { getZObject } from 'common';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
-import { useErrorBoundary } from '../ErrorFallback';
 import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 export default function PostGame() {
-	const { showBoundary } = useErrorBoundary();
 	const formRef = createRef<FormRef>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
@@ -81,6 +79,7 @@ export default function PostGame() {
 		setIsCreating(true);
 		mutation.mutate(data, {
 			onSuccess: () => {
+				console.log('Doing gamepost fetch');
 				// FIXME pull this out to it's own function?
 				return fetch(
 					'/api/gamepost',
@@ -92,22 +91,21 @@ export default function PostGame() {
 						}
 					},
 					FetchResultTypes.JSON
-				)
-					.then((data: any) => {
-						// FIXME - any
-						queryClient.resetQueries(
-							{
-								queryKey: ['game'],
-								exact: true
-							},
-							{ throwOnError: true }
-						);
-						setIsCreating(false);
-						setPostId(data.datum.key);
-					})
-					.catch((e) => showBoundary(e));
+				).then((data: any) => {
+					// FIXME - any
+					queryClient.resetQueries(
+						{
+							queryKey: ['game'],
+							exact: true
+						},
+						{ throwOnError: true }
+					);
+					setIsCreating(false);
+					setPostId(data.datum.key);
+				});
 			},
 			onError: (e) => {
+				console.error('onError from mutate ', e);
 				setIsCreating(false);
 				throw e;
 			}
