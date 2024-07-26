@@ -309,6 +309,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 			reason: `Game: ${this.name!} by ${userMention(this.owner)}`,
 			appliedTags: tags
 		});
+		await thread!.members.add(this.owner);
 		return thread!.id;
 	}
 

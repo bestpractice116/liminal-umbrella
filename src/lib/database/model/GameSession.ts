@@ -31,8 +31,8 @@ import {
 import GameSystem from './GameSystem.js';
 import User from './User.js';
 import { container } from '@sapphire/framework';
-import { getGameListingChannel, format, getOneShotsChannel } from '../../discord.js';
-import { GuildScheduledEvent, Message, GuildScheduledEventStatus, AnyThreadChannel } from 'discord.js';
+import { getGameListingChannel, format, getOneShotThread } from '../../discord.js';
+import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
 import dayjs from '../../dayjs.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
@@ -184,23 +184,8 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
-	async getGameThread(): Promise<AnyThreadChannel | null> {
-		const channel = await getOneShotsChannel();
-		if (!channel) return null;
-		try {
-			return await channel.threads.fetch(this.channelId);
-		} catch (e: any) {
-			if (e.code === 10003) {
-				// 'Unknown Channel' - thread has already been deleted, skip
-				return null;
-			} else {
-				throw e;
-			}
-		}
-	}
-
 	async updateGameThread() {
-		const thread = await this.getGameThread();
+		const thread = await getOneShotThread(this.channelId);
 		if (!thread) return;
 		const starttime = dayjs(this.starttime);
 		const endtime = dayjs(this.endtime);
@@ -216,17 +201,17 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	}
 
 	async deleteGameThread() {
-		const thread = await this.getGameThread();
+		const thread = await getOneShotThread(this.channelId);
 		await thread?.delete();
 	}
 
 	async addMemberToGameThread(id: string) {
-		const thread = await this.getGameThread();
+		const thread = await getOneShotThread(this.channelId);
 		await thread?.members.add(id);
 	}
 
 	async removeMemberFromGameThread(id: string) {
-		const thread = await this.getGameThread();
+		const thread = await getOneShotThread(this.channelId);
 		await thread?.members.remove(id);
 	}
 

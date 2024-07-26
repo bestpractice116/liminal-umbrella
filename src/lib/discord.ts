@@ -1,4 +1,4 @@
-import { Snowflake, TextChannel, ChannelType, userMention, ForumChannel } from 'discord.js';
+import { Snowflake, TextChannel, ChannelType, userMention, ForumChannel, AnyThreadChannel } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { gametypes } from 'common/schema';
 import { PlannedGame, GameSession } from './database/model.js';
@@ -23,6 +23,21 @@ export function getOneShotsChannel(): ForumChannel | undefined {
 		return channel;
 	}
 	return undefined;
+}
+
+export async function getOneShotThread(id: string): Promise<AnyThreadChannel | null> {
+	const channel = await getOneShotsChannel();
+	if (!channel) return null;
+	try {
+		return await channel.threads.fetch(id);
+	} catch (e: any) {
+		if (e.code === 10003) {
+			// 'Unknown Channel' - thread has already been deleted, skip
+			return null;
+		} else {
+			throw e;
+		}
+	}
 }
 
 export async function format(game: PlannedGame | GameSession): Promise<string> {
