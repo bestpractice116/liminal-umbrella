@@ -17,6 +17,7 @@ const create = z
 				invalid_type_error: 'Description must be a string'
 			})
 			.trim(),
+		date: z.optional(z.preprocess(dayJsCoerceOrUndefined, z.union([zodDay, z.undefined()]))),
 		starttime: z.optional(z.preprocess(dayJsCoerceOrUndefined, z.union([zodDay, z.undefined()]))),
 		endtime: z.optional(z.preprocess(dayJsCoerceOrUndefined, z.union([zodDay, z.undefined()]))),
 		location: z

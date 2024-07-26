@@ -1,10 +1,11 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import { GameSystem, PlannedGame } from '../lib/database/model.js';
+import { PlannedGame } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
 import { NewGameSchema } from 'common/schema';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
+import { doCoerce } from './api_game.js';
 
 export class ApiGameEdit extends UD {
 	public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -24,14 +25,8 @@ export class ApiGameEdit extends UD {
 	@AuthenticatedWithRole('Dungeon Master', true)
 	override async auth_UPDATE() {}
 
-	override async UPDATE_coerce(_request: ApiRequest, _response: ApiResponse, data: any) {
-		if (data.gamesystem) {
-			const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
-			if (gamesystem) {
-				return { ...data, gamesystem: gamesystem.key };
-			}
-		}
-		return data;
+	override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
+		return await doCoerce(request, response, data);
 	}
 
 	@AuthenticatedWithRole('Dungeon Master', true)

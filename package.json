@@ -18,6 +18,7 @@
 		"bufferutil": "^4.0.8",
 		"colorette": "^2.0.20",
 		"common": "1.0.0",
+		"dayjs": "^1.11.12",
 		"discord.js": "^14.14.1",
 		"limit-concurrency-decorator": "^0.6.0",
 		"prom-client": "^15.1.0",

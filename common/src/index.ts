@@ -3,7 +3,6 @@ import { AnyZodSchema } from 'common/schema';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -24,7 +23,9 @@ export function getZObject(schema: AnyZodSchema): z.ZodObject<any> {
 	return schema;
 }
 
-export function dayJsCoerce(val: unknown): dayjs.Dayjs {
+export function dayJsCoerce(val: unknown): dayjs.Dayjs | undefined {
+	if (!val) return undefined;
+
 	if (val instanceof dayjs) {
 		return val as dayjs.Dayjs;
 	}
@@ -36,7 +37,7 @@ export function dayJsCoerce(val: unknown): dayjs.Dayjs {
 
 export function dayJsCoerceOrUndefined(val: unknown) {
 	const d = dayJsCoerce(val);
-	if (d.isValid()) return d;
+	if (d?.isValid()) return d;
 	return undefined;
 }
 

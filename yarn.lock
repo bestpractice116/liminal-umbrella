@@ -4541,6 +4541,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.12":
+  version: 1.11.12
+  resolution: "dayjs@npm:1.11.12"
+  checksum: 10c0/9673d37f3f9ad8a91caaeae9b3fea9a0010c81c7f58599fb9d860bc3359b86632fbff8eb7dddc86c2acaab01c5e6860bc672952f17b58c9286140c52b077c8e4
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.11.5":
   version: 1.11.10
   resolution: "dayjs@npm:1.11.10"
@@ -5306,7 +5313,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.2.1"
     antd: "npm:^5.19.3"
     antd-zod: "npm:^5.1.0"
-    dayjs: "npm:^1.11.11"
+    dayjs: "npm:^1.11.12"
     eslint: "npm:^8.57.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.6"
@@ -6590,6 +6597,7 @@ __metadata:
     bufferutil: "npm:^4.0.8"
     colorette: "npm:^2.0.20"
     common: "npm:1.0.0"
+    dayjs: "npm:^1.11.12"
     discord.js: "npm:^14.14.1"
     jest: "npm:^29.7.0"
     limit-concurrency-decorator: "npm:^0.6.0"

@@ -23,15 +23,18 @@ export default function PostGame() {
 	const queryClient = useQueryClient();
 	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
 		formRef.current!.setFieldValue('key', data!.datum!.key);
-		queryClient.setQueryData(['game'], (old: any) => {
-			return [...(old || []), data.datum];
+		queryClient.setQueryData(['game'], (_old: any) => {
+			return [data.datum];
 		});
 	});
-	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, () => {
-		//console.log('updated');
+	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, (data: any) => {
+		queryClient.setQueryData(['game'], (_old: any) => {
+			return [data.datum];
+		});
 	});
 
 	let initialvalues: any = {
+		date: dayjs('12:00', 'HH:mm').add(14, 'days'),
 		starttime: dayjs('18:00', 'HH:mm'),
 		endtime: dayjs('22:00', 'HH:mm'),
 		maxplayers: 4,
@@ -42,11 +45,12 @@ export default function PostGame() {
 	if (result.isFetched && result.data && result.data.length == 1) {
 		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
 		if (!res.success) {
-			console.log(res.error);
+			console.error('error parsing NewGameSchea.read', res.error);
 		} else {
 			initialvalues = res.data;
+			initialvalues.date = initialvalues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
 			hasGame = true;
-			isPostable = getZObject(GameSchema.create!).safeParse(result.data[0]).success;
+			isPostable = getZObject(GameSchema.create!).safeParse(initialvalues).success;
 		}
 	}
 	if (!result.isFetched) {
