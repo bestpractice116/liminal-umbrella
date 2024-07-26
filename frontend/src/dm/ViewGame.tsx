@@ -8,10 +8,13 @@ import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
+import Collapse from 'antd/es/collapse';
+import Panel from 'antd/es/collapse/CollapsePanel.js';
+import List from 'antd/es/list';
 import { type DefaultColumns } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
-import Typeography from 'antd/es/typography';
 import Popconfirm from 'antd/es/popconfirm';
+import { LinkOutlined } from '@ant-design/icons';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { DeleteOutlined } from '@ant-design/icons';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
@@ -19,8 +22,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import NotFound from '../NotFound.js';
 import { useErrorBoundary } from '../ErrorFallback';
 import { AnyObject } from 'antd/es/_util/type.js';
-
-const Title = Typeography.Title;
 
 function UsersSignedUpTable({
 	deleteDisabled,
@@ -79,11 +80,29 @@ function UsersSignedUpTable({
 			}
 		});
 	}
+	return <Table dataSource={users} columns={columns} />;
+}
+
+function GameLinks({ data }: { data: GameListItem }) {
+	const listData = [
+		{ text: 'Game Listing', href: data.gameListingsMessageLink },
+		{ text: 'Event', href: data.eventLink },
+		{ text: 'Game chat', href: data.channelLink }
+	];
 	return (
-		<>
-			<Title>Signed up Players</Title>
-			<Table dataSource={users} columns={columns} />
-		</>
+		<List
+			size="large"
+			dataSource={listData}
+			renderItem={(item) => (
+				<List.Item>
+					<a href={item.href} target="_blank">
+						<LinkOutlined />
+						&nbsp;
+						{item.text}
+					</a>
+				</List.Item>
+			)}
+		/>
 	);
 }
 
@@ -133,27 +152,23 @@ export default function ViewGame() {
 		full = initialValues?.maxplayers <= signedUpUsers?.length;
 	}
 	return (
-		<div>
-			<PostGameForm
-				mutation={updateMutation}
-				initialvalues={initialValues}
-				isLoading={isCreating || result.isFetching}
-				formRef={formRef}
-				save={save}
-				setIsCreating={setIsCreating}
-				createForm={false}
-				disabled={!editable}
-				submitButtonText={'Update Game Listing'}
-			/>
-			<UsersSignedUpTable deleteDisabled={!editable || isCreating} gameSessionKey={key} users={signedUpUsers} />
-			{editable ? (
-				<>
-					Add user:&nbsp;
-					<FindUserSearchBox
-						disabled={full || isCreating}
-						gameSessionKey={key}
-						exclude={signedUpUsers.map((player: AutoCompleteUser) => player.key)}
-					/>
+		<Collapse bordered={false} defaultActiveKey={['1']}>
+			<Panel style={{ textAlign: 'left' }} header="Links" key="1">
+				<GameLinks data={initialValues as GameListItem} />
+			</Panel>
+			<Panel style={{ textAlign: 'left' }} header="Edit game" key="2">
+				<PostGameForm
+					mutation={updateMutation}
+					initialvalues={initialValues}
+					isLoading={isCreating || result.isFetching}
+					formRef={formRef}
+					save={save}
+					setIsCreating={setIsCreating}
+					createForm={false}
+					disabled={!editable}
+					submitButtonText={'Update Game Listing'}
+				/>
+				<div style={{ float: 'right', position: 'relative', top: -55 }}>
 					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => deleteMutation.mutate({ key })}>
 						<a>
 							<Button danger disabled={isCreating} icon={<DeleteOutlined />}>
@@ -161,10 +176,24 @@ export default function ViewGame() {
 							</Button>
 						</a>
 					</Popconfirm>
-				</>
-			) : (
-				<></>
-			)}
-		</div>
+				</div>
+			</Panel>
+			<Panel style={{ textAlign: 'left' }} header="Signed up users" key="3">
+				<UsersSignedUpTable deleteDisabled={!editable || isCreating} gameSessionKey={key} users={signedUpUsers} />
+
+				{editable ? (
+					<>
+						Add user:&nbsp;
+						<FindUserSearchBox
+							disabled={full || isCreating}
+							gameSessionKey={key}
+							exclude={signedUpUsers.map((player: AutoCompleteUser) => player.key)}
+						/>
+					</>
+				) : (
+					<></>
+				)}
+			</Panel>
+		</Collapse>
 	);
 }

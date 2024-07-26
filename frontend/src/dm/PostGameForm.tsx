@@ -126,9 +126,11 @@ export default function PostGameForm({
 			initialValues={initialvalues}
 			submitButton={!createForm}
 			submitButtonText={submitButtonText}
+			labelCol={{ span: 3 }}
+			wrapperCol={{ span: 21 }}
 		>
 			<Spin spinning={isLoading} fullscreen />
-			<Form.Item<GameListItem> name="key">
+			<Form.Item<GameListItem> style={{ height: 0, margin: 0 }} name="key">
 				<Input type="hidden" />
 			</Form.Item>
 

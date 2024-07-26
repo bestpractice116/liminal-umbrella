@@ -16,6 +16,7 @@ import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { Store } from 'rc-field-form/lib/interface';
 import { SaveOutlined } from '@ant-design/icons';
+import { ColProps } from 'antd';
 
 type InputRef = GetRef<typeof Input>;
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -325,7 +326,10 @@ export function CreateForm({
 	initialValues,
 	formRef,
 	submitButton = true,
-	submitButtonText = 'Submit'
+	submitButtonText = 'Submit',
+	style,
+	labelCol = { span: 5 },
+	wrapperCol = { span: 19 }
 }: {
 	mutation: UseMutationResult<void, Error, any, void>;
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
@@ -334,6 +338,9 @@ export function CreateForm({
 	formRef?: RefObject<FormRef>;
 	submitButton?: boolean;
 	submitButtonText?: string;
+	style?: React.CSSProperties;
+	labelCol?: ColProps;
+	wrapperCol?: ColProps;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
 
@@ -351,10 +358,12 @@ export function CreateForm({
 
 	return (
 		<Form
+			style={style}
 			ref={formRef}
 			form={form}
 			initialValues={initialValues}
-			labelCol={{ span: 5 }}
+			labelCol={labelCol}
+			wrapperCol={wrapperCol}
 			onFinish={(values) => {
 				mutation.mutate(values, {
 					onError: (e) => {
