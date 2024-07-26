@@ -137,12 +137,12 @@ export type QuerySet<T> = {
 	createMutation: UseMutationResult<void, Error, any, void>;
 };
 
-function zodErrorConvertor(data: any, request: any, onSuccess: (data: any, request: any) => void) {
+export function zodErrorConvertor(data: any, onSuccess?: () => void) {
 	if (data.status && data.status !== 'ok' && data.error) {
 		console.error('Error updating data', data);
 		throw new z.ZodError(data.error);
 	}
-	onSuccess(data, request);
+	if (onSuccess) onSuccess();
 }
 
 export function getCreateMutation(apipath: string, querykey: QueryKey, setIsMutating: (isMutating: boolean) => void, onCreate: (data: any) => void) {
@@ -163,7 +163,9 @@ export function getCreateMutation(apipath: string, querykey: QueryKey, setIsMuta
 			)
 				.then((data) => {
 					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
-					return zodErrorConvertor(data, r, onCreate);
+					throw zodErrorConvertor(data, () => {
+						onCreate(data);
+					});
 				})
 				.catch((e) => showBoundary(e));
 		},
@@ -221,7 +223,9 @@ export function getUpdateMutation(
 			)
 				.then((data) => {
 					queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
-					return zodErrorConvertor(data, r, onSuccess);
+					throw zodErrorConvertor(data, () => {
+						onSuccess(data, r);
+					});
 				})
 				.catch((e) => showBoundary(e));
 		},

@@ -2,7 +2,6 @@ import { useState, createRef } from 'react';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type GameListItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
-import { getDeleteMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import { getZObject } from 'common';
 import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
@@ -11,7 +10,7 @@ import Button from 'antd/es/button';
 import Collapse from 'antd/es/collapse';
 import Panel from 'antd/es/collapse/CollapsePanel.js';
 import List from 'antd/es/list';
-import { type DefaultColumns } from '../CRUD.js';
+import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
 import { LinkOutlined } from '@ant-design/icons';
@@ -144,9 +143,13 @@ export default function ViewGame() {
 	let signedUpUsers: AutoCompleteUser[] = [];
 	let full = false;
 	if (result.isSuccess) {
-		const res = getZObject(GameSchema.read).safeParse(result.data);
-		if (res.error) showBoundary(res.error);
-		initialValues = res.data!;
+		let res;
+		try {
+			res = getZObject(GameSchema.read).parse(result.data);
+		} catch (e: any) {
+			showBoundary(zodErrorConvertor(e));
+		}
+		initialValues = res!.data!;
 		initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
 		const now = dayjs(Date.now());
 		editable = initialValues?.starttime && initialValues.starttime > now;
