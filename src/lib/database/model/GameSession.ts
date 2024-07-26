@@ -231,7 +231,9 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	}
 
 	async getGameListing(): Promise<Message | null> {
-		const channel = getGameListingChannel();
+		console.log('About to getGameListingChannel');
+		const channel = await getGameListingChannel();
+		console.log('Got gamelistingChannel, about to fetch message ID ', this.gameListingsMessageId);
 		try {
 			return (await channel?.messages.fetch(this.gameListingsMessageId)) || null;
 		} catch (e: any) {
