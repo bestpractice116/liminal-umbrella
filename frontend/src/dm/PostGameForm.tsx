@@ -114,7 +114,7 @@ export default function PostGameForm({
 	}) => {
 		return (
 			<FormItem style={style} labelCol={labelCol} wrapperCol={wrapperCol} name={name} label={label}>
-				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="middle" onBlur={hasChanged} disabled={disabled} />
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="middle" onChange={hasChanged} disabled={disabled} />
 			</FormItem>
 		);
 	};

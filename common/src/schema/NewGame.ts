@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
-import { dayJsCoerce, zodDay } from '../index.js';
+import { dayJsCoerceOrUndefined, zodDay } from '../index.js';
 import { gameTypeSchema, gameSystemSchema } from './Game.js';
 
 const create = z
@@ -17,8 +17,8 @@ const create = z
 				invalid_type_error: 'Description must be a string'
 			})
 			.trim(),
-		starttime: z.preprocess(dayJsCoerce, zodDay),
-		endtime: z.preprocess(dayJsCoerce, zodDay),
+		starttime: z.optional(z.preprocess(dayJsCoerceOrUndefined, z.union([zodDay, z.undefined()]))),
+		endtime: z.optional(z.preprocess(dayJsCoerceOrUndefined, z.union([zodDay, z.undefined()]))),
 		location: z
 			.string({
 				required_error: 'Location is required',

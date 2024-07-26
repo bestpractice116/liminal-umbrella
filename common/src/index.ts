@@ -24,9 +24,9 @@ export function getZObject(schema: AnyZodSchema): z.ZodObject<any> {
 	return schema;
 }
 
-export function dayJsCoerce(val: unknown) {
+export function dayJsCoerce(val: unknown): dayjs.Dayjs {
 	if (val instanceof dayjs) {
-		return val;
+		return val as dayjs.Dayjs;
 	}
 	if (val instanceof Date) {
 		return dayjs(val);
@@ -34,4 +34,10 @@ export function dayJsCoerce(val: unknown) {
 	return dayjs(val as string);
 }
 
-export const zodDay = z.custom<dayjs.Dayjs>((val) => val instanceof dayjs, 'Invalid date');
+export function dayJsCoerceOrUndefined(val: unknown) {
+	const d = dayJsCoerce(val);
+	if (d.isValid()) return d;
+	return undefined;
+}
+
+export const zodDay: z.ZodTypeAny = z.custom<dayjs.Dayjs>((val) => val instanceof dayjs && (val as dayjs.Dayjs).isValid(), 'Invalid date');
