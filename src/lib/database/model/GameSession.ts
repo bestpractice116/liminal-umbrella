@@ -231,13 +231,10 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	}
 
 	async getGameListing(): Promise<Message | null> {
-		console.log('About to getGameListingChannel');
 		const channel = await getGameListingChannel();
-		console.log('Got gamelistingChannel, about to fetch message ID ', this.gameListingsMessageId);
 		try {
 			return (await channel?.messages.fetch(this.gameListingsMessageId)) || null;
 		} catch (e: any) {
-			console.log(`Got Exception from getGameListing: `, e);
 			if (e.code === 10008) {
 				// 'Unknown Message' - message has already been deleted, skip
 				return null;
@@ -261,8 +258,17 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		await message?.delete();
 	}
 
-	async getEvent(): Promise<GuildScheduledEvent | undefined> {
-		return await container.guild?.scheduledEvents.fetch(this.get('eventId'));
+	async getEvent(): Promise<GuildScheduledEvent | null> {
+		try {
+			return (await container.guild?.scheduledEvents.fetch(this.get('eventId'))) || null;
+		} catch (e: any) {
+			if (e.code === 10070) {
+				// 'Unknown Guild Scheduled Event' - event has already been deleted, skip
+				return null;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	async updateEvent() {
