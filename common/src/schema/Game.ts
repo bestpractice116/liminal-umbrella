@@ -19,6 +19,9 @@ export const gameTypeSchema = z.object({
 	type: z.nativeEnum(GameType)
 });
 
+const find = z.object({
+	key: z.coerce.number().int().positive()
+});
 const update = z
 	.object({
 		name: z
@@ -51,28 +54,28 @@ const update = z
 		maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })
 	})
 	.merge(gameSystemSchema)
-	.merge(gameTypeSchema);
-const find = z.object({
-	key: z.coerce.number().int().positive()
-});
+	.merge(gameTypeSchema)
+	.merge(find);
 const user = z.object({
 	key: z.string(),
 	nickname: z.string(),
 	avatarURL: z.string(),
 	username: z.string()
 });
-const read = find.merge(update).merge(
-	z.object({
-		owner: user,
-		signedupplayers: z.array(user),
-		gameListingsMessageId: z.string(),
-		eventId: z.string(),
-		channelId: z.string(),
-		gameListingsMessageLink: z.string(),
-		eventLink: z.string(),
-		channelLink: z.string()
-	})
-);
+const read = update
+	.merge(
+		z.object({
+			owner: user,
+			signedupplayers: z.array(user),
+			gameListingsMessageId: z.string(),
+			eventId: z.string(),
+			channelId: z.string(),
+			gameListingsMessageLink: z.string(),
+			eventLink: z.string(),
+			channelLink: z.string()
+		})
+	)
+	.omit({ date: true });
 
 export const GameSchema: SchemaBundle = {
 	// This is a strange case, as Game is Created from NewGame, but the update schema is used on
@@ -83,4 +86,5 @@ export const GameSchema: SchemaBundle = {
 	read: read.readonly(),
 	delete: true
 };
-export type GameListItem = z.infer<typeof read>;
+export type GameUpdateItem = z.infer<typeof update>;
+export type GameReadItem = z.infer<typeof read>;

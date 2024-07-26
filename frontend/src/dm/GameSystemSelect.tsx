@@ -2,7 +2,7 @@ import { createSchemaFieldRule } from 'antd-zod';
 import { getZObject } from 'common';
 import Form from 'antd/es/form';
 import Select from 'antd/es/select';
-import { type GameSystemListItem, type GameListItem, gameSystemSchema } from 'common/schema';
+import { type GameSystemListItem, type GameUpdateItem, gameSystemSchema } from 'common/schema';
 import { getListQueries, WrapCRUD } from '../CRUD.js';
 
 const createFormRule = createSchemaFieldRule(getZObject(gameSystemSchema));
@@ -35,7 +35,7 @@ function GameSystemsSelectHTML({
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
 	return (
-		<Form.Item<GameListItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
+		<Form.Item<GameUpdateItem> label="Game System" name="gamesystem" rules={[createFormRule]}>
 			<Select style={{ textAlign: 'left' }} options={gamesystems_items} onBlur={save} onSelect={save} loading={loading} disabled={disabled} />
 		</Form.Item>
 	);

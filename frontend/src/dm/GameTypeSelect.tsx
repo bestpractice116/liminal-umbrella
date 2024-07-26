@@ -1,6 +1,6 @@
 import Form from 'antd/es/form';
 import Select from 'antd/es/select';
-import { type GameListItem, gametypes, gametypesEnabled, gameTypeSchema } from 'common/schema';
+import { type GameUpdateItem, gametypes, gametypesEnabled, gameTypeSchema } from 'common/schema';
 import { createSchemaFieldRule } from 'antd-zod';
 import { getZObject } from 'common';
 
@@ -14,7 +14,7 @@ export default function GameTypeSelect({ save, disabled }: GameTypeSelectInputs)
 	});
 
 	return (
-		<Form.Item<GameListItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
+		<Form.Item<GameUpdateItem> label="Type of Adventure" name="type" rules={[createFormRule]}>
 			<Select style={{ textAlign: 'left' }} options={gametypes_items} onBlur={save} onSelect={save} disabled={disabled} />
 		</Form.Item>
 	);

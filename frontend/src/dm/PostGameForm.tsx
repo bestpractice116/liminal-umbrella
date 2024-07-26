@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import Form from 'antd/es/form';
 import { FormRef, NamePath } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
@@ -8,13 +8,14 @@ import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
-import { type GameListItem, GameSchema, NewGameSchema } from 'common/schema';
+import { type GameUpdateItem, GameSchema, NewGameSchema } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
 import { getZObject } from 'common';
 import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
+import { AnyObject } from 'antd/es/_util/type.js';
 
 const createFormRule = createSchemaFieldRule(getZObject(NewGameSchema.create!));
 const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!));
@@ -25,7 +26,7 @@ export default function PostGameForm({
 	formRef,
 	isLoading,
 	mutation,
-	initialvalues,
+	initialValues,
 	children = <></>,
 	createForm = true,
 	disabled = false,
@@ -36,13 +37,20 @@ export default function PostGameForm({
 	isLoading: boolean;
 	formRef: React.RefObject<FormRef>;
 	mutation: UseMutationResult<void, Error, any, void>;
-	initialvalues: { [key: string]: any };
+	initialValues: { [key: string]: any };
 	children?: React.ReactNode;
 	createForm?: boolean;
 	disabled?: boolean;
 	submitButtonText?: string;
 }) {
-	const [formData, setFormData] = useState(initialvalues);
+	console.log('Just in PostGameForm with: ', initialValues);
+	useEffect(() => {
+		formRef.current?.setFieldsValue(initialValues);
+	}, [initialValues]);
+
+	const getFormData = (): AnyObject => {
+		return formRef.current?.getFieldsValue() || initialValues;
+	};
 	const hasChanged = () => {
 		const values = formRef.current?.getFieldsValue();
 		if (values.date) {
@@ -54,20 +62,20 @@ export default function PostGameForm({
 				values.endtime = values.endtime.clone().year(values.date.year()).month(values.date.month()).date(values.date.date());
 			}
 		}
-		setFormData(values);
 		formRef.current?.setFieldsValue(values);
 		save();
 	};
 
 	const getValidateStatus = (name: string) => {
 		if (createForm) return undefined;
-		if ((name == 'starttime' || name == 'endtime') && formData[name] && initialvalues[name]) {
-			return formData[name].format('HH:mm') != initialvalues[name].format('HH:mm') ? 'error' : undefined;
+		if ((name == 'starttime' || name == 'endtime') && getFormData()[name] && initialValues[name]) {
+			return getFormData()[name].format('HH:mm') != initialValues[name].format('HH:mm') ? 'error' : undefined;
 		}
-		if (name == 'date' && formData[name] && initialvalues[name]) {
-			return formData[name].format('YYYY-MM-DD') != initialvalues[name].format('YYYY-MM-DD') ? 'error' : undefined;
+		if (name == 'date' && getFormData()[name] && initialValues[name]) {
+			return getFormData()[name].format('YYYY-MM-DD') != initialValues[name].format('YYYY-MM-DD') ? 'error' : undefined;
 		}
-		return `${formData[name]}` != `${initialvalues[name]}` ? 'error' : undefined;
+		console.log(`getValidateStatus for ${name} - formData: ${getFormData()[name]}, initialValues: ${initialValues[name]}`);
+		return `${getFormData()[name]}` != `${initialValues[name]}` ? 'error' : undefined;
 	};
 
 	const FormItem = ({
@@ -78,7 +86,7 @@ export default function PostGameForm({
 		labelCol,
 		wrapperCol
 	}: {
-		name: NamePath<GameListItem>;
+		name: NamePath<GameUpdateItem>;
 		label: string;
 		children: React.ReactNode;
 		style?: React.CSSProperties;
@@ -86,7 +94,7 @@ export default function PostGameForm({
 		wrapperCol?: ColProps;
 	}) => {
 		return (
-			<Form.Item<GameListItem>
+			<Form.Item<GameUpdateItem>
 				wrapperCol={wrapperCol}
 				labelCol={labelCol}
 				style={style}
@@ -107,7 +115,7 @@ export default function PostGameForm({
 		wrapperCol,
 		style
 	}: {
-		name: NamePath<GameListItem>;
+		name: NamePath<GameUpdateItem>;
 		label: string;
 		labelCol?: ColProps;
 		wrapperCol?: ColProps;
@@ -119,63 +127,71 @@ export default function PostGameForm({
 			</FormItem>
 		);
 	};
+	console.log('About to include CreateForm: ', initialValues);
 	return (
-		<CreateForm
-			formRef={formRef}
-			mutation={mutation}
-			setIsMutating={setIsCreating}
-			initialValues={initialvalues}
-			submitButton={!createForm}
-			submitButtonText={submitButtonText}
-			labelCol={{ span: 3 }}
-			wrapperCol={{ span: 21 }}
-		>
+		<div>
+			{' '}
 			<Spin spinning={isLoading} fullscreen />
-			<Form.Item<GameListItem> style={{ height: 0, margin: 0 }} name="key">
-				<Input type="hidden" />
-			</Form.Item>
+			{initialValues ? (
+				<CreateForm
+					formRef={formRef}
+					mutation={mutation}
+					setIsMutating={setIsCreating}
+					initialValues={initialValues}
+					submitButton={!createForm}
+					submitButtonText={submitButtonText}
+					labelCol={{ span: 3 }}
+					wrapperCol={{ span: 21 }}
+				>
+					<Form.Item<GameUpdateItem> style={{ height: 0, margin: 0 }} name="key">
+						<Input type="hidden" />
+					</Form.Item>
 
-			<FormItem label="Name" name="name">
-				<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
-			</FormItem>
+					<FormItem label="Name" name="name">
+						<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
+					</FormItem>
 
-			<GameTypeSelect save={hasChanged} disabled={disabled || !createForm} />
+					<GameTypeSelect save={hasChanged} disabled={disabled || !createForm} />
 
-			<GameSystemSelect save={hasChanged} disabled={disabled || !createForm} />
+					<GameSystemSelect save={hasChanged} disabled={disabled || !createForm} />
 
-			<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
-				<DatePicker
-					style={{ width: '250px', paddingRight: '20px' }}
-					minDate={dayjs().add(1, 'day')}
-					format={'dddd D MMM (YYYY-MM-DD)'}
-					onChange={(val) => {
-						if (val) {
-							hasChanged();
-						}
-					}}
-					disabled={disabled}
-				/>
-			</FormItem>
-			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="starttime" label="Start Time" />
-			<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="endtime" label="End Time" />
-			<FormItem label="Location" name="location">
-				<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
-			</FormItem>
+					<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
+						<DatePicker
+							style={{ width: '250px', paddingRight: '20px' }}
+							minDate={dayjs().add(1, 'day')}
+							format={'dddd D MMM (YYYY-MM-DD)'}
+							onChange={(val) => {
+								if (val) {
+									hasChanged();
+								}
+							}}
+							disabled={disabled}
+						/>
+					</FormItem>
+					<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="starttime" label="Start Time" />
+					<TimeControl wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }} name="endtime" label="End Time" />
+					<FormItem label="Location" name="location">
+						<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
+					</FormItem>
 
-			<FormItem label="Description" name="description">
-				<Input.TextArea rows={6} size={'large'} onBlur={hasChanged} disabled={disabled} />
-			</FormItem>
+					<FormItem label="Description" name="description">
+						<Input.TextArea rows={6} size={'large'} onBlur={hasChanged} disabled={disabled} />
+					</FormItem>
 
-			<FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} label="Max Players" name="maxplayers">
-				<Select
-					options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
-						return { value: idx, label: <span>{idx}</span> };
-					})}
-					onBlur={hasChanged}
-					disabled={disabled}
-				/>
-			</FormItem>
-			{children}
-		</CreateForm>
+					<FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} label="Max Players" name="maxplayers">
+						<Select
+							options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
+								return { value: idx, label: <span>{idx}</span> };
+							})}
+							onBlur={hasChanged}
+							disabled={disabled}
+						/>
+					</FormItem>
+					{children}
+				</CreateForm>
+			) : (
+				<></>
+			)}
+		</div>
 	);
 }

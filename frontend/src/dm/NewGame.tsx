@@ -33,7 +33,7 @@ export default function PostGame() {
 		});
 	});
 
-	let initialvalues: any = {
+	let initialValues: any = {
 		date: dayjs('12:00', 'HH:mm').add(14, 'days'),
 		starttime: dayjs('18:00', 'HH:mm'),
 		endtime: dayjs('22:00', 'HH:mm'),
@@ -47,10 +47,10 @@ export default function PostGame() {
 		if (!res.success) {
 			console.error('error parsing NewGameSchea.read', res.error);
 		} else {
-			initialvalues = res.data;
-			initialvalues.date = initialvalues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
+			initialValues = res.data;
+			initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
 			hasGame = true;
-			isPostable = getZObject(GameSchema.create!).safeParse(initialvalues).success;
+			isPostable = getZObject(GameSchema.create!).safeParse(initialValues).success;
 		}
 	}
 	if (!result.isFetched) {
@@ -124,7 +124,7 @@ export default function PostGame() {
 			setIsCreating={setIsCreating}
 			formRef={formRef}
 			mutation={mutation}
-			initialvalues={initialvalues}
+			initialValues={initialValues}
 		>
 			<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={postgame}>
 				Post Game

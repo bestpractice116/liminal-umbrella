@@ -1,7 +1,7 @@
 import { useState, createRef } from 'react';
 import { FormRef } from 'rc-field-form/es/interface.js';
 import { useParams, useNavigate } from 'react-router-dom';
-import { type GameListItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
+import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getZObject } from 'common';
 import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
@@ -84,7 +84,7 @@ function UsersSignedUpTable({
 	return <Table dataSource={users} columns={columns} />;
 }
 
-function GameLinks({ data }: { data: GameListItem }) {
+function GameLinks({ data }: { data: GameReadItem }) {
 	const listData = [
 		{ text: 'Game Listing', href: data.gameListingsMessageLink },
 		{ text: 'Event', href: data.eventLink },
@@ -118,7 +118,7 @@ export default function ViewGame() {
 	}
 	const key = data.key as number;
 	const queryKey = ['gamesessions', key];
-	const result = getFetchQuery<GameListItem>(`/api/gamesessions/${key}`, queryKey);
+	const result = getFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};
 	const formRef = createRef<FormRef>();
@@ -138,19 +138,19 @@ export default function ViewGame() {
 	if (!result.data) {
 		return <div>loading</div>;
 	}
-	let initialValues: AnyObject = {};
+	let initialValues: AnyObject | undefined;
 	let editable = false;
 	let signedUpUsers: AutoCompleteUser[] = [];
 	let full = false;
 	if (result.isSuccess) {
-		let res;
 		try {
-			res = getZObject(GameSchema.read).parse(result.data);
+			initialValues = getZObject(GameSchema.read).parse(result.data) as GameReadItem;
+			console.log('Res ', initialValues);
 		} catch (e: any) {
+			console.log('error ', e);
 			showBoundary(zodErrorConvertor(e));
 		}
-		initialValues = res!.data!;
-		initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
+		if (initialValues) initialValues.date = initialValues.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
 		const now = dayjs(Date.now());
 		editable = initialValues?.starttime && initialValues.starttime > now;
 		signedUpUsers = initialValues?.signedupplayers;
@@ -159,12 +159,12 @@ export default function ViewGame() {
 	return (
 		<Collapse bordered={false} defaultActiveKey={['1']}>
 			<Panel style={{ textAlign: 'left' }} header="Links" key="1">
-				<GameLinks data={initialValues as GameListItem} />
+				<GameLinks data={initialValues as GameReadItem} />
 			</Panel>
 			<Panel style={{ textAlign: 'left' }} header="Edit game" key="2">
 				<PostGameForm
 					mutation={updateMutation}
-					initialvalues={initialValues}
+					initialValues={initialValues || {}}
 					isLoading={isCreating || result.isFetching}
 					formRef={formRef}
 					save={save}

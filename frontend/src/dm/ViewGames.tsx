@@ -4,7 +4,7 @@ import Button from 'antd/es/button';
 import Tooltip from 'antd/es/tooltip';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { GameSchema, type GameListItem } from 'common/schema';
+import { GameSchema, type GameReadItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { isAdmin } from '../Auth.js';
 import UserRecord from './UserRecord.js';
@@ -21,7 +21,7 @@ function toolTipValue(value: any, _record: any) {
 
 export default function ViewGames() {
 	const admin = isAdmin();
-	const { result, isMutating, handleSave } = getListQueries<GameListItem>('/api/gamesessions', 'gamesessions');
+	const { result, isMutating, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -96,7 +96,7 @@ export default function ViewGames() {
 		};
 	}
 
-	const columns = getColumns<GameListItem>(defaultColumns, handleSave);
+	const columns = getColumns<GameReadItem>(defaultColumns, handleSave);
 	return (
 		<>
 			<div style={{ margin: '1em', padding: 0 }}>
@@ -104,7 +104,7 @@ export default function ViewGames() {
 					<Button type="primary">Create new game</Button>
 				</Link>
 			</div>
-			<WrapCRUD<GameListItem> result={result}>
+			<WrapCRUD<GameReadItem> result={result}>
 				<>
 					<Spin spinning={isMutating} fullscreen />
 					<Table
