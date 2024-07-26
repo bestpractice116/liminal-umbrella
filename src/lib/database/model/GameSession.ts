@@ -235,6 +235,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		try {
 			return (await channel?.messages.fetch(this.gameListingsMessageId)) || null;
 		} catch (e: any) {
+			console.log(`Got Exception from getGameListing: `, e);
 			if (e.code === 10008) {
 				// 'Unknown Message' - message has already been deleted, skip
 				return null;
