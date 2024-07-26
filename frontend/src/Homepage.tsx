@@ -6,7 +6,6 @@ import Space from 'antd/es/space';
 import { useContext } from 'react';
 import { AuthData, isAuthenticated, isDM } from './Auth';
 import { DebugContext } from './Debug';
-import './App.css';
 
 function HomePage() {
 	const { debug } = useContext(DebugContext);
