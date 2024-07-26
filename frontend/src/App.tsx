@@ -1,4 +1,3 @@
-import './App.css';
 import { useContext } from 'react';
 import Layout, { Header, Footer, Content } from 'antd/es/layout/layout';
 import Menu from 'antd/es/menu/menu';
@@ -38,6 +37,7 @@ import ViewGames from './dm/ViewGames';
 import ViewGame from './dm/ViewGame';
 import NotFound from './NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
+import { AnyObject } from 'antd/es/_util/type.js';
 
 function TopMenu() {
 	const { debug, setDebug } = useContext(DebugContext);
@@ -202,20 +202,28 @@ function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 }
 
 function Page() {
-	var isMobile = false;
+	var isMobile = true;
 
 	if ('maxTouchPoints' in navigator) {
 		isMobile = navigator.maxTouchPoints > 0;
 	}
+	const style: AnyObject = {
+		minHeight: 280,
+		paddingLeft: 0,
+		margin: isMobile ? 0 : '2em'
+	};
+	if (isMobile) {
+		style['width'] = '100%';
+	}
 	return (
 		<MaybeDebug>
-			<Layout>
+			<Layout style={style}>
 				<TopMenu />
 				<Content>
 					<div
 						style={{
 							minHeight: 280,
-							padding: isMobile ? 0 : '1em'
+							padding: isMobile ? 0 : '2em'
 						}}
 					>
 						<ErrorBoundary FallbackComponent={ErrorFallback}>
