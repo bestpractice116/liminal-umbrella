@@ -43,9 +43,10 @@ export default function AdminBotPlaying() {
 				<Spin spinning={isMutating} fullscreen />
 				<div>
 					This page is for editing the games which the bot can be listed as '<code>Playing ...</code>' in the user list at the side of
-					Discord. The bot will randomly pick a new activity from this list roughly every 4 hours (although this will vary!). The list here
-					is not used anywhere else in the bot, and so it's safe to add or remove items as you see fit and you can add items which are not
-					TTRPGs (e.g. <code>with kittens</code>)
+					Discord. The bot will randomly pick a new activity from this list roughly every 4 hours (although this will vary!).
+					<br />
+					The list here is not used anywhere else in the bot, and so it's safe to add or remove items as you see fit and you can add items
+					which are not TTRPGs (e.g. <code>with kittens</code>)
 				</div>
 				<Divider />
 				<AddRow createMutation={createMutation}>

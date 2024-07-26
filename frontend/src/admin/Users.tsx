@@ -53,9 +53,6 @@ export default function AdminUsers() {
 		<WrapCRUD<UserListItem> result={result}>
 			<>
 				<Spin spinning={isMutating} fullscreen />
-				<div>This page is for Users</div>
-				<Divider />
-
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}

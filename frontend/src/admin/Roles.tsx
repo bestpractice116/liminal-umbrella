@@ -28,9 +28,6 @@ export default function AdminRoles() {
 		<WrapCRUD<RoleListItem> result={result}>
 			<>
 				<Spin spinning={isMutating} fullscreen />
-				<div>This page is for Roles</div>
-				<Divider />
-
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}
