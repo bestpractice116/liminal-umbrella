@@ -1,6 +1,5 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
-import Divider from 'antd/es/divider';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { RoleSchema, type RoleListItem } from 'common/schema';
 
