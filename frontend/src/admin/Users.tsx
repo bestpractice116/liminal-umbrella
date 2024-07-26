@@ -14,34 +14,43 @@ export default function AdminUsers() {
 			title: 'Avatar',
 			dataIndex: 'avatarURL',
 			editable: false,
+			ellipsis: true,
 			render: (avatarURL: string) => <img src={avatarURL} style={{ margin: 0, padding: 0, width: 50 }} alt="avatar" />
 		},
 		{
 			title: 'Name',
 			dataIndex: 'name',
-			editable: false
+			editable: false,
+			ellipsis: true
 		},
 		{
 			title: 'Username',
 			dataIndex: 'username',
-			editable: false
+			editable: false,
+			ellipsis: true
 		},
 		{
 			title: 'Nickname',
 			dataIndex: 'nickname',
-			editable: false
+			editable: false,
+			ellipsis: true
 		},
 		{
 			title: 'Roles',
 			dataIndex: 'roles',
 			editable: false,
+			ellipsis: true,
 			render: (roles: string[]) =>
 				roles
 					.filter((role) => role !== '@everyone' && role !== 'AllUsers')
 					.map((role) => (
-						<Tag color={'geekblue'} key={role}>
-							{role}
-						</Tag>
+						<>
+							{' '}
+							<Tag color={'geekblue'} key={role}>
+								{role}
+							</Tag>
+							<br />
+						</>
 					))
 		}
 	];

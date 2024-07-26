@@ -58,7 +58,8 @@ function UsersSignedUpTable({
 			key: 'nickname',
 			render: (_, record) => {
 				return <UserRecord user={record as AutoCompleteUser} />;
-			}
+			},
+			ellipsis: true
 		}
 	];
 	if (!deleteDisabled) {
@@ -66,6 +67,7 @@ function UsersSignedUpTable({
 			title: 'Delete',
 			dataIndex: 'delete',
 			key: 'delete',
+			ellipsis: true,
 			render: (_, record) => {
 				return (
 					<Popconfirm

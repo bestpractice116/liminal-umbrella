@@ -77,7 +77,7 @@ function SearchBox({ disabled, gameSessionKey, exclude = [] }: { disabled: boole
 			<AutoComplete
 				value={value}
 				options={opt}
-				style={{ width: 300 }}
+				style={{ width: '80%' }}
 				onSelect={onSelect}
 				onSearch={setValue}
 				onChange={onChange}

@@ -20,21 +20,25 @@ export default function AdminGameSystems() {
 		{
 			title: 'Name',
 			dataIndex: 'name',
-			editable: true
+			editable: true,
+			ellipsis: true
 		},
 		{
 			title: 'Description',
 			dataIndex: 'description',
-			editable: true
+			editable: true,
+			ellipsis: true
 		},
 		{
 			title: 'Tag',
 			dataIndex: 'tag',
-			editable: true
+			editable: true,
+			ellipsis: true
 		},
 		{
 			title: 'operation',
 			dataIndex: 'operation',
+			ellipsis: true,
 			render: (_, record) =>
 				result.data!.length >= 1 ? (
 					<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>

@@ -20,11 +20,13 @@ export default function AdminBotPlaying() {
 		{
 			title: 'Name',
 			dataIndex: 'name',
-			editable: true
+			editable: true,
+			ellipsis: true
 		},
 		{
 			title: 'operation',
 			dataIndex: 'operation',
+			ellipsis: true,
 			render: (_, record) =>
 				result.data!.length >= 1 ? (
 					<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
