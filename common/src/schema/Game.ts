@@ -75,6 +75,9 @@ const read = find.merge(update).merge(
 );
 
 export const GameSchema: SchemaBundle = {
+	// This is a strange case, as Game is Created from NewGame, but the update schema is used on
+	// the frontend to check if it's okay to try posting to the backend.
+	create: update.merge(find).readonly(),
 	update: update.readonly(),
 	find: find.readonly(),
 	read: read.readonly(),
