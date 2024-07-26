@@ -86,6 +86,7 @@ export default function ViewGames() {
 			title: 'Owner',
 			dataIndex: 'owner',
 			editable: false,
+			ellipsis: true,
 			render: (_, record) => <UserRecord user={record.owner} />
 		});
 	}
