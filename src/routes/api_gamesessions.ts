@@ -31,6 +31,7 @@ export class ApiGameSessionsList extends CR {
 		return [['starttime', 'DESC']];
 	}
 
+	// Cannot be created by this method
 	override async auth_CREATE(_request: ApiRequest, response: ApiResponse) {
 		response.notFound();
 	}

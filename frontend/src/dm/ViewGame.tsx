@@ -17,6 +17,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import NotFound from '../NotFound.js';
+import { useErrorBoundary } from '../ErrorFallback';
+import { AnyObject } from 'antd/es/_util/type.js';
 
 const Title = Typeography.Title;
 
@@ -86,6 +88,7 @@ function UsersSignedUpTable({
 }
 
 export default function ViewGame() {
+	const { showBoundary } = useErrorBoundary();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const findSchema = GameSchema.find!;
@@ -115,14 +118,20 @@ export default function ViewGame() {
 	if (!result.data) {
 		return <div>loading</div>;
 	}
-	// FIXME - clean this up
-	const res = getZObject(GameSchema.read).safeParse(result.data);
-	const initialValues = res.data!;
-	initialValues.date = initialValues.starttime.clone().hour(12).minute(0).second(0).millisecond(0);
-	const now = dayjs(Date.now());
-	const editable = initialValues.starttime > now;
-	const signedUpUsers: AutoCompleteUser[] = initialValues.signedupplayers;
-	const full = initialValues.maxplayers <= signedUpUsers.length;
+	let initialValues: AnyObject = {};
+	let editable = false;
+	let signedUpUsers: AutoCompleteUser[] = [];
+	let full = false;
+	if (result.isSuccess) {
+		const res = getZObject(GameSchema.read).safeParse(result.data);
+		if (res.error) showBoundary(res.error);
+		initialValues = res.data!;
+		initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
+		const now = dayjs(Date.now());
+		editable = initialValues?.starttime && initialValues.starttime > now;
+		signedUpUsers = initialValues?.signedupplayers;
+		full = initialValues?.maxplayers <= signedUpUsers?.length;
+	}
 	return (
 		<div>
 			<PostGameForm
@@ -143,7 +152,7 @@ export default function ViewGame() {
 					<FindUserSearchBox
 						disabled={full || isCreating}
 						gameSessionKey={key}
-						exclude={res.data!.signedupplayers.map((player: AutoCompleteUser) => player.key)}
+						exclude={signedUpUsers.map((player: AutoCompleteUser) => player.key)}
 					/>
 					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => deleteMutation.mutate({ key })}>
 						<a>

@@ -19,7 +19,7 @@ export const gameTypeSchema = z.object({
 	type: z.nativeEnum(GameType)
 });
 
-const create = z
+const update = z
 	.object({
 		name: z
 			.string({
@@ -61,16 +61,21 @@ const user = z.object({
 	avatarURL: z.string(),
 	username: z.string()
 });
-const read = find.merge(create).merge(
+const read = find.merge(update).merge(
 	z.object({
 		owner: user,
-		signedupplayers: z.array(user)
+		signedupplayers: z.array(user),
+		gameListingsMessageId: z.string(),
+		eventId: z.string(),
+		channelId: z.string(),
+		gameListingsMessageLink: z.string(),
+		eventLink: z.string(),
+		channelLink: z.string()
 	})
 );
 
 export const GameSchema: SchemaBundle = {
-	create: create.readonly(),
-	update: create.readonly(),
+	update: update.readonly(),
 	find: find.readonly(),
 	read: read.readonly(),
 	delete: true

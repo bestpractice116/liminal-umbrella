@@ -129,6 +129,21 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	declare hasSignedupUsers: BelongsToManyHasAssociationsMixin<User, User['key']>;
 	declare countSignedupUsers: BelongsToManyCountAssociationsMixin<User>;
 
+	async gameListingsMessageLink(): Promise<string | null> {
+		const channel = await getGameListingChannel();
+		if (!channel) return null;
+		return `https://discord.com/channels/${container.guildId}/${channel.id}/${this.gameListingsMessageId}`;
+	}
+
+	@Attribute(DataTypes.VIRTUAL(DataTypes.STRING, ['eventId']))
+	get eventLink(): CreationOptional<string> {
+		return `https://discord.com/events/${container.guildId}/${this.eventId}`;
+	}
+	@Attribute(DataTypes.VIRTUAL(DataTypes.STRING, ['channelId']))
+	get channelLink(): CreationOptional<string> {
+		return `https://discord.com/channels/${container.guildId}/${this.channelId}`;
+	}
+
 	async CRUDRead(name: string) {
 		if (name == 'gamesystem') {
 			if (this.gamesystem) {
@@ -144,6 +159,8 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 			const user = await this.getOwnerOb();
 			return { key: user!.key, nickname: user!.nickname, avatarURL: user!.avatarURL, username: user!.username };
 		}
+		if (name == 'gameListingsMessageLink') return await this.gameListingsMessageLink();
+
 		return this.get(name);
 	}
 

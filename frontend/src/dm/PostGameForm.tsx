@@ -8,7 +8,7 @@ import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
-import { type GameListItem, GameSchema } from 'common/schema';
+import { type GameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
@@ -16,7 +16,8 @@ import { getZObject } from 'common';
 import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
 
-const createFormRule = createSchemaFieldRule(getZObject(GameSchema.create!));
+const createFormRule = createSchemaFieldRule(getZObject(NewGameSchema.create!));
+const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!));
 
 export default function PostGameForm({
 	save,
@@ -54,7 +55,7 @@ export default function PostGameForm({
 			}
 		}
 		setFormData(values);
-		save()
+		save();
 	};
 
 	const getValidateStatus = (name: string) => {
@@ -90,7 +91,7 @@ export default function PostGameForm({
 				style={style}
 				name={name}
 				label={label}
-				rules={[createFormRule]}
+				rules={[createForm ? createFormRule : updateFormRule]}
 				validateStatus={getValidateStatus(`${name}`)}
 			>
 				{children}
@@ -113,18 +114,10 @@ export default function PostGameForm({
 	}) => {
 		return (
 			<FormItem style={style} labelCol={labelCol} wrapperCol={wrapperCol} name={name} label={label}>
-				<TimePicker
-					showNow={false}
-					minuteStep={15}
-					format={'HH:mm'}
-					size="middle"
-					onBlur={hasChanged}
-					disabled={disabled}
-				/>
+				<TimePicker showNow={false} minuteStep={15} format={'HH:mm'} size="middle" onBlur={hasChanged} disabled={disabled} />
 			</FormItem>
 		);
 	};
-
 	return (
 		<CreateForm
 			formRef={formRef}
