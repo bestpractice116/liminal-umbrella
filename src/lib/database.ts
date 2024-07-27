@@ -32,6 +32,7 @@ import {
 } from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
+import { sleep } from './utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -39,10 +40,6 @@ function assertIsDefined<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {
 		throw new Error(`${value} is not defined`);
 	}
-}
-
-async function sleep(time: number) {
-	return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 export default class Database {

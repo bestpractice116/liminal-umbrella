@@ -206,8 +206,12 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
+	getGameThread() {
+		return getOneShotThread(this.channelId);
+	}
+
 	async updateGameThread() {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		if (!thread) return;
 		const starttime = dayjs(this.starttime);
 		const endtime = dayjs(this.endtime);
@@ -223,17 +227,17 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	}
 
 	async deleteGameThread() {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.delete();
 	}
 
 	async addMemberToGameThread(id: string) {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.members.add(id);
 	}
 
 	async removeMemberFromGameThread(id: string) {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.members.remove(id);
 	}
 
