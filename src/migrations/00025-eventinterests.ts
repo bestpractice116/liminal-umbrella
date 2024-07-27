@@ -48,7 +48,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			{ transaction }
 		);
 		await qi.addIndex(
-			'event_interests',
+			'eventinterests',
 			{
 				name: 'event_interests_guild_scheduled_event_id',
 				fields: ['guildScheduledEventId']
@@ -56,7 +56,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			{ transaction }
 		);
 		await qi.addIndex(
-			'event_interests',
+			'eventinterests',
 			{
 				name: 'event_interests_user_id',
 				fields: ['userId']
