@@ -8,7 +8,9 @@ import {
 	MessageDeleted,
 	MessageUpdated,
 	ActivityCacheClear,
-	BotMessageCacheClear
+	BotMessageCacheClear,
+	UserInterestedInGame,
+	UserDisinterestedInGame
 } from './events/index.js';
 
 export type emitterSpec = {
@@ -22,4 +24,6 @@ export type emitterSpec = {
 	messageUpdated: MessageUpdated;
 	activityCacheClear: ActivityCacheClear;
 	botMessageCacheClear: BotMessageCacheClear;
+	userInterestedInGame: UserInterestedInGame;
+	userDisinterestedInGame: UserDisinterestedInGame;
 };

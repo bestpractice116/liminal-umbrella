@@ -14,12 +14,22 @@ import type {
 	NonThreadGuildBasedChannel,
 	MessageCollector,
 	ThreadChannel,
-	PublicThreadChannel
+	PublicThreadChannel,
+	User as GuildUser,
+	GuildScheduledEvent
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
-import { User, Role, Channel, Message, Watermark } from './database/model.js';
+import { User, Role, Channel, Message, Watermark, GameSession, GameSessionUserSignup } from './database/model.js';
 import { TypedEvent } from '../lib/typedEvents.js';
-import { UserJoined, UserLeft, UserChangedNickname, MessageUpdated, MessageAdded } from './events/index.js';
+import {
+	UserJoined,
+	UserLeft,
+	UserChangedNickname,
+	MessageUpdated,
+	MessageAdded,
+	UserInterestedInGame,
+	UserDisinterestedInGame
+} from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
 
@@ -520,5 +530,45 @@ export default class Database {
 		//container.logger.info`Sync in channel ${channel_name}`);
 		const discordChannel = await this.getdiscordChannel(guild, channel_name);
 		return this.syncChannel(discordChannel);
+	}
+
+	async addUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
+		console.log(`Add User to event ${guildScheduledEvent.id} user ${user.id}`);
+		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
+		if (!gameSession) return;
+		const gameSessionUserSignup = await GameSessionUserSignup.create({
+			userKey: user.id,
+			gameSessionKey: gameSession.key
+		});
+		this.events.emit(
+			'userInterestedInGame',
+			new UserInterestedInGame(guildScheduledEvent.id, guildScheduledEvent, gameSession.key, gameSession, user.id, user, gameSessionUserSignup)
+		);
+	}
+
+	async removeUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
+		console.log(`Remove user from event ${guildScheduledEvent.id} user ${user.id}`);
+		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
+		if (!gameSession) return;
+		const gameSessionUserSignup = await GameSessionUserSignup.findOne({
+			where: {
+				userKey: user.id,
+				gameSessionKey: gameSession.key
+			}
+		});
+		if (!gameSessionUserSignup) return;
+		await gameSessionUserSignup.destroy();
+		this.events.emit(
+			'userDisinterestedInGame',
+			new UserDisinterestedInGame(
+				guildScheduledEvent.id,
+				guildScheduledEvent,
+				gameSession.key,
+				gameSession,
+				user.id,
+				user,
+				gameSessionUserSignup
+			)
+		);
 	}
 }

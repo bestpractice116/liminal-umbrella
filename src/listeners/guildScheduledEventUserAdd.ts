@@ -4,7 +4,7 @@ import { Sequential } from '../lib/utils.js';
 
 export class GuildScheduledEventUserAddEvent extends Listener {
 	@Sequential
-	public override run(_guildScheduledEvent: GuildScheduledEvent, _user: User) {
-		console.log(`Add User to event ${_guildScheduledEvent.id} user ${_user.id}`);
+	public override async run(guildScheduledEvent: GuildScheduledEvent, user: User) {
+		await this.container.database.addUserInterestedInGame(user, guildScheduledEvent);
 	}
 }
