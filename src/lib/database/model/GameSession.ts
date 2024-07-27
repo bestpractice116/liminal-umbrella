@@ -59,6 +59,11 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@NotNull
 	declare gameListingsMessageId: string;
 
+	@Attribute(DataTypes.BOOLEAN)
+	@NotNull
+	@Default(false)
+	declare gameListingsMessageCleanedup: CreationOptional<boolean>;
+
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
@@ -79,6 +84,11 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Unique
 	@NotNull
 	declare channelId: string;
+
+	@Attribute(DataTypes.BOOLEAN)
+	@NotNull
+	@Default(false)
+	declare channelCleanedup: CreationOptional<boolean>;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
