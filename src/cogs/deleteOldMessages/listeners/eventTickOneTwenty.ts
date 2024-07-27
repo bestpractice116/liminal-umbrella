@@ -5,22 +5,24 @@ import { Sequential } from '../../../lib/utils.js';
 import { Message } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
 import { ChannelType, GuildTextBasedChannel } from 'discord.js';
-import { shortSleep, sleepUpToFiveMinutes } from '../../../lib/utils.js';
+import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
 
-export class deleteOldMessagesTickFiveListener extends Listener {
+const MESSAGE_AGE_BEFORE_DELETES = 30 * 24 * 60 * 60 * 1000; // 30 days ago
+
+export class deleteOldMessagesTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
 		super(context, {
 			...options,
-			name: 'deleteOldMessagesTickFive',
+			name: 'deleteOldMessagesTickOneTwenty',
 			emitter: container.events,
-			event: 'tickFive'
+			event: 'tickOneTwenty'
 		});
 	}
 
 	@Sequential
 	async findMessagesToDelete(discordChannel: GuildTextBasedChannel) {
 		// Find all non-pinned messages > 30 days old from the channel.
-		const since = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30 days ago
+		const since = Date.now() - MESSAGE_AGE_BEFORE_DELETES;
 		return Message.findAll({
 			where: {
 				channelId: discordChannel.id,
@@ -58,7 +60,7 @@ export class deleteOldMessagesTickFiveListener extends Listener {
 			return;
 		}
 
-		await sleepUpToFiveMinutes();
+		await sleepUpToTwoHours();
 
 		const discordChannel = await this.container.database.getdiscordChannel(this.container.guild!, channel_name!);
 		if (discordChannel!.type !== ChannelType.GuildText) {

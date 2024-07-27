@@ -5,13 +5,10 @@ import { TickFive } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { GameSession } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
-import { sleep } from '../../../lib/utils.js';
+import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
 
-const SLEEP_STEP = 100; // 0.1s
-//const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
-//const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
-const CLEANUP_GAME_LISTINGS_AFTER_TIME = 60 * 1000; // 1 min ago
-const CLEANUP_GAME_CHANNELS_AFTER_TIME = 60 * 1000; // 1 min ago
+const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
+const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
 
 export class gameSessionCleanupTickFiveListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -24,6 +21,7 @@ export class gameSessionCleanupTickFiveListener extends Listener {
 	}
 
 	async run(_e: TickFive) {
+		await sleepUpToTwoHours();
 		this.container.logger.info('Doing gameSessionCleanup now');
 		await this.cleanupGameListings();
 		await this.cleanupGameChannels();
@@ -45,13 +43,13 @@ export class gameSessionCleanupTickFiveListener extends Listener {
 
 	async cleanupGameListings() {
 		const gameListingsToDelete = await this.getGameListingsToDelete();
-		await sleep(SLEEP_STEP);
+		await shortSleep();
 
 		// Delete them from Discord and the bot's database.
 		this.container.logger.info(`Found ${gameListingsToDelete.length} game_listings posts to consider deleting`);
 		for (const gameSession of gameListingsToDelete) {
 			await this.cleanupGameListing(gameSession);
-			await sleep(SLEEP_STEP);
+			await shortSleep();
 		}
 	}
 
@@ -89,7 +87,7 @@ export class gameSessionCleanupTickFiveListener extends Listener {
 		this.container.logger.info(`Found ${gameChannelsToLock.length} game threads to consider locking`);
 		for (const gameSession of gameChannelsToLock) {
 			await this.cleanupGameChannel(gameSession);
-			await sleep(SLEEP_STEP);
+			await shortSleep();
 		}
 	}
 
