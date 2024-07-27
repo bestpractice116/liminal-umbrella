@@ -14,7 +14,8 @@ import {
 	BelongsToManyRemoveAssociationsMixin,
 	BelongsToManyCountAssociationsMixin,
 	BelongsToManyHasAssociationMixin,
-	BelongsToManyHasAssociationsMixin
+	BelongsToManyHasAssociationsMixin,
+	HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import {
 	Index,
@@ -26,10 +27,12 @@ import {
 	BelongsTo,
 	Default,
 	DeletedAt,
-	BelongsToMany
+	BelongsToMany,
+	HasMany
 } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import User from './User.js';
+import EventInterest from './EventInterest.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotThread } from '../../discord.js';
 import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
@@ -61,6 +64,15 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@Unique
 	@NotNull
 	declare eventId: string;
+
+	@HasMany(() => EventInterest, {
+		foreignKey: 'guildScheduledEventId',
+		inverse: {
+			as: 'eventInterests'
+		}
+	})
+	declare eventInterests: NonAttribute<EventInterest>;
+	declare getEventInterests: HasManyGetAssociationsMixin<EventInterest>;
 
 	@Attribute(DataTypes.STRING)
 	@Index
