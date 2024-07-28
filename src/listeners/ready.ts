@@ -4,6 +4,7 @@ import type { Client } from 'discord.js';
 import type { StoreRegistryValue } from '@sapphire/pieces';
 import { blue, gray, green, magenta, magentaBright, white, yellow } from 'colorette';
 import { Sequential } from '../lib/utils.js';
+import { getGameListingChannel } from '../lib/discord.js';
 import { BotStarted } from '../lib/events/index.js';
 import { Methods } from '@sapphire/plugin-api';
 const dev = process.env.NODE_ENV !== 'production';
@@ -19,7 +20,6 @@ export class ReadyEvent extends Listener {
 
 	private readonly style = dev ? yellow : blue;
 
-	@Sequential
 	public override async run(client: Client) {
 		client.guilds.fetch(this.container.guildId).then(async (guild) => {
 			this.container.guild = guild;
@@ -27,16 +27,25 @@ export class ReadyEvent extends Listener {
 			const db = await this.container.database.getdb();
 			await db.sync()
 		       	*/
-			await this.container.database.doMigrations(guild);
-			await this.container.database.getHighestWatermark();
-			const start = Date.now();
-			await this.container.database.sync(guild);
-			await this.container.database.syncChannelGameListings(guild, 'game_listings');
+			await this.doInitialDbSync();
 			this.container.events.emit('botStarted', new BotStarted(guild));
-			this.container.database.setHighestWatermark(start);
 		});
 		this.printBanner();
 		this.printStoreDebugInformation();
+	}
+
+	@Sequential
+	async doInitialDbSync() {
+		const guild = this.container.guild!;
+		await this.container.database.doMigrations(guild);
+		await this.container.database.getHighestWatermark();
+		const start = Date.now();
+		await this.container.database.sync(guild);
+		const gameListingsChannel = await getGameListingChannel();
+		if (gameListingsChannel) {
+			await this.container.database.syncChannel(gameListingsChannel);
+		}
+		this.container.database.setHighestWatermark(start);
 	}
 
 	private printBanner() {

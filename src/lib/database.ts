@@ -506,37 +506,17 @@ export default class Database {
 		}
 	}
 
-	async syncChannelGameListings(guild: Guild, channel_name: string) {
-		//container.logger.info(`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		await this.syncChannel(discordChannel);
-		//container.logger.info("SYNC CHANNEL DONE");
-		///const messages = await Message.findAll({where: {channelId: discordChannel.id}});
-		///for (const msg of messages) {
-		//ccontainer.logger.info("MSG " + msg.id);
-		///}
-	}
-
-	async syncChannelOneShots(guild: Guild, channel_name: string) {
-		//container.logger.info(`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		return this.syncChannel(discordChannel);
-	}
-
-	async syncChannelNewMembers(guild: Guild, channel_name: string) {
-		//container.logger.info`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		return this.syncChannel(discordChannel);
-	}
-
 	async addUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
-		console.log(`Add User to event ${guildScheduledEvent.id} user ${user.id}`);
 		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
 		if (!gameSession) return;
-		const gameSessionUserSignup = await GameSessionUserSignup.create({
-			userKey: user.id,
-			gameSessionKey: gameSession.key
+		const [gameSessionUserSignup, created] = await GameSessionUserSignup.findOrCreate({
+			where: { userKey: user.id, gameSessionKey: gameSession.key },
+			defaults: {
+				userKey: user.id,
+				gameSessionKey: gameSession.key
+			}
 		});
+		if (!created) return;
 		this.events.emit(
 			'userInterestedInGame',
 			new UserInterestedInGame(guildScheduledEvent.id, guildScheduledEvent, gameSession.key, gameSession, user.id, user, gameSessionUserSignup)
@@ -544,7 +524,6 @@ export default class Database {
 	}
 
 	async removeUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
-		console.log(`Remove user from event ${guildScheduledEvent.id} user ${user.id}`);
 		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
 		if (!gameSession) return;
 		const gameSessionUserSignup = await GameSessionUserSignup.findOne({
