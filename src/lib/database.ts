@@ -15,7 +15,8 @@ import type {
 	MessageCollector,
 	ThreadChannel,
 	PublicThreadChannel,
-	GuildScheduledEvent
+	GuildScheduledEvent,
+	User as GuildUser
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark, EventInterest } from './database/model.js';
@@ -32,6 +33,7 @@ import {
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
 import { sleep } from './utils.js';
+import { CustomEvents } from './events.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -512,7 +514,7 @@ export default class Database {
 		for (const guildScheduledEvent of allEvents.values()) {
 			const subscribers = await guildScheduledEvent.fetchSubscribers();
 			for (const subscriber of subscribers.values()) {
-				await this.addUserInterestedInEvent(subscriber.user.id, guildScheduledEvent);
+				await this.addUserInterestedInEvent(subscriber.user, guildScheduledEvent);
 			}
 			const uninteresteds = await EventInterest.findAll({
 				where: {
@@ -521,32 +523,41 @@ export default class Database {
 				}
 			});
 			for (const uninterested of uninteresteds) {
-				await this.removeUserInterestedInEvent(uninterested.userId, guildScheduledEvent);
+				const member = await container.guild?.members.fetch(uninterested.userId);
+				if (member) {
+					await this.removeUserInterestedInEvent(member.user, guildScheduledEvent);
+				}
 			}
 		}
 	}
 
-	async addUserInterestedInEvent(userId: string, guildScheduledEvent: GuildScheduledEvent) {
+	async addUserInterestedInEvent(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
 		const [eventInterest, created] = await EventInterest.findOrCreate({
-			where: { userId, guildScheduledEventId: guildScheduledEvent.id },
+			where: { userId: user.id, guildScheduledEventId: guildScheduledEvent.id },
 			defaults: {
-				userId,
+				userId: user.id,
 				guildScheduledEventId: guildScheduledEvent.id
 			}
 		});
 		if (!created) return;
-		this.events.emit('userInterestedInGame', new UserInterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, userId, eventInterest));
+		this.events.emit(
+			CustomEvents.UserInterestedInEvent,
+			new UserInterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
+		);
 	}
 
-	async removeUserInterestedInEvent(userId: string, guildScheduledEvent: GuildScheduledEvent) {
+	async removeUserInterestedInEvent(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
 		const eventInterest = await EventInterest.findOne({
 			where: {
-				userId,
+				userId: user.id,
 				guildScheduledEventId: guildScheduledEvent.id
 			}
 		});
 		if (!eventInterest) return;
 		await eventInterest.destroy();
-		this.events.emit('userDisinterestedInGame', new UserDisinterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, userId, eventInterest));
+		this.events.emit(
+			CustomEvents.UserDisinterestedInEvent,
+			new UserDisinterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
+		);
 	}
 }

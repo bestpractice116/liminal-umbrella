@@ -12,6 +12,6 @@ export class GuildScheduledEventUserAddEvent extends Listener {
 
 	@Sequential
 	public override async run(guildScheduledEvent: GuildScheduledEvent, user: User) {
-		await this.container.database.addUserInterestedInEvent(user.id, guildScheduledEvent);
+		await this.container.database.addUserInterestedInEvent(user, guildScheduledEvent);
 	}
 }

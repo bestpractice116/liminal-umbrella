@@ -7,13 +7,13 @@ import {
 	BelongsToGetAssociationMixin,
 	CreationOptional
 } from '@sequelize/core';
-import { Attribute, NotNull, PrimaryKey, Index } from '@sequelize/core/decorators-legacy';
+import { Attribute, AutoIncrement, PrimaryKey, Index } from '@sequelize/core/decorators-legacy';
 import User from './User.js';
 import GameSession from './GameSession.js';
 
 export default class EventInterest extends Model<InferAttributes<EventInterest>, InferCreationAttributes<EventInterest>> {
-	@Attribute(DataTypes.STRING)
-	@NotNull
+	@Attribute(DataTypes.INTEGER)
+	@AutoIncrement
 	@PrimaryKey
 	declare key: CreationOptional<number>;
 
