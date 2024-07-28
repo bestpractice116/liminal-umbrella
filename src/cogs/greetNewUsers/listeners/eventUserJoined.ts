@@ -3,6 +3,7 @@ import { UserJoined } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
 import { getMessage } from '../../../lib/message.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class greetNewUsersUserJoinedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -10,7 +11,7 @@ export class greetNewUsersUserJoinedListener extends Listener {
 			...options,
 			name: 'greetNewUsersUserJoined',
 			emitter: container.events,
-			event: 'userJoined'
+			event: CustomEvents.UserJoined
 		});
 	}
 

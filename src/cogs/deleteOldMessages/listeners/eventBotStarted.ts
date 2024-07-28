@@ -3,6 +3,7 @@ import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
 import { ChannelType } from 'discord.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class deleteOldMessagesBotStartedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -10,7 +11,7 @@ export class deleteOldMessagesBotStartedListener extends Listener {
 			...options,
 			name: 'deleteOldMessagesBotStarted',
 			emitter: container.events,
-			event: 'botStarted'
+			event: CustomEvents.BotStarted
 		});
 	}
 

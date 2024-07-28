@@ -6,6 +6,7 @@ import { Message } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
 import { ChannelType, GuildTextBasedChannel } from 'discord.js';
 import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 const MESSAGE_AGE_BEFORE_DELETES = 30 * 24 * 60 * 60 * 1000; // 30 days ago
 
@@ -15,7 +16,7 @@ export class deleteOldMessagesTickOneTwentyListener extends Listener {
 			...options,
 			name: 'deleteOldMessagesTickOneTwenty',
 			emitter: container.events,
-			event: 'tickOneTwenty'
+			event: CustomEvents.TickOneTwenty
 		});
 	}
 

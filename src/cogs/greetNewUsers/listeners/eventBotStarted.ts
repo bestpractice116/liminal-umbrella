@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class greetNewUsersBotStartedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +10,7 @@ export class greetNewUsersBotStartedListener extends Listener {
 			...options,
 			name: 'greetNewUsersBotStarted',
 			emitter: container.events,
-			event: 'botStarted'
+			event: CustomEvents.BotStarted
 		});
 	}
 

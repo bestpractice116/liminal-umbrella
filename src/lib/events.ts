@@ -10,7 +10,8 @@ import {
 	ActivityCacheClear,
 	BotMessageCacheClear,
 	UserInterestedInGame,
-	UserDisinterestedInGame
+	UserDisinterestedInGame,
+	UserChangedNickname
 } from './events/index.js';
 
 export type emitterSpec = {
@@ -26,4 +27,21 @@ export type emitterSpec = {
 	botMessageCacheClear: BotMessageCacheClear;
 	userInterestedInGame: UserInterestedInGame;
 	userDisinterestedInGame: UserDisinterestedInGame;
+	userChangedNickname: UserChangedNickname;
+};
+
+export const CustomEvents = {
+	UserJoined: 'userJoined' as const,
+	UserLeft: 'userLeft' as const,
+	BotStarted: 'botStarted' as const,
+	TickFive: 'tickFive' as const,
+	TickOneTwenty: 'tickOneTwenty' as const,
+	MessageAdded: 'messageAdded' as const,
+	MessageDeleted: 'messageDeleted' as const,
+	MessageUpdated: 'messageUpdated' as const,
+	ActivityCacheClear: 'activityCacheClear' as const,
+	BotMessageCacheClear: 'botMessageCacheClear' as const,
+	UserInterestedInGame: 'userInterestedInGame' as const,
+	UserDisinterestedInGame: 'userDisinterestedInGame' as const,
+	UserChangedNickname: 'userChangedNickname' as const
 };

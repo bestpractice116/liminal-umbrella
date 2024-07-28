@@ -1,14 +1,15 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../lib/events/index.js';
 import { Sequential } from '../lib/utils.js';
+import { CustomEvents } from '../lib/events.js';
 
 export class TickFiveEvent extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
 		super(context, {
 			...options,
-			name: 'tickFive',
+			name: 'eventTickFive',
 			emitter: container.events,
-			event: 'tickFive'
+			event: CustomEvents.TickFive
 		});
 	}
 

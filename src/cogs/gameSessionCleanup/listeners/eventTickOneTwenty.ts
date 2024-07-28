@@ -6,17 +6,18 @@ import { Sequential } from '../../../lib/utils.js';
 import { GameSession } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
 import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
 const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
 
-export class gameSessionCleanupTickFiveListener extends Listener {
+export class gameSessionCleanupTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
 		super(context, {
 			...options,
-			name: 'gameSessionCleanupTickFive',
+			name: 'gameSessionCleanupTickOneTwenty',
 			emitter: container.events,
-			event: 'tickFive'
+			event: CustomEvents.TickOneTwenty
 		});
 	}
 

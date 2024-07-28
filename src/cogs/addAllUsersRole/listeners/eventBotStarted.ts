@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { User, Role } from '../../../lib/database/model.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class addAllUsersRoleBotStartedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +10,7 @@ export class addAllUsersRoleBotStartedListener extends Listener {
 			...options,
 			name: 'addAllUsersRoleBotStarted',
 			emitter: container.events,
-			event: 'botStarted'
+			event: CustomEvents.BotStarted
 		});
 	}
 
