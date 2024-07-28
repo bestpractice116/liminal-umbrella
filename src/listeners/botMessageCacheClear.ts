@@ -3,7 +3,7 @@ import { BotMessageCacheClear } from '../lib/events/index.js';
 import { clearMessageCache } from '../lib/message.js';
 import { CustomEvents } from '../lib/events.js';
 
-export class eventBotMessageMessageCacheClearListener extends Listener {
+export class BotMessageMessageCacheClearEvent extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
 		super(context, {
 			...options,

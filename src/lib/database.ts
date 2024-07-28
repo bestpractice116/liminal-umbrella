@@ -15,11 +15,10 @@ import type {
 	MessageCollector,
 	ThreadChannel,
 	PublicThreadChannel,
-	User as GuildUser,
 	GuildScheduledEvent
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
-import { User, Role, Channel, Message, Watermark, GameSession, GameSessionUserSignup } from './database/model.js';
+import { User, Role, Channel, Message, Watermark, EventInterest } from './database/model.js';
 import { TypedEvent } from '../lib/typedEvents.js';
 import {
 	UserJoined,
@@ -27,8 +26,8 @@ import {
 	UserChangedNickname,
 	MessageUpdated,
 	MessageAdded,
-	UserInterestedInGame,
-	UserDisinterestedInGame
+	UserInterestedInEvent,
+	UserDisinterestedInEvent
 } from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
@@ -332,6 +331,7 @@ export default class Database {
 		await this.syncRoles(guild);
 		await this.syncUsers(guild);
 		await this.syncChannels(guild);
+		await this.syncEvents(guild);
 	}
 
 	async getHighestWatermark() {
@@ -506,45 +506,47 @@ export default class Database {
 		}
 	}
 
-	async addUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
-		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
-		if (!gameSession) return;
-		const [gameSessionUserSignup, created] = await GameSessionUserSignup.findOrCreate({
-			where: { userKey: user.id, gameSessionKey: gameSession.key },
+	// Catch up on any users interested
+	async syncEvents(guild: Guild) {
+		const allEvents = await guild.scheduledEvents.fetch();
+		for (const guildScheduledEvent of allEvents.values()) {
+			const subscribers = await guildScheduledEvent.fetchSubscribers();
+			for (const subscriber of subscribers.values()) {
+				await this.addUserInterestedInEvent(subscriber.user.id, guildScheduledEvent);
+			}
+			const uninteresteds = await EventInterest.findAll({
+				where: {
+					userId: { [Op.notIn]: Array.from(subscribers.keys()) },
+					guildScheduledEventId: guildScheduledEvent.id
+				}
+			});
+			for (const uninterested of uninteresteds) {
+				await this.removeUserInterestedInEvent(uninterested.userId, guildScheduledEvent);
+			}
+		}
+	}
+
+	async addUserInterestedInEvent(userId: string, guildScheduledEvent: GuildScheduledEvent) {
+		const [eventInterest, created] = await EventInterest.findOrCreate({
+			where: { userId, guildScheduledEventId: guildScheduledEvent.id },
 			defaults: {
-				userKey: user.id,
-				gameSessionKey: gameSession.key
+				userId,
+				guildScheduledEventId: guildScheduledEvent.id
 			}
 		});
 		if (!created) return;
-		this.events.emit(
-			'userInterestedInGame',
-			new UserInterestedInGame(guildScheduledEvent.id, guildScheduledEvent, gameSession.key, gameSession, user.id, user, gameSessionUserSignup)
-		);
+		this.events.emit('userInterestedInGame', new UserInterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, userId, eventInterest));
 	}
 
-	async removeUserInterestedInGame(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
-		const gameSession = await GameSession.findOne({ where: { eventId: guildScheduledEvent.id } });
-		if (!gameSession) return;
-		const gameSessionUserSignup = await GameSessionUserSignup.findOne({
+	async removeUserInterestedInEvent(userId: string, guildScheduledEvent: GuildScheduledEvent) {
+		const eventInterest = await EventInterest.findOne({
 			where: {
-				userKey: user.id,
-				gameSessionKey: gameSession.key
+				userId,
+				guildScheduledEventId: guildScheduledEvent.id
 			}
 		});
-		if (!gameSessionUserSignup) return;
-		await gameSessionUserSignup.destroy();
-		this.events.emit(
-			'userDisinterestedInGame',
-			new UserDisinterestedInGame(
-				guildScheduledEvent.id,
-				guildScheduledEvent,
-				gameSession.key,
-				gameSession,
-				user.id,
-				user,
-				gameSessionUserSignup
-			)
-		);
+		if (!eventInterest) return;
+		await eventInterest.destroy();
+		this.events.emit('userDisinterestedInGame', new UserDisinterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, userId, eventInterest));
 	}
 }

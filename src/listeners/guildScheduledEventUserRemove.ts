@@ -12,6 +12,6 @@ export class GuildScheduledEventUserRemoveEvent extends Listener {
 
 	@Sequential
 	public override async run(guildScheduledEvent: GuildScheduledEvent, user: User) {
-		await this.container.database.removeUserInterestedInGame(user, guildScheduledEvent);
+		await this.container.database.removeUserInterestedInEvent(user.id, guildScheduledEvent);
 	}
 }

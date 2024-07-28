@@ -1,4 +1,12 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute, BelongsToGetAssociationMixin } from '@sequelize/core';
+import {
+	DataTypes,
+	Model,
+	InferAttributes,
+	InferCreationAttributes,
+	NonAttribute,
+	BelongsToGetAssociationMixin,
+	CreationOptional
+} from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey, Index } from '@sequelize/core/decorators-legacy';
 import User from './User.js';
 import GameSession from './GameSession.js';
@@ -7,7 +15,7 @@ export default class EventInterest extends Model<InferAttributes<EventInterest>,
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	@PrimaryKey
-	declare key: number;
+	declare key: CreationOptional<number>;
 
 	@Attribute(DataTypes.STRING)
 	@Index

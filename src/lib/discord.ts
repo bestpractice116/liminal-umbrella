@@ -7,13 +7,17 @@ export function gameChannelLink(channelId: Snowflake): string {
 	return `https://discord.com/channels/${container.guildId}/${channelId}`;
 }
 
-export function getGameListingChannel(): TextChannel | undefined {
-	const channel_name = 'game_listings';
-	const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
+export function getTextChannel(name: string): TextChannel | undefined {
+	const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === name);
 	if (channel && channel.type == ChannelType.GuildText) {
 		return channel;
 	}
 	return undefined;
+}
+
+export function getGameListingChannel(): TextChannel | undefined {
+	const channel_name = 'game_listings';
+	return getTextChannel(channel_name);
 }
 
 export function getOneShotsChannel(): ForumChannel | undefined {

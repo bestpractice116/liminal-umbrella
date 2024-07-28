@@ -4,7 +4,6 @@ import { getChannelAndSend } from '../utils.js';
 
 export class verboseLogListenerErrorListener extends Listener<typeof Events.ListenerError> {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
-		super(context, { event: Events.ListenerError });
 		super(context, {
 			...options,
 			name: 'verboseLogListenerError',
