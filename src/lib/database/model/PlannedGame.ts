@@ -223,12 +223,10 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		let channelId: string | undefined;
 		let gameListingsMessageId: string | undefined;
 		let eventId: string | undefined;
+		let gameSessionParams: any;
 		try {
 			return await db.transaction(async () => {
-				channelId = await this.createGameThread();
-				gameListingsMessageId = await this.postGameListing();
-				eventId = await this.postEvent(channelId);
-				const session = await GameSession.create({
+				gameSessionParams = {
 					owner: this.owner,
 					gameListingsMessageId,
 					eventId,
@@ -242,12 +240,16 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					signed_up_players: 0,
 					description: this.description!,
 					location: this.location!
-				});
+				};
+				const session = await GameSession.create(gameSessionParams);
+				channelId = await this.createGameThread();
+				gameListingsMessageId = await this.postGameListing();
+				eventId = await this.postEvent(channelId);
 				await this.destroy();
 				return session.key;
 			});
 		} catch (e) {
-			console.log(`Caught error posting Game: ${e}`);
+			console.log(`Caught error posting Game: ${e} Game creation data was: ${JSON.stringify(gameSessionParams)}`);
 			if (channelId) {
 				const channel = container.client.channels.cache.find((channel) => channel.id === channelId);
 				await channel?.delete();
