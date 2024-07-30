@@ -34,7 +34,7 @@ export default function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
-	formRef: React.MutableRefObject<FormInstance<any> | undefined>;
+	formRef: React.MutableRefObject<FormInstance<any>>;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialValues: { [key: string]: any };
 	children?: React.ReactNode;

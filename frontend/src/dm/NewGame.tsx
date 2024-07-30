@@ -15,7 +15,8 @@ import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
-	const formRef = useRef<FormInstance<any> | undefined>();
+	const [form] = Form.useForm();
+	const formRef = useRef<FormInstance<any>>(form);
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);

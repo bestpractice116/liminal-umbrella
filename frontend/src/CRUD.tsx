@@ -336,27 +336,23 @@ export function CreateForm({
 	submitButtonText = 'Submit',
 	style,
 	labelCol = { span: 5 },
-	wrapperCol = { span: 19 }
+	wrapperCol = { span: 19 },
+	hidden = false
 }: {
 	mutation: UseMutationResult<void, Error, any, void>;
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
-	formRef?: MutableRefObject<FormInstance<any> | undefined>;
+	formRef: MutableRefObject<FormInstance<any>>;
 	submitButton?: boolean;
 	submitButtonText?: string;
 	style?: React.CSSProperties;
 	labelCol?: ColProps;
 	wrapperCol?: ColProps;
+	hidden?: boolean;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
-	if (!formRef) {
-		formRef = useRef<FormInstance<any>>();
-	}
-	const [form] = formRef.current ? [formRef.current] : Form.useForm();
-	if (!formRef.current) {
-		formRef.current = form;
-	}
+	const form = formRef.current!;
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
@@ -365,6 +361,9 @@ export function CreateForm({
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
 
+	if (hidden) {
+		return <></>;
+	}
 	return (
 		<Form
 			style={style}
@@ -398,14 +397,21 @@ export function CreateForm({
 
 export function AddRow({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
 	const [isCreating, setIsCreating] = useState(false);
+	const [form] = Form.useForm();
+	const formRef = useRef<FormInstance<any>>(form);
+	let button = <></>;
 	if (!isCreating) {
-		return (
+		button = (
 			<Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
 				Add a row
 			</Button>
 		);
 	}
-	return CreateForm({ mutation: createMutation, setIsMutating: setIsCreating, children });
+	return (
+		<>
+			${button}${CreateForm({ mutation: createMutation, setIsMutating: setIsCreating, children, formRef })}
+		</>
+	);
 }
 
 export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {

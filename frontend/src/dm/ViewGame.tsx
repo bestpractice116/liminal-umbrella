@@ -9,7 +9,7 @@ import Button from 'antd/es/button';
 import Collapse from 'antd/es/collapse';
 import Panel from 'antd/es/collapse/CollapsePanel.js';
 import List from 'antd/es/list';
-import { FormInstance } from 'antd/es/form';
+import Form, { FormInstance } from 'antd/es/form';
 import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
@@ -120,7 +120,8 @@ export default function ViewGame() {
 	const result = getFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};
-	const formRef = useRef<FormInstance<any>>();
+	const [form] = Form.useForm();
+	const formRef = useRef<FormInstance<any>>(form);
 	const [isCreating, setIsCreating] = useState(false);
 	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
 		console.log('updated');
