@@ -1,10 +1,10 @@
 import { useState, createRef } from 'react';
-import { FormRef } from 'rc-field-form/es/interface.js';
 import Button from 'antd/es/button';
 import dayjs from '../dayjs.js';
 import { type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
+import { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
-	const formRef = createRef<FormRef>();
+	const formRef = createRef<FormInstance<any>>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);

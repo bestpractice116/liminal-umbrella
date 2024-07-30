@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import Form from 'antd/es/form';
-import { FormRef, NamePath } from 'rc-field-form/es/interface.js';
+import Form, { FormInstance } from 'antd/es/form';
+import { NamePath } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker from 'antd/es/date-picker';
@@ -35,7 +35,7 @@ export default function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
-	formRef: React.RefObject<FormRef>;
+	formRef: React.RefObject<FormInstance<any>>;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialValues: { [key: string]: any };
 	children?: React.ReactNode;

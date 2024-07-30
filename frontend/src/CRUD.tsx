@@ -9,7 +9,6 @@ import Button from 'antd/es/button';
 import Spin from 'antd/es/spin';
 import { EditOutlined } from '@ant-design/icons';
 import * as z from 'zod';
-import { FormRef } from 'rc-field-form/es/interface.js';
 import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
 import { SchemaBundle } from 'common/schema';
 import { getZObject } from 'common';
@@ -17,9 +16,9 @@ import { createSchemaFieldRule } from 'antd-zod';
 import { Store } from 'rc-field-form/lib/interface';
 import { SaveOutlined } from '@ant-design/icons';
 import { ColProps } from 'antd';
+import { FormInstance } from 'antd/es/form';
 
 type InputRef = GetRef<typeof Input>;
-type FormInstance<T> = GetRef<typeof Form<T>>;
 
 interface EditableCellProps<T> {
 	title: React.ReactNode;
@@ -33,7 +32,7 @@ type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 export type ColumnTypeArray = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
 export type SaveHandler<Item> = {
-	(row: Item, form: FormRef<any>, toggleEdit: Function): Boolean;
+	(row: Item, form: RefObject<FormInstance<any>>, toggleEdit: Function): Boolean;
 };
 export type DefaultColumns = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
 
@@ -343,7 +342,7 @@ export function CreateForm({
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
-	formRef?: RefObject<FormRef>;
+	formRef?: RefObject<FormInstance<any>>;
 	submitButton?: boolean;
 	submitButtonText?: string;
 	style?: React.CSSProperties;
@@ -353,13 +352,13 @@ export function CreateForm({
 	const [isSubmittable, setSubmittable] = useState(false);
 
 	if (!formRef) {
-		formRef = createRef<FormRef>();
+		formRef = createRef<FormInstance<any>>();
 	}
 	const [form] = Form.useForm();
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
-		form.validateFields({ validateOnly: true })
+		form.validateFields({})
 			.then(() => setSubmittable(true))
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
