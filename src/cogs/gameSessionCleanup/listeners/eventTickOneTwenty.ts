@@ -1,7 +1,5 @@
-// FIXME change this to eventTickOneTwenty
-
 import { Listener, container } from '@sapphire/framework';
-import { TickFive } from '../../../lib/events/index.js';
+import { TickOneTwenty } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { GameSession } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
@@ -21,7 +19,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 		});
 	}
 
-	async run(_e: TickFive) {
+	async run(_e: TickOneTwenty) {
 		await sleepUpToTwoHours();
 		this.container.logger.info('Doing gameSessionCleanup now');
 		await this.cleanupGameListings();
