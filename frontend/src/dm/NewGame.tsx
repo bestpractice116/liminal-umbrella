@@ -75,7 +75,6 @@ export default function PostGame() {
 		});
 	};
 	const postgame = () => {
-		console.log('Did onClick handler for postgame');
 		const data = formRef.current!.getFieldsValue();
 		setIsCreating(true);
 		mutation.mutate(data, {
