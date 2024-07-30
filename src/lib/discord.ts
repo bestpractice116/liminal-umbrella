@@ -42,7 +42,7 @@ export async function getOneShotThread(id: string): Promise<AnyThreadChannel | n
 
 export async function format(game: PlannedGame | GameSession): Promise<string> {
 	const gs = await game.getGamesystemOb();
-	const out = [`Advanture Name: ${game.name}`, `Type: ${gametypes[game.type!]}`];
+	const out = [`Adventure Name: ${game.name}`, `Type: ${gametypes[game.type!]}`];
 	if (game.gamesystem) {
 		out.push(`Game system: ${gs!.description}`);
 	}

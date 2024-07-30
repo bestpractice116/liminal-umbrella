@@ -148,7 +148,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 	showDescriptionModal(interaction: Command.ChatInputCommandInteraction) {
 		const namefield = new TextInputBuilder()
 			.setCustomId('name')
-			.setLabel('Advanture Name')
+			.setLabel('Adventure Name')
 			.setStyle(TextInputStyle.Short)
 			.setMinLength(10)
 			.setMaxLength(500)
