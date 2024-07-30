@@ -43,6 +43,10 @@ function assertIsDefined<T>(value: T): asserts value is NonNullable<T> {
 	}
 }
 
+export const DATABASE_FILENAME = process.env.DATABASE_NAME.startsWith('/')
+	? process.env.DATABASE_NAME
+	: path.join(__dirname, '..', '..', process.env.DATABASE_NAME);
+
 export default class Database {
 	db: Sequelize | undefined;
 
@@ -59,9 +63,7 @@ export default class Database {
 	}
 
 	async getdb(): Promise<Sequelize> {
-		const storage = process.env.DATABASE_NAME.startsWith('/')
-			? process.env.DATABASE_NAME
-			: path.join(__dirname, '..', '..', process.env.DATABASE_NAME);
+		const storage = DATABASE_FILENAME;
 
 		if (this.db) {
 			return this.db;
