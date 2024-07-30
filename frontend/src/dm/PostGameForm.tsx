@@ -8,7 +8,7 @@ import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
-import { type GameUpdateItem, GameSchema, NewGameSchema } from 'common/schema';
+import { type GameUpdateItem, GameSchema } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
@@ -17,7 +17,6 @@ import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
 import { AnyObject } from 'antd/es/_util/type.js';
 
-const createFormRule = createSchemaFieldRule(getZObject(NewGameSchema.create!));
 const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!));
 
 export default function PostGameForm({
@@ -98,7 +97,7 @@ export default function PostGameForm({
 				style={style}
 				name={name}
 				label={label}
-				rules={[createForm ? createFormRule : updateFormRule]}
+				rules={[updateFormRule]}
 				validateStatus={getValidateStatus(`${name}`)}
 			>
 				{children}
