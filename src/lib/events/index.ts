@@ -9,3 +9,5 @@ export * from './MessageDeleted.js';
 export * from './MessageUpdated.js';
 export * from './ActivityCacheClear.js';
 export * from './BotMessageCacheClear.js';
+export * from './UserInterestedInEvent.js';
+export * from './UserDisinterestedInEvent.js';

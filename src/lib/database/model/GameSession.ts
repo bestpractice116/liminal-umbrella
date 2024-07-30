@@ -14,7 +14,8 @@ import {
 	BelongsToManyRemoveAssociationsMixin,
 	BelongsToManyCountAssociationsMixin,
 	BelongsToManyHasAssociationMixin,
-	BelongsToManyHasAssociationsMixin
+	BelongsToManyHasAssociationsMixin,
+	HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import {
 	Index,
@@ -26,10 +27,12 @@ import {
 	BelongsTo,
 	Default,
 	DeletedAt,
-	BelongsToMany
+	BelongsToMany,
+	HasMany
 } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
 import User from './User.js';
+import EventInterest from './EventInterest.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotThread } from '../../discord.js';
 import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
@@ -56,17 +59,36 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	@NotNull
 	declare gameListingsMessageId: string;
 
+	@Attribute(DataTypes.BOOLEAN)
+	@NotNull
+	@Default(false)
+	declare gameListingsMessageCleanedup: CreationOptional<boolean>;
+
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
 	@NotNull
 	declare eventId: string;
 
+	@HasMany(() => EventInterest, {
+		foreignKey: 'guildScheduledEventId',
+		inverse: {
+			as: 'eventInterests'
+		}
+	})
+	declare eventInterests: NonAttribute<EventInterest>;
+	declare getEventInterests: HasManyGetAssociationsMixin<EventInterest>;
+
 	@Attribute(DataTypes.STRING)
 	@Index
 	@Unique
 	@NotNull
 	declare channelId: string;
+
+	@Attribute(DataTypes.BOOLEAN)
+	@NotNull
+	@Default(false)
+	declare channelCleanedup: CreationOptional<boolean>;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
@@ -184,8 +206,12 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		});
 	}
 
+	getGameThread() {
+		return getOneShotThread(this.channelId);
+	}
+
 	async updateGameThread() {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		if (!thread) return;
 		const starttime = dayjs(this.starttime);
 		const endtime = dayjs(this.endtime);
@@ -201,17 +227,17 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 	}
 
 	async deleteGameThread() {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.delete();
 	}
 
 	async addMemberToGameThread(id: string) {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.members.add(id);
 	}
 
 	async removeMemberFromGameThread(id: string) {
-		const thread = await getOneShotThread(this.channelId);
+		const thread = await this.getGameThread();
 		await thread?.members.remove(id);
 	}
 

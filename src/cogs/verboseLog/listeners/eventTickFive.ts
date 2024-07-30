@@ -1,6 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
 //import { getChannelAndSend } from '../utils.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class verboseLogTickFiveListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -8,7 +9,7 @@ export class verboseLogTickFiveListener extends Listener {
 			...options,
 			name: 'verboseLogTickFive',
 			emitter: container.events,
-			event: 'tickFive'
+			event: CustomEvents.TickFive
 		});
 	}
 	run(_: TickFive) {

@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { Role } from '../../../lib/database/model.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class addAllUsersRoleUserJoinedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +10,7 @@ export class addAllUsersRoleUserJoinedListener extends Listener {
 			...options,
 			name: 'addAllUsersRoleUserJoined',
 			emitter: container.events,
-			event: 'userJoined'
+			event: CustomEvents.UserJoined
 		});
 	}
 

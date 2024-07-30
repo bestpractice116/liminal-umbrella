@@ -8,7 +8,7 @@ export class BotStartedEvent extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
 		super(context, {
 			...options,
-			name: 'eventsBotStarted',
+			name: 'eventBotStarted',
 			emitter: container.events,
 			event: 'botStarted'
 		});

@@ -17,6 +17,7 @@ import Role from './Role.js';
 import RoleMember from './RoleMember.js';
 import PlannedGame from './PlannedGame.js';
 import GameSession from './GameSession.js';
+import EventInterest from './EventInterest.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	@Attribute(DataTypes.STRING)
@@ -66,6 +67,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 	declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['key']>;
 	declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['key']>;
 	declare countRoles: BelongsToManyCountAssociationsMixin<Role>;
+
+	@HasMany(() => EventInterest, /* foreign key */ 'userId')
+	declare eventInterest: NonAttribute<EventInterest>;
+	declare getEventInterests: HasManyGetAssociationsMixin<EventInterest>;
 
 	async CRUDRead(key: string) {
 		if (key === 'roles') {

@@ -48,3 +48,19 @@ function getGuildInfo(guild: Guild | null) {
 }
 
 export const Sequential = limitConcurrency(1);
+
+export async function sleep(time: number) {
+	return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export function shortSleep() {
+	return sleep(100);
+}
+
+export function sleepUpToFiveMinutes() {
+	return sleep(Math.floor(Math.random() * 1000 * 60 * 5));
+}
+
+export function sleepUpToTwoHours() {
+	return sleep(Math.floor(Math.random() * 1000 * 60 * 60 * 2));
+}

@@ -1,6 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
 import { setRandomActivity } from '../activity.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class randomActivityTickFiveListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -8,7 +9,7 @@ export class randomActivityTickFiveListener extends Listener {
 			...options,
 			name: 'randomActivityTTickFive',
 			emitter: container.events,
-			event: 'tickFive'
+			event: CustomEvents.TickFive
 		});
 	}
 	run(_: TickFive) {

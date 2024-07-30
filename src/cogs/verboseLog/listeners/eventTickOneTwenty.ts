@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { TickOneTwenty } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import dayjs from '../../../lib/dayjs.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class verboseLogTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +10,7 @@ export class verboseLogTickOneTwentyListener extends Listener {
 			...options,
 			name: 'verboseLogTickOneTwenty',
 			emitter: container.events,
-			event: 'tickOneTwenty'
+			event: CustomEvents.TickOneTwenty
 		});
 	}
 	run(e: TickOneTwenty) {

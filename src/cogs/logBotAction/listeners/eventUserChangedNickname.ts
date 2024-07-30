@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserChangedNickname } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
+import { CustomEvents } from '../../../lib/events.js';
 
 export class logBotActionUserChangedNicknameListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +10,7 @@ export class logBotActionUserChangedNicknameListener extends Listener {
 			...options,
 			name: 'logBotActionUserChangedNickname',
 			emitter: container.events,
-			event: 'userChangedNickname'
+			event: CustomEvents.UserChangedNickname
 		});
 	}
 	async run(e: UserChangedNickname) {

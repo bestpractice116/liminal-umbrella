@@ -14,14 +14,26 @@ import type {
 	NonThreadGuildBasedChannel,
 	MessageCollector,
 	ThreadChannel,
-	PublicThreadChannel
+	PublicThreadChannel,
+	GuildScheduledEvent,
+	User as GuildUser
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
-import { User, Role, Channel, Message, Watermark } from './database/model.js';
+import { User, Role, Channel, Message, Watermark, EventInterest } from './database/model.js';
 import { TypedEvent } from '../lib/typedEvents.js';
-import { UserJoined, UserLeft, UserChangedNickname, MessageUpdated, MessageAdded } from './events/index.js';
+import {
+	UserJoined,
+	UserLeft,
+	UserChangedNickname,
+	MessageUpdated,
+	MessageAdded,
+	UserInterestedInEvent,
+	UserDisinterestedInEvent
+} from './events/index.js';
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
+import { sleep } from './utils.js';
+import { CustomEvents } from './events.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -29,10 +41,6 @@ function assertIsDefined<T>(value: T): asserts value is NonNullable<T> {
 	if (value === undefined || value === null) {
 		throw new Error(`${value} is not defined`);
 	}
-}
-
-async function sleep(time: number) {
-	return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 export default class Database {
@@ -325,6 +333,7 @@ export default class Database {
 		await this.syncRoles(guild);
 		await this.syncUsers(guild);
 		await this.syncChannels(guild);
+		await this.syncEvents(guild);
 	}
 
 	async getHighestWatermark() {
@@ -499,26 +508,56 @@ export default class Database {
 		}
 	}
 
-	async syncChannelGameListings(guild: Guild, channel_name: string) {
-		//container.logger.info(`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		await this.syncChannel(discordChannel);
-		//container.logger.info("SYNC CHANNEL DONE");
-		///const messages = await Message.findAll({where: {channelId: discordChannel.id}});
-		///for (const msg of messages) {
-		//ccontainer.logger.info("MSG " + msg.id);
-		///}
+	// Catch up on any users interested
+	async syncEvents(guild: Guild) {
+		const allEvents = await guild.scheduledEvents.fetch();
+		for (const guildScheduledEvent of allEvents.values()) {
+			const subscribers = await guildScheduledEvent.fetchSubscribers();
+			for (const subscriber of subscribers.values()) {
+				await this.addUserInterestedInEvent(subscriber.user, guildScheduledEvent);
+			}
+			const uninteresteds = await EventInterest.findAll({
+				where: {
+					userId: { [Op.notIn]: Array.from(subscribers.keys()) },
+					guildScheduledEventId: guildScheduledEvent.id
+				}
+			});
+			for (const uninterested of uninteresteds) {
+				const member = await container.guild?.members.fetch(uninterested.userId);
+				if (member) {
+					await this.removeUserInterestedInEvent(member.user, guildScheduledEvent);
+				}
+			}
+		}
 	}
 
-	async syncChannelOneShots(guild: Guild, channel_name: string) {
-		//container.logger.info(`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		return this.syncChannel(discordChannel);
+	async addUserInterestedInEvent(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
+		const [eventInterest, created] = await EventInterest.findOrCreate({
+			where: { userId: user.id, guildScheduledEventId: guildScheduledEvent.id },
+			defaults: {
+				userId: user.id,
+				guildScheduledEventId: guildScheduledEvent.id
+			}
+		});
+		if (!created) return;
+		this.events.emit(
+			CustomEvents.UserInterestedInEvent,
+			new UserInterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
+		);
 	}
 
-	async syncChannelNewMembers(guild: Guild, channel_name: string) {
-		//container.logger.info`Sync in channel ${channel_name}`);
-		const discordChannel = await this.getdiscordChannel(guild, channel_name);
-		return this.syncChannel(discordChannel);
+	async removeUserInterestedInEvent(user: GuildUser, guildScheduledEvent: GuildScheduledEvent) {
+		const eventInterest = await EventInterest.findOne({
+			where: {
+				userId: user.id,
+				guildScheduledEventId: guildScheduledEvent.id
+			}
+		});
+		if (!eventInterest) return;
+		await eventInterest.destroy();
+		this.events.emit(
+			CustomEvents.UserDisinterestedInEvent,
+			new UserDisinterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
+		);
 	}
 }

@@ -44,7 +44,8 @@ export class MySapphireClient extends SapphireClient {
 				GatewayIntentBits.GuildMessageReactions,
 				GatewayIntentBits.Guilds,
 				GatewayIntentBits.MessageContent,
-				GatewayIntentBits.GuildMembers
+				GatewayIntentBits.GuildMembers,
+				GatewayIntentBits.GuildScheduledEvents
 			],
 			loadMessageCommandListeners: true,
 			api: {
