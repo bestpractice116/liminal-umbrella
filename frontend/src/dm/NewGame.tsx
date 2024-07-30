@@ -130,9 +130,8 @@ export default function PostGame() {
 }
 
 function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> | undefined>; doPost: () => void }) {
+	const values = Form.useWatch([], form.current || undefined);
 	if (!form.current) return <></>;
-
-	const values = Form.useWatch([], form.current);
 	const isPostable = getZObject(GameSchema.create!).safeParse(values).success;
 
 	return (
