@@ -1,10 +1,10 @@
-import { useState, createRef } from 'react';
+import { useState, useRef } from 'react';
 import Button from 'antd/es/button';
 import dayjs from '../dayjs.js';
 import { type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
-import { FormInstance } from 'antd/es/form';
+import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
-	const formRef = createRef<FormInstance<any>>();
+	const formRef = useRef<FormInstance<any> | undefined>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);
@@ -41,7 +41,6 @@ export default function PostGame() {
 		type: 'oneshot'
 	};
 	let hasGame = false;
-	let isPostable = false;
 	if (result.isFetched && result.data && result.data.length == 1) {
 		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
 		if (!res.success) {
@@ -50,7 +49,6 @@ export default function PostGame() {
 			initialValues = res.data;
 			initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
 			hasGame = true;
-			isPostable = getZObject(GameSchema.create!).safeParse(initialValues).success;
 		}
 	}
 	if (!result.isFetched) {
@@ -77,6 +75,7 @@ export default function PostGame() {
 		});
 	};
 	const postgame = () => {
+		console.log('Did onClick handler for postgame');
 		const data = formRef.current!.getFieldsValue();
 		setIsCreating(true);
 		mutation.mutate(data, {
@@ -126,9 +125,20 @@ export default function PostGame() {
 			mutation={mutation}
 			initialValues={initialValues}
 		>
-			<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={postgame}>
-				Post Game
-			</Button>
+			<PostButton form={formRef} doPost={postgame} />
 		</PostGameForm>
+	);
+}
+
+function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> | undefined>; doPost: () => void }) {
+	if (!form.current) return <></>;
+
+	const values = Form.useWatch([], form.current);
+	const isPostable = getZObject(GameSchema.create!).safeParse(values).success;
+
+	return (
+		<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={doPost}>
+			Post Game
+		</Button>
 	);
 }

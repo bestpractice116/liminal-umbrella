@@ -34,7 +34,7 @@ export default function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
-	formRef: React.RefObject<FormInstance<any>>;
+	formRef: React.MutableRefObject<FormInstance<any> | undefined>;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialValues: { [key: string]: any };
 	children?: React.ReactNode;
@@ -50,6 +50,8 @@ export default function PostGameForm({
 		return formRef.current?.getFieldsValue() || initialValues;
 	};
 	const hasChanged = () => {
+		console.log('in OnBlur handler');
+		// This is gross, we should fix it.. Maybe with useWatch in the time components?
 		const values = formRef.current?.getFieldsValue();
 		if (values.date) {
 			values.date = values.date.clone().hour(12).minute(0).second(0).millisecond(0);

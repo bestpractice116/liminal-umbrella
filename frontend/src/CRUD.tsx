@@ -1,4 +1,4 @@
-import { createContext, type FC, useState, useContext, useRef, useEffect, createRef, type RefObject } from 'react';
+import { createContext, type FC, useState, useContext, useRef, useEffect, createRef, type RefObject, type MutableRefObject } from 'react';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient, useQuery, useMutation, UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { GetRef } from 'antd/es/_util/type';
@@ -342,7 +342,7 @@ export function CreateForm({
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
-	formRef?: RefObject<FormInstance<any>>;
+	formRef?: MutableRefObject<FormInstance<any> | undefined>;
 	submitButton?: boolean;
 	submitButtonText?: string;
 	style?: React.CSSProperties;
@@ -350,11 +350,13 @@ export function CreateForm({
 	wrapperCol?: ColProps;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
-
 	if (!formRef) {
-		formRef = createRef<FormInstance<any>>();
+		formRef = useRef<FormInstance<any>>();
 	}
-	const [form] = Form.useForm();
+	const [form] = formRef.current ? [formRef.current] : Form.useForm();
+	if (!formRef.current) {
+		formRef.current = form;
+	}
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
@@ -366,7 +368,7 @@ export function CreateForm({
 	return (
 		<Form
 			style={style}
-			ref={formRef}
+			ref={formRef as RefObject<FormInstance<any>>}
 			form={form}
 			initialValues={initialValues}
 			labelCol={labelCol}

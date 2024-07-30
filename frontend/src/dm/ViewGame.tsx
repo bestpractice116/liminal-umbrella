@@ -1,4 +1,4 @@
-import { useState, createRef } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getZObject } from 'common';
@@ -120,7 +120,7 @@ export default function ViewGame() {
 	const result = getFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};
-	const formRef = createRef<FormInstance<any>>();
+	const formRef = useRef<FormInstance<any>>();
 	const [isCreating, setIsCreating] = useState(false);
 	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
 		console.log('updated');
