@@ -42,7 +42,8 @@ export default function PostGame() {
 		type: 'oneshot'
 	};
 	let hasGame = false;
-	if (result.isFetched && result.data && result.data.length == 1) {
+	if (result.isFetched && result.data && result.data.length >= 1) {
+		// THe length should never be > 1, but lets try to work anyway.
 		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
 		if (!res.success) {
 			console.error('error parsing NewGameSchea.read', res.error);
