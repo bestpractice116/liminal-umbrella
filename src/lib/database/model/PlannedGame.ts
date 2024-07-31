@@ -226,6 +226,9 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		let gameSessionParams: any;
 		try {
 			return await db.transaction(async () => {
+				channelId = await this.createGameThread();
+				gameListingsMessageId = await this.postGameListing();
+				eventId = await this.postEvent(channelId);
 				gameSessionParams = {
 					owner: this.owner,
 					gameListingsMessageId,
@@ -242,9 +245,6 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 					location: this.location!
 				};
 				const session = await GameSession.create(gameSessionParams);
-				channelId = await this.createGameThread();
-				gameListingsMessageId = await this.postGameListing();
-				eventId = await this.postEvent(channelId);
 				await this.destroy();
 				return session.key;
 			});
