@@ -4,7 +4,6 @@ import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { NewGameSchema } from 'common/schema';
 import { AuthenticatedWithRole } from '../lib/api/decorators.js';
-import { isAdmin } from '../lib/api/auth.js';
 
 export async function doCoerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
 	const out = {
