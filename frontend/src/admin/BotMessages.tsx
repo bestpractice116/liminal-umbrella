@@ -1,5 +1,4 @@
 import Table from 'antd/es/table';
-import Spin from 'antd/es/spin';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema, type BotMessageListItem } from 'common/schema';
@@ -29,9 +28,8 @@ export default function AdminBotMessages() {
 	const leftBracket = '${';
 	const rightBracket = '}';
 	return (
-		<WrapCRUD<BotMessageListItem> result={result}>
+		<WrapCRUD<BotMessageListItem> spin={isMutating} result={result}>
 			<>
-				<Spin spinning={isMutating} fullscreen />
 				<Result
 					status="warning"
 					title="Danger - Altering these templates can break the bot."

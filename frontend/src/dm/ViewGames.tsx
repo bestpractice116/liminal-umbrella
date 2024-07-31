@@ -1,5 +1,4 @@
 import Table from 'antd/es/table';
-import Spin from 'antd/es/spin';
 import Button from 'antd/es/button';
 import Tooltip from 'antd/es/tooltip';
 import { EditOutlined } from '@ant-design/icons';
@@ -21,7 +20,7 @@ function toolTipValue(value: any, _record: any) {
 
 export default function ViewGames() {
 	const admin = isAdmin();
-	const { result, isMutating, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
+	const { result, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -99,14 +98,13 @@ export default function ViewGames() {
 	const columns = getColumns<GameReadItem>(defaultColumns, handleSave);
 	return (
 		<>
-			<div style={{ margin: '1em', padding: 0 }}>
-				<Link to={`../newgame`} relative="path">
-					<Button type="primary">Create new game</Button>
-				</Link>
-			</div>
 			<WrapCRUD<GameReadItem> result={result}>
 				<>
-					<Spin spinning={isMutating} fullscreen />
+					<div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '1em' }}>
+						<Link to={`../newgame`} relative="path">
+							<Button type="primary">Create new game</Button>
+						</Link>
+					</div>
 					<Table
 						components={components}
 						rowClassName={() => 'editable-row'}

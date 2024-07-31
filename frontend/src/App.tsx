@@ -16,10 +16,9 @@ import {
 	AppstoreAddOutlined,
 	LogoutOutlined
 } from '@ant-design/icons';
-import Spin from 'antd/es/spin';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-
+import Spin from './components/Spin.js';
 import { MaybeDebug, DebugContext } from './Debug';
 import { ProtectedRoute } from './ProtectedRoute';
 import HomePage from './Homepage';
@@ -196,7 +195,7 @@ function PageContent() {
 
 function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 	if (isAuthFetching()) {
-		return <Spin size="large" />;
+		return <Spin />;
 	}
 	return children;
 }
@@ -228,7 +227,8 @@ function Page() {
 					<div
 						style={{
 							minHeight: 280,
-							padding: isMobile ? 0 : '2em'
+							padding: isMobile ? 0 : '2em',
+							display: 'flex',
 						}}
 					>
 						<ErrorBoundary FallbackComponent={ErrorFallback}>

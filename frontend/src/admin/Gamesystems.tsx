@@ -1,7 +1,6 @@
 import Table from 'antd/es/table';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
-import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider';
 import { WarningOutlined } from '@ant-design/icons';
@@ -68,9 +67,8 @@ export default function AdminGameSystems() {
 	});
 
 	return (
-		<WrapCRUD<GameSystemListItem> result={result}>
+		<WrapCRUD<GameSystemListItem> spin={isMutating} result={result}>
 			<>
-				<Spin spinning={isMutating} fullscreen />
 				<div>
 					This page is for editing the game which DMs can list their games as in Discord Please be careful here and do not delete any system
 					which currently has games running or scheduled using it.

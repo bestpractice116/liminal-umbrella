@@ -6,7 +6,7 @@ import Input from 'antd/es/input';
 import Form from 'antd/es/form';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
-import Spin from 'antd/es/spin';
+import Spin from './components/Spin.js';
 import { EditOutlined } from '@ant-design/icons';
 import * as z from 'zod';
 import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
@@ -384,9 +384,10 @@ export function CreateForm({
 			<>{children}</>
 			{submitButton ? (
 				<Form.Item>
+					<div style={{display: 'flex', justifyContent: 'center', width: '100%', margin: 0, padding: 0}}>
 					<Button icon={<SaveOutlined />} type="primary" htmlType="submit" disabled={!isSubmittable}>
 						{submitButtonText}
-					</Button>
+					</Button></div>
 				</Form.Item>
 			) : (
 				<></>
@@ -402,14 +403,15 @@ export function AddRow({ createMutation, children }: { createMutation: UseMutati
 	let button = <></>;
 	if (!isCreating) {
 		button = (
-			<Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+			<div style={{width: '100%', display: 'flex', justifyContent: 'center'}} ><Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
 				Add a row
-			</Button>
+			</Button></div>
 		);
 	}
 	return (
 		<>
-			${button}${CreateForm({ mutation: createMutation, setIsMutating: setIsCreating, children, formRef })}
+			{button}{CreateForm({ labelCol: { span: 2 },
+        wrapperCol: { span: 22 }, hidden: !isCreating, mutation: createMutation, setIsMutating: setIsCreating, children, formRef })}
 		</>
 	);
 }
@@ -433,12 +435,20 @@ export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function
 	});
 }
 
-export function WrapCRUD<Res>({ children, result }: { children: React.ReactNode; result: UseQueryResult<Array<Res>, Error> }) {
-	if (result.isLoading) {
-		return <Spin size="large" />;
+export function WrapCRUD<Res>({
+	spin = false,
+	children,
+	result
+}: {
+	spin?: boolean;
+	children: React.ReactNode;
+	result: UseQueryResult<Array<Res>, Error>;
+}) {
+	if (spin || result.isLoading) {
+		return <Spin />;
 	}
 	if (result.isError) {
 		return <ErrorFallback error={result.error} />;
 	}
-	return <>{children}</>;
+	return <div style={{ display: 'block' }}>{children}</div>;
 }
