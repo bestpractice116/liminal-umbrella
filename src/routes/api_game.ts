@@ -56,9 +56,6 @@ export class ApiGameList extends CR {
 	}
 
 	override async findAllWhere(request: ApiRequest) {
-		if (isAdmin(request)) {
-			return {};
-		}
 		return { owner: request.auth!.id };
 	}
 }
