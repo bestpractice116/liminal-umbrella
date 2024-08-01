@@ -5,7 +5,7 @@ import Spin from 'antd/es/spin';
 import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider';
 import { DeleteOutlined } from '@ant-design/icons';
-import { ActivitySchema, type BotActivityListItem } from 'common/schema';
+import { ActivitySchema, type BotActivityListItem, type BotActivityCreate } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
 import { getTableComponents, ColumnTypes, getListQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
@@ -51,7 +51,7 @@ export default function AdminBotPlaying() {
 					which are not TTRPGs (e.g. <code>with kittens</code>)
 				</div>
 				<Divider />
-				<AddRow createMutation={createMutation}>
+				<AddRow<BotActivityCreate> createMutation={createMutation}>
 					<Form.Item label="Name" name="name" rules={[createFormRule]}>
 						<Input />
 					</Form.Item>

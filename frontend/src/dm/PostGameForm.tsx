@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, createRef, type RefObject } from 'react';
 import Form, { FormInstance } from 'antd/es/form';
 import { NamePath } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
@@ -8,7 +8,7 @@ import Select from 'antd/es/select';
 import dayjs from '../dayjs.js';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
-import { type GameUpdateItem, GameSchema } from 'common/schema';
+import { type GameUpdateItem, GameSchema, type GameCreateItem } from 'common/schema';
 import { CreateForm } from '../CRUD.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
@@ -22,7 +22,6 @@ const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!));
 export default function PostGameForm({
 	save,
 	setIsCreating,
-	formRef,
 	isLoading,
 	mutation,
 	initialValues,
@@ -34,14 +33,15 @@ export default function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
-	formRef: React.MutableRefObject<FormInstance<any>>;
 	mutation: UseMutationResult<void, Error, any, void>;
 	initialValues: { [key: string]: any };
 	children?: React.ReactNode;
 	createForm?: boolean;
 	disabled?: boolean;
 	submitButtonText?: string;
+	formRef?: RefObject<FormInstance<GameCreateItem>>;
 }) {
+	const formRef = createRef<FormInstance<GameCreateItem>>();
 	useEffect(() => {
 		formRef.current?.setFieldsValue(initialValues);
 	}, [initialValues]);
@@ -53,6 +53,7 @@ export default function PostGameForm({
 		console.log('in OnBlur handler');
 		// This is gross, we should fix it.. Maybe with useWatch in the time components?
 		const values = formRef.current?.getFieldsValue();
+		if (!values) return;
 		if (values.date) {
 			values.date = values.date.clone().hour(12).minute(0).second(0).millisecond(0);
 			if (values.starttime) {
@@ -85,7 +86,7 @@ export default function PostGameForm({
 		labelCol,
 		wrapperCol
 	}: {
-		name: NamePath<GameUpdateItem>;
+		name: NamePath<GameCreateItem>;
 		label: string;
 		children: React.ReactNode;
 		style?: React.CSSProperties;
@@ -93,7 +94,7 @@ export default function PostGameForm({
 		wrapperCol?: ColProps;
 	}) => {
 		return (
-			<Form.Item<GameUpdateItem>
+			<Form.Item<GameCreateItem>
 				wrapperCol={wrapperCol}
 				labelCol={labelCol}
 				style={style}
@@ -131,8 +132,7 @@ export default function PostGameForm({
 			{' '}
 			<Spin spinning={isLoading} fullscreen />
 			{initialValues ? (
-				<CreateForm
-					formRef={formRef}
+				<CreateForm<GameCreateItem>
 					mutation={mutation}
 					setIsMutating={setIsCreating}
 					initialValues={initialValues}
@@ -140,6 +140,7 @@ export default function PostGameForm({
 					submitButtonText={submitButtonText}
 					labelCol={{ span: 3 }}
 					wrapperCol={{ span: 21 }}
+					formRef={formRef}
 				>
 					<Form.Item<GameUpdateItem> style={{ height: 0, margin: 0 }} name="key">
 						<Input type="hidden" />

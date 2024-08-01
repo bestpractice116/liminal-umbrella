@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
 import dayjs from '../dayjs.js';
-import { type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
+import { type GameCreateItem, type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';
 import Form, { FormInstance } from 'antd/es/form';
@@ -15,8 +15,7 @@ import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
-	const [form] = Form.useForm();
-	const formRef = useRef<FormInstance<any>>(form);
+	const formRef = createRef<FormInstance<GameCreateItem>>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);

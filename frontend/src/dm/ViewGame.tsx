@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, createRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
+import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema, type GameCreateItem } from 'common/schema';
 import { getZObject } from 'common';
 import dayjs from '../dayjs.js';
 import PostGameForm from './PostGameForm.js';
@@ -9,7 +9,7 @@ import Button from 'antd/es/button';
 import Collapse from 'antd/es/collapse';
 import Panel from 'antd/es/collapse/CollapsePanel.js';
 import List from 'antd/es/list';
-import Form, { FormInstance } from 'antd/es/form';
+import { FormInstance } from 'antd/es/form';
 import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
@@ -112,6 +112,8 @@ export default function ViewGame() {
 	const navigate = useNavigate();
 	const findSchema = GameSchema.find!;
 	const { data, error } = findSchema.safeParse(useParams());
+	const [isCreating, setIsCreating] = useState(false);
+	const formRef = createRef<FormInstance<GameCreateItem>>();
 	if (error) {
 		return <NotFound />;
 	}
@@ -120,9 +122,7 @@ export default function ViewGame() {
 	const result = getFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
 
 	const save = () => {};
-	const [form] = Form.useForm();
-	const formRef = useRef<FormInstance<any>>(form);
-	const [isCreating, setIsCreating] = useState(false);
+
 	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
 		console.log('updated');
 	});

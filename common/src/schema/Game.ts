@@ -76,15 +76,17 @@ const read = update
 		})
 	)
 	.omit({ date: true });
+const create = update.merge(find);
 
 export const GameSchema: SchemaBundle = {
 	// This is a strange case, as Game is Created from NewGame, but the update schema is used on
 	// the frontend to check if it's okay to try posting to the backend.
-	create: update.merge(find).readonly(),
+	create: create.readonly(),
 	update: update.readonly(),
 	find: find.readonly(),
 	read: read.readonly(),
 	delete: true
 };
+export type GameCreateItem = z.infer<typeof create>;
 export type GameUpdateItem = z.infer<typeof update>;
 export type GameReadItem = z.infer<typeof read>;

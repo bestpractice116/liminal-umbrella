@@ -1,4 +1,4 @@
-import { createContext, type FC, useState, useContext, useRef, useEffect, type RefObject, type MutableRefObject } from 'react';
+import { createContext, type FC, useState, useContext, createRef, useRef, useEffect, type RefObject } from 'react';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient, useQuery, useMutation, UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { GetRef } from 'antd/es/_util/type';
@@ -326,33 +326,34 @@ export function getListQueries<APIRow>(apipath: string, querykey: QueryKey): Que
 	return { result, isMutating, handleDelete, handleSave, createMutation };
 }
 
-export function CreateForm({
+export function CreateForm<T>({
 	mutation,
 	setIsMutating,
 	children,
 	initialValues,
-	formRef,
 	submitButton = true,
 	submitButtonText = 'Submit',
 	style,
 	labelCol = { span: 5 },
 	wrapperCol = { span: 19 },
-	hidden = false
+	hidden = false,
+	formRef
 }: {
 	mutation: UseMutationResult<void, Error, any, void>;
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
-	formRef: MutableRefObject<FormInstance<any>>;
 	submitButton?: boolean;
 	submitButtonText?: string;
 	style?: React.CSSProperties;
 	labelCol?: ColProps;
 	wrapperCol?: ColProps;
 	hidden?: boolean;
+	formRef?: RefObject<FormInstance<T>>;
 }) {
 	const [isSubmittable, setSubmittable] = useState(false);
-	const form = formRef.current!;
+	const [form] = Form.useForm<T>();
+	if (!formRef) formRef = createRef<FormInstance<T>>();
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
@@ -367,7 +368,7 @@ export function CreateForm({
 	return (
 		<Form
 			style={style}
-			ref={formRef as RefObject<FormInstance<any>>}
+			ref={formRef}
 			form={form}
 			initialValues={initialValues}
 			labelCol={labelCol}
@@ -384,10 +385,11 @@ export function CreateForm({
 			<>{children}</>
 			{submitButton ? (
 				<Form.Item>
-					<div style={{display: 'flex', justifyContent: 'center', width: '100%', margin: 0, padding: 0}}>
-					<Button icon={<SaveOutlined />} type="primary" htmlType="submit" disabled={!isSubmittable}>
-						{submitButtonText}
-					</Button></div>
+					<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: 0, padding: 0 }}>
+						<Button icon={<SaveOutlined />} type="primary" htmlType="submit" disabled={!isSubmittable}>
+							{submitButtonText}
+						</Button>
+					</div>
 				</Form.Item>
 			) : (
 				<></>
@@ -396,22 +398,29 @@ export function CreateForm({
 	);
 }
 
-export function AddRow({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
+export function AddRow<T>({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
 	const [isCreating, setIsCreating] = useState(false);
-	const [form] = Form.useForm();
-	const formRef = useRef<FormInstance<any>>(form);
 	let button = <></>;
 	if (!isCreating) {
 		button = (
-			<div style={{width: '100%', display: 'flex', justifyContent: 'center'}} ><Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
-				Add a row
-			</Button></div>
+			<div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+				<Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+					Add a row
+				</Button>
+			</div>
 		);
 	}
 	return (
 		<>
-			{button}{CreateForm({ labelCol: { span: 2 },
-        wrapperCol: { span: 22 }, hidden: !isCreating, mutation: createMutation, setIsMutating: setIsCreating, children, formRef })}
+			{button}
+			{CreateForm<T>({
+				labelCol: { span: 2 },
+				wrapperCol: { span: 22 },
+				hidden: !isCreating,
+				mutation: createMutation,
+				setIsMutating: setIsCreating,
+				children
+			})}
 		</>
 	);
 }
