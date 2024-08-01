@@ -289,8 +289,8 @@ export function getListQueries<APIRow>(apipath: string, querykey: QueryKey): Que
 	const queryClient = useQueryClient();
 	const [isMutating, setIsMutating] = useState(false);
 	const result = getFetchQuery<Array<APIRow>>(apipath, querykey);
-	const deleteMutation = getDeleteMutation(apipath, setIsMutating, (_data) => {
-		queryClient.setQueryData(coerceQueryKey(querykey), (old: any, row: any) => {
+	const deleteMutation = getDeleteMutation(apipath, setIsMutating, (row: any) => {
+		queryClient.setQueryData(coerceQueryKey(querykey), (old: any) => {
 			return old.filter((item: any) => item.key !== row.key);
 		});
 	});
