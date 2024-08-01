@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import * as React from 'react';
 import Layout, { Header, Footer, Content } from 'antd/es/layout/layout';
 import Menu from 'antd/es/menu/menu';
 import ConfigProvider from 'antd/es/config-provider';
@@ -37,10 +37,15 @@ import ViewGame from './dm/ViewGame';
 import NotFound from './NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
 import { AnyObject } from 'antd/es/_util/type.js';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const ReactQueryDevtools = React.lazy(() =>
+	import('@tanstack/react-query-devtools/build/modern/production.js').then((d) => ({
+		default: d.ReactQueryDevtools
+	}))
+);
 
 function TopMenu() {
-	const { debug, setDebug } = useContext(DebugContext);
+	const { debug, setDebug } = React.useContext(DebugContext);
 	const location = useLocation();
 	const doLogout = getLogoutMutation();
 	const { pathname } = location;
@@ -245,12 +250,16 @@ function Page() {
 
 function AppRouter() {
 	const queryClient = new QueryClient();
-	const { debug } = useContext(DebugContext);
+	const { debug } = React.useContext(DebugContext);
 
 	return (
 		<Router>
 			<QueryClientProvider client={queryClient}>
-				<ReactQueryDevtools initialIsOpen={debug} />
+				{debug && (
+					<React.Suspense fallback={null}>
+						<ReactQueryDevtools />
+					</React.Suspense>
+				)}
 				<ConfigProvider
 					theme={{
 						token: { colorPrimary: '#00b96b' }
