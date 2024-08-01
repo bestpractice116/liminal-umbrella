@@ -10,7 +10,13 @@ const read = find.merge(
 		username: z.string({}),
 		nickname: z.string({}),
 		avatarURL: z.string({}),
-		roles: z.array(z.string())
+		roles: z.array(
+			z.object({
+				name: z.string(),
+				hexColor: z.string(),
+				position: z.number().int()
+			})
+		)
 	})
 );
 

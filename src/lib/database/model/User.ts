@@ -74,7 +74,11 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
 	async CRUDRead(key: string) {
 		if (key === 'roles') {
-			return ((await this.roles) || []).map((role: Role) => role.name);
+			return ((await this.roles) || []).map((role: Role) => ({
+				name: role.name,
+				hexColor: role.hexColor,
+				position: role.rawPosition
+			}));
 		}
 		return this.get(key);
 	}

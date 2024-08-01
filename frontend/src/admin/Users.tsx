@@ -6,6 +6,15 @@ import { UserSchema, type UserListItem } from 'common/schema';
 
 const components = getTableComponents(UserSchema);
 
+type UserFragment = {
+	roles: RoleFragment[];
+};
+type RoleFragment = {
+	name: string;
+	hexColor: string;
+	position: number;
+};
+
 export default function AdminUsers() {
 	const { result, isMutating, handleSave } = getListQueries<UserListItem>('/api/user', 'user');
 
@@ -16,6 +25,29 @@ export default function AdminUsers() {
 			editable: false,
 			ellipsis: true,
 			render: (avatarURL: string) => <img src={avatarURL} style={{ margin: 0, padding: 0, width: 50 }} alt="avatar" />
+		},
+		{
+			title: 'Nickname',
+			dataIndex: 'nickname',
+			editable: false,
+			ellipsis: true,
+			render: (nickname: string, _record: any) => {
+				const record = _record as UserFragment;
+				const roles = record.roles
+					.filter((role: RoleFragment) => role.hexColor != '#000000')
+					.toSorted((a, b) => {
+						if (a.position < b.position) return 1;
+						if (a.position > b.position) return -1;
+						return 0;
+					});
+				let color: string | undefined = undefined;
+				if (roles.length > 0) color = roles[0].hexColor;
+				return (
+					<span style={{ color }}>
+						<b>{nickname}</b>
+					</span>
+				);
+			}
 		},
 		{
 			title: 'Name',
@@ -30,24 +62,21 @@ export default function AdminUsers() {
 			ellipsis: true
 		},
 		{
-			title: 'Nickname',
-			dataIndex: 'nickname',
-			editable: false,
-			ellipsis: true
-		},
-		{
 			title: 'Roles',
 			dataIndex: 'roles',
 			editable: false,
 			ellipsis: true,
-			render: (roles: string[], record: any) =>
+			render: (roles: { name: string; hexColor: string }[], record: any) =>
 				roles
-					.filter((role) => role !== '@everyone' && role !== 'AllUsers')
+					.filter((role) => role.name !== '@everyone' && role.name !== 'AllUsers')
+					.toSorted((a, b) => {
+						if (a.name > b.name) return 1;
+						if (a.name < b.name) return -1;
+						return 0;
+					})
 					.map((role, index) => (
 						<span key={`${record.key}${index}`}>
-							<Tag color={'geekblue'} key={role}>
-								{role}
-							</Tag>
+							<Tag color={role.hexColor == '#000000' ? undefined : role.hexColor}>{role.name}</Tag>
 							<br />
 						</span>
 					))

@@ -7,7 +7,8 @@ const find = z.object({
 const read = find.merge(
 	z.object({
 		name: z.string({}),
-		mentionable: z.boolean()
+		mentionable: z.boolean(),
+		hexColor: z.string()
 	})
 );
 

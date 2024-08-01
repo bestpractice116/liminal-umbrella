@@ -16,7 +16,8 @@ import type {
 	ThreadChannel,
 	PublicThreadChannel,
 	GuildScheduledEvent,
-	User as GuildUser
+	User as GuildUser,
+	Role as GuildRole
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark, EventInterest } from './database/model.js';
@@ -113,35 +114,62 @@ export default class Database {
 		});
 	}
 
+	getRoleData(role: GuildRole): any {
+		return {
+			name: role.name,
+			mentionable: role.mentionable,
+			tags: JSON.stringify(role.tags || []) || '',
+			position: role.position,
+			rawPosition: role.rawPosition,
+			hexColor: role.hexColor,
+			unicodeEmoji: role.unicodeEmoji || '',
+			permissions: JSON.stringify(role.permissions.serialize())
+		};
+	}
+
 	async syncRoles(guild: Guild): Promise<void> {
 		const roles = await guild.roles.fetch();
 		const dbRoles = await Role.rolesMap();
 		const missingRoles = [];
-		for (const [key, _] of roles) {
+		for (const [key, role] of roles) {
 			const dbRole = dbRoles.get(key);
 			if (!dbRole) {
 				missingRoles.push(key);
+			} else {
+				await this.roleUpdate(role, dbRole);
 			}
 			dbRoles.delete(key);
 		}
 		for (const missingId of missingRoles) {
 			const role = roles.get(missingId)!;
-			await Role.create({
-				key: missingId,
-				name: role.name,
-				mentionable: role.mentionable,
-				tags: JSON.stringify(role.tags || []) || '',
-				position: role.position,
-				rawPosition: role.rawPosition,
-				hexColor: role.hexColor,
-				unicodeEmoji: role.unicodeEmoji || '',
-				permissions: JSON.stringify(role.permissions.serialize())
-			});
+			await this.roleCreate(role);
 		}
-		for (const [key, _] of dbRoles) {
-			const role = await Role.findByPk(key);
-			await role?.destroy();
+		for (const [_key, dbRole] of dbRoles) {
+			this.roleDelete(undefined, dbRole);
 		}
+	}
+
+	async roleCreate(role: GuildRole) {
+		await Role.create({
+			key: role.id,
+			...this.getRoleData(role)
+		});
+	}
+
+	async roleDelete(role?: GuildRole | undefined, dbRole?: Role | undefined) {
+		if (!dbRole && !role) {
+			throw new Error('Must supply either discord Guildrole or DB role as parameter');
+		}
+		if (!dbRole) dbRole = (await Role.findByPk(role!.id)) || undefined;
+		if (!dbRole) return;
+		await dbRole?.destroy();
+	}
+
+	async roleUpdate(role: GuildRole, dbRole?: Role | undefined) {
+		if (!dbRole) dbRole = (await Role.findByPk(role!.id)) || undefined;
+		if (!dbRole) return this.roleCreate(role);
+		dbRole.set(this.getRoleData(role));
+		await dbRole.save();
 	}
 
 	async guildMemberAdd(guildMember: GuildMember) {
