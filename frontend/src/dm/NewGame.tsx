@@ -27,7 +27,7 @@ export default function PostGame() {
 			return [data.datum];
 		});
 	});
-	const updateMutation = getUpdateMutation('/api/game', 'game', setIsCreating, (data: any) => {
+	const updateMutation = getUpdateMutation('/api/game', setIsCreating, (data: any) => {
 		queryClient.setQueryData(['game'], (_old: any) => {
 			return [data.datum];
 		});

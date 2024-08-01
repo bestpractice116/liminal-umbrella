@@ -187,8 +187,7 @@ type QueryKeyElement = string | number;
 export type QueryKey = QueryKeyElement | QueryKeyElement[];
 
 function coerceQueryKey(key: QueryKey): string[] {
-	if (typeof key === 'number') {
-		// Array.from works on single strings, but not numbers, as they're not iterable
+	if (typeof key === 'number' || typeof key === 'string') {
 		return [`${key}`];
 	}
 	return Array.from(key, (v: QueryKeyElement) => `${v}`);
@@ -206,12 +205,10 @@ export function getFetchQuery<T>(apipath: string, querykey: QueryKey): UseQueryR
 
 export function getUpdateMutation(
 	apipath: string,
-	querykey: QueryKey,
 	setIsMutating: (isMutating: boolean) => void,
 	onSuccess: (data: any, row: any) => void
 ): UseMutationResult<void, Error, any, void> {
 	const { showBoundary } = useErrorBoundary();
-	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (r: any) => {
 			return fetch(
@@ -225,7 +222,6 @@ export function getUpdateMutation(
 				},
 				FetchResultTypes.JSON
 			).then((data) => {
-				queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
 				zodErrorConvertorThrow(data, () => {
 					onSuccess(data, r);
 				});
@@ -301,8 +297,9 @@ export function getListQueries<APIRow>(apipath: string, querykey: QueryKey): Que
 	const handleDelete = (key: React.Key) => {
 		deleteMutation.mutate({ key });
 	};
-	const updateMutation = getUpdateMutation(apipath, querykey, setIsMutating, (data: any) => {
+	const updateMutation = getUpdateMutation(apipath, setIsMutating, (data: any) => {
 		queryClient.setQueryData([querykey], (old: any) => {
+			console.log(`Have old data for query key ${querykey} that we are updating: `, old);
 			return old.map((item: any, row: any) => {
 				if (item.key === row.key) {
 					return data.datum;

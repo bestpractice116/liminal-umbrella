@@ -3153,6 +3153,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-devtools@npm:5.51.16":
+  version: 5.51.16
+  resolution: "@tanstack/query-devtools@npm:5.51.16"
+  checksum: 10c0/40f1fbad77b703b96809b06323962614f9868b6e453fbcfcc1c73f3ff4f479f4ef066706fdfb3c3be33da76122dac21725de42c0f65ac0344d3839688d672c32
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.51.18":
+  version: 5.51.18
+  resolution: "@tanstack/react-query-devtools@npm:5.51.18"
+  dependencies:
+    "@tanstack/query-devtools": "npm:5.51.16"
+  peerDependencies:
+    "@tanstack/react-query": ^5.51.18
+    react: ^18 || ^19
+  checksum: 10c0/862294c3ac89e264e6f9e6f18df93fbbee094fe80323f72e1bcc5ad4820e6de014deed2e97dca1fb4897e53a44a9c9d45d05d0c43ce2291fc4ae6247ec0c8dd5
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.45.1":
   version: 5.45.1
   resolution: "@tanstack/react-query@npm:5.45.1"
@@ -5306,6 +5325,7 @@ __metadata:
   dependencies:
     "@ant-design/icons": "npm:^5.4.0"
     "@tanstack/react-query": "npm:^5.45.1"
+    "@tanstack/react-query-devtools": "npm:^5.51.18"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.2.0"

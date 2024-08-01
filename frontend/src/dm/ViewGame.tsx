@@ -123,7 +123,9 @@ export default function ViewGame() {
 
 	const save = () => {};
 
-	const updateMutation = getUpdateMutation(`/api/gamesessions`, ['gamesessions', key], setIsCreating, () => {
+	const updateMutation = getUpdateMutation(`/api/gamesessions`, setIsCreating, () => {
+		// FIXME - this is a crappy way to do this, see how it's done in CRUD.tsx
+		queryClient.invalidateQueries({ queryKey: ['gamesessions', key] });
 		console.log('updated');
 	});
 	const deleteMutation = getDeleteMutation(

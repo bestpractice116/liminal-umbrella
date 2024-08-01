@@ -37,6 +37,7 @@ import ViewGame from './dm/ViewGame';
 import NotFound from './NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
 import { AnyObject } from 'antd/es/_util/type.js';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function TopMenu() {
 	const { debug, setDebug } = useContext(DebugContext);
@@ -220,35 +221,36 @@ function Page() {
 		style['width'] = '100%';
 	}
 	return (
-		<MaybeDebug>
-			<Layout style={style}>
-				<TopMenu />
-				<Content>
-					<div
-						style={{
-							minHeight: 280,
-							padding: isMobile ? 0 : '2em',
-							display: 'flex',
-						}}
-					>
-						<ErrorBoundary FallbackComponent={ErrorFallback}>
-							<AuthLoadingSpinner>
-								<PageContent />
-							</AuthLoadingSpinner>
-						</ErrorBoundary>
-					</div>
-				</Content>
-				<Footer style={{ textAlign: 'center' }}>Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D</Footer>
-			</Layout>
-		</MaybeDebug>
+		<Layout style={style}>
+			<TopMenu />
+			<Content>
+				<div
+					style={{
+						minHeight: 280,
+						padding: isMobile ? 0 : '2em',
+						display: 'flex'
+					}}
+				>
+					<ErrorBoundary FallbackComponent={ErrorFallback}>
+						<AuthLoadingSpinner>
+							<PageContent />
+						</AuthLoadingSpinner>
+					</ErrorBoundary>
+				</div>
+			</Content>
+			<Footer style={{ textAlign: 'center' }}>Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D</Footer>
+		</Layout>
 	);
 }
 
-function App() {
+function AppRouter() {
 	const queryClient = new QueryClient();
+	const { debug } = useContext(DebugContext);
+
 	return (
 		<Router>
 			<QueryClientProvider client={queryClient}>
+				<ReactQueryDevtools initialIsOpen={debug} />
 				<ConfigProvider
 					theme={{
 						token: { colorPrimary: '#00b96b' }
@@ -260,6 +262,14 @@ function App() {
 				</ConfigProvider>
 			</QueryClientProvider>
 		</Router>
+	);
+}
+
+function App() {
+	return (
+		<MaybeDebug>
+			<AppRouter />
+		</MaybeDebug>
 	);
 }
 
