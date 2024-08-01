@@ -40,17 +40,16 @@ export default function AdminUsers() {
 			dataIndex: 'roles',
 			editable: false,
 			ellipsis: true,
-			render: (roles: string[]) =>
+			render: (roles: string[], record: any) =>
 				roles
 					.filter((role) => role !== '@everyone' && role !== 'AllUsers')
-					.map((role) => (
-						<>
-							{' '}
+					.map((role, index) => (
+						<span key={`${record.key}${index}`}>
 							<Tag color={'geekblue'} key={role}>
 								{role}
 							</Tag>
 							<br />
-						</>
+						</span>
 					))
 		}
 	];
