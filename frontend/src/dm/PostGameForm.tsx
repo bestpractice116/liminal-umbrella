@@ -1,4 +1,4 @@
-import { useEffect, createRef, type RefObject } from 'react';
+import { type RefObject } from 'react';
 import Form, { FormInstance } from 'antd/es/form';
 import { NamePath } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
@@ -28,7 +28,8 @@ export default function PostGameForm({
 	children = <></>,
 	createForm = true,
 	disabled = false,
-	submitButtonText
+	submitButtonText,
+	formRef
 }: {
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
@@ -39,18 +40,12 @@ export default function PostGameForm({
 	createForm?: boolean;
 	disabled?: boolean;
 	submitButtonText?: string;
-	formRef?: RefObject<FormInstance<GameCreateItem>>;
+	formRef: RefObject<FormInstance<GameCreateItem>>;
 }) {
-	const formRef = createRef<FormInstance<GameCreateItem>>();
-	useEffect(() => {
-		formRef.current?.setFieldsValue(initialValues);
-	}, [initialValues]);
-
 	const getFormData = (): AnyObject => {
 		return formRef.current?.getFieldsValue() || initialValues;
 	};
 	const hasChanged = () => {
-		console.log('in OnBlur handler');
 		// This is gross, we should fix it.. Maybe with useWatch in the time components?
 		const values = formRef.current?.getFieldsValue();
 		if (!values) return;
@@ -145,15 +140,11 @@ export default function PostGameForm({
 					<Form.Item<GameUpdateItem> style={{ height: 0, margin: 0 }} name="key">
 						<Input type="hidden" />
 					</Form.Item>
-
 					<FormItem label="Name" name="name">
 						<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
 					</FormItem>
-
 					<GameTypeSelect save={hasChanged} disabled={disabled || !createForm} />
-
 					<GameSystemSelect save={hasChanged} disabled={disabled || !createForm} />
-
 					<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
 						<DatePicker
 							style={{ width: '250px', paddingRight: '20px' }}
@@ -172,11 +163,9 @@ export default function PostGameForm({
 					<FormItem label="Location" name="location">
 						<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
 					</FormItem>
-
 					<FormItem label="Description" name="description">
 						<Input.TextArea rows={6} size={'large'} onBlur={hasChanged} disabled={disabled} />
 					</FormItem>
-
 					<FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} label="Max Players" name="maxplayers">
 						<Select
 							options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
