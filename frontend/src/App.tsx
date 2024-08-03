@@ -233,7 +233,6 @@ function Page() {
 					style={{
 						minHeight: 280,
 						padding: isMobile ? 0 : '2em',
-						display: 'flex'
 					}}
 				>
 					<ErrorBoundary FallbackComponent={ErrorFallback}>
