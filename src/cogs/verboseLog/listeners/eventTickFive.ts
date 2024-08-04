@@ -1,6 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
-//import { getChannelAndSend } from '../utils.js';
+import { getChannelAndSend } from '../utils.js';
+import dayjs from '../../../lib/dayjs.js';
 import { CustomEvents } from '../../../lib/events.js';
 
 export class verboseLogTickFiveListener extends Listener {
@@ -12,8 +13,9 @@ export class verboseLogTickFiveListener extends Listener {
 			event: CustomEvents.TickFive
 		});
 	}
-	run(_: TickFive) {
+	run(e: TickFive) {
+		const thing = dayjs(new Date(e.firedAt));
 		//container.logger.info("verboseLog cog - tickFive");
-		//getChannelAndSend(this.container, `Tick: ${e.firedAt}`)
+		getChannelAndSend(`Tick (5m): ${thing.format('LT')}`);
 	}
 }
