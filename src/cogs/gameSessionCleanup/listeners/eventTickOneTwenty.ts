@@ -7,7 +7,13 @@ import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
 import { CustomEvents } from '../../../lib/events.js';
 
 const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
-const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
+// FIXME - this is 1 for testing...
+const CLEANUP_GAME_CHANNELS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 10 days ago
+
+type GameChannelsLocked = {
+	considered: number;
+	locked: number;
+};
 
 export class gameSessionCleanupTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -22,9 +28,10 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 	async run(_e: TickOneTwenty) {
 		await sleepUpToTwoHours();
 		this.container.logger.info('Doing gameSessionCleanup now');
-		await this.cleanupGameListings();
-		await this.cleanupGameChannels();
-		this.container.logger.info('Finished gameSessionCleanup');
+		const gameListingsDeleted = await this.cleanupGameListings();
+		const gameChannelsHandled = await this.cleanupGameChannels();
+		const statusMessage = `deleted ${gameListingsDeleted} game listings, considered ${gameChannelsHandled.considered} and locked ${gameChannelsHandled.locked} of them`;
+		this.container.logger.info(`Finished gameSessionCleanup: ${statusMessage}`);
 	}
 
 	@Sequential
@@ -40,7 +47,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 		});
 	}
 
-	async cleanupGameListings() {
+	async cleanupGameListings(): Promise<number> {
 		const gameListingsToDelete = await this.getGameListingsToDelete();
 		await shortSleep();
 
@@ -50,6 +57,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 			await this.cleanupGameListing(gameSession);
 			await shortSleep();
 		}
+		return gameListingsToDelete.length;
 	}
 
 	@Sequential
@@ -78,37 +86,43 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 		});
 	}
 
-	async cleanupGameChannels() {
+	async cleanupGameChannels(): Promise<GameChannelsLocked> {
 		// Find all non-pinned messages > 30 days old from the channel.
 		const gameChannelsToLock = await this.getGameChannelsToLockSessions();
 
+		let locked = 0;
 		// Delete them from Discord and the bot's database.
 		this.container.logger.info(`Found ${gameChannelsToLock.length} game threads to consider locking`);
 		for (const gameSession of gameChannelsToLock) {
-			await this.cleanupGameChannel(gameSession);
+			if (await this.cleanupGameChannel(gameSession)) locked++;
 			await shortSleep();
 		}
+		return {
+			considered: gameChannelsToLock.length,
+			locked
+		};
 	}
 
 	@Sequential
-	async cleanupGameChannel(gameSession: GameSession) {
+	async cleanupGameChannel(gameSession: GameSession): Promise<boolean> {
 		const db = await this.container.database.getdb();
-		await db.transaction(async () => {
+		return await db.transaction(async () => {
 			const gameThread = await gameSession.getGameThread();
 			if (!gameThread) {
 				container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} has been deleted, marking cleaned up`);
 				gameSession.set({ channelCleanedup: true });
 				await gameSession.save();
-				return;
+				return true;
 			}
 			if (gameThread.archived) {
 				container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} is archived, locking`);
 				await gameThread.setLocked(true);
 				gameSession.set({ channelCleanedup: true });
 				await gameSession.save();
-				return;
+				return true;
 			}
 			container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} is not yet archived - ignoring`);
+			return false;
 		});
 	}
 }
