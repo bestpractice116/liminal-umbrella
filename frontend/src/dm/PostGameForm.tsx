@@ -17,7 +17,7 @@ import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
 import { AnyObject } from 'antd/es/_util/type.js';
 
-const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!));
+const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!).partial());
 
 export default function PostGameForm({
 	save,

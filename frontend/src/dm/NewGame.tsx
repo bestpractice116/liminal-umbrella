@@ -45,7 +45,7 @@ export default function PostGame() {
 		// THe length should never be > 1, but lets try to work anyway.
 		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
 		if (!res.success) {
-			console.error('error parsing NewGameSchea.read', res.error);
+			console.error('error parsing NewGameSchea.read', res.error.format());
 		} else {
 			initialValues = res.data;
 			initialValues.date = initialValues?.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
