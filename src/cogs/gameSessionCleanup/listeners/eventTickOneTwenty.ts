@@ -7,8 +7,7 @@ import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
 import { CustomEvents } from '../../../lib/events.js';
 
 const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
-// FIXME - this is 1 for testing...
-const CLEANUP_GAME_CHANNELS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 10 days ago
+const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
 
 type GameChannelsLocked = {
 	considered: number;
@@ -30,7 +29,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 		this.container.logger.info('Doing gameSessionCleanup now');
 		const gameListingsDeleted = await this.cleanupGameListings();
 		const gameChannelsHandled = await this.cleanupGameChannels();
-		const statusMessage = `deleted ${gameListingsDeleted} game listings, considered ${gameChannelsHandled.considered} and locked ${gameChannelsHandled.locked} of them`;
+		const statusMessage = `deleted ${gameListingsDeleted} game listings, considered ${gameChannelsHandled.considered} threads and locked ${gameChannelsHandled.locked} of them`;
 		this.container.logger.info(`Finished gameSessionCleanup: ${statusMessage}`);
 	}
 
@@ -115,13 +114,17 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 				return true;
 			}
 			if (gameThread.archived) {
-				container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} is archived, locking`);
-				await gameThread.setLocked(true);
+				if (!gameThread.locked) {
+					container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} is archived, locking`);
+					// Yes - this is lame... You need to un-archive a thread to then lock it...
+					await gameThread.setArchived(false);
+					await gameThread.setLocked(true);
+				}
 				gameSession.set({ channelCleanedup: true });
 				await gameSession.save();
 				return true;
 			}
-			container.logger.info(`Game thread ${gameSession.channelId} for game ${gameSession.name} is not yet archived - ignoring`);
+			container.logger.info(`Game thread ${gameSession.channelId} for game "${gameSession.name}" is not yet archived - ignoring`);
 			return false;
 		});
 	}
