@@ -354,7 +354,7 @@ export function CreateForm<T>({
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
-		form.validateFields({ })
+		form.validateFields({})
 			.then(() => setSubmittable(true))
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
@@ -363,7 +363,7 @@ export function CreateForm<T>({
 		return <></>;
 	}
 	return (
-		<Form
+		<Form<T>
 			style={style}
 			ref={formRef}
 			form={form}

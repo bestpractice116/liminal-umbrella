@@ -15,7 +15,7 @@ import { useErrorBoundary } from '../ErrorFallback.js';
 
 export default function PostGame() {
 	const { showBoundary } = useErrorBoundary();
-	const formRef = createRef<FormInstance<GameCreateItem>>();
+	const formRef = createRef<FormInstance<GameCreateItem & { date?: any }>>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);
@@ -64,6 +64,7 @@ export default function PostGame() {
 			return;
 		}
 		const data = formRef.current!.getFieldsValue();
+		delete data.date;
 		setIsCreating(true);
 		mutation.mutate(data, {
 			// FIXME - why do we have some logic in getCreateMutation and some here.

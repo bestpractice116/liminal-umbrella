@@ -49,20 +49,23 @@ export default function PostGameForm({
 		);
 	};
 
+	const setDate = (val: any, date: any) => {
+		return val.year(date.year()).month(date.month()).date(date.date());
+	};
+
 	// Normalize value from component value before passing to Form instance.
 	const timeNormalize = (val: any): any => {
 		if (!val || !formRef.current) return val;
 		const date = formRef.current?.getFieldValue('date');
 		if (!date || !date.isValid || !date.isValid()) return val;
-		return val.year(date.year()).month(date.month()).date(date.date());
+		return setDate(val, date);
 	};
 	const timeGetValue = (val: any): any => {
 		if (!val) return val;
 		if (!formRef.current) return { value: dayjs(val) };
 		const date = formRef.current?.getFieldValue('date');
 		if (!date || !date.isValid || !date.isValid()) return { value: dayjs(val) };
-		const d = dayjs(val).year(date.year()).month(date.month()).date(date.date());
-		return { value: d };
+		return { value: setDate(dayjs(val), date) };
 	};
 
 	const TimeControl = ({
@@ -101,7 +104,7 @@ export default function PostGameForm({
 			{' '}
 			<Spin spinning={isLoading} fullscreen />
 			{initialValues ? (
-				<CreateForm<GameCreateItem>
+				<CreateForm<GameCreateItem & { date?: any }>
 					mutation={mutation}
 					setIsMutating={setIsCreating}
 					initialValues={initialValues}
@@ -126,6 +129,8 @@ export default function PostGameForm({
 							format={'dddd D MMM (YYYY-MM-DD)'}
 							onChange={(val) => {
 								if (val) {
+									formRef.current?.setFieldValue('starttime', setDate(formRef.current?.getFieldValue('starttime'), val));
+									formRef.current?.setFieldValue('endtime', setDate(formRef.current?.getFieldValue('endtime'), val));
 									save();
 								}
 							}}

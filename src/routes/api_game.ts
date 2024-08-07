@@ -17,15 +17,6 @@ export async function doCoerce(request: ApiRequest, response: ApiResponse, data:
 		}
 		out['gamesystem'] = gamesystem.key;
 	}
-	if (data.date) {
-		if (data.starttime) {
-			out.starttime = data.starttime.clone().year(data.date.year()).month(data.date.month()).date(data.date.date());
-		}
-		if (data.endtime) {
-			out.endtime = data.endtime.clone().year(data.date.year()).month(data.date.month()).date(data.date.date());
-		}
-	}
-	delete out.date;
 	return out;
 }
 
