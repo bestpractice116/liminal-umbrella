@@ -40,7 +40,6 @@ const update = z
 			.trim()
 			.min(50, { message: 'Description must be at least 50 characters long' })
 			.max(500, { message: 'Description must be less than 500 characters' }),
-		date: z.preprocess(dayJsCoerce, zodDay),
 		starttime: z.preprocess(dayJsCoerce, zodDay),
 		endtime: z.preprocess(dayJsCoerce, zodDay),
 		location: z
@@ -62,21 +61,20 @@ const user = z.object({
 	avatarURL: z.string(),
 	username: z.string()
 });
-const read = update
-	.merge(
-		z.object({
-			owner: user,
-			signedupplayers: z.array(user),
-			gameListingsMessageId: z.string(),
-			eventId: z.string(),
-			channelId: z.string(),
-			gameListingsMessageLink: z.string(),
-			eventLink: z.string(),
-			channelLink: z.string()
-		})
-	)
-	.omit({ date: true });
-const create = update.merge(find);
+const read = update.and(
+	z.object({
+		owner: user,
+		signedupplayers: z.array(user),
+		gameListingsMessageId: z.string(),
+		eventId: z.string(),
+		channelId: z.string(),
+		gameListingsMessageLink: z.string(),
+		eventLink: z.string(),
+		channelLink: z.string()
+	})
+);
+
+const create = update.and(find);
 
 export const GameSchema: SchemaBundle = {
 	// This is a strange case, as Game is Created from NewGame, but the update schema is used on
