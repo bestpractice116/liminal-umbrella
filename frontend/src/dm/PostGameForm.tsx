@@ -1,5 +1,5 @@
 import { type RefObject } from 'react';
-import Form, { FormInstance } from 'antd/es/form';
+import Form, { FormInstance, FormItemProps } from 'antd/es/form';
 import { NamePath } from 'rc-field-form/es/interface.js';
 import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
@@ -73,31 +73,9 @@ export default function PostGameForm({
 		return `${getFormData()[name]}` != `${initialValues[name]}` ? 'error' : undefined;
 	};
 
-	const FormItem = ({
-		name,
-		label,
-		children,
-		style,
-		labelCol,
-		wrapperCol
-	}: {
-		name: NamePath<GameCreateItem>;
-		label: string;
-		children: React.ReactNode;
-		style?: React.CSSProperties;
-		labelCol?: ColProps;
-		wrapperCol?: ColProps;
-	}) => {
+	const FormItem = ({ name, label, children, rules = [], ...rest }: { children: React.ReactNode } & FormItemProps) => {
 		return (
-			<Form.Item<GameCreateItem>
-				wrapperCol={wrapperCol}
-				labelCol={labelCol}
-				style={style}
-				name={name}
-				label={label}
-				rules={[updateFormRule]}
-				validateStatus={getValidateStatus(`${name}`)}
-			>
+			<Form.Item<GameCreateItem> {...rest} name={name} label={label} rules={[updateFormRule, ...rules]}>
 				{children}
 			</Form.Item>
 		);
