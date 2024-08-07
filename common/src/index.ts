@@ -41,4 +41,4 @@ export function dayJsCoerceOrUndefined(val: unknown) {
 	return undefined;
 }
 
-export const zodDay: z.ZodTypeAny = z.custom<dayjs.Dayjs>((val) => val instanceof dayjs && (val as dayjs.Dayjs).isValid(), 'Invalid date');
+export const zodDay: z.ZodTypeAny = z.custom<dayjs.Dayjs>((val) => dayjs(val).isValid(), 'Invalid date');
