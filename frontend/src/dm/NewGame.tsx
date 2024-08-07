@@ -133,8 +133,8 @@ export default function PostGame() {
 function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> | undefined>; doPost: () => void }) {
 	const values = Form.useWatch([], form.current || undefined);
 	if (!form.current) return <></>;
-	const isPostable = getZObject(GameSchema.create!).safeParse(values).success;
-
+	const hasFieldErrors = form.current.getFieldsError().filter((field) => field.errors.length > 0).length > 0;
+	const isPostable = !hasFieldErrors && getZObject(GameSchema.create!).safeParse(values).success;
 	return (
 		<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={doPost}>
 			Post Game
