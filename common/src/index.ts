@@ -6,9 +6,12 @@ import timezone from 'dayjs/plugin/timezone.js';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any>): string[] {
+export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any> | z.ZodIntersection<any, any>): string[] {
+	if (schema instanceof z.ZodIntersection) {
+		return [...getSchemaKeys(schema._def.left), ...getSchemaKeys(schema._def.right)];
+	}
 	if (schema instanceof z.ZodReadonly) {
-		return Object.keys(schema.unwrap().shape);
+		return getSchemaKeys(schema.unwrap());
 	}
 	return Object.keys(schema.shape);
 }
