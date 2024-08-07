@@ -81,6 +81,22 @@ export default function PostGameForm({
 		);
 	};
 
+	// Normalize value from component value before passing to Form instance.
+	const timeNormalize = (val: any): any => {
+		if (!val || !formRef.current) return val;
+		const date = formRef.current?.getFieldValue('date');
+		if (!date || !date.isValid || !date.isValid()) return val;
+		return val.year(date.year()).month(date.month()).date(date.date());
+	};
+	const timeGetValue = (val: any): any => {
+		if (!val) return val;
+		if (!formRef.current) return { value: dayjs(val) };
+		const date = formRef.current?.getFieldValue('date');
+		if (!date || !date.isValid || !date.isValid()) return { value: dayjs(val) };
+		const d = dayjs(val).year(date.year()).month(date.month()).date(date.date());
+		return { value: d };
+	};
+
 	const TimeControl = ({
 		name,
 		label,
