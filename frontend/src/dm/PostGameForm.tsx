@@ -144,7 +144,7 @@ export default function PostGameForm({
 						<Input onPressEnter={hasChanged} onBlur={hasChanged} disabled={disabled} />
 					</FormItem>
 					<GameTypeSelect save={hasChanged} disabled={disabled || !createForm} />
-					<GameSystemSelect save={hasChanged} disabled={disabled || !createForm} />
+					<GameSystemSelect create={createForm} save={hasChanged} disabled={disabled || !createForm} />
 					<FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date" label="Date">
 						<DatePicker
 							style={{ width: '250px', paddingRight: '20px' }}
