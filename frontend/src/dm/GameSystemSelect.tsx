@@ -5,9 +5,7 @@ import Select from 'antd/es/select';
 import { type GameSystemListItem, type GameUpdateItem, gameSystemSchema } from 'common/schema';
 import { getListQueries, WrapCRUD } from '../CRUD.js';
 
-const createFormRule = createSchemaFieldRule(getZObject(gameSystemSchema));
-
-export default function GameSystemSelect({ save, disabled }: { save: () => void; disabled: boolean }) {
+export default function GameSystemSelect({ save, disabled, create }: { save: () => void; disabled: boolean; create: boolean }) {
 	const { result } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 	const gamesystems: GameSystemListItem[] = result.isSuccess ? result.data : [];
 	const loading = result.isFetching;
@@ -15,7 +13,7 @@ export default function GameSystemSelect({ save, disabled }: { save: () => void;
 	// FIXME - do we need the WrapCRUD spinner here, or is loading component enough
 	return (
 		<WrapCRUD result={result}>
-			<GameSystemsSelectHTML gamesystems={gamesystems} save={save} loading={loading} disabled={disabled} />
+			<GameSystemsSelectHTML create={create} gamesystems={gamesystems} save={save} loading={loading} disabled={disabled} />
 		</WrapCRUD>
 	);
 }
@@ -24,13 +22,16 @@ function GameSystemsSelectHTML({
 	gamesystems,
 	save,
 	loading,
-	disabled
+	disabled,
+	create
 }: {
 	gamesystems: GameSystemListItem[];
 	save: () => void;
 	loading: boolean;
 	disabled: boolean;
+	create: boolean;
 }) {
+	const createFormRule = createSchemaFieldRule(getZObject(create ? gameSystemSchema.partial() : gameSystemSchema));
 	const gamesystems_items = gamesystems.map((system) => {
 		return { value: system.name, label: <span>{system.description}</span> };
 	});
