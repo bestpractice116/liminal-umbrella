@@ -15,7 +15,6 @@ import { UseMutationResult } from '@tanstack/react-query';
 import { getZObject } from 'common';
 import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
-import { AnyObject } from 'antd/es/_util/type.js';
 
 const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!).partial());
 
