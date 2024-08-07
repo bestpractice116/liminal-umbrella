@@ -354,7 +354,7 @@ export function CreateForm<T>({
 	const values = Form.useWatch([], form);
 
 	useEffect(() => {
-		form.validateFields({ validateOnly: true })
+		form.validateFields({ })
 			.then(() => setSubmittable(true))
 			.catch(() => setSubmittable(false));
 	}, [form, values]);
