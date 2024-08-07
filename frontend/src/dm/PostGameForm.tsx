@@ -50,6 +50,7 @@ export default function PostGameForm({
 	};
 
 	const setDate = (val: any, date: any) => {
+		if (!date || !val) return val;
 		return val.year(date.year()).month(date.month()).date(date.date());
 	};
 
