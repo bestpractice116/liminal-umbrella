@@ -51,16 +51,16 @@ export class ApiGameSessions extends UD {
 	}
 
 	override async UPDATE_coerce(_request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-		const date = new Date(data.date);
 		const starttime = new Date(data.starttime!);
-		starttime.setFullYear(date.getFullYear());
-		starttime.setMonth(date.getMonth());
-		starttime.setDate(date.getDate());
 		const endtime = new Date(data.endtime)!;
-		endtime.setFullYear(date.getFullYear());
-		endtime.setMonth(date.getMonth());
-		endtime.setDate(date.getDate());
 
+		if (isNaN(starttime.getTime()) {
+			return response.badRequest('starttime is invalid')
+		}
+		if (isNaN(endtime.getTime()) {
+			return response.badRequest('starttime is invalid')
+		}
+	
 		const now = new Date(Date.now());
 		if (starttime < now) {
 			// Session started in the past, not valid
