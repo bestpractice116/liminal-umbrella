@@ -54,13 +54,13 @@ export class ApiGameSessions extends UD {
 		const starttime = new Date(data.starttime!);
 		const endtime = new Date(data.endtime)!;
 
-		if (isNaN(starttime.getTime()) {
-			return response.badRequest('starttime is invalid')
+		if (isNaN(starttime.getTime())) {
+			return response.badRequest('starttime is invalid');
 		}
-		if (isNaN(endtime.getTime()) {
-			return response.badRequest('starttime is invalid')
+		if (isNaN(endtime.getTime())) {
+			return response.badRequest('starttime is invalid');
 		}
-	
+
 		const now = new Date(Date.now());
 		if (starttime < now) {
 			// Session started in the past, not valid
