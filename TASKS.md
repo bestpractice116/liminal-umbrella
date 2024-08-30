@@ -15,7 +15,7 @@
 
 ## Cleaning up old messages
 
--   Deletes old messages (age > 7 days) which are not pinned from #location_booking [[code](src/cogs/deleteOldMessages/listeners/eventTickFive.ts)].
+-   Deletes old messages (age > 7 days) which are not pinned from #location_booking [[code](src/cogs/deleteOldMessages/listeners/eventTickOneTwenty.ts)].
 
 # Channels that things happen/are posted in
 
