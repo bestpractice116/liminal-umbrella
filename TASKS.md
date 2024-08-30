@@ -38,11 +38,11 @@ Just for fun, the bot has a list of games it lists itself as 'Playing' on Discor
 
 ## Dungeon Master Screens
 
-## View games
+### View games
 
 Allows DMs to view their upcoming and historical games. Selecting a game allows you to edit it, if the game is upcoming
 
-## Post game
+### Post game
 
 Allows DMs to setup, edit and post upcoming games. Details are saved as they are entered, so that you can part fill in the form and not lose your data if you leave and come back to it. Only one game can be in draft form at once. Once a game is posted, it is posted to Discord in the standard places.
 
