@@ -77,12 +77,16 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 }
 
 type BotMessageProps = {
-	key: string;
-	default?: string | null | undefined;
+	messageKey: string;
+	defaultMessage?: string | null | undefined;
 };
 
 export default function BotMessage(props: BotMessageProps) {
+	return botMessage(props.messageKey, props.defaultMessage);
+}
+
+export function botMessage(messageKey: string, defaultMessage?: string | null | undefined) {
 	const messages = useContext(MessageContext);
-	const defaultMessage = typeof props.default === 'undefined' ? props.key : props.default;
-	return props.key in messages ? messages['key'] : defaultMessage;
+	const defaultM = typeof defaultMessage === 'undefined' ? messageKey : defaultMessage;
+	return messageKey in messages ? messages['key'] : defaultM;
 }

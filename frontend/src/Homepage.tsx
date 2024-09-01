@@ -6,6 +6,7 @@ import Space from 'antd/es/space';
 import { useContext } from 'react';
 import { AuthData, isAuthenticated, isDM } from './Auth';
 import { DebugContext } from './Debug';
+import Tooltip from './Tooltip';
 
 function HomePage() {
 	const { debug } = useContext(DebugContext);
@@ -21,16 +22,20 @@ function HomePage() {
 				{dm ? (
 					<Flex justify="center">
 						<Space>
-							<Link to={`./dm/newgame`} relative="path">
-								<Button type="primary" style={{ marginBottom: 16 }}>
-									Create new game
-								</Button>
-							</Link>
-							<Link to={`./dm/viewgames`} relative="path">
-								<Button type="primary" style={{ marginBottom: 16 }}>
-									View games
-								</Button>
-							</Link>
+							<Tooltip messageKey="NEW_GAME_TOOLTIP">
+								<Link to={`./dm/newgame`} relative="path">
+									<Button type="primary" style={{ marginBottom: 16 }}>
+										Create new game
+									</Button>
+								</Link>
+							</Tooltip>
+							<Tooltip messageKey="VIEW_GAMES_TOOLTIP">
+								<Link to={`./dm/viewgames`} relative="path">
+									<Button type="primary" style={{ marginBottom: 16 }}>
+										View games
+									</Button>
+								</Link>
+							</Tooltip>
 						</Space>
 					</Flex>
 				) : (
