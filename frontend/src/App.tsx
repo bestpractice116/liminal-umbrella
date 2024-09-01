@@ -23,7 +23,7 @@ import { MaybeDebug, DebugContext } from './Debug';
 import { ProtectedRoute } from './ProtectedRoute';
 import HomePage from './Homepage';
 import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, getLogoutMutation } from './Auth';
-
+import { MessageProvider } from './BotMessage';
 import Login from './Login';
 import AdminUsers from './admin/Users';
 import AdminCogs from './admin/Cogs';
@@ -232,14 +232,12 @@ function Page() {
 				<div
 					style={{
 						minHeight: 280,
-						padding: isMobile ? 0 : '2em',
+						padding: isMobile ? 0 : '2em'
 					}}
 				>
-					<ErrorBoundary FallbackComponent={ErrorFallback}>
-						<AuthLoadingSpinner>
-							<PageContent />
-						</AuthLoadingSpinner>
-					</ErrorBoundary>
+					<AuthLoadingSpinner>
+						<PageContent />
+					</AuthLoadingSpinner>
 				</div>
 			</Content>
 			<Footer style={{ textAlign: 'center' }}>Preston RPG Discord Admins ©{new Date().getFullYear()} built with ❤️ by Tomas D</Footer>
@@ -264,9 +262,11 @@ function AppRouter() {
 						token: { colorPrimary: '#00b96b' }
 					}}
 				>
-					<AuthProvider>
-						<Page />
-					</AuthProvider>
+					<MessageProvider>
+						<AuthProvider>
+							<Page />
+						</AuthProvider>
+					</MessageProvider>
 				</ConfigProvider>
 			</QueryClientProvider>
 		</Router>
@@ -275,9 +275,11 @@ function AppRouter() {
 
 function App() {
 	return (
-		<MaybeDebug>
-			<AppRouter />
-		</MaybeDebug>
+		<ErrorBoundary FallbackComponent={ErrorFallback}>
+			<MaybeDebug>
+				<AppRouter />
+			</MaybeDebug>
+		</ErrorBoundary>
 	);
 }
 

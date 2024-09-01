@@ -14,6 +14,7 @@ import {
 	useMemo,
 	useState
 } from 'react';
+import Layout, { Content } from 'antd/es/layout/layout';
 
 declare function FallbackRender(props: FallbackProps): ReactNode;
 
@@ -227,10 +228,14 @@ export const ErrorFallback = ({ error, errorInfo }: { error: Error; resetErrorBo
 		console.error(error, errorInfo);
 	}, []);
 	return (
-		<div role="alert">
-			<p>Something went wrong:</p>
-			<pre style={{ color: 'red' }}>{error ? error.toString() : `Error has no toString() method, is: ${error}`}</pre>
-			{errorInfo && errorInfo.componentStack ? <pre style={{ color: 'red' }}>{errorInfo.componentStack}</pre> : null}
-		</div>
+		<Layout>
+			<Content>
+				<div role="alert">
+					<p>Something went wrong:</p>
+					<pre style={{ color: 'red' }}>{error ? error.toString() : `Error has no toString() method, is: ${error}`}</pre>
+					{errorInfo && errorInfo.componentStack ? <pre style={{ color: 'red' }}>{errorInfo.componentStack}</pre> : null}
+				</div>
+			</Content>
+		</Layout>
 	);
 };
