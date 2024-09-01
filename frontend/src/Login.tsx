@@ -5,5 +5,12 @@ export default function Login() {
 	if (isAuthenticated()) {
 		return <Navigate to={'/'} replace />;
 	}
-	return <LoginButton />;
+	return (
+		<div style={{ margin: 'auto' }}>
+			<div style={{ margin: 'auto', textAlign: 'center' }}>Log in with Discord:</div>
+			<div style={{ margin: 'auto', textAlign: 'center' }}>
+				<LoginButton />
+			</div>
+		</div>
+	);
 }
