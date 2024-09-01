@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
+import Spin from 'antd/es/spin';
+import Layout, { Content } from 'antd/es/layout/layout';
 
 export type MessagesData = { [key: string]: string };
 
@@ -39,6 +41,18 @@ async function fetchMessages(): Promise<MessagesFetchResult> {
 	);
 }
 
+function Loading() {
+	return (
+		<Layout>
+			<Content>
+				<Spin tip="Loading" size="large" fullscreen={true}>
+					&nbsp;
+				</Spin>
+			</Content>
+		</Layout>
+	);
+}
+
 export const MessageContext = createContext({} as MessagesData);
 export function MessageProvider({ children }: { children: React.ReactNode }) {
 	const result: MessagesQueryResult = useQuery<any, MessagesQueryError>({
@@ -51,6 +65,9 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 	if (result) {
 		if (result.error || ((result.data || {}) as MessagesQueryError).error) {
 			throw result;
+		}
+		if (result.isFetching) {
+			return <Loading />;
 		}
 		data = ((result.data as MessagesQueryData) || []).reduce((acc: MessagesData, curr: MessagesQueryDatum) => {
 			return { ...acc, [curr.key]: curr.value };
