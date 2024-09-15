@@ -1,50 +1,8 @@
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { createContext, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useContext } from 'react';
 import { Button } from 'antd';
-import { fetch, FetchResultTypes } from '@sapphire/fetch';
-import { AuthFetchResult, LogoutFetchResult } from './types';
-
-async function fetchAuth(): Promise<AuthFetchResult> {
-	return fetch(
-		'/oauth/refreshtoken',
-		{
-			method: 'POST'
-		},
-		FetchResultTypes.JSON
-	);
-}
-
-async function doLogoutCallback(): Promise<LogoutFetchResult> {
-	return fetch(
-		'/oauth/logout',
-		{
-			method: 'POST',
-			body: JSON.stringify({}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		},
-		FetchResultTypes.JSON
-	);
-}
-
-export function useLogoutMutation() {
-	const queryClient = useQueryClient();
-	const navigate = useNavigate();
-	const mutation = useMutation({
-		mutationFn: doLogoutCallback,
-		onSuccess: (_) => {
-			queryClient.setQueryData(['auth'], { error: 'Unauthorized' });
-			navigate('/login', { replace: true, state: { redirectTo: '/' } });
-		}
-	});
-	return {
-		logoutMutation: () => {
-			mutation.mutate();
-		}
-	};
-}
+import { useAuthStatus } from './hooks';
+import { AuthContext } from './Context';
 
 export function LoginButton() {
 	const location = useLocation();
@@ -66,64 +24,6 @@ export function LoginButton() {
 			Login
 		</Button>
 	);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AuthContext = createContext(null as any);
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-	const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth, notifyOnChangeProps: 'all', retry: 0 });
-	return <AuthContext.Provider value={result}>{children}</AuthContext.Provider>;
-}
-
-export function useAuthStatus() {
-	const auth = useContext(AuthContext);
-	const isAuthenticated = () => {
-		if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
-			return false;
-		}
-		return auth.data;
-	};
-
-	const isAuthFetching = () => {
-		if (!auth) {
-			return false;
-		}
-		return auth.isFetching;
-	};
-
-	const isAdmin = () => {
-		const auth = isAuthenticated();
-		if (!auth) {
-			return false;
-		}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return !!auth.roles.find((e: any) => e === 'Admin');
-	};
-
-	const isDM = () => {
-		const auth = isAuthenticated();
-		if (!auth) {
-			return false;
-		}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return !!auth.roles.find((e: any) => e === 'Admin' || e === 'Dungeon Master');
-	};
-
-	const isBotBetaTester = () => {
-		const auth = isAuthenticated();
-		if (!auth) {
-			return false;
-		}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return !!auth.roles.find((e: any) => e === 'Admin' || e === 'BotBetaTester');
-	};
-	return {
-		isAuthenticated,
-		isAuthFetching,
-		isAdmin,
-		isDM,
-		isBotBetaTester
-	};
 }
 
 export function AuthData() {
