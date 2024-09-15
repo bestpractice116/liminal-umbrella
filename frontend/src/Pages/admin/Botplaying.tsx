@@ -8,13 +8,25 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { ActivitySchema, type BotActivityListItem, type BotActivityCreate } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
-import { getTableComponents, ColumnTypes, getListQueries, AddRow, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
+import {
+	useTableComponents,
+	ColumnTypes,
+	useFetchQuery,
+	useFormHandlers,
+	useCreateMutationAndUpdateQueryData,
+	AddRow,
+	getColumns,
+	DefaultColumns,
+	WrapCRUD
+} from '../../lib/CRUD';
 
-const components = getTableComponents(ActivitySchema);
 const createFormRule = createSchemaFieldRule(getZObject(ActivitySchema.create!));
 
 export function AdminBotplaying() {
-	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<BotActivityListItem>('/api/botplaying', 'bot_playing');
+	const components = useTableComponents(ActivitySchema);
+	const result = useFetchQuery<BotActivityListItem[]>('/api/botplaying', 'bot_playing');
+	const { isUpdating, isDeleting, handleUpdate, handleDelete } = useFormHandlers<BotActivityListItem>('/api/botplaying', 'bot_playing');
+	const { isCreating, createMutation } = useCreateMutationAndUpdateQueryData('/api/botplaying', 'bot_playing');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -37,12 +49,12 @@ export function AdminBotplaying() {
 		}
 	];
 
-	const columns = getColumns<BotActivityListItem>(defaultColumns, handleSave);
+	const columns = getColumns<BotActivityListItem>(defaultColumns, handleUpdate);
 
 	return (
 		<WrapCRUD<BotActivityListItem> result={result}>
 			<>
-				<Spin spinning={isMutating} fullscreen />
+				<Spin spinning={isCreating || isUpdating || isDeleting} fullscreen />
 				<div>
 					This page is for editing the games which the bot can be listed as '<code>Playing ...</code>' in the user list at the side of
 					Discord. The bot will randomly pick a new activity from this list roughly every 4 hours (although this will vary!).

@@ -4,11 +4,10 @@ import Tooltip from 'antd/es/tooltip';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { GameSchema, type GameReadItem } from 'common/schema';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
+import { useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFetchQuery, useFormHandlers } from '../../lib/CRUD';
 import { useAuthStatus } from '../../components/Auth';
 import UserRecord from './UserRecord.js';
 import dayjs from '../../lib/dayjs.js';
-const components = getTableComponents(GameSchema);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toolTipValue(value: any, _record: any) {
@@ -22,7 +21,9 @@ function toolTipValue(value: any, _record: any) {
 export function ViewGames() {
 	const { isAdmin } = useAuthStatus();
 	const admin = isAdmin();
-	const { result, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
+	const components = useTableComponents(GameSchema);
+	const result = useFetchQuery<GameReadItem[]>('/api/gamesessions', 'gamesessions');
+	const { handleUpdate } = useFormHandlers<GameReadItem>('/api/gamesessions', 'gamesessions');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -97,7 +98,7 @@ export function ViewGames() {
 		};
 	}
 
-	const columns = getColumns<GameReadItem>(defaultColumns, handleSave);
+	const columns = getColumns<GameReadItem>(defaultColumns, handleUpdate);
 	return (
 		<>
 			<WrapCRUD<GameReadItem> result={result}>

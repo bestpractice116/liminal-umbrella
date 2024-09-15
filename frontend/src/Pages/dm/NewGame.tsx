@@ -2,7 +2,7 @@ import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
 import dayjs from '../../lib/dayjs.js';
 import { type GameCreateItem, type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
-import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../../lib/CRUD.js';
+import { useCreateMutation, useFetchQuery, useUpdateMutation } from '../../lib/CRUD';
 import Spin from 'antd/es/spin';
 import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
@@ -18,20 +18,20 @@ export function NewGame() {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const formRef = createRef<FormInstance<GameCreateItem & { date?: any }>>();
 	// FIXME - this name is bad as it isn't just creating
-	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);
-	const result = getFetchQuery<Array<NewGameListItem>>('/api/game', 'game');
+	const result = useFetchQuery<Array<NewGameListItem>>('/api/game', 'game');
 	const queryClient = useQueryClient();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
+	const { createMutation, isCreating } = useCreateMutation('/api/game', 'game', (data: any) => {
 		formRef.current!.setFieldValue('key', data!.datum!.key);
+		// FIXME - why can't we use the built in one?
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		queryClient.setQueryData(['game'], (_old: any) => {
 			return [data.datum];
 		});
 	});
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const updateMutation = getUpdateMutation('/api/game', setIsCreating, (data: any) => {
+	const { updateMutation, isUpdating } = useUpdateMutation('/api/game', (data: any) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		queryClient.setQueryData(['game'], (_old: any) => {
 			return [data.datum];
@@ -71,20 +71,10 @@ export function NewGame() {
 		}
 		const data = formRef.current!.getFieldsValue();
 		delete data.date;
-		setIsCreating(true);
-		mutation.mutate(data, {
-			// FIXME - why do we have some logic in getCreateMutation and some here.
-			onSuccess: (_data) => {
-				setIsCreating(false);
-			},
-			onError: (_e) => {
-				setIsCreating(false);
-			}
-		});
+		mutation.mutate(data);
 	};
 	const postgame = () => {
 		const data = formRef.current!.getFieldsValue();
-		setIsCreating(true);
 		mutation.mutate(data, {
 			onSuccess: () => {
 				// FIXME pull this out to it's own function?
@@ -110,14 +100,12 @@ export function NewGame() {
 								},
 								{ throwOnError: true }
 							);
-							setIsCreating(false);
 							setPostId(data.datum.key);
 						})
 						.catch((e) => showBoundary(e))
 				);
 			},
 			onError: (e) => {
-				setIsCreating(false);
 				throw e;
 			}
 		});
@@ -128,9 +116,8 @@ export function NewGame() {
 	}
 	return (
 		<PostGameForm
-			isLoading={isCreating || result.isFetching}
+			isLoading={isCreating || isUpdating || result.isFetching}
 			save={save}
-			setIsCreating={setIsCreating}
 			formRef={formRef}
 			mutation={mutation}
 			initialValues={initialValues}

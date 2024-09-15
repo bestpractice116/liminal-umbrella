@@ -2,12 +2,12 @@ import Table from 'antd/es/table';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema, type BotMessageListItem } from 'common/schema';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
-
-const components = getTableComponents(BotMessageSchema);
+import { useTableComponents, ColumnTypes, useFetchQuery, useFormHandlers, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD';
 
 export function AdminBotMessages() {
-	const { result, isMutating, handleSave } = getListQueries<BotMessageListItem>('/api/botmessages', 'botmessages');
+	const components = useTableComponents(BotMessageSchema);
+	const result = useFetchQuery<BotMessageListItem[]>('/api/botmessages', 'botmessages');
+	const { isUpdating, handleUpdate } = useFormHandlers<BotMessageListItem>('/api/botmessages', 'botmessages');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -22,13 +22,13 @@ export function AdminBotMessages() {
 		}
 	];
 
-	const columns = getColumns<BotMessageListItem>(defaultColumns, handleSave);
+	const columns = getColumns<BotMessageListItem>(defaultColumns, handleUpdate);
 
 	const codeexample = '${this....}';
 	const leftBracket = '${';
 	const rightBracket = '}';
 	return (
-		<WrapCRUD<BotMessageListItem> spin={isMutating} result={result}>
+		<WrapCRUD<BotMessageListItem> spin={isUpdating} result={result}>
 			<>
 				<Result
 					status="warning"

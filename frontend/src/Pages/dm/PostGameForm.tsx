@@ -20,7 +20,6 @@ const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!).part
 
 export default function PostGameForm({
 	save,
-	setIsCreating,
 	isLoading,
 	mutation,
 	initialValues,
@@ -30,7 +29,6 @@ export default function PostGameForm({
 	submitButtonText,
 	formRef
 }: {
-	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,7 +111,6 @@ export default function PostGameForm({
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				<CreateForm<GameCreateItem & { date?: any }>
 					mutation={mutation}
-					setIsMutating={setIsCreating}
 					initialValues={initialValues}
 					submitButton={!createForm}
 					submitButtonText={submitButtonText}

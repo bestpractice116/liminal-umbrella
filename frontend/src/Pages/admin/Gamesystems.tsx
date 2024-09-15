@@ -7,13 +7,24 @@ import { WarningOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
 import { GameSystemSchema, type GameSystemListItem } from 'common/schema';
 import { getZObject } from 'common';
-import { getTableComponents, ColumnTypes, getListQueries, AddRow, ColumnTypeArray, WrapCRUD } from '../../lib/CRUD.js';
+import {
+	useTableComponents,
+	ColumnTypes,
+	useFetchQuery,
+	AddRow,
+	ColumnTypeArray,
+	WrapCRUD,
+	useFormHandlers,
+	useCreateMutationAndUpdateQueryData
+} from '../../lib/CRUD';
 import { createSchemaFieldRule } from 'antd-zod';
 
-const components = getTableComponents(GameSystemSchema);
 const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!));
 export function AdminGamesystems() {
-	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	const components = useTableComponents(GameSystemSchema);
+	const result = useFetchQuery<GameSystemListItem[]>('/api/gamesystem', 'gamesystem');
+	const { isDeleting, isUpdating, handleDelete, handleUpdate } = useFormHandlers<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+	const { isCreating, createMutation } = useCreateMutationAndUpdateQueryData('/api/gamesystem', 'gamesystem');
 
 	const defaultColumns: ColumnTypeArray = [
 		{
@@ -61,13 +72,13 @@ export function AdminGamesystems() {
 				editable: col.editable,
 				dataIndex: col.dataIndex,
 				title: col.title,
-				handleSave
+				handleUpdate
 			})
 		};
 	});
 
 	return (
-		<WrapCRUD<GameSystemListItem> spin={isMutating} result={result}>
+		<WrapCRUD<GameSystemListItem> spin={isUpdating || isDeleting || isCreating} result={result}>
 			<>
 				<div>
 					This page is for editing the game which DMs can list their games as in Discord Please be careful here and do not delete any system

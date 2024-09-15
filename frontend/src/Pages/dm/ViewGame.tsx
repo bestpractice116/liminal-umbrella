@@ -1,20 +1,20 @@
-import { useState, createRef } from 'react';
+import { createRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema, type GameCreateItem } from 'common/schema';
 import { getZObject } from 'common';
-import dayjs from '../../lib/dayjs.js';
-import PostGameForm from './PostGameForm.js';
+import dayjs from '../../lib/dayjs';
+import PostGameForm from './PostGameForm';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
 import Collapse from 'antd/es/collapse';
-import Panel from 'antd/es/collapse/CollapsePanel.js';
+import Panel from 'antd/es/collapse/CollapsePanel';
 import List from 'antd/es/list';
 import { FormInstance } from 'antd/es/form';
-import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../../lib/CRUD.js';
+import { type DefaultColumns, zodErrorConvertor, useDeleteMutation, useFetchQuery, useUpdateMutation } from '../../lib/CRUD';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
 import { LinkOutlined, DeleteOutlined } from '@ant-design/icons';
-import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
+import UserRecord, { type AutoCompleteUser } from './UserRecord';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { NotFound } from '..//NotFound';
@@ -112,31 +112,29 @@ export function ViewGame() {
 	const navigate = useNavigate();
 	const findSchema = GameSchema.find!;
 	const { data, error } = findSchema.safeParse(useParams());
-	const [isCreating, setIsCreating] = useState(false);
-	const formRef = createRef<FormInstance<GameCreateItem>>();
-	if (error) {
-		return <NotFound />;
-	}
 	const key = data.key as number;
 	const queryKey = ['gamesessions', key];
-	const result = getFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
-
-	const save = () => {};
-
-	const updateMutation = getUpdateMutation(`/api/gamesessions`, setIsCreating, () => {
+	const result = useFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
+	const { updateMutation, isUpdating } = useUpdateMutation(`/api/gamesessions`, () => {
 		// FIXME - this is a crappy way to do this, see how it's done in CRUD.tsx
 		queryClient.invalidateQueries({ queryKey: ['gamesessions', key] });
 		console.log('updated');
 	});
-	const deleteMutation = getDeleteMutation(
+	const { deleteMutation } = useDeleteMutation(
 		'/api/gamesessions',
-		(_isMutating: boolean) => {},
+		// FIXME - why can't we use the built in query mangler
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(_data: any, row: any) => {
 			queryClient.removeQueries({ queryKey: ['gamesessions', `${row.key}`] });
 			navigate('/dm/viewgames');
 		}
 	);
+	const formRef = createRef<FormInstance<GameCreateItem>>();
+	if (error) {
+		return <NotFound />;
+	}
+
+	const save = () => {};
 
 	if (!result.data) {
 		return <div>loading</div>;
@@ -168,10 +166,9 @@ export function ViewGame() {
 				<PostGameForm
 					mutation={updateMutation}
 					initialValues={initialValues || {}}
-					isLoading={isCreating || result.isFetching}
+					isLoading={isUpdating || result.isFetching}
 					formRef={formRef}
 					save={save}
-					setIsCreating={setIsCreating}
 					createForm={false}
 					disabled={!editable}
 					submitButtonText={'Update Game Listing'}
@@ -179,7 +176,7 @@ export function ViewGame() {
 				<div style={{ float: 'right', position: 'relative', top: -55 }}>
 					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => deleteMutation.mutate({ key })}>
 						<a>
-							<Button danger disabled={isCreating} icon={<DeleteOutlined />}>
+							<Button danger disabled={isUpdating} icon={<DeleteOutlined />}>
 								Cancel game
 							</Button>
 						</a>
@@ -187,13 +184,13 @@ export function ViewGame() {
 				</div>
 			</Panel>
 			<Panel style={{ textAlign: 'left' }} header="Signed up users" key="3">
-				<UsersSignedUpTable deleteDisabled={!editable || isCreating} gameSessionKey={key} users={signedUpUsers} />
+				<UsersSignedUpTable deleteDisabled={!editable || isUpdating} gameSessionKey={key} users={signedUpUsers} />
 
 				{editable ? (
 					<>
 						Add user:&nbsp;
 						<FindUserSearchBox
-							disabled={full || isCreating}
+							disabled={full || isUpdating}
 							gameSessionKey={key}
 							exclude={signedUpUsers.map((player: AutoCompleteUser) => player.key)}
 						/>

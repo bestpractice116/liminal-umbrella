@@ -1,12 +1,12 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
+import { useTableComponents, useFormHandlers, useFetchQuery, ColumnTypes, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD';
 import { RoleSchema, type RoleListItem } from 'common/schema';
 
-const components = getTableComponents(RoleSchema);
-
 export function AdminRoles() {
-	const { result, isMutating, handleSave } = getListQueries<RoleListItem>('/api/role', 'role');
+	const result = useFetchQuery<RoleListItem[]>('/api/role', 'role');
+	const { isUpdating, handleUpdate } = useFormHandlers<RoleListItem>('/api/role', 'role');
+	const components = useTableComponents(RoleSchema);
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -22,11 +22,11 @@ export function AdminRoles() {
 		}
 	];
 
-	const columns = getColumns<RoleListItem>(defaultColumns, handleSave);
+	const columns = getColumns<RoleListItem>(defaultColumns, handleUpdate);
 	return (
 		<WrapCRUD<RoleListItem> result={result}>
 			<>
-				<Spin spinning={isMutating} fullscreen />
+				<Spin spinning={isUpdating} fullscreen />
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}

@@ -1,10 +1,8 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Tag from 'antd/es/tag';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
+import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
-
-const components = getTableComponents(UserSchema);
 
 type UserFragment = {
 	roles: RoleFragment[];
@@ -16,7 +14,9 @@ type RoleFragment = {
 };
 
 export function AdminUsers() {
-	const { result, isMutating, handleSave } = getListQueries<UserListItem>('/api/user', 'user');
+	const components = useTableComponents(UserSchema);
+	const result = useFetchQuery<UserListItem[]>('/api/user', 'user');
+	const { isUpdating, handleUpdate } = useFormHandlers('/api/user', 'user');
 
 	const defaultColumns: DefaultColumns = [
 		{
@@ -85,12 +85,12 @@ export function AdminUsers() {
 		}
 	];
 
-	const columns = getColumns<UserListItem>(defaultColumns, handleSave);
+	const columns = getColumns<UserListItem>(defaultColumns, handleUpdate);
 
 	return (
 		<WrapCRUD<UserListItem> result={result}>
 			<>
-				<Spin spinning={isMutating} fullscreen />
+				<Spin spinning={isUpdating} fullscreen />
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}
