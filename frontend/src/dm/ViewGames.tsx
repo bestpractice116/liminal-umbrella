@@ -7,7 +7,7 @@ import { GameSchema, type GameReadItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
 import { isAdmin } from '../Auth.js';
 import UserRecord from './UserRecord.js';
-import dayjs from '../dayjs.js';
+import dayjs from '../lib/dayjs.js';
 const components = getTableComponents(GameSchema);
 
 function toolTipValue(value: any, _record: any) {

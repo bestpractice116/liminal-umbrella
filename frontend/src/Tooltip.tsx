@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { botMessage } from './BotMessage.js';
+import { botMessage } from './components/BotMessage/BotMessage.js';
 import AntdTooltip from 'antd/es/tooltip';
 import type { PresetColorType } from 'antd/es/_util/colors.js';
 import { DebugContext } from './Debug';

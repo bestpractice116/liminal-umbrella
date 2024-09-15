@@ -1,35 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import Spin from 'antd/es/spin';
 import Layout, { Content } from 'antd/es/layout/layout';
-
-export type MessagesData = { [key: string]: string };
-
-export type MessagesQueryDatum = {
-	key: number;
-	name: string;
-	value: string;
-};
-
-export type MessagesQueryData = MessagesQueryDatum[];
-
-export type MessagesQueryError = {
-	error: string;
-};
-
-export type MessagesFetchResult = MessagesQueryData | MessagesQueryError;
-
-export type MessagesQueryResult = {
-	data: MessagesFetchResult | undefined;
-	error: any;
-	isError: boolean;
-	isFetching: boolean;
-	isFetched: boolean;
-	isPending: boolean;
-	isLoading: boolean;
-	isSuccess: boolean;
-};
+import { MessageContext, useBotMessage } from './hooks';
+import { MessagesData, MessagesFetchResult, MessagesQueryData, MessagesQueryDatum, MessagesQueryError, MessagesQueryResult } from './types';
 
 async function fetchMessages(): Promise<MessagesFetchResult> {
 	return fetch(
@@ -53,8 +27,8 @@ function Loading() {
 	);
 }
 
-export const MessageContext = createContext({} as MessagesData);
 export function MessageProvider({ children }: { children: React.ReactNode }) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const result: MessagesQueryResult = useQuery<any, MessagesQueryError>({
 		queryKey: ['botmessages'],
 		queryFn: fetchMessages,
@@ -82,11 +56,6 @@ type BotMessageProps = {
 };
 
 export default function BotMessage(props: BotMessageProps) {
+	const {botMessage} = useBotMessage();
 	return botMessage(props.messageKey, props.defaultMessage);
-}
-
-export function botMessage(messageKey: string, defaultMessage?: string | null | undefined) {
-	const messages = useContext(MessageContext);
-	const defaultM = typeof defaultMessage === 'undefined' ? messageKey : defaultMessage;
-	return messageKey in messages ? messages['key'] : defaultM;
 }

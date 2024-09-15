@@ -1,9 +1,9 @@
-import Spin from 'antd/es/spin';
+import Spinner from 'antd/es/spin';
 
-export default function Spinner() {
+export function Spin() {
 	return (
 		<div style={{ width: '100%', display: 'flex' }}>
-			<Spin
+			<Spinner
 				style={{
 					justifyContent: 'center',
 					alignItems: 'center',

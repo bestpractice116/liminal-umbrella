@@ -1,4 +1,4 @@
-import dayjs from './dayjs.js';
+import dayjs from './lib/dayjs.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';

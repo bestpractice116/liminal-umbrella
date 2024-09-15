@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { DebugContext } from '../../Debug';
-import { botMessage } from '../../BotMessage.js';
+import { useBotMessage } from '../BotMessage';
 import QuestionOutlined from '@ant-design/icons';
 import Popover from 'antd/es/popover';
 
@@ -10,6 +10,7 @@ export type HelpButtonParams = {
 };
 export function HelpIcon({ titleKey, contentKey }: HelpButtonParams) {
 	const { debug } = useContext(DebugContext);
+	const { botMessage } = useBotMessage();
 	const content = botMessage(contentKey, debug ? undefined : null);
 	if (!debug && !content) {
 		return null;

@@ -1,6 +1,6 @@
 import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
-import dayjs from '../dayjs.js';
+import dayjs from '../lib/dayjs.js';
 import { type GameCreateItem, type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
 import Spin from 'antd/es/spin';

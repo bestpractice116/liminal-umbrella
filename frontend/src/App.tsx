@@ -18,12 +18,12 @@ import {
 } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import Spin from './components/Spin.js';
+import { Spin } from './components/Spin';
 import { MaybeDebug, DebugContext } from './Debug';
 import { ProtectedRoute } from './ProtectedRoute';
 import HomePage from './Homepage';
 import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, getLogoutMutation } from './Auth';
-import { MessageProvider } from './BotMessage';
+import { MessageProvider } from './components/BotMessage/BotMessage.js';
 import Login from './Login';
 import AdminUsers from './admin/Users';
 import AdminCogs from './admin/Cogs';
@@ -34,7 +34,7 @@ import AdminBotMessages from './admin/BotMessages';
 import NewGame from './dm/NewGame';
 import ViewGames from './dm/ViewGames';
 import ViewGame from './dm/ViewGame';
-import NotFound from './NotFound';
+import { NotFound } from './Pages/NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
 import { AnyObject } from 'antd/es/_util/type.js';
 
@@ -54,6 +54,7 @@ function TopMenu() {
 	const avatarSrc = auth ? auth.user.avatarURL : null;
 	const avatarIcon = auth ? null : <UserOutlined />;
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const items: any = [];
 
 	const beta = isBotBetaTester();
@@ -136,6 +137,7 @@ function TopMenu() {
 
 	const navigate = useNavigate();
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleMenuClick = ({ key }: any) => {
 		if (key == 'debug-on') {
 			setDebug(true);
@@ -207,7 +209,7 @@ function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
 }
 
 function checkIsMobile(): boolean {
-	var isMobile = false;
+	let isMobile = false;
 
 	if ('maxTouchPoints' in navigator) {
 		isMobile = navigator.maxTouchPoints > 0;
