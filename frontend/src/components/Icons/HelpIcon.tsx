@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { DebugContext } from '../../Debug';
+import { DebugContext } from '../Debug';
 import { useBotMessage } from '../BotMessage';
 import QuestionOutlined from '@ant-design/icons';
 import Popover from 'antd/es/popover';

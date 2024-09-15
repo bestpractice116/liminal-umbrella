@@ -5,7 +5,7 @@ import Flex from 'antd/es/flex';
 import Space from 'antd/es/space';
 import { useContext } from 'react';
 import { AuthData, useAuthStatus } from '../../components/Auth';
-import { DebugContext } from '../../Debug';
+import { DebugContext } from '../../components/Debug';
 import { Tooltip } from '../../components/Tooltip';
 
 export function HomePage() {

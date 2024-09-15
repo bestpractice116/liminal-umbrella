@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useBotMessage } from '../../components/BotMessage';
 import AntdTooltip from 'antd/es/tooltip';
 import type { PresetColorType } from 'antd/es/_util/colors.js';
-import { DebugContext } from '../../Debug';
+import { DebugContext } from '../Debug';
 
 export type TooltipParams = {
 	messageKey: string;

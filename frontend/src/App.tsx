@@ -19,11 +19,11 @@ import {
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Spin } from './components/Spin';
-import { MaybeDebug, DebugContext } from './Debug';
+import { MaybeDebug, DebugContext } from './components/Debug';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './Pages/Homepage';
 import { AuthProvider, useAuthStatus, useLogoutMutation } from './components/Auth';
-import { MessageProvider } from './components/BotMessage/BotMessage.js';
+import { MessageProvider } from './components/BotMessage';
 import { Login } from './Pages/Login/Login.js';
 import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages } from './Pages/admin';
 import { NewGame, ViewGames, ViewGame } from './Pages/dm';
