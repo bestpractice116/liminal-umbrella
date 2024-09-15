@@ -4,11 +4,11 @@ import Button from 'antd/es/button';
 import Flex from 'antd/es/flex';
 import Space from 'antd/es/space';
 import { useContext } from 'react';
-import { AuthData, isAuthenticated, isDM } from './Auth';
-import { DebugContext } from './Debug';
-import Tooltip from './Tooltip';
+import { AuthData, isAuthenticated, isDM } from '../../Auth';
+import { DebugContext } from '../../Debug';
+import Tooltip from '../../Tooltip';
 
-function HomePage() {
+export function HomePage() {
 	const { debug } = useContext(DebugContext);
 	const auth = isAuthenticated();
 	const dm = isDM();
@@ -46,5 +46,3 @@ function HomePage() {
 		</>
 	);
 }
-
-export default HomePage;
