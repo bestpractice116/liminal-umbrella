@@ -1,8 +1,8 @@
 import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
-import dayjs from '../lib/dayjs.js';
+import dayjs from '../../lib/dayjs.js';
 import { type GameCreateItem, type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
-import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../CRUD.js';
+import { getCreateMutation, getFetchQuery, getUpdateMutation } from '../../lib/CRUD.js';
 import Spin from 'antd/es/spin';
 import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
@@ -11,28 +11,34 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { useErrorBoundary } from '../ErrorFallback.js';
+import { useErrorBoundary } from '../../ErrorFallback.js';
 
-export default function PostGame() {
+export function NewGame() {
 	const { showBoundary } = useErrorBoundary();
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const formRef = createRef<FormInstance<GameCreateItem & { date?: any }>>();
 	// FIXME - this name is bad as it isn't just creating
 	const [isCreating, setIsCreating] = useState(false);
 	const [postId, setPostId] = useState(-1);
 	const result = getFetchQuery<Array<NewGameListItem>>('/api/game', 'game');
 	const queryClient = useQueryClient();
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const createMutation = getCreateMutation('/api/game', 'game', setIsCreating, (data: any) => {
 		formRef.current!.setFieldValue('key', data!.datum!.key);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		queryClient.setQueryData(['game'], (_old: any) => {
 			return [data.datum];
 		});
 	});
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const updateMutation = getUpdateMutation('/api/game', setIsCreating, (data: any) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		queryClient.setQueryData(['game'], (_old: any) => {
 			return [data.datum];
 		});
 	});
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let initialValues: any = {
 		date: dayjs('12:00', 'HH:mm').add(14, 'days'),
 		starttime: dayjs('18:00', 'HH:mm'),
@@ -93,6 +99,7 @@ export default function PostGame() {
 					},
 					FetchResultTypes.JSON
 				)
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					.then((data: any) => {
 						// FIXME - any
 						queryClient.resetQueries(
@@ -131,6 +138,7 @@ export default function PostGame() {
 	);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> | undefined>; doPost: () => void }) {
 	const values = Form.useWatch([], form.current || undefined);
 	if (!form.current) return <></>;

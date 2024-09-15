@@ -13,7 +13,7 @@ import { getTableComponents, ColumnTypes, getListQueries, AddRow, getColumns, De
 const components = getTableComponents(ActivitySchema);
 const createFormRule = createSchemaFieldRule(getZObject(ActivitySchema.create!));
 
-export function AdminBotPlaying() {
+export function AdminBotplaying() {
 	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<BotActivityListItem>('/api/botplaying', 'bot_playing');
 
 	const defaultColumns: DefaultColumns = [

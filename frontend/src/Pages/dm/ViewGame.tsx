@@ -106,7 +106,7 @@ function GameLinks({ data }: { data: GameReadItem }) {
 	);
 }
 
-export default function ViewGame() {
+export function ViewGame() {
 	const { showBoundary } = useErrorBoundary();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();

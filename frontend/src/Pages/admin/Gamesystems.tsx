@@ -12,7 +12,7 @@ import { createSchemaFieldRule } from 'antd-zod';
 
 const components = getTableComponents(GameSystemSchema);
 const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!));
-export function AdminGameSystems() {
+export function AdminGamesystems() {
 	const { result, isMutating, handleDelete, handleSave, createMutation } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');
 
 	const defaultColumns: ColumnTypeArray = [

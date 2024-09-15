@@ -4,12 +4,13 @@ import Tooltip from 'antd/es/tooltip';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { GameSchema, type GameReadItem } from 'common/schema';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
-import { isAdmin } from '../Auth.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
+import { isAdmin } from '../../Auth.js';
 import UserRecord from './UserRecord.js';
-import dayjs from '../lib/dayjs.js';
+import dayjs from '../../lib/dayjs.js';
 const components = getTableComponents(GameSchema);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toolTipValue(value: any, _record: any) {
 	return (
 		<Tooltip placement="topLeft" title={value}>
@@ -18,7 +19,7 @@ function toolTipValue(value: any, _record: any) {
 	);
 }
 
-export default function ViewGames() {
+export function ViewGames() {
 	const admin = isAdmin();
 	const { result, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
 
