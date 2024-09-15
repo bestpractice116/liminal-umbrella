@@ -3,7 +3,7 @@ import { getZObject } from 'common';
 import Form from 'antd/es/form';
 import Select from 'antd/es/select';
 import { type GameSystemListItem, type GameUpdateItem, gameSystemSchema } from 'common/schema';
-import { getListQueries, WrapCRUD } from '../CRUD.js';
+import { getListQueries, WrapCRUD } from '../../lib/CRUD';
 
 export default function GameSystemSelect({ save, disabled, create }: { save: () => void; disabled: boolean; create: boolean }) {
 	const { result } = getListQueries<GameSystemListItem>('/api/gamesystem', 'gamesystem');

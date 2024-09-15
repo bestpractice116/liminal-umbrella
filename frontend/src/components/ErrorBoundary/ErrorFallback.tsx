@@ -1,20 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-	Component,
-	createElement,
-	ErrorInfo,
-	isValidElement,
-	ComponentType,
-	FunctionComponent,
-	PropsWithChildren,
-	ReactElement,
-	ReactNode,
-	useEffect
-} from 'react';
+import { Component, createElement, ErrorInfo, isValidElement, useEffect } from 'react';
 import Layout, { Content } from 'antd/es/layout/layout';
 import { ErrorBoundaryContext } from './Context';
-
-declare function FallbackRender(props: FallbackProps): ReactNode;
+import { ErrorBoundaryProps, ErrorBoundaryState, FallbackProps } from './types';
 
 const initialState: ErrorBoundaryState = {
 	didCatch: false,

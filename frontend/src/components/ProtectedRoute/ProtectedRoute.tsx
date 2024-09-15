@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { AuthContext } from './Auth';
+import { AuthContext } from '../Auth';
 
 type Props = {
 	redirectPath?: string;

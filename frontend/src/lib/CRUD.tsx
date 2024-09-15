@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, type FC, useState, useContext, createRef, useRef, useEffect, type RefObject } from 'react';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useQueryClient, useQuery, useMutation, UseMutationResult, UseQueryResult } from '@tanstack/react-query';
@@ -6,10 +7,10 @@ import Input from 'antd/es/input';
 import Form from 'antd/es/form';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
-import Spin from './components/Spin.js';
+import { Spin } from '../components/Spin';
 import { EditOutlined } from '@ant-design/icons';
 import * as z from 'zod';
-import { useErrorBoundary, ErrorFallback } from './ErrorFallback';
+import { useErrorBoundary, ErrorFallback } from '../components/ErrorBoundary';
 import { SchemaBundle } from 'common/schema';
 import { getZObject } from 'common';
 import { createSchemaFieldRule } from 'antd-zod';
@@ -25,6 +26,7 @@ interface EditableCellProps<T> {
 	editable: boolean;
 	dataIndex: keyof T;
 	record: T;
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	handleSave: (record: T, form: FormInstance<any>, _: Function) => void;
 }
 
@@ -32,7 +34,8 @@ type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 export type ColumnTypeArray = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
 export type SaveHandler<Item> = {
-	(row: Item, form: RefObject<FormInstance<any>>, toggleEdit: Function): Boolean;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	(row: Item, form: RefObject<FormInstance<any>>, toggleEdit: Function): boolean;
 };
 export type DefaultColumns = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
 
@@ -131,7 +134,9 @@ export function getTableComponents(schema: SchemaBundle) {
 export type QuerySet<T> = {
 	result: UseQueryResult<T[], Error>;
 	isMutating: boolean;
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	handleDelete: Function;
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	handleSave: Function;
 	createMutation: UseMutationResult<void, Error, any, void>;
 };
@@ -308,7 +313,8 @@ export function getListQueries<APIRow>(apipath: string, querykey: QueryKey): Que
 			});
 		});
 	});
-	const handleSave = (row: APIRow, form: FormInstance<any>, toggleEdit: Function): Boolean => {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	const handleSave = (row: APIRow, form: FormInstance<any>, toggleEdit: Function): boolean => {
 		updateMutation.mutate(row, {
 			onError: (e) => mutationErrorToFormError(form, e),
 			onSuccess: () => toggleEdit()
@@ -336,6 +342,7 @@ export function CreateForm<T>({
 	hidden = false,
 	formRef
 }: {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	mutation: UseMutationResult<void, Error, any, void>;
 	setIsMutating: React.Dispatch<React.SetStateAction<boolean>>;
 	children: React.ReactNode;
@@ -422,6 +429,7 @@ export function AddRow<T>({ createMutation, children }: { createMutation: UseMut
 	);
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function getColumns<Item>(columns: ColumnTypeArray, _handleSave: Function) {
 	const handleSave: SaveHandler<Item> = _handleSave as SaveHandler<Item>;
 	return columns.map((col) => {

@@ -5,11 +5,11 @@ import Input from 'antd/es/input';
 import TimePicker from 'antd/es/time-picker';
 import DatePicker from 'antd/es/date-picker';
 import Select from 'antd/es/select';
-import dayjs from '../lib/dayjs.js';
+import dayjs from '../../lib/dayjs';
 import Spin from 'antd/es/spin';
 import { ColProps } from 'antd/es/col';
 import { type GameUpdateItem, GameSchema, type GameCreateItem } from 'common/schema';
-import { CreateForm } from '../CRUD.js';
+import { CreateForm } from '../../lib/CRUD';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
 import { getZObject } from 'common';
@@ -33,7 +33,9 @@ export default function PostGameForm({
 	setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 	save: () => void;
 	isLoading: boolean;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	mutation: UseMutationResult<void, Error, any, void>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	initialValues: { [key: string]: any };
 	children?: React.ReactNode;
 	createForm?: boolean;
@@ -49,18 +51,21 @@ export default function PostGameForm({
 		);
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const setDate = (val: any, date: any) => {
 		if (!date || !val) return val;
 		return val.year(date.year()).month(date.month()).date(date.date());
 	};
 
 	// Normalize value from component value before passing to Form instance.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const timeNormalize = (val: any): any => {
 		if (!val || !formRef.current) return val;
 		const date = formRef.current?.getFieldValue('date');
 		if (!date || !date.isValid || !date.isValid()) return val;
 		return setDate(val, date);
 	};
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const timeGetValue = (val: any): any => {
 		if (!val) return val;
 		if (!formRef.current) return { value: dayjs(val) };
@@ -105,6 +110,7 @@ export default function PostGameForm({
 			{' '}
 			<Spin spinning={isLoading} fullscreen />
 			{initialValues ? (
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				<CreateForm<GameCreateItem & { date?: any }>
 					mutation={mutation}
 					setIsMutating={setIsCreating}

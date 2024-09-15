@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { createContext } from "react";
-import { AuthFetchResult } from "./types";
-import { fetch, FetchResultTypes } from "@sapphire/fetch";
+import { useQuery } from '@tanstack/react-query';
+import { createContext } from 'react';
+import { AuthFetchResult } from './types';
+import { fetch, FetchResultTypes } from '@sapphire/fetch';
 
 async function fetchAuth(): Promise<AuthFetchResult> {
 	return fetch(
