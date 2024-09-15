@@ -28,7 +28,7 @@ import { Login } from './Pages/Login/Login.js';
 import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages } from './Pages/admin';
 import { NewGame, ViewGames, ViewGame } from './Pages/dm';
 import { NotFound } from './Pages/NotFound';
-import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
+import { ErrorFallback, ErrorBoundary } from './components/ErrorBoundary';
 import { AnyObject } from 'antd/es/_util/type.js';
 
 const ReactQueryDevtools = React.lazy(() =>

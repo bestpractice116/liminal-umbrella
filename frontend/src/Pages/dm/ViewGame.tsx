@@ -18,7 +18,7 @@ import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { NotFound } from '..//NotFound';
-import { useErrorBoundary } from '../../ErrorFallback';
+import { useErrorBoundary } from '../../components/ErrorBoundary';
 import { AnyObject } from 'antd/es/_util/type.js';
 
 function UsersSignedUpTable({
@@ -148,7 +148,7 @@ export function ViewGame() {
 	if (result.isSuccess) {
 		try {
 			initialValues = getZObject(GameSchema.read).parse(result.data) as GameReadItem;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			console.log('error ', e);
 			showBoundary(zodErrorConvertor(e));

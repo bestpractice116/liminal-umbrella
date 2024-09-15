@@ -1,4 +1,3 @@
-
 export type MessagesData = { [key: string]: string };
 
 export type MessagesQueryDatum = {
@@ -17,6 +16,7 @@ export type MessagesFetchResult = MessagesQueryData | MessagesQueryError;
 
 export type MessagesQueryResult = {
 	data: MessagesFetchResult | undefined;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	error: any;
 	isError: boolean;
 	isFetching: boolean;

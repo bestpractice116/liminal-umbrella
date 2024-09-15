@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { useErrorBoundary } from '../../ErrorFallback.js';
+import { useErrorBoundary } from '../../components/ErrorBoundary';
 
 export function NewGame() {
 	const { showBoundary } = useErrorBoundary();
@@ -88,31 +88,33 @@ export function NewGame() {
 		mutation.mutate(data, {
 			onSuccess: () => {
 				// FIXME pull this out to it's own function?
-				return fetch(
-					'/api/gamepost',
-					{
-						method: FetchMethods.Post,
-						body: JSON.stringify({ key: data.key }),
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					},
-					FetchResultTypes.JSON
-				)
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					.then((data: any) => {
-						// FIXME - any
-						queryClient.resetQueries(
-							{
-								queryKey: ['game'],
-								exact: true
-							},
-							{ throwOnError: true }
-						);
-						setIsCreating(false);
-						setPostId(data.datum.key);
-					})
-					.catch((e) => showBoundary(e));
+				return (
+					fetch(
+						'/api/gamepost',
+						{
+							method: FetchMethods.Post,
+							body: JSON.stringify({ key: data.key }),
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						},
+						FetchResultTypes.JSON
+					)
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						.then((data: any) => {
+							// FIXME - any
+							queryClient.resetQueries(
+								{
+									queryKey: ['game'],
+									exact: true
+								},
+								{ throwOnError: true }
+							);
+							setIsCreating(false);
+							setPostId(data.datum.key);
+						})
+						.catch((e) => showBoundary(e))
+				);
 			},
 			onError: (e) => {
 				setIsCreating(false);
