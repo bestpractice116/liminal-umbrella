@@ -4,12 +4,13 @@ import Button from 'antd/es/button';
 import Flex from 'antd/es/flex';
 import Space from 'antd/es/space';
 import { useContext } from 'react';
-import { AuthData, isAuthenticated, isDM } from '../../Auth';
+import { AuthData, useAuthStatus } from '../../components/Auth';
 import { DebugContext } from '../../Debug';
 import { Tooltip } from '../../components/Tooltip';
 
 export function HomePage() {
 	const { debug } = useContext(DebugContext);
+	const { isAuthenticated, isDM } = useAuthStatus();
 	const auth = isAuthenticated();
 	const dm = isDM();
 	return (

@@ -20,12 +20,12 @@ import { BrowserRouter as Router, Route, Routes, useNavigate, Link, useLocation 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Spin } from './components/Spin';
 import { MaybeDebug, DebugContext } from './Debug';
-import { ProtectedRoute } from './ProtectedRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './Pages/Homepage';
-import { AuthProvider, isAuthenticated, isAdmin, isDM, isBotBetaTester, isAuthFetching, getLogoutMutation } from './Auth';
+import { AuthProvider, useAuthStatus, useLogoutMutation } from './components/Auth';
 import { MessageProvider } from './components/BotMessage/BotMessage.js';
 import { Login } from './Pages/Login/Login.js';
-import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages  } from './Pages/admin';
+import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages } from './Pages/admin';
 import { NewGame, ViewGames, ViewGame } from './Pages/dm';
 import { NotFound } from './Pages/NotFound';
 import { ErrorFallback, ErrorBoundary } from './ErrorFallback';
@@ -38,9 +38,10 @@ const ReactQueryDevtools = React.lazy(() =>
 );
 
 function TopMenu() {
+	const { logoutMutation } = useLogoutMutation();
+	const { isAuthenticated, isBotBetaTester, isAdmin, isDM } = useAuthStatus();
 	const { debug, setDebug } = React.useContext(DebugContext);
 	const location = useLocation();
-	const doLogout = getLogoutMutation();
 	const { pathname } = location;
 	const auth = isAuthenticated();
 
@@ -141,7 +142,7 @@ function TopMenu() {
 			return;
 		}
 		if (key == 'logout') {
-			doLogout();
+			logoutMutation();
 			return;
 		}
 		if (key) {
@@ -195,6 +196,7 @@ function PageContent() {
 }
 
 function AuthLoadingSpinner({ children }: { children: React.ReactNode }) {
+	const { isAuthFetching } = useAuthStatus();
 	if (isAuthFetching()) {
 		return <Spin />;
 	}

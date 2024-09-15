@@ -1,7 +1,8 @@
-import { isAuthenticated, LoginButton } from '../../Auth';
+import { useAuthStatus, LoginButton } from '../../components/Auth';
 import { Navigate } from 'react-router-dom';
 
 export function Login() {
+	const { isAuthenticated } = useAuthStatus();
 	if (isAuthenticated()) {
 		return <Navigate to={'/'} replace />;
 	}

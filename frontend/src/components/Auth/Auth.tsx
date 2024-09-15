@@ -3,35 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext } from 'react';
 import { Button } from 'antd';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
-
-export type AuthQueryData = {
-	user: {
-		avatarURL: string;
-		discriminator: string;
-		id: string;
-		username: string;
-		global_name: string;
-		nickname: string;
-	};
-	roles: string[];
-};
-
-export type AuthError = {
-	error: string;
-};
-
-export type AuthFetchResult = AuthQueryData | AuthError;
-
-export type AuthQueryResult = {
-	data: AuthFetchResult | undefined;
-	error: any;
-	isError: boolean;
-	isFetching: boolean;
-	isFetched: boolean;
-	isPending: boolean;
-	isLoading: boolean;
-	isSuccess: boolean;
-};
+import { AuthFetchResult, LogoutFetchResult } from './types';
 
 async function fetchAuth(): Promise<AuthFetchResult> {
 	return fetch(
@@ -42,10 +14,6 @@ async function fetchAuth(): Promise<AuthFetchResult> {
 		FetchResultTypes.JSON
 	);
 }
-
-export type LogoutFetchResult = {
-	success: boolean;
-};
 
 async function doLogoutCallback(): Promise<LogoutFetchResult> {
 	return fetch(
@@ -61,7 +29,7 @@ async function doLogoutCallback(): Promise<LogoutFetchResult> {
 	);
 }
 
-export function getLogoutMutation() {
+export function useLogoutMutation() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const mutation = useMutation({
@@ -71,13 +39,16 @@ export function getLogoutMutation() {
 			navigate('/login', { replace: true, state: { redirectTo: '/' } });
 		}
 	});
-	return () => {
-		mutation.mutate();
+	return {
+		logoutMutation: () => {
+			mutation.mutate();
+		}
 	};
 }
 
 export function LoginButton() {
 	const location = useLocation();
+	const { isAuthenticated } = useAuthStatus();
 	if (isAuthenticated()) {
 		return null;
 	}
@@ -97,52 +68,62 @@ export function LoginButton() {
 	);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AuthContext = createContext(null as any);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const result = useQuery({ queryKey: ['auth'], queryFn: fetchAuth, notifyOnChangeProps: 'all', retry: 0 });
 	return <AuthContext.Provider value={result}>{children}</AuthContext.Provider>;
 }
 
-export function isAuthenticated() {
+export function useAuthStatus() {
 	const auth = useContext(AuthContext);
+	const isAuthenticated = () => {
+		if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
+			return false;
+		}
+		return auth.data;
+	};
 
-	if (!auth || auth.isFetching || auth.isError || !auth.data || auth.data.error) {
-		return false;
-	}
-	return auth.data;
-}
+	const isAuthFetching = () => {
+		if (!auth) {
+			return false;
+		}
+		return auth.isFetching;
+	};
 
-export function isAuthFetching() {
-	const auth = useContext(AuthContext);
+	const isAdmin = () => {
+		const auth = isAuthenticated();
+		if (!auth) {
+			return false;
+		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return !!auth.roles.find((e: any) => e === 'Admin');
+	};
 
-	if (!auth) {
-		return false;
-	}
-	return auth.isFetching;
-}
+	const isDM = () => {
+		const auth = isAuthenticated();
+		if (!auth) {
+			return false;
+		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return !!auth.roles.find((e: any) => e === 'Admin' || e === 'Dungeon Master');
+	};
 
-export function isAdmin() {
-	const auth = isAuthenticated();
-	if (!auth) {
-		return false;
-	}
-	return !!auth.roles.find((e: any) => e === 'Admin');
-}
-
-export function isDM() {
-	const auth = isAuthenticated();
-	if (!auth) {
-		return false;
-	}
-	return !!auth.roles.find((e: any) => e === 'Admin' || e === 'Dungeon Master');
-}
-
-export function isBotBetaTester() {
-	const auth = isAuthenticated();
-	if (!auth) {
-		return false;
-	}
-	return !!auth.roles.find((e: any) => e === 'Admin' || e === 'BotBetaTester');
+	const isBotBetaTester = () => {
+		const auth = isAuthenticated();
+		if (!auth) {
+			return false;
+		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return !!auth.roles.find((e: any) => e === 'Admin' || e === 'BotBetaTester');
+	};
+	return {
+		isAuthenticated,
+		isAuthFetching,
+		isAdmin,
+		isDM,
+		isBotBetaTester
+	};
 }
 
 export function AuthData() {

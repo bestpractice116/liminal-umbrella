@@ -5,7 +5,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { GameSchema, type GameReadItem } from 'common/schema';
 import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
-import { isAdmin } from '../../Auth.js';
+import { useAuthStatus } from '../../components/Auth';
 import UserRecord from './UserRecord.js';
 import dayjs from '../../lib/dayjs.js';
 const components = getTableComponents(GameSchema);
@@ -20,6 +20,7 @@ function toolTipValue(value: any, _record: any) {
 }
 
 export function ViewGames() {
+	const { isAdmin } = useAuthStatus();
 	const admin = isAdmin();
 	const { result, handleSave } = getListQueries<GameReadItem>('/api/gamesessions', 'gamesessions');
 
