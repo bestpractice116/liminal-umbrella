@@ -2,11 +2,11 @@ import Table from 'antd/es/table';
 import Result from 'antd/es/result';
 import Divider from 'antd/es/divider';
 import { BotMessageSchema, type BotMessageListItem } from 'common/schema';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
 
 const components = getTableComponents(BotMessageSchema);
 
-export default function AdminBotMessages() {
+export function AdminBotMessages() {
 	const { result, isMutating, handleSave } = getListQueries<BotMessageListItem>('/api/botmessages', 'botmessages');
 
 	const defaultColumns: DefaultColumns = [

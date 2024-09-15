@@ -1,11 +1,11 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
 import { RoleSchema, type RoleListItem } from 'common/schema';
 
 const components = getTableComponents(RoleSchema);
 
-export default function AdminRoles() {
+export function AdminRoles() {
 	const { result, isMutating, handleSave } = getListQueries<RoleListItem>('/api/role', 'role');
 
 	const defaultColumns: DefaultColumns = [

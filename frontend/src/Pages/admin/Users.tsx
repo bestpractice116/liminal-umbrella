@@ -1,7 +1,7 @@
 import Table from 'antd/es/table';
 import Spin from 'antd/es/spin';
 import Tag from 'antd/es/tag';
-import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../CRUD.js';
+import { getTableComponents, ColumnTypes, getListQueries, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD.js';
 import { UserSchema, type UserListItem } from 'common/schema';
 
 const components = getTableComponents(UserSchema);
@@ -15,7 +15,7 @@ type RoleFragment = {
 	position: number;
 };
 
-export default function AdminUsers() {
+export function AdminUsers() {
 	const { result, isMutating, handleSave } = getListQueries<UserListItem>('/api/user', 'user');
 
 	const defaultColumns: DefaultColumns = [
@@ -31,6 +31,7 @@ export default function AdminUsers() {
 			dataIndex: 'nickname',
 			editable: false,
 			ellipsis: true,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			render: (nickname: string, _record: any) => {
 				const record = _record as UserFragment;
 				const roles = record.roles
@@ -66,6 +67,7 @@ export default function AdminUsers() {
 			dataIndex: 'roles',
 			editable: false,
 			ellipsis: true,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			render: (roles: { name: string; hexColor: string }[], record: any) =>
 				roles
 					.filter((role) => role.name !== '@everyone' && role.name !== 'AllUsers')

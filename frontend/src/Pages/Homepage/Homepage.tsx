@@ -6,7 +6,7 @@ import Space from 'antd/es/space';
 import { useContext } from 'react';
 import { AuthData, isAuthenticated, isDM } from '../../Auth';
 import { DebugContext } from '../../Debug';
-import Tooltip from '../../Tooltip';
+import { Tooltip } from '../../components/Tooltip';
 
 export function HomePage() {
 	const { debug } = useContext(DebugContext);
