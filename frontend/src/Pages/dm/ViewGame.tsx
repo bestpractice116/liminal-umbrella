@@ -2,7 +2,7 @@ import { useState, createRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema, type GameCreateItem } from 'common/schema';
 import { getZObject } from 'common';
-import dayjs from '../lib/dayjs.js';
+import dayjs from '../../lib/dayjs.js';
 import PostGameForm from './PostGameForm.js';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
@@ -10,15 +10,15 @@ import Collapse from 'antd/es/collapse';
 import Panel from 'antd/es/collapse/CollapsePanel.js';
 import List from 'antd/es/list';
 import { FormInstance } from 'antd/es/form';
-import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../lib/CRUD.js';
+import { type DefaultColumns, zodErrorConvertor, getDeleteMutation, getFetchQuery, getUpdateMutation } from '../../lib/CRUD.js';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
 import { LinkOutlined, DeleteOutlined } from '@ant-design/icons';
 import UserRecord, { type AutoCompleteUser } from './UserRecord.js';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { NotFound } from '../Pages/NotFound';
-import { useErrorBoundary } from '../ErrorFallback';
+import { NotFound } from '..//NotFound';
+import { useErrorBoundary } from '../../ErrorFallback';
 import { AnyObject } from 'antd/es/_util/type.js';
 
 function UsersSignedUpTable({
