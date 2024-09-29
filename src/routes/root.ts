@@ -20,6 +20,9 @@ export class RootRoute extends Route {
 		});
 	}
 
+	public [methods.HEAD](_request: ApiRequest, response: ApiResponse) {
+		serveRoot(_request, response);
+	}
 	public [methods.GET](_request: ApiRequest, response: ApiResponse) {
 		serveRoot(_request, response);
 	}
