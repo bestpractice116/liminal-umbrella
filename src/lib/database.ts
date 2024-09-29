@@ -553,7 +553,18 @@ export default class Database {
 				}
 			});
 			for (const uninterested of uninteresteds) {
-				const member = await container.guild?.members.fetch(uninterested.userId);
+				let member;
+				try {
+					member = await container.guild?.members.fetch(uninterested.userId);
+				} catch (e: any) {
+					if (e.code === 10007) {
+							// 'Unknown Member' - memeber who had previously said they were interested has left the Discord
+							await uninterested.destroy();
+							return null;
+					} else {
+							throw e;
+					}
+				}
 				if (member) {
 					await this.removeUserInterestedInEvent(member.user, guildScheduledEvent);
 				}
