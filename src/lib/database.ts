@@ -271,6 +271,7 @@ export default class Database {
 				}
 			});
 			for (const session of sessions) {
+				// FIXME - also need to call updateGameListing
 				await session.destroy();
 			}
 		});
