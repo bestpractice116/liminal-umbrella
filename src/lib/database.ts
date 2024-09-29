@@ -254,9 +254,9 @@ export default class Database {
 			return;
 		}
 		await this.db!.transaction(async () => {
-			member.left = true;
-			await member.save();
-			await member.setRoles([]);
+			member!.left = true;
+			await member!.save();
+			await member!.setRoles([]);
 			const eventInterests = await EventInterest.findAll({
 				where: {
 					userId: id,
