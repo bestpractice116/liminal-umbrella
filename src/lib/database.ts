@@ -20,7 +20,7 @@ import type {
 	Role as GuildRole
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
-import { User, Role, Channel, Message, Watermark, EventInterest } from './database/model.js';
+import { User, Role, Channel, Message, Watermark, EventInterest, GameSessionUserSignup } from './database/model.js';
 import { TypedEvent } from '../lib/typedEvents.js';
 import {
 	UserJoined,
@@ -271,7 +271,7 @@ export default class Database {
 				}
 			});
 			for (const session of sessions) {
-				await session.destory();
+				await session.destroy();
 			}
 		});
 		this.events.emit(
