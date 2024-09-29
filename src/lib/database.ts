@@ -253,9 +253,27 @@ export default class Database {
 		if (!member) {
 			return;
 		}
-		member.left = true;
-		await member.save();
-		await member.setRoles([]);
+		await this.db!.transaction(async () => {
+			member.left = true;
+			await member.save();
+			await member.setRoles([]);
+			const eventInterests = await EventInterest.findAll({
+				where: {
+					userId: id,
+				}
+			});
+			for (const eventInterest of eventInterests) {
+				await eventInterest.destroy();
+			}
+			const sessions = await GameSessionUserSignup.findAll({
+				where: {
+					userKey: id,
+				}
+			});
+			for (const session of sessions) {
+				await session.destory();
+			}
+		});
 		this.events.emit(
 			'userLeft',
 			new UserLeft(id, member.username, member.name, member.nickname, member.avatarURL, new Date(member.joinedDiscordAt), member)
@@ -560,7 +578,6 @@ export default class Database {
 					if (e.code === 10007) {
 							// 'Unknown Member' - memeber who had previously said they were interested has left the Discord
 							await uninterested.destroy();
-							return null;
 					} else {
 							throw e;
 					}
