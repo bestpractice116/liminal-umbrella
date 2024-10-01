@@ -1,0 +1,34 @@
+import type { MigrationParams } from 'umzug';
+import { Channel, GreetingMessage, Message, User } from '../lib/database/model.js';
+import { Op } from '@sequelize/core';
+
+export const up = async (_uz: MigrationParams<any>) => {
+    const channel = await Channel.findOne({ where: { name: 'new_members' } });
+    const messages = await Message.findAll({ where: { channelId: channel!.id } });
+    for (const message of messages) {
+        const match = message.content.match(/<@(\d+)>/);
+        if (match) {
+            const userId = match[1];
+            const greetingMessage = await GreetingMessage.findOne({ where: { userId } });
+            if (!greetingMessage) {
+                const user = await User.findOne({ where: { key: userId } });
+                if (!user) continue;
+                await GreetingMessage.create({ userId, messageId: message.id });
+                console.log(`Associated greeting message for user ${userId}`);
+            }
+        }
+    }
+    const stillMissing = await User.findAll({
+        include: ['greetingMessage'],
+        where: {
+            left: false,
+            bot: false,
+            '$greetingMessage.userId$': { [Op.eq]: null }
+        }
+    });
+    for (const user of stillMissing) {
+        console.log(`Still missing greeting message for user ${user.nickname} ID ${user.key}`);
+    }
+};
+
+export const down = async (_uz: MigrationParams<any>) => {};

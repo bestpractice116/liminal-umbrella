@@ -4,7 +4,7 @@ import { Sequential, shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js
 import { User } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
 import { CustomEvents } from '../../../lib/events.js';
-import { doUserGreeting } from '../utils.js';
+//import { doUserGreeting } from '../utils.js';
 
 export class greetNewUsersTickOneTwentyListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -44,6 +44,7 @@ export class greetNewUsersTickOneTwentyListener extends Listener {
 
     @Sequential
     async sendMissedGreeting(user: User) {
-        await doUserGreeting(user);
+        this.container.logger.info(`Missing greeting message for user ${user.nickname}: ${user.key}`);
+        //await doUserGreeting(user);
     }
 }
