@@ -19,6 +19,7 @@ import PlannedGame from './PlannedGame.js';
 import GameSession from './GameSession.js';
 import EventInterest from './EventInterest.js';
 import GreetingMessage from './GreetingMessage.js';
+import { GuildMember } from 'discord.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	@Attribute(DataTypes.STRING)
@@ -101,4 +102,30 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
 	@HasOne(() => GreetingMessage, /* foreign key */ 'userId')
 	declare greetingMessage?: NonAttribute<GreetingMessage>;
+
+	static userDataFromGuildMember(guildMember: GuildMember) {
+		return {
+			nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+			username: guildMember.user.username,
+			name: (guildMember.user.globalName || guildMember.user.username)!,
+			rulesaccepted: false, // FIXME
+			left: false,
+			bot: guildMember.user.bot,
+			avatarURL: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
+			joinedDiscordAt: guildMember.user.createdAt.valueOf()
+		};
+	}
+
+	static createFromGuildMember(guildMember: GuildMember): Promise<User> {
+		return User.create({
+			key: guildMember.id,
+			...User.userDataFromGuildMember(guildMember)
+		});
+	}
+
+	updateFromGuildMember(guildMember: GuildMember) {
+		this.set({
+			...User.userDataFromGuildMember(guildMember)
+		});
+	}
 }

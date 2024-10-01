@@ -1,10 +1,10 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickFive } from '../../../lib/events/index.js';
-import { Sequential } from '../../../lib/utils.js';
+import { Sequential, shortSleep } from '../../../lib/utils.js';
 import { User } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
-import { shortSleep } from '../../../lib/utils.js';
 import { CustomEvents } from '../../../lib/events.js';
+import { doUserGreeting } from '../utils.js';
 
 export class greetNewUsersTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -48,5 +48,6 @@ export class greetNewUsersTickOneTwentyListener extends Listener {
 	async sendMissedGreeting(user: User) {
 		//const db = await this.container.database.getdb();
 		this.container.logger.info(`Send greeting to ${user.nickname}`);
+		await doUserGreeting(user);
 	}
 }

@@ -1,4 +1,3 @@
-import { GuildMember } from 'discord.js';
 import { User } from '../database/model.js';
 
 export class UserJoined {
@@ -10,7 +9,6 @@ export class UserJoined {
 		public exMember: boolean,
 		public avatarURL: string,
 		public joinedDiscordAt: Date,
-		public dbUser: User,
-		public discordUser: GuildMember
+		public dbUser: User
 	) {}
 }

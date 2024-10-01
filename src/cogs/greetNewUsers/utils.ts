@@ -1,5 +1,7 @@
-import { Container } from '@sapphire/framework';
 import { ChannelType } from 'discord.js';
+import { container } from '@sapphire/framework';
+import { getMessage } from '../../lib/message.js';
+import { User } from '../../lib/database/model.js';
 
 export function getChannelName(): string | null {
 	const channel_name = process.env.GREET_USERS_CHANNEL;
@@ -9,7 +11,7 @@ export function getChannelName(): string | null {
 	return channel_name;
 }
 
-export async function getChannelAndSend(container: Container, msg: string): Promise<void | string> {
+export async function getChannelAndSend(msg: string): Promise<void | string> {
 	const channel_name = getChannelName();
 
 	const client = container.client;
@@ -20,4 +22,18 @@ export async function getChannelAndSend(container: Container, msg: string): Prom
 	} else {
 		container.logger.warn('Cannot find the ${channel_name} channel, or not a text channel');
 	}
+}
+
+export async function doUserGreeting(u: User) {
+	const db = await container.database.getdb();
+	await db.transaction(async () => {
+		// Post welcome message for newly joined users
+		const msg = await getMessage('NEW_USER_GREETING', { u });
+		const id = await getChannelAndSend(msg);
+
+		// Stash a reference to that message so that we can find it when reacted to etc later.
+		if (id) {
+			await container.database.greetingMessageAdd(id, u.key);
+		}
+	});
 }

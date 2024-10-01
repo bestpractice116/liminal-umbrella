@@ -1,8 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
-import { getChannelAndSend } from '../utils.js';
+import { doUserGreeting } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
-import { getMessage } from '../../../lib/message.js';
 import { CustomEvents } from '../../../lib/events.js';
 
 export class greetNewUsersUserJoinedListener extends Listener {
@@ -17,16 +16,6 @@ export class greetNewUsersUserJoinedListener extends Listener {
 
 	@Sequential
 	async run(e: UserJoined) {
-		const db = await this.container.database.getdb();
-		await db.transaction(async () => {
-			// Post welcome message for newly joined users
-			const msg = await getMessage('NEW_USER_GREETING', { e });
-			const id = await getChannelAndSend(this.container, msg);
-
-			// Stash a reference to that message so that we can find it when reacted to etc later.
-			if (id) {
-				await this.container.database.greetingMessageAdd(id, e.id);
-			}
-		});
+		await doUserGreeting(e.dbUser);
 	}
 }
