@@ -1,18 +1,10 @@
 import { Listener, container } from '@sapphire/framework';
-import { TickOneTwenty } from '../../../lib/events/index.js';
+import { TickFive } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { User } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
-import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
+import { shortSleep } from '../../../lib/utils.js';
 import { CustomEvents } from '../../../lib/events.js';
-
-const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
-const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
-
-type GameChannelsLocked = {
-	considered: number;
-	locked: number;
-};
 
 export class greetNewUsersTickOneTwentyListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -20,12 +12,12 @@ export class greetNewUsersTickOneTwentyListener extends Listener {
 			...options,
 			name: 'greetNewUsersTickOneTwentyListener',
 			emitter: container.events,
-			event: CustomEvents.TickOneTwenty
+			event: CustomEvents.TickFive
 		});
 	}
 
-	async run(_e: TickOneTwenty) {
-		await sleepUpToTwoHours();
+	async run(_e: TickFive) {
+		//await sleepUpToTwoHours();
 		this.container.logger.info('Doing greetNewUsers find now');
 		await this.doMissedGreetings();
 		this.container.logger.info('Finished greetNewUsers find');
