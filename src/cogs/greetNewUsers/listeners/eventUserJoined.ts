@@ -17,13 +17,16 @@ export class greetNewUsersUserJoinedListener extends Listener {
 
 	@Sequential
 	async run(e: UserJoined) {
-		// Post welcome message for newly joined users
-		const msg = await getMessage('NEW_USER_GREETING', { e });
-		const id = await getChannelAndSend(this.container, msg);
+		const db = await this.container.database.getdb();
+		await db.transaction(async () => {
+			// Post welcome message for newly joined users
+			const msg = await getMessage('NEW_USER_GREETING', { e });
+			const id = await getChannelAndSend(this.container, msg);
 
-		// Stash a reference to that message so that we can find it when reacted to etc later. (not currently used for anything)
-		if (id) {
-			await this.container.database.greetingMessageAdd(id, e.id);
-		}
+			// Stash a reference to that message so that we can find it when reacted to etc later.
+			if (id) {
+				await this.container.database.greetingMessageAdd(id, e.id);
+			}
+		});
 	}
 }

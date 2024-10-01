@@ -12,12 +12,13 @@ import {
 	BelongsToManyCountAssociationsMixin,
 	HasManyGetAssociationsMixin
 } from '@sequelize/core';
-import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany } from '@sequelize/core/decorators-legacy';
+import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany, HasOne } from '@sequelize/core/decorators-legacy';
 import Role from './Role.js';
 import RoleMember from './RoleMember.js';
 import PlannedGame from './PlannedGame.js';
 import GameSession from './GameSession.js';
 import EventInterest from './EventInterest.js';
+import GreetingMessage from './GreetingMessage.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	@Attribute(DataTypes.STRING)
@@ -97,4 +98,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 		}
 		return out;
 	}
+
+	@HasOne(() => GreetingMessage, /* foreign key */ 'userId')
+	declare greetingMessage?: NonAttribute<GreetingMessage>;
 }

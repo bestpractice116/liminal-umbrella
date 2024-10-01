@@ -1,6 +1,6 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@sequelize/core';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribute } from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey, Index, Unique } from '@sequelize/core/decorators-legacy';
-//import User from './User.js';
+import User from './User.js';
 
 export default class GreetingMessage extends Model<InferAttributes<GreetingMessage>, InferCreationAttributes<GreetingMessage>> {
 	@Attribute(DataTypes.STRING)
@@ -13,6 +13,5 @@ export default class GreetingMessage extends Model<InferAttributes<GreetingMessa
 	@Index
 	declare userId?: string;
 
-	//@HasOne(() => User, /* foreign key */ 'key')
-	//declare user: NonAttribute<User>;
+	declare user: NonAttribute<User>;
 }
