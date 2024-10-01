@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
-import Spin from 'antd/es/spin';
+import { Spin } from '../Spin';
 import Layout, { Content } from 'antd/es/layout/layout';
 import { MessageContext, useBotMessage } from './hooks';
 import { MessagesData, MessagesFetchResult, MessagesQueryData, MessagesQueryDatum, MessagesQueryError, MessagesQueryResult } from './types';
@@ -19,9 +19,7 @@ function Loading() {
 	return (
 		<Layout>
 			<Content>
-				<Spin tip="Loading" size="large" fullscreen={true}>
-					&nbsp;
-				</Spin>
+				<Spin />
 			</Content>
 		</Layout>
 	);
@@ -56,6 +54,6 @@ type BotMessageProps = {
 };
 
 export default function BotMessage(props: BotMessageProps) {
-	const {botMessage} = useBotMessage();
+	const { botMessage } = useBotMessage();
 	return botMessage(props.messageKey, props.defaultMessage);
 }

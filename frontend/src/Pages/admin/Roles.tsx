@@ -1,5 +1,5 @@
 import Table from 'antd/es/table';
-import Spin from 'antd/es/spin';
+import { Spin } from '../../components/Spin';
 import { useTableComponents, useFormHandlers, useFetchQuery, ColumnTypes, getColumns, DefaultColumns, WrapCRUD } from '../../lib/CRUD';
 import { RoleSchema, type RoleListItem } from 'common/schema';
 
@@ -26,7 +26,7 @@ export function AdminRoles() {
 	return (
 		<WrapCRUD<RoleListItem> result={result}>
 			<>
-				<Spin spinning={isUpdating} fullscreen />
+				<Spin spinning={isUpdating} />
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}

@@ -84,7 +84,13 @@ function SearchBox({ disabled, gameSessionKey, exclude = [] }: { disabled: boole
 				suffixIcon={<PlusCircleOutlined />}
 				placeholder={disabled ? 'Game is full' : 'Type name'}
 				disabled={disabled}
-				filterOption={(_inputValue, option) => !exclude.find((maybeExclude) => maybeExclude == option?.value)}
+				filterOption={(_inputValue, option) => {
+					console.log('filter option ', option, exclude);
+					return !exclude.find((maybeExclude) => {
+						console.log(maybeExclude, option?.value);
+						return maybeExclude == option?.value;
+					});
+				}}
 			/>
 			<br />
 			<br />

@@ -1,5 +1,5 @@
 import Table from 'antd/es/table';
-import Spin from 'antd/es/spin';
+import { Spin } from '../../components/Spin';
 import Tag from 'antd/es/tag';
 import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
@@ -90,7 +90,7 @@ export function AdminUsers() {
 	return (
 		<WrapCRUD<UserListItem> result={result}>
 			<>
-				<Spin spinning={isUpdating} fullscreen />
+				<Spin spinning={isUpdating} />
 				<Table
 					components={components}
 					rowClassName={() => 'editable-row'}
