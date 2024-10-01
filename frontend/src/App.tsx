@@ -7,6 +7,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './Pages/Homepage';
 import { AuthProvider } from './components/Auth';
 import { MessageProvider } from './components/BotMessage';
+import { EditModeProvider } from './components/EditMode';
 import { Login } from './Pages/Login/Login.js';
 import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages } from './Pages/admin';
 import { NewGame, ViewGames, ViewGame } from './Pages/dm';
@@ -57,13 +58,15 @@ function AppRouter() {
 						token: { colorPrimary: '#00b96b' }
 					}}
 				>
-					<MessageProvider>
-						<AuthProvider>
-							<Page>
-								<PageContent />
-							</Page>
-						</AuthProvider>
-					</MessageProvider>
+					<EditModeProvider>
+						<MessageProvider>
+							<AuthProvider>
+								<Page>
+									<PageContent />
+								</Page>
+							</AuthProvider>
+						</MessageProvider>
+					</EditModeProvider>
 				</ConfigProvider>
 			</QueryClientProvider>
 		</Router>

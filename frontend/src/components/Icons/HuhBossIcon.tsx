@@ -3,14 +3,14 @@ export function HuhBossIcon() {
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			version="1.1"
-			width="32px"
-			height="32px"
+			viewBox="0 0 32 32"
 			style={{
 				shapeRendering: 'geometricPrecision',
 				textRendering: 'geometricPrecision',
 				imageRendering: undefined,
 				fillRule: 'evenodd',
-				clipRule: 'evenodd'
+				clipRule: 'evenodd',
+				width: '20px'
 			}}
 		>
 			<g>

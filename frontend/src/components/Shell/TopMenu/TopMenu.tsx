@@ -4,6 +4,7 @@ import Menu from 'antd/es/menu';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useLogoutMutation, useAuthStatus } from '../../Auth';
 import { DebugContext } from '../../Debug';
+import { EditModeContext } from '../../EditMode';
 import React from 'react';
 import {
 	BugOutlined,
@@ -18,11 +19,13 @@ import {
 	ExportOutlined,
 	EyeOutlined
 } from '@ant-design/icons/lib/icons';
+import { BossIcon, HuhBossIcon } from '../../Icons';
 
 export function TopMenu() {
 	const { logoutMutation } = useLogoutMutation();
 	const { isAuthenticated, isBotBetaTester, isAdmin, isDM } = useAuthStatus();
 	const { debug, setDebug } = React.useContext(DebugContext);
+	const { editMode, setEditMode } = React.useContext(EditModeContext);
 	const location = useLocation();
 	const { pathname } = location;
 	const auth = isAuthenticated();
@@ -97,6 +100,12 @@ export function TopMenu() {
 
 	if (admin) {
 		items.push({
+			key: editMode ? 'phb-off' : 'phb-on',
+			label: editMode ? 'Stop Editing' : 'Edit',
+			icon: editMode ? <BossIcon /> : <HuhBossIcon />,
+			danger: editMode ? true : false
+		});
+		items.push({
 			icon: <BugOutlined />,
 			key: debug ? 'debug-off' : 'debug-on',
 			label: debug ? 'Debug On' : 'Debug Off',
@@ -125,6 +134,14 @@ export function TopMenu() {
 		}
 		if (key == 'logout') {
 			logoutMutation();
+			return;
+		}
+		if (key == 'phb-on') {
+			setEditMode(true);
+			return;
+		}
+		if (key == 'phb-off') {
+			setEditMode(false);
 			return;
 		}
 		if (key) {
