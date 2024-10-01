@@ -102,7 +102,7 @@ export function TopMenu() {
 		items.push({
 			key: editMode ? 'phb-off' : 'phb-on',
 			label: editMode ? 'Stop Editing' : 'Edit',
-			icon: editMode ? <BossIcon /> : <HuhBossIcon />,
+			icon: editMode ? <HuhBossIcon /> : <BossIcon />,
 			danger: editMode ? true : false
 		});
 		items.push({

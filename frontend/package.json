@@ -23,6 +23,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
+		"@tanstack/eslint-plugin-query": "^5.58.1",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
 		"@typescript-eslint/eslint-plugin": "^7.2.0",
