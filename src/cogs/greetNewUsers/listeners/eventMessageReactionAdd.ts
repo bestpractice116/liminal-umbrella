@@ -61,7 +61,7 @@ export class verboseLogBotStartedListener extends Listener {
             // Remove any non-Admin reacts
             if (!roles.some((r) => r.name === 'Admin')) await r.users.remove(userId);
             // An admin X'd - so we want to kick this user
-            if (r.emoji.name === '❌' && !roles.some((r) => r.name === 'Member')) kickUser = true;
+            if (r.emoji.name === '❌') kickUser = true;
             if (r.emoji.name === '✅') admitMember = true;
         }
         if (!kickUser && !admitMember) return;
@@ -72,21 +72,25 @@ export class verboseLogBotStartedListener extends Listener {
 
         if (!greeting) return;
         const dbUser = greeting.user;
+        const roles = await getRoles(dbUser.key);
+        if (!roles) return;
+
         const guildMember = await getGuildMemberById(dbUser.key);
         if (!guildMember) return;
 
-        if (kickUser) {
+        if (kickUser && !roles.some((r) => r.name === 'Member')) {
             const msg = await getMessage('USER_NO_NAME_CHANGE_KICK', {});
             await (
                 await this.container.database.getdb()
             ).transaction(async () => {
                 dbUser.set({ kicked: true });
-                await guildMember.kick(msg);
+                await guildMember.send(msg);
+                await guildMember.kick(`RPGBot Kicked user ${dbUser.nickname} (${dbUser.name} : ${dbUser.key} due to X on greeting message in ${greetingChannelName}`);
                 await dbUser.save();
             });
         }
         if (admitMember) {
-            const dbRole = await Role.findOne({where: { name: 'Member' }});
+            const dbRole = await Role.findOne({ where: { name: 'Member' } });
             if (!dbRole) return;
             await guildMember.roles.add(dbRole.key);
         }
