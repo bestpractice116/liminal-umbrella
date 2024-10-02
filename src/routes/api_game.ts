@@ -3,7 +3,7 @@ import { GameSystem, PlannedGame } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { NewGameSchema } from 'common/schema';
-import { AuthenticatedWithRole } from '../lib/api/decorators.js';
+import { DM } from '../lib/api/decorators.js';
 
 export async function doCoerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
 	const out = {
@@ -35,10 +35,10 @@ export class ApiGameList extends CR {
 		return NewGameSchema;
 	}
 
-	@AuthenticatedWithRole('Dungeon Master')
+	@DM
 	override async auth_GET() {}
 
-	@AuthenticatedWithRole('Dungeon Master')
+	@DM
 	override async auth_CREATE() {}
 
 	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
