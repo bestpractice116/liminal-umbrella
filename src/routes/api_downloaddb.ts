@@ -1,5 +1,5 @@
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import { AuthenticatedAdmin } from '../lib/api/decorators.js';
+import { Admin } from '../lib/api/decorators.js';
 import { Sequential } from '../lib/utils.js';
 import { DATABASE_FILENAME } from '../lib/database.js';
 import * as fs from 'fs';
@@ -13,7 +13,7 @@ export class ApiBotplayingList extends Route {
 	}
 
 	// Get current list
-	@AuthenticatedAdmin()
+	@Admin()
 	@Sequential
 	public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
 		const stream = fs.createReadStream(DATABASE_FILENAME);

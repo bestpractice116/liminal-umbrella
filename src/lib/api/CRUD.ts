@@ -1,7 +1,7 @@
 import { methods, Route, type ApiRequest, type ApiResponse, HttpCodes } from '@sapphire/plugin-api';
 import type { SchemaBundle, AnyZodSchema } from 'common/schema';
 import { getSchemaKeys } from 'common';
-import { AuthenticatedAdmin } from '../api/decorators.js';
+import { Admin as AuthenticatedAdmin } from '../api/decorators.js';
 import { Sequential } from '../utils.js';
 
 type SequelizeInclude =
