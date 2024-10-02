@@ -7,32 +7,32 @@ import { AuthenticatedWithRole } from '../lib/api/decorators.js';
 import { isAdmin } from '../lib/api/auth.js';
 
 export class ApiGameSessionsList extends CR {
-	public constructor(context: Route.LoaderContext, options: Route.Options) {
-		super(context, {
-			...options,
-			route: 'api/gamesessions'
-		});
-	}
+    public constructor(context: Route.LoaderContext, options: Route.Options) {
+        super(context, {
+            ...options,
+            route: 'api/gamesessions'
+        });
+    }
 
-	getModel() {
-		return GameSession;
-	}
-	getSchema(): SchemaBundle {
-		return GameSchema;
-	}
-	@AuthenticatedWithRole('Dungeon Master', true)
-	override async auth_GET() {}
+    getModel() {
+        return GameSession;
+    }
+    getSchema(): SchemaBundle {
+        return GameSchema;
+    }
+    @AuthenticatedWithRole('Dungeon Master')
+    override async auth_GET() {}
 
-	override async findAllWhere(request: ApiRequest) {
-		if (isAdmin(request)) return {};
-		return { owner: request.auth!.id };
-	}
-	override findAllOrder(): string[][] {
-		return [['starttime', 'DESC']];
-	}
+    override async findAllWhere(request: ApiRequest) {
+        if (isAdmin(request)) return {};
+        return { owner: request.auth!.id };
+    }
+    override findAllOrder(): string[][] {
+        return [['starttime', 'DESC']];
+    }
 
-	// Cannot be created by this method
-	override async auth_CREATE(_request: ApiRequest, response: ApiResponse) {
-		response.notFound();
-	}
+    // Cannot be created by this method
+    override async auth_CREATE(_request: ApiRequest, response: ApiResponse) {
+        response.notFound();
+    }
 }

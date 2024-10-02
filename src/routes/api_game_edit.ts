@@ -8,34 +8,34 @@ import { isAdmin } from '../lib/api/auth.js';
 import { doCoerce } from './api_game.js';
 
 export class ApiGameEdit extends UD {
-	public constructor(context: Route.LoaderContext, options: Route.Options) {
-		super(context, {
-			...options,
-			route: 'api/game/:key'
-		});
-	}
+    public constructor(context: Route.LoaderContext, options: Route.Options) {
+        super(context, {
+            ...options,
+            route: 'api/game/:key'
+        });
+    }
 
-	getModel() {
-		return PlannedGame;
-	}
-	getSchema(): SchemaBundle {
-		return NewGameSchema;
-	}
+    getModel() {
+        return PlannedGame;
+    }
+    getSchema(): SchemaBundle {
+        return NewGameSchema;
+    }
 
-	@AuthenticatedWithRole('Dungeon Master', true)
-	override async auth_UPDATE() {}
+    @AuthenticatedWithRole('Dungeon Master')
+    override async auth_UPDATE() {}
 
-	override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
-		return await doCoerce(request, response, data);
-	}
+    override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
+        return await doCoerce(request, response, data);
+    }
 
-	@AuthenticatedWithRole('Dungeon Master', true)
-	override async auth_DELETE() {}
+    @AuthenticatedWithRole('Dungeon Master')
+    override async auth_DELETE() {}
 
-	override async getRetrieveWhere(request: ApiRequest) {
-		if (isAdmin(request)) {
-			return {};
-		}
-		return { owner: request.auth!.id };
-	}
+    override async getRetrieveWhere(request: ApiRequest) {
+        if (isAdmin(request)) {
+            return {};
+        }
+        return { owner: request.auth!.id };
+    }
 }

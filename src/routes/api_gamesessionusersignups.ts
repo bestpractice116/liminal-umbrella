@@ -26,7 +26,7 @@ export class ApiGameSessionUserSignupsList extends CR {
         return response.notFound();
     }
 
-    @AuthenticatedWithRole('Dungeon Master', true)
+    @AuthenticatedWithRole('Dungeon Master')
     override async auth_CREATE(_request: ApiRequest, _response: ApiResponse) {}
 
     override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: GameSessionUserSignupCreate) {
@@ -69,7 +69,7 @@ export class ApiGameSessionUserSignupsList extends CR {
         return data;
     }
 
-    @AuthenticatedWithRole('Dungeon Master', true)
+    @AuthenticatedWithRole('Dungeon Master')
     override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
     public override async DELETE_disallowed(item: GameSessionUserSignup, request: ApiRequest): Promise<string | undefined> {

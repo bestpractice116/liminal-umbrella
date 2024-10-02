@@ -20,7 +20,7 @@ export class ApiGameSessions extends UD {
 	getSchema(): SchemaBundle {
 		return GameSchema;
 	}
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_GET() {}
 
 	override async getRetrieveWhere(request: ApiRequest) {
@@ -28,7 +28,7 @@ export class ApiGameSessions extends UD {
 		return { owner: request.auth!.id };
 	}
 
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
 	override async DELETE_disallowed(item: any, _request: ApiRequest): Promise<string | undefined> {
@@ -39,7 +39,7 @@ export class ApiGameSessions extends UD {
 		return;
 	}
 
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 
 	override UPDATE_disallowed(item: any): string | undefined {

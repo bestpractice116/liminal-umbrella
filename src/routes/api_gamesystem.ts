@@ -20,6 +20,6 @@ export class ApiGameSystemList extends CR {
 		return GameSystemSchema;
 	}
 
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_GET() {}
 }

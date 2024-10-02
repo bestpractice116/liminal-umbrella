@@ -35,10 +35,10 @@ export class ApiGameList extends CR {
 		return NewGameSchema;
 	}
 
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_GET() {}
 
-	@AuthenticatedWithRole('Dungeon Master', true)
+	@AuthenticatedWithRole('Dungeon Master')
 	override async auth_CREATE() {}
 
 	override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
