@@ -413,7 +413,6 @@ export default class Database {
 
     async indexMessage(msg: DiscordMessage) {
         if (!this.subscribedChannels.has(msg.channel.id)) {
-            container.logger.debug(`Got index request for message on channel we are not subscribed to: ${msg.channel.id}`);
             return;
         }
         const dbMessage = await Message.findOne({ where: { id: msg.id } });
@@ -436,7 +435,6 @@ export default class Database {
                 this.events.emit('messageUpdated', new MessageUpdated(msg, dbMessage));
             }
         } else {
-            container.logger.debug(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
             const dbMessage = await Message.create({
                 id: msg.id,
                 authorId: msg.author.id,
