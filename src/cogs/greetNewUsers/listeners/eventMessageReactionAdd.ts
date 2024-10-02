@@ -1,6 +1,6 @@
 import { Listener, Events } from '@sapphire/framework';
 import { ChannelType, MessageReaction } from 'discord.js';
-import { GreetingMessage } from '../../../lib/database/model.js';
+import { GreetingMessage, Role } from '../../../lib/database/model.js';
 import { getMessage } from '../../../lib/message.js';
 import { getGuildMemberById } from '../../../lib/discord.js';
 import { Sequential } from '../../../lib/utils.js';
@@ -53,38 +53,42 @@ export class verboseLogBotStartedListener extends Listener {
             return u.roles || [];
         };
 
-        console.log('Emoji name ', r.emoji.name);
-
         let kickUser = false;
+        let admitMember = false;
         for (const userId of (await r.users.fetch()).keys()) {
             const roles = await getRoles(userId);
             if (!roles) continue; // Skip reactions from bots
             // Remove any non-Admin reacts
             if (!roles.some((r) => r.name === 'Admin')) await r.users.remove(userId);
             // An admin X'd - so we want to kick this user
-            if (r.emoji.name === '❌') kickUser = true;
+            if (r.emoji.name === '❌' && !roles.some((r) => r.name === 'Member')) kickUser = true;
+            if (r.emoji.name === '✅') admitMember = true;
         }
-        console.log('kickuser ', kickUser);
-        if (!kickUser) return;
+        if (!kickUser && !admitMember) return;
 
         // Find the message in the DB that was reacted to, and from that find the user who's greeting message it was
         const messageId = r.message.id;
         const greeting = await GreetingMessage.findOne({ include: ['user'], where: { messageId } });
 
-        console.log('greeting ', greeting);
         if (!greeting) return;
         const dbUser = greeting.user;
-        const msg = await getMessage('USER_NO_NAME_CHANGE_KICK', {});
         const guildMember = await getGuildMemberById(dbUser.key);
-        console.log('guildMember ', guildMember);
         if (!guildMember) return;
 
-        await (
-            await this.container.database.getdb()
-        ).transaction(async () => {
-            dbUser.set({ kicked: true });
-            await guildMember.kick(msg);
-            await dbUser.save();
-        });
+        if (kickUser) {
+            const msg = await getMessage('USER_NO_NAME_CHANGE_KICK', {});
+            await (
+                await this.container.database.getdb()
+            ).transaction(async () => {
+                dbUser.set({ kicked: true });
+                await guildMember.kick(msg);
+                await dbUser.save();
+            });
+        }
+        if (admitMember) {
+            const dbRole = await Role.findOne({where: { name: 'Member' }});
+            if (!dbRole) return;
+            await guildMember.roles.add(dbRole.key);
+        }
     }
 }
