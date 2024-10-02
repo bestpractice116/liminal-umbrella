@@ -248,8 +248,8 @@ export default class Database {
                 // FIXME - also need to call updateGameListing
                 await session.destroy();
             }
-            const greeting = await GreetingMessage.findOne({where: {userId: id}});
-            if (greeting) await greeting.destroy()
+            const greeting = await GreetingMessage.findOne({ where: { userId: id } });
+            if (greeting) await greeting.destroy();
         });
         this.events.emit(
             'userLeft',
@@ -418,7 +418,6 @@ export default class Database {
         }
         const dbMessage = await Message.findOne({ where: { id: msg.id } });
         if (dbMessage) {
-            console.log('Update message ', msg.id);
             if (
                 (!dbMessage.editedTimestamp && msg.editedTimestamp) ||
                 (dbMessage.editedTimestamp && dbMessage.editedTimestamp < msg.editedTimestamp!) ||
@@ -437,7 +436,6 @@ export default class Database {
                 this.events.emit('messageUpdated', new MessageUpdated(msg, dbMessage));
             }
         } else {
-            console.log('Create message ', msg.id);
             container.logger.debug(`Create message with author ${msg.author.id} in channel ${msg.channel.id} content ${msg.content}`);
             const dbMessage = await Message.create({
                 id: msg.id,
@@ -478,7 +476,6 @@ export default class Database {
                         earliestDate = msg.createdTimestamp;
                         earliestMessage = msg;
                     }
-                    console.log('fetchAndStoreMessages index message ', msg.id);
                     await this.indexMessage(msg);
                 }
 

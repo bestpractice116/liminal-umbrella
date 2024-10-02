@@ -3,20 +3,19 @@ import { Message } from 'discord.js';
 import { Sequential } from '../lib/utils.js';
 
 export class MessageUpdateEvent extends Listener {
-    constructor(context: Listener.LoaderContext, options: Listener.Options) {
-        super(context, {
-            ...options,
-            event: Events.MessageUpdate
-        });
-    }
+	constructor(context: Listener.LoaderContext, options: Listener.Options) {
+		super(context, {
+			...options,
+			event: Events.MessageUpdate
+		});
+	}
 
-    @Sequential
-    public override run(_: Message, newMessage: Message) {
-        if (!newMessage.guildId) {
-            return;
-        }
-        console.log('messageUpdate event index message', newMessage.id);
-        this.container.database.indexMessage(newMessage);
-        return;
-    }
+	@Sequential
+	public override run(_: Message, newMessage: Message) {
+		if (!newMessage.guildId) {
+			return;
+		}
+		this.container.database.indexMessage(newMessage);
+		return;
+	}
 }
