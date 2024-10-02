@@ -3,8 +3,18 @@ import { container } from '@sapphire/framework';
 import { gametypes } from 'common/schema';
 import { PlannedGame, GameSession } from './database/model.js';
 
-export function getGuildMemberById(id: Snowflake) {
-    return container.guild!.members.fetch(id);
+export async function getGuildMemberById(id: Snowflake) {
+    let member;
+    try {
+        member = await container.guild?.members.fetch(id);
+    } catch (e: any) {
+        if (e.code === 10007) {
+            // 'Unknown Member' - memeber who had previously said they were interested has left the Discord
+        } else {
+            throw e;
+        }
+    }
+    return member;
 }
 
 export function gameChannelLink(channelId: Snowflake): string {

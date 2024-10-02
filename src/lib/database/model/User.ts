@@ -1,16 +1,16 @@
 import {
-	DataTypes,
-	Model,
-	InferAttributes,
-	InferCreationAttributes,
-	NonAttribute,
-	BelongsToManySetAssociationsMixin,
-	BelongsToManyAddAssociationsMixin,
-	BelongsToManyRemoveAssociationsMixin,
-	BelongsToManyHasAssociationMixin,
-	BelongsToManyHasAssociationsMixin,
-	BelongsToManyCountAssociationsMixin,
-	HasManyGetAssociationsMixin
+    DataTypes,
+    Model,
+    InferAttributes,
+    InferCreationAttributes,
+    NonAttribute,
+    BelongsToManySetAssociationsMixin,
+    BelongsToManyAddAssociationsMixin,
+    BelongsToManyRemoveAssociationsMixin,
+    BelongsToManyHasAssociationMixin,
+    BelongsToManyHasAssociationsMixin,
+    BelongsToManyCountAssociationsMixin,
+    HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany, HasOne } from '@sequelize/core/decorators-legacy';
 import Role from './Role.js';
@@ -22,110 +22,115 @@ import GreetingMessage from './GreetingMessage.js';
 import { GuildMember } from 'discord.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
-	@Attribute(DataTypes.STRING)
-	@PrimaryKey
-	@NotNull
-	declare key: string;
+    @Attribute(DataTypes.STRING)
+    @PrimaryKey
+    @NotNull
+    declare key: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare name: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare name: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare username: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare username: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare nickname: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare nickname: string;
 
-	@Attribute(DataTypes.BOOLEAN)
-	@NotNull
-	declare rulesaccepted: boolean;
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare rulesaccepted: boolean;
 
-	@Attribute(DataTypes.BOOLEAN)
-	@NotNull
-	declare bot: boolean;
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare bot: boolean;
 
-	@Attribute(DataTypes.BOOLEAN)
-	@NotNull
-	declare left: boolean;
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare left: boolean;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare avatarURL: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare avatarURL: string;
 
-	@Attribute(DataTypes.INTEGER)
-	@NotNull
-	declare joinedDiscordAt: number;
+    @Attribute(DataTypes.INTEGER)
+    @NotNull
+    declare joinedDiscordAt: number;
 
-	@BelongsToMany(() => Role, {
-		through: () => RoleMember
-	})
-	declare roles?: NonAttribute<Role[]>;
-	declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['key']>;
-	declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['key']>;
-	declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;
-	declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['key']>;
-	declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['key']>;
-	declare countRoles: BelongsToManyCountAssociationsMixin<Role>;
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare kicked: boolean;
 
-	@HasMany(() => EventInterest, /* foreign key */ 'userId')
-	declare eventInterest: NonAttribute<EventInterest>;
-	declare getEventInterests: HasManyGetAssociationsMixin<EventInterest>;
+    @BelongsToMany(() => Role, {
+        through: () => RoleMember
+    })
+    declare roles?: NonAttribute<Role[]>;
+    declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['key']>;
+    declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['key']>;
+    declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;
+    declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['key']>;
+    declare hasRoles: BelongsToManyHasAssociationsMixin<Role, Role['key']>;
+    declare countRoles: BelongsToManyCountAssociationsMixin<Role>;
 
-	async CRUDRead(key: string) {
-		if (key === 'roles') {
-			return ((await this.roles) || []).map((role: Role) => ({
-				name: role.name,
-				hexColor: role.hexColor,
-				position: role.rawPosition
-			}));
-		}
-		return this.get(key);
-	}
+    @HasMany(() => EventInterest, /* foreign key */ 'userId')
+    declare eventInterest: NonAttribute<EventInterest>;
+    declare getEventInterests: HasManyGetAssociationsMixin<EventInterest>;
 
-	@HasMany(() => PlannedGame, /* foreign key */ 'owner')
-	declare plannedGames?: NonAttribute<PlannedGame>;
-	declare getPlannedGames: HasManyGetAssociationsMixin<PlannedGame>;
+    async CRUDRead(key: string) {
+        if (key === 'roles') {
+            return ((await this.roles) || []).map((role: Role) => ({
+                name: role.name,
+                hexColor: role.hexColor,
+                position: role.rawPosition
+            }));
+        }
+        return this.get(key);
+    }
 
-	declare signedupGameSessions: NonAttribute<GameSession[]>;
-	declare getSignedupGameSessions: HasManyGetAssociationsMixin<GameSession>;
+    @HasMany(() => PlannedGame, /* foreign key */ 'owner')
+    declare plannedGames?: NonAttribute<PlannedGame>;
+    declare getPlannedGames: HasManyGetAssociationsMixin<PlannedGame>;
 
-	static async activeUsersMap(): Promise<Map<string, User>> {
-		const out = new Map();
-		for (const user of await this.findAll({ where: { left: false }, include: ['roles'] })) {
-			out.set(user.key, user);
-		}
-		return out;
-	}
+    declare signedupGameSessions: NonAttribute<GameSession[]>;
+    declare getSignedupGameSessions: HasManyGetAssociationsMixin<GameSession>;
 
-	@HasOne(() => GreetingMessage, /* foreign key */ 'userId')
-	declare greetingMessage?: NonAttribute<GreetingMessage>;
+    static async activeUsersMap(): Promise<Map<string, User>> {
+        const out = new Map();
+        for (const user of await this.findAll({ where: { left: false }, include: ['roles'] })) {
+            out.set(user.key, user);
+        }
+        return out;
+    }
 
-	static userDataFromGuildMember(guildMember: GuildMember) {
-		return {
-			nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
-			username: guildMember.user.username,
-			name: (guildMember.user.globalName || guildMember.user.username)!,
-			rulesaccepted: false, // FIXME
-			left: false,
-			bot: guildMember.user.bot,
-			avatarURL: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
-			joinedDiscordAt: guildMember.user.createdAt.valueOf()
-		};
-	}
+    @HasOne(() => GreetingMessage, /* foreign key */ 'userId')
+    declare greetingMessage?: NonAttribute<GreetingMessage>;
 
-	static createFromGuildMember(guildMember: GuildMember): Promise<User> {
-		return User.create({
-			key: guildMember.id,
-			...User.userDataFromGuildMember(guildMember)
-		});
-	}
+    static userDataFromGuildMember(guildMember: GuildMember) {
+        return {
+            nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+            username: guildMember.user.username,
+            name: (guildMember.user.globalName || guildMember.user.username)!,
+            rulesaccepted: false, // FIXME
+            left: false,
+            bot: guildMember.user.bot,
+            avatarURL: guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL,
+            joinedDiscordAt: guildMember.user.createdAt.valueOf(),
+            kicked: false,
+        };
+    }
 
-	updateFromGuildMember(guildMember: GuildMember) {
-		this.set({
-			...User.userDataFromGuildMember(guildMember)
-		});
-	}
+    static createFromGuildMember(guildMember: GuildMember): Promise<User> {
+        return User.create({
+            key: guildMember.id,
+            ...User.userDataFromGuildMember(guildMember)
+        });
+    }
+
+    updateFromGuildMember(guildMember: GuildMember) {
+        this.set({
+            ...User.userDataFromGuildMember(guildMember)
+        });
+    }
 }
