@@ -23,7 +23,7 @@ import { BossIcon, HuhBossIcon } from '../../Icons';
 
 export function TopMenu() {
 	const { logoutMutation } = useLogoutMutation();
-	const { isAuthenticated, isBotBetaTester, isAdmin, isDM } = useAuthStatus();
+	const { isAuthenticated, isAdmin, isDM } = useAuthStatus();
 	const { debug, setDebug } = React.useContext(DebugContext);
 	const { editMode, setEditMode } = React.useContext(EditModeContext);
 	const location = useLocation();
@@ -36,7 +36,6 @@ export function TopMenu() {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const items: any = [];
 
-	const beta = isBotBetaTester();
 	const admin = isAdmin();
 	if (admin) {
 		items.push({
@@ -78,7 +77,7 @@ export function TopMenu() {
 	}
 
 	const dm = isDM();
-	if (dm && beta) {
+	if (dm) {
 		items.push({
 			key: 'dm',
 			label: 'DM',
