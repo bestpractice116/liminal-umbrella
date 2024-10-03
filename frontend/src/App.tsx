@@ -6,7 +6,7 @@ import { MaybeDebug, DebugContext } from './components/Debug';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './Pages/Homepage';
 import { AuthProvider } from './components/Auth';
-import { MessageProvider } from './components/BotMessage';
+import { BotMessageProvider } from './components/BotMessage';
 import { EditModeProvider } from './components/EditMode';
 import { Login } from './Pages/Login/Login.js';
 import { AdminUsers, AdminCogs, AdminRoles, AdminGamesystems, AdminBotplaying, AdminBotMessages } from './Pages/admin';
@@ -59,13 +59,13 @@ function AppRouter() {
                     }}
                 >
                     <EditModeProvider>
-                        <MessageProvider>
+                        <BotMessageProvider>
                             <AuthProvider>
                                 <Page>
                                     <PageContent />
                                 </Page>
                             </AuthProvider>
-                        </MessageProvider>
+                        </BotMessageProvider>
                     </EditModeProvider>
                 </ConfigProvider>
             </QueryClientProvider>

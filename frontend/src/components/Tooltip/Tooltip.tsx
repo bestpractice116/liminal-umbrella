@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import { useBotMessage } from '../../components/BotMessage';
 import AntdTooltip from 'antd/es/tooltip';
 import type { PresetColorType } from 'antd/es/_util/colors.js';
-import { DebugContext } from '../Debug';
+import { EditModeContext } from '../EditMode';
+import { EditOutlined } from '@ant-design/icons';
 
 export type TooltipParams = {
 	messageKey: string;
@@ -10,10 +11,17 @@ export type TooltipParams = {
 };
 export function Tooltip({ messageKey, color, children }: TooltipParams & { children: React.ReactNode }) {
 	const { botMessage } = useBotMessage();
-	const { debug } = useContext(DebugContext);
-	const title = botMessage(messageKey, debug ? undefined : null);
+	const { editMode } = useContext(EditModeContext);
+	const message = botMessage(messageKey);
+	const title = editMode ? (
+		<>
+			{message} <EditOutlined />
+		</>
+	) : (
+		message
+	);
 	return title ? (
-		<AntdTooltip title={title} color={color}>
+		<AntdTooltip title={message} color={color}>
 			{children}
 		</AntdTooltip>
 	) : (

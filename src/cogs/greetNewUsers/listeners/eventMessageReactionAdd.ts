@@ -5,6 +5,7 @@ import { getMessage } from '../../../lib/message.js';
 import { getGuildMemberById } from '../../../lib/discord.js';
 import { Sequential } from '../../../lib/utils.js';
 import { User } from '../../../lib/database/model.js';
+import { getChannelName } from '../utils.js';
 
 interface PartialFetchable {
     partial: boolean;
@@ -33,7 +34,7 @@ export class verboseLogBotStartedListener extends Listener {
 
     @Sequential
     async run(r: MessageReaction) {
-        const greetingChannelName = process.env.GREET_USERS_CHANNEL;
+        const greetingChannelName = getChannelName()
         if (!greetingChannelName) return;
 
         await this.fetchPartial(r);
