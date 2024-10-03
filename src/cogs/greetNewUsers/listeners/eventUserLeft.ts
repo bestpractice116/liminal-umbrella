@@ -1,7 +1,6 @@
 import { Listener, container } from '@sapphire/framework';
 import { UserLeft } from '../../../lib/events/index.js';
-import { doUserGreeting, getChannelName } from '../utils.js';
-import { Sequential } from '../../../lib/utils.js';
+import { getChannelName } from '../utils.js';
 import { CustomEvents } from '../../../lib/events.js';
 import { getTextChannel } from '../../../lib/discord.js';
 
@@ -15,7 +14,6 @@ export class greetNewUsersUserLeftistener extends Listener {
 		});
 	}
 
-	@Sequential
 	async run(e: UserLeft) {
 		if (!e.greetingMessageId) return;
 
