@@ -8,6 +8,7 @@ export class UserLeft {
 		public nickname: string,
 		public avatarURL: string,
 		public joinedDiscordAt: Date,
-		public dbUser: User
+		public dbUser: User,
+		public greetingMessageId?: string
 	) {}
 }
