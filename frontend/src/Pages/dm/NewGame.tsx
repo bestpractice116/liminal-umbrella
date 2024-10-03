@@ -12,6 +12,7 @@ import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { useErrorBoundary } from '../../components/ErrorBoundary';
+import BotMessage from '../../components/BotMessage';
 
 export function NewGame() {
 	const { showBoundary } = useErrorBoundary();
@@ -135,7 +136,7 @@ function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> 
 	const isPostable = !hasFieldErrors && getZObject(GameSchema.create!).safeParse(values).success;
 	return (
 		<Button type="primary" icon={<CheckCircleOutlined />} disabled={!isPostable} onClick={doPost}>
-			Post Game
+			<BotMessage messageKey="BUTTON_NEW_GAME_POST_GAME" />
 		</Button>
 	);
 }
