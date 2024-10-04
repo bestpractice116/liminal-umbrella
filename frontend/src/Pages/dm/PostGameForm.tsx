@@ -17,8 +17,6 @@ import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
 import { Tooltip } from '../../components/Tooltip';
 import { useBotMessage } from '../../components/BotMessage';
-import { EditModeContext } from '../../components/EditMode/EditMode.js';
-import { DebugContext } from '../../components/Debug/Debug.js';
 
 const updateFormRule = createSchemaFieldRule(getZObject(GameSchema.update!).partial());
 
@@ -46,15 +44,9 @@ export default function PostGameForm({
     formRef: RefObject<FormInstance<GameCreateItem>>;
 }) {
     const { botMessage } = useBotMessage();
-    const FormItem = ({
-        name,
-        label,
-        children,
-        rules = [],
-        tooltip,
-        ...rest
-    }: FormItemProps & { children: React.ReactNode; label: string; tooltip: string }) => {
-        const message = botMessage(label);
+    const FormItem = ({ name, children, rules = [], ...rest }: FormItemProps & { children: React.ReactNode }) => {
+        const tooltip = `TOOLTIP_POST_GAME_${name.toUpperCase()}`;
+        const message = botMessage(`LABEL_POST_GAME_${name.toUpperCase()}`);
         return (
             <Form.Item<GameCreateItem>
                 {...rest}
@@ -92,16 +84,12 @@ export default function PostGameForm({
 
     const TimeControl = ({
         name,
-        label,
-        tooltip,
         labelCol,
         wrapperCol,
         style,
         rules = []
     }: {
         name: NamePath<GameUpdateItem>;
-        label: string;
-        tooltip: string;
         labelCol?: ColProps;
         wrapperCol?: ColProps;
         style?: React.CSSProperties;
@@ -115,8 +103,6 @@ export default function PostGameForm({
                 labelCol={labelCol}
                 wrapperCol={wrapperCol}
                 name={name}
-                label={label}
-                tooltip={tooltip}
                 dependencies={['date']}
                 rules={rules}
             >
@@ -142,17 +128,12 @@ export default function PostGameForm({
                     <Form.Item<GameUpdateItem> style={{ height: 0, margin: 0 }} name="key">
                         <Input type="hidden" />
                     </Form.Item>
-                    <FormItem name="name" label="LABEL_POST_GAME_NAME" tooltip="TOOLTIP_POST_GAME_NAME">
+                    <FormItem name="name">
                         <Input onPressEnter={save} onBlur={save} disabled={disabled} />
                     </FormItem>
                     <GameTypeSelect save={save} disabled={disabled || !createForm} />
                     <GameSystemSelect save={save} create={createForm} disabled={disabled || !createForm} />
-                    <FormItem
-                        label="LABEL_POST_GAME_DATE"
-                        tooltip="TOOLTIP_POST_GAME_DATE"
-                        wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }}
-                        name="date"
-                    >
+                    <FormItem wrapperCol={{ style: { maxWidth: 275, textAlign: 'left' }, offset: 0, span: 20 }} name="date">
                         <DatePicker
                             style={{ width: '250px', paddingRight: '20px' }}
                             minDate={dayjs().add(1, 'day')}
@@ -181,8 +162,6 @@ export default function PostGameForm({
                         ]}
                         wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }}
                         name="starttime"
-                        label="LABEL_POST_GAME_START_TIME"
-                        tooltip="TOOLTIP_POST_GAME_START_TIME"
                     />
                     <TimeControl
                         rules={[
@@ -199,21 +178,14 @@ export default function PostGameForm({
                         ]}
                         wrapperCol={{ style: { maxWidth: 150, textAlign: 'left' }, span: 19 }}
                         name="endtime"
-                        label="LABEL_POST_GAME_END_TIME"
-                        tooltip="TOOLTIP_POST_GAME_END_TIME"
                     />
-                    <FormItem label="LABEL_POST_GAME_LOCATION" tooltip="TOOLTIP_POST_GAME_LOCATION" name="location">
+                    <FormItem name="location">
                         <Input onPressEnter={save} onBlur={save} disabled={disabled} />
                     </FormItem>
-                    <FormItem label="LABEL_POST_GAME_DESCRIPTION" tooltip="TOOLTIP_POST_GAME_DESCRIPTION" name="description">
+                    <FormItem name="description">
                         <Input.TextArea rows={6} size={'large'} onBlur={save} disabled={disabled} />
                     </FormItem>
-                    <FormItem
-                        label="LABEL_POST_GAME_MAX_PLAYERS"
-                        tooltip="TOOLTIP_POST_GAME_MAX_PLAYERS"
-                        wrapperCol={{ style: { maxWidth: 100 }, span: 19 }}
-                        name="maxplayers"
-                    >
+                    <FormItem wrapperCol={{ style: { maxWidth: 100 }, span: 19 }} name="maxplayers">
                         <Select
                             options={Array.from({ length: 7 }, (_, i) => i + 1).map((idx) => {
                                 return { value: idx, label: <span>{idx}</span> };
