@@ -17,10 +17,9 @@ const data = [
     ['TOOLTIP_POST_GAME_LOCATION', ''],
     ['LABEL_POST_GAME_DESCRIPTION', 'Description'],
     ['TOOLTIP_POST_GAME_DESCRIPTION', ''],
-    ['LABEL_POST_GAME_MAX_PLAYERS', 'Max Players'],
-    ['TOOLTIP_POST_GAME_MAX_PLAYERS', ''],
-    ['BUTTON_NEW_GAME_POST_GAME', 'Post Game'],
-    ['LABEL_POST_GAME_GAMESYSTEM', 'Game System']
+    ['LABEL_POST_GAME_MAXPLAYERS', 'Max Players'],
+    ['TOOLTIP_POST_GAME_MAXPLAYERS', ''],
+    ['BUTTON_NEW_GAME_POST_GAME', 'Post Game']
 ];
 
 const clean = (uz: MigrationParams<any>, transaction: any) => {

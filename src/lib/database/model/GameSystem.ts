@@ -2,6 +2,7 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes, NonAttribut
 import { Attribute, NotNull, Unique, PrimaryKey, AutoIncrement, HasMany, DeletedAt } from '@sequelize/core/decorators-legacy';
 import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
 import PlannedGame from './PlannedGame.js';
+import Campaign from './Campaign.js';
 
 export default class GameSystem extends Model<InferAttributes<GameSystem>, InferCreationAttributes<GameSystem>> {
 	@Attribute(DataTypes.INTEGER)
@@ -44,4 +45,12 @@ export default class GameSystem extends Model<InferAttributes<GameSystem>, Infer
 			menu.addOptions(options);
 		});
 	}
+
+	@HasMany(() => Campaign, {
+		foreignKey: 'gamesystem',
+		inverse: {
+			as: 'gamesystemOb'
+		}
+	})
+	declare campaigns?: NonAttribute<PlannedGame>;
 }
