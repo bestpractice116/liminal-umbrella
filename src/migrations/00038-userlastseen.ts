@@ -75,7 +75,7 @@ export const up = async (uz: MigrationParams<any>) => {
 			},
 			{ transaction }
 		);
-		await sq.query('UPDATE users SET lastSeenChannel = (SELECT key FROM channels WHERE name = "new_members")', { raw: true, transaction });
+		await sq.query('UPDATE users SET lastSeenChannel = (SELECT id FROM channels WHERE name = "new_members")', { raw: true, transaction });
 		await qi.changeColumn(
 			'users',
 			'lastSeenChannel',
