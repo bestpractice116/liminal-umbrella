@@ -112,11 +112,7 @@ export default class Database {
 				where: { userId: user.key },
 				defaults: { userId: user.key, messageId: message.id }
 			});
-			user.set({
-				lastSeenTime: new Date(Date.now()),
-				lastSeenChannel: message.channelId,
-				lastSeenMessage: message.id
-			});
+			user.updateLastSeenFromMessage(message);
 			await user.save();
 		});
 	}
@@ -434,6 +430,11 @@ export default class Database {
 	}
 
 	async indexMessage(msg: DiscordMessage) {
+		const user = await User.findOne({ where: { key: msg.author.id } });
+		if (user && !user.bot) {
+			user.updateLastSeenFromMessage(msg);
+			await user.save();
+		}
 		if (!this.subscribedChannels.has(msg.channel.id)) {
 			return;
 		}

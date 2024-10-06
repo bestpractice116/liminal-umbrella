@@ -19,7 +19,7 @@ import PlannedGame from './PlannedGame.js';
 import GameSession from './GameSession.js';
 import EventInterest from './EventInterest.js';
 import GreetingMessage from './GreetingMessage.js';
-import { GuildMember } from 'discord.js';
+import { GuildMember, Message } from 'discord.js';
 import Campaign from './Campaign.js';
 import CampaignPlayer from './CampaignPlayer.js';
 
@@ -168,4 +168,15 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare lastSeenMessage: string;
+
+	updateLastSeenFromMessage(message: Message) {
+		this.set({
+			lastSeenTime: new Date(Date.now()),
+			lastSeenChannel: message.channelId,
+			lastSeenMessage: message.id
+		});
+		if (message.thread) {
+			this.set({ lastSeenThread: message.thread.id });
+		}
+	}
 }

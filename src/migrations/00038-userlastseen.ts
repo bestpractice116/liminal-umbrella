@@ -80,7 +80,13 @@ export const up = async (uz: MigrationParams<any>) => {
             'users',
             'lastSeenChannel',
             {
-                allowNull: false
+                allowNull: false,
+                references: {
+                    table: 'channels',
+                    key: 'id'
+                },
+                onDelete: 'SET NULL',
+                onUpdate: 'RESTRICT'
             },
             { transaction }
         );
