@@ -126,7 +126,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 	static createFromGuildMember(guildMember: GuildMember): Promise<User> {
 		return User.create({
 			key: guildMember.id,
-			...User.userDataFromGuildMember(guildMember)
+			...User.userDataFromGuildMember(guildMember),
+			lastSeenTime: new Date(Date.now()),
+			lastSeenChannel: 'unknown',
+			lastSeenMessage: 'unknown'
 		});
 	}
 
@@ -150,4 +153,19 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 	declare removeCampaignsPlaying: BelongsToManyRemoveAssociationsMixin<Campaign, Campaign['key']>;
 	declare hasCampaignPlaying: BelongsToManyHasAssociationMixin<Campaign, Campaign['key']>;
 	declare countCampaignsPlaying: BelongsToManyCountAssociationsMixin<Campaign>;
+
+	@Attribute(DataTypes.DATE)
+	@NotNull
+	declare lastSeenTime: Date;
+
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare lastSeenChannel: string;
+
+	@Attribute(DataTypes.STRING)
+	declare lastSeenThread?: string;
+
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare lastSeenMessage: string;
 }

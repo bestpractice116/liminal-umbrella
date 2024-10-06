@@ -105,10 +105,19 @@ export default class Database {
 		return umzug.up();
 	}
 
-	async greetingMessageAdd(messageId: string, userId: string): Promise<void> {
-		await GreetingMessage.findOrCreate({
-			where: { userId },
-			defaults: { userId, messageId }
+	async greetingMessageAdd(message: DiscordMessage, user: User): Promise<void> {
+		const db = await this.getdb();
+		await db.transaction(async () => {
+			await GreetingMessage.findOrCreate({
+				where: { userId: user.key },
+				defaults: { userId: user.key, messageId: message.id }
+			});
+			user.set({
+				lastSeenTime: new Date(Date.now()),
+				lastSeenChannel: message.channelId,
+				lastSeenMessage: message.id
+			});
+			await user.save();
 		});
 	}
 
