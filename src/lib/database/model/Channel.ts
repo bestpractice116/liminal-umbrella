@@ -51,6 +51,10 @@ export default class Channel extends Model<InferAttributes<Channel>, InferCreati
     declare rateLimitPerUser: bigint;
 */
 
+	@Attribute(DataTypes.DATE)
+	@NotNull
+	declare lastSeenIndexedToDate: string;
+
 	static async channelsMap(): Promise<Map<string, Channel>> {
 		const out = new Map();
 		for (const channel of await this.findAll()) {

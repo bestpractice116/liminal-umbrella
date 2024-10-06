@@ -108,19 +108,9 @@ export const up = async (uz: MigrationParams<any>) => {
             },
             { transaction }
         );
-        /* FIXME */
         await sq.query(
-            'UPDATE users SET lastSeenMessage = greetingmessage.messageId FROM users INNER JOIN greetingmessage ON users.key = greetingmessage.userId',
+            'UPDATE users SET lastSeenMessage = greetingmessages.messageId FROM greetingmessages WHERE users.key = greetingmessages.userId',
             { raw: true, transaction }
-        );
-        /* FIXME */
-        await qi.changeColumn(
-            'users',
-            'lastSeenMessage',
-            {
-                allowNull: false
-            },
-            { transaction }
         );
 
         // Add fkey to rolemembers
