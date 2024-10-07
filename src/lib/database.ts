@@ -33,7 +33,7 @@ import { arrayStrictEquals } from '@sapphire/utilities';
 import { sleep } from './utils.js';
 import { CustomEvents } from './events.js';
 import { getGuildMemberById } from './discord.js';
-import { START_OF_TIME } from './dates.js';
+import { END_OF_TIME, START_OF_TIME } from './dates.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -475,43 +475,57 @@ export default class Database {
         }
     }
 
-    async fetchAndStoreMessages(channel: TextBasedChannel, earliest: Date): Promise<{ lastSeenIndexedToDate: Date; lastSeenIndexedFromDate: Date }> {
+    async fetchAndStoreMessages(channel: TextBasedChannel, earliest?: Date): Promise<{ lastSeenIndexedToDate: Date; lastSeenIndexedFromDate: Date }> {
+        console.log(`fetchAndStoreMessages for ${(channel as any).name}`);
         const fetchAmount = 100;
         const options: FetchMessagesOptions = {
             limit: fetchAmount
         };
+        earliest ||= START_OF_TIME;
         let msgCount = 0;
-        let earliestDate = Infinity;
-        let latestDate = 0;
+        let earliestDate = END_OF_TIME;
+        let latestDate = START_OF_TIME;
         while (true) {
             const messages = await channel.messages.fetch(options);
             await sleep(1000);
 
             if (messages.size > 0) {
                 let earliestMessage;
-
                 for (let pairs of messages) {
                     let msg = pairs[1];
+                    const createdTimestamp = new Date(msg.createdTimestamp);
 
-                    if (msg.createdTimestamp < earliestDate) {
-                        earliestDate = msg.createdTimestamp;
+                    console.log(`Message content ${msg.content}`);
+
+                    if (createdTimestamp < earliestDate) {
+                        console.log(`Message created at ${createdTimestamp} which is less than ${earliestDate} - new earliest message`);
+                        earliestDate = new Date(msg.createdTimestamp);
                         earliestMessage = msg;
+                    } else {
+                        console.log(`Message created at${createdTimestamp} which is after ${earliestDate} - NOT earliest message`);
                     }
-                    if (msg.createdTimestamp > latestDate) {
-                        latestDate = msg.createdTimestamp;
+                    if (createdTimestamp > latestDate) {
+                        console.log(`Message created at ${createdTimestamp} which is more than than ${latestDate} - new latest message`);
+                        latestDate = new Date(msg.createdTimestamp);
                     }
                     await this.indexMessage(msg);
                 }
 
                 options.before = earliestMessage!.id;
+            } else {
+                console.log('NO MESSAGES');
             }
 
             msgCount += messages.size;
 
-            if (messages.size < fetchAmount || earliestDate <= earliest.getTime()) {
+            if (messages.size < fetchAmount || earliestDate <= earliest) {
                 break;
             }
         }
+        console.log({
+            lastSeenIndexedToDate: new Date(latestDate),
+            lastSeenIndexedFromDate: new Date(earliestDate)
+        });
         return {
             lastSeenIndexedToDate: new Date(latestDate),
             lastSeenIndexedFromDate: new Date(earliestDate)
@@ -525,7 +539,14 @@ export default class Database {
         }
         if (discordChannel.type === ChannelType.GuildText) {
             this.subscribedChannels.add(discordChannel.id);
-            const { lastSeenIndexedToDate, lastSeenIndexedFromDate } = await this.fetchAndStoreMessages(discordChannel);
+            const channel = await Channel.findByPk(discordChannel.id);
+            if (!channel) return;
+            await this.db!.transaction(async () => {
+                const dates = await this.fetchAndStoreMessages(discordChannel);
+                channel.set(dates);
+                console.log('Channel ', channel.name, dates);
+                await channel.save();
+            });
         }
         if (discordChannel.type === ChannelType.PublicThread) {
             this.subscribedChannels.add(discordChannel.id);
