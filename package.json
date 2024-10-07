@@ -62,8 +62,8 @@
 		"dev": "yarn workspace common run build && yarn run build && yarn run start",
 		"watch:start": "tsc-watch --onSuccess \"npm run start\"",
 		"format": "prettier --write \"src/\"",
-		"deploy": "fly deploy",
-		"deploy-prod": "fly deploy -c fly-production.toml"
+		"deploy": "rm -rf dist; tsc; fly deploy",
+		"deploy-prod": "rm -rf dist; tsc; fly deploy -c fly-production.toml"
 	},
 	"prettier": "@sapphire/prettier-config",
 	"packageManager": "yarn@4.1.0",
