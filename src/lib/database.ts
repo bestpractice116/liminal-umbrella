@@ -33,6 +33,7 @@ import { arrayStrictEquals } from '@sapphire/utilities';
 import { sleep } from './utils.js';
 import { CustomEvents } from './events.js';
 import { getGuildMemberById } from './discord.js';
+import { START_OF_TIME } from './dates.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -474,19 +475,20 @@ export default class Database {
         }
     }
 
-    async fetchAndStoreMessages(channel: TextBasedChannel) {
+    async fetchAndStoreMessages(channel: TextBasedChannel, earliest: Date): Promise<{ lastSeenIndexedToDate: Date; lastSeenIndexedFromDate: Date }> {
         const fetchAmount = 100;
         const options: FetchMessagesOptions = {
             limit: fetchAmount
         };
         let msgCount = 0;
+        let earliestDate = Infinity;
+        let latestDate = 0;
         while (true) {
             const messages = await channel.messages.fetch(options);
             await sleep(1000);
 
             if (messages.size > 0) {
                 let earliestMessage;
-                let earliestDate = Infinity;
 
                 for (let pairs of messages) {
                     let msg = pairs[1];
@@ -494,6 +496,9 @@ export default class Database {
                     if (msg.createdTimestamp < earliestDate) {
                         earliestDate = msg.createdTimestamp;
                         earliestMessage = msg;
+                    }
+                    if (msg.createdTimestamp > latestDate) {
+                        latestDate = msg.createdTimestamp;
                     }
                     await this.indexMessage(msg);
                 }
@@ -503,10 +508,14 @@ export default class Database {
 
             msgCount += messages.size;
 
-            if (messages.size < fetchAmount) {
+            if (messages.size < fetchAmount || earliestDate <= earliest.getTime()) {
                 break;
             }
         }
+        return {
+            lastSeenIndexedToDate: new Date(latestDate),
+            lastSeenIndexedFromDate: new Date(earliestDate)
+        };
     }
 
     async syncChannel(discordChannel: GuildBasedChannel) {
@@ -516,7 +525,7 @@ export default class Database {
         }
         if (discordChannel.type === ChannelType.GuildText) {
             this.subscribedChannels.add(discordChannel.id);
-            await this.fetchAndStoreMessages(discordChannel);
+            const { lastSeenIndexedToDate, lastSeenIndexedFromDate } = await this.fetchAndStoreMessages(discordChannel);
         }
         if (discordChannel.type === ChannelType.PublicThread) {
             this.subscribedChannels.add(discordChannel.id);
