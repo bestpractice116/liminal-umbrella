@@ -1,6 +1,6 @@
 import './lib/setup.js';
 
-import { readdirSync } from 'node:fs';
+import { readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import Database from './lib/database.js';
@@ -64,16 +64,18 @@ export class MySapphireClient extends SapphireClient {
 				}
 			}
 		});
+		container.events = createEmitter<emitterSpec>();
+		container.database = new Database(container.events);
 		for (const d of readdirSync(join(this.rootData.root, 'cogs'))) {
 			container.logger.info('Registering cog: ' + d);
 			this.stores.registerPath(join(this.rootData.root, 'cogs', d));
+			const registerPath = join(this.rootData.root, 'cogs', d, 'register.js');
+			if (existsSync(registerPath)) import(registerPath);
 		}
 	}
 
 	public override async login(token?: string): Promise<string> {
 		container.guildId = process.env.DISCORD_GUILD_ID;
-		container.events = createEmitter<emitterSpec>();
-		container.database = new Database(container.events);
 		container.ticker = new Ticker(container.events);
 		return super.login(token);
 	}
