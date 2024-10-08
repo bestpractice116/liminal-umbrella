@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
+import { dayJsCoerce, zodDay } from '../index.js';
 
 const find = z.object({
 	key: z.coerce.number().int().positive()
@@ -16,7 +17,11 @@ const read = find.merge(
 				hexColor: z.string(),
 				position: z.number().int()
 			})
-		)
+		),
+		lastSeenTime: z.preprocess(dayJsCoerce, zodDay),
+		lastSeenChannel: z.string({}).optional(),
+		lastSeenThread: z.string({}).optional(),
+		lastSeenMessage: z.string({}).optional()
 	})
 );
 
