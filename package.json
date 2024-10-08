@@ -36,7 +36,6 @@
 		"@babel/preset-typescript": "^7.23.3",
 		"@flydotio/dockerfile": "^0.5.2",
 		"@sapphire/cli": "^1.9.3",
-		"@sapphire/prettier-config": "^2.0.0",
 		"@sapphire/ts-config": "^5.0.0",
 		"@types/babel__core": "^7",
 		"@types/babel__preset-env": "^7",
@@ -65,7 +64,6 @@
 		"deploy": "rm -rf dist; tsc; fly deploy",
 		"deploy-prod": "rm -rf dist; tsc; fly deploy -c fly-production.toml"
 	},
-	"prettier": "@sapphire/prettier-config",
 	"packageManager": "yarn@4.1.0",
 	"workspaces": [
 		"common/",
