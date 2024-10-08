@@ -25,7 +25,7 @@ export const up = async (uz: MigrationParams<any>) => {
 				key: {
 					type: DataTypes.INTEGER,
 					allowNull: false,
-					primaryKey: true,
+					primaryKey: true
 				},
 				guildScheduledEventId: {
 					type: DataTypes.TEXT,

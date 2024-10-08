@@ -21,7 +21,7 @@ export class ReadyEvent extends Listener {
 	private readonly style = dev ? yellow : blue;
 
 	public override async run(client: Client) {
-		console.log("IN DATABASE RUN");
+		console.log('IN DATABASE RUN');
 		client.guilds.fetch(this.container.guildId).then(async (guild) => {
 			this.container.guild = guild;
 			/*
@@ -39,9 +39,9 @@ export class ReadyEvent extends Listener {
 	async doInitialDbSync() {
 		const guild = this.container.guild!;
 		const gameListingsChannel = await getGameListingChannel();
-                if (gameListingsChannel) {
-                        await this.container.database.indexChannel(gameListingsChannel.id);
-                }
+		if (gameListingsChannel) {
+			await this.container.database.indexChannel(gameListingsChannel.id);
+		}
 		await this.container.database.doMigrations(guild);
 		await this.container.database.getHighestWatermark();
 		const start = Date.now();

@@ -17,7 +17,7 @@ export const down = async (uz: MigrationParams<any>) => {
 	await sq.transaction(async (transaction: any) => {
 		await qi.changeColumn('plannedgames', 'key', { autoIncrement: true }, { transaction });
 		await qi.changeColumn('activities', 'key', { autoIncrement: true }, { transaction });
-                await qi.changeColumn('gamesystems', 'key', { autoIncrement: true }, { transaction });
-                await qi.changeColumn('botmessages', 'key', { autoIncrement: true }, { transaction });
+		await qi.changeColumn('gamesystems', 'key', { autoIncrement: true }, { transaction });
+		await qi.changeColumn('botmessages', 'key', { autoIncrement: true }, { transaction });
 	});
 };
