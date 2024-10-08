@@ -522,27 +522,20 @@ export default class Database {
                     let msg = pairs[1];
                     const createdTimestamp = new Date(msg.createdTimestamp);
 
-                    console.log(`Message content ${msg.content}`);
-
                     if (createdTimestamp < earliestDateSeen) {
-                        console.log(`Message created at ${createdTimestamp} which is less than ${earliestDateSeen} - new earliest message`);
                         earliestDateSeen = new Date(msg.createdTimestamp);
                         earliestMessageSeen = msg;
-                    } else {
-                        console.log(`Message created at${createdTimestamp} which is after ${earliestDateSeen} - NOT earliest message`);
                     }
                     if (createdTimestamp > latestDateSeen) {
-                        console.log(`Message created at ${createdTimestamp} which is more than than ${latestDateSeen} - new latest message`);
                         latestDateSeen = new Date(msg.createdTimestamp);
                     }
                     await this.indexMessage(msg);
                 }
 
                 options.before = earliestMessageSeen!.id;
-            } else {
-                console.log('NO MESSAGES');
             }
 
+	    console.log(`Indexed ${messages.size} messages in channel ${(channel as any).name}`);
             if (messages.size < fetchAmount || earliestDateSeen <= earliest) {
                 break;
             }
