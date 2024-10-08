@@ -17,6 +17,7 @@ export class BotStartedEvent extends Listener {
 	async run(e: BotStarted) {
 		this.container.ticker.start(e.guild);
 
+		await this.container.database.indexChannels(this.container.guild!);
 		/*
     // Example - how to do a slow data migration piecewise without stopping the bot...
     // See also migrations 00002 and 00003

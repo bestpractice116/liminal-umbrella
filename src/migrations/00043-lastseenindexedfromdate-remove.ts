@@ -56,42 +56,23 @@ export const up = async (uz: MigrationParams<any>) => {
 		await sq.query('DROP TABLE _users_old', { raw: true, transaction });
 
 		// Add the column to the users table
+		await qi.removeColumn('channels', 'lastSeenIndexedFromDate', { transaction });
 		await qi.addColumn(
 			'channels',
-			'lastSeenIndexedToDate',
+			'synced',
 			{
-				type: DataTypes.DATE,
+				type: DataTypes.BOOLEAN,
 				allowNull: true
 			},
 			{ transaction }
 		);
-
-		await sq.query('UPDATE channels SET lastSeenIndexedToDate = date("1970-01-01 12:00:00")', { raw: true, transaction });
-		await qi.changeColumn(
-			'channels',
-			'lastSeenIndexedToDate',
-			{
-				type: DataTypes.DATE,
-				allowNull: false
-			},
-			{ transaction }
-		);
-		await qi.addColumn(
-			'channels',
-			'lastSeenIndexedFromDate',
-			{
-				type: DataTypes.DATE,
-				allowNull: true
-			},
-			{ transaction }
-		);
-		await sq.query('UPDATE channels SET lastSeenIndexedFromDate = date("2037-12-31")', { raw: true, transaction });
+		await sq.query('UPDATE channels SET synced = FALSE', { raw: true, transaction });
 
 		await qi.changeColumn(
 			'channels',
-			'lastSeenIndexedFromDate',
+			'synced',
 			{
-				type: DataTypes.DATE,
+				type: DataTypes.BOOLEAN,
 				allowNull: false
 			},
 			{ transaction }

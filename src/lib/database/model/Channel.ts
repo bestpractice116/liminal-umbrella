@@ -55,9 +55,9 @@ export default class Channel extends Model<InferAttributes<Channel>, InferCreati
     @NotNull
     declare lastSeenIndexedToDate: Date;
 
-    @Attribute(DataTypes.DATE)
+    @Attribute(DataTypes.BOOLEAN)
     @NotNull
-    declare lastSeenIndexedFromDate: Date;
+    declare synced: boolean;
 
     static async channelsMap(): Promise<Map<string, Channel>> {
         const out = new Map();
