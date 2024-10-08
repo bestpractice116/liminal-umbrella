@@ -371,7 +371,7 @@ export default class Database {
 			} else {
 				dbChannel.set(this.getChannelData(guildChannel!));
 				await dbChannel.save();
-				await this.syncChannel(guildChannel);
+				await this.syncChannel(guildChannel!);
 			}
 			dbchannels.delete(id);
 		}
@@ -499,7 +499,7 @@ export default class Database {
 		let latestDate = START_OF_TIME;
 		while (true) {
 			const messages = await channel.messages.fetch(options);
-			await sleep(1000);
+			await sleep(100);
 
 			if (messages.size > 0) {
 				let earliestMessage;
@@ -565,13 +565,13 @@ export default class Database {
 		if (discordChannel.type === ChannelType.GuildForum) {
 			let fetchArchivedOptions: FetchArchivedThreadOptions = {
 				fetchAll: true,
-				limit: 1
+				limit: 100
 			};
 			console.log('Fetch archived threads START');
 			while (true) {
 				console.log('Fetch archived threads TOP OF LOOP');
 				const archivedThreads = await discordChannel.threads.fetchArchived(fetchArchivedOptions);
-				await sleep(1000);
+				await sleep(100);
 
 				for (const [_name, thread] of archivedThreads.threads) {
 					this.syncedChannels.add(thread.id);
