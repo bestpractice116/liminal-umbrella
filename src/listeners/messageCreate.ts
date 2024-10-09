@@ -11,14 +11,11 @@ export class MessageCreateEvent extends Listener {
     }
 
     @Sequential
-    public override async run(message: Message) {
+    public override run(message: Message) {
         if (!message.guildId) {
             return;
         }
-        const db = await this.container.database.getdb();
-        await db.transaction(async (transaction) => {
-            this.container.database.indexMessage(transaction, message);
-        });
+        this.container.database.indexMessage(message);
         return;
     }
 }

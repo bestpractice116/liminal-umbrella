@@ -10,8 +10,7 @@ import {
     BelongsToManyHasAssociationMixin,
     BelongsToManyHasAssociationsMixin,
     BelongsToManyCountAssociationsMixin,
-    HasManyGetAssociationsMixin,
-    Transaction
+    HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany, HasOne } from '@sequelize/core/decorators-legacy';
 import Role from './Role.js';
@@ -172,7 +171,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     @NotNull
     declare lastSeenMessage?: string;
 
-    updateLastSeenFromMessage(transaction: Transaction, message: Message) {
+    updateLastSeenFromMessage(message: Message) {
         if (message.createdAt < this.lastSeenTime) return;
         const messageLink = message.hasThread ? `https://discord.com/channels/${container.guildId}/${message.thread!.id}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
         console.log(`updateLastSeenFromMessage for user ${this.nickname} msg ${message.id} (${messageLink}) from ${message.createdAt}`);
@@ -183,7 +182,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
             lastSeenThread: message.thread?.id
         });
 
-        return this.save({transaction});
+        return this.save();
     }
 
     lastSeenLink() {
