@@ -114,11 +114,11 @@ export default class Database {
             logging: log ? (msg) => { container.logger.debug(msg); } : false,
             storage,
             models: await importModels(__dirname + '/database/model/*.js'),
-            transactionType: TransactionType.IMMEDIATE,
+            transactionType: TransactionType.EXCLUSIVE,
             retry: {
                 match: [/SQLITE_BUSY/],
                 name: 'query',
-                max: 5
+                max: 10
             }
         });
 
@@ -144,14 +144,11 @@ export default class Database {
     }
 
     async greetingMessageAdd(message: DiscordMessage, user: User): Promise<void> {
-        const db = await this.getdb();
-        await db.transaction(async () => {
-            await GreetingMessage.findOrCreate({
-                where: { userId: user.key },
-                defaults: { userId: user.key, messageId: message.id }
-            });
-            await user.updateLastSeenFromMessage(message);
+        await GreetingMessage.findOrCreate({
+            where: { userId: user.key },
+            defaults: { userId: user.key, messageId: message.id }
         });
+        await user.updateLastSeenFromMessage(message);
     }
 
     getRoleData(role: GuildRole): RoleData {
@@ -271,7 +268,6 @@ export default class Database {
             return;
         }
         let greetingMessageId: string | undefined = undefined;
-        await this.db!.transaction(async () => {
             member.left = true;
             await member.save();
             await member.setRoles([]);
@@ -297,7 +293,6 @@ export default class Database {
                 greetingMessageId = greeting.messageId;
                 await greeting.destroy();
             }
-        });
         this.events.emit(
             'userLeft',
             new UserLeft(
@@ -453,12 +448,10 @@ export default class Database {
     }
 
     async setHighestWatermark(watermark: number) {
-        await this.db!.transaction(async () => {
             await Watermark.create({ time: watermark });
             await Watermark.destroy({
                 where: { time: { [Op.lt]: watermark } }
             });
-        });
         this.highwatermark = watermark;
         return Promise.resolve();
     }
@@ -580,11 +573,9 @@ export default class Database {
             if (channel.synced) {
                 earliest = channel.lastSeenIndexedToDate;
             }
-            await this.db!.transaction(async () => {
                 const lastSeenIndexedToDate = await this.fetchAndStoreMessages(discordChannel, earliest);
                 channel.set({ lastSeenIndexedToDate, synced: true });
                 await channel.save();
-            });
         }
         if (discordChannel.type === ChannelType.PublicThread) {
             throw new Error(`We should not end up in syncChannel for a thread ID ${discordChannel.id}`);
@@ -625,7 +616,6 @@ export default class Database {
     }
 
     async syncThread(thread: AnyThreadChannel) {
-        await this.db!.transaction(async () => {
             const dbThread = await Thread.findByPk(thread.id);
             if (
                 dbThread &&
@@ -660,7 +650,6 @@ export default class Database {
                     await dbThread.save();
                 }
             }
-        });
     }
 
     // Catch up on any users interested
