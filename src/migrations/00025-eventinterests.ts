@@ -16,59 +16,59 @@ import { DataTypes } from '@sequelize/core';
 import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
-	const sq = uz.context.sequelize;
-	const qi = uz.context.sequelize.getQueryInterface();
-	await sq.transaction(async (transaction: any) => {
-		await qi.createTable(
-			'eventinterests',
-			{
-				key: {
-					type: DataTypes.INTEGER,
-					allowNull: false,
-					primaryKey: true
-				},
-				guildScheduledEventId: {
-					type: DataTypes.TEXT,
-					allowNull: false
-				},
-				userId: {
-					type: DataTypes.TEXT,
-					allowNull: false
-				},
-				createdAt: {
-					type: DataTypes.TEXT,
-					allowNull: false
-				},
-				updatedAt: {
-					type: DataTypes.TEXT,
-					allowNull: false
-				}
-			},
-			{ transaction }
-		);
-		await qi.addIndex(
-			'eventinterests',
-			{
-				name: 'event_interests_guild_scheduled_event_id',
-				fields: ['guildScheduledEventId']
-			},
-			{ transaction }
-		);
-		await qi.addIndex(
-			'eventinterests',
-			{
-				name: 'event_interests_user_id',
-				fields: ['userId']
-			},
-			{ transaction }
-		);
-	});
+    const sq = uz.context.sequelize;
+    const qi = uz.context.sequelize.getQueryInterface();
+    await sq.transaction(async (transaction: any) => {
+        await qi.createTable(
+            'eventinterests',
+            {
+                key: {
+                    type: DataTypes.INTEGER,
+                    allowNull: false,
+                    primaryKey: true
+                },
+                guildScheduledEventId: {
+                    type: DataTypes.TEXT,
+                    allowNull: false
+                },
+                userId: {
+                    type: DataTypes.TEXT,
+                    allowNull: false
+                },
+                createdAt: {
+                    type: DataTypes.TEXT,
+                    allowNull: false
+                },
+                updatedAt: {
+                    type: DataTypes.TEXT,
+                    allowNull: false
+                }
+            },
+            { transaction }
+        );
+        await qi.addIndex(
+            'eventinterests',
+            {
+                name: 'event_interests_guild_scheduled_event_id',
+                fields: ['guildScheduledEventId']
+            },
+            { transaction }
+        );
+        await qi.addIndex(
+            'eventinterests',
+            {
+                name: 'event_interests_user_id',
+                fields: ['userId']
+            },
+            { transaction }
+        );
+    });
 };
 
 export const down = async (uz: MigrationParams<any>) => {
-	const sq = uz.context.sequelize;
-	const qi = uz.context.sequelize.getQueryInterface();
-	await sq.transaction(async (transaction: any) => {
-		await qi.dropTable('eventinterests', { transaction });
-	});
+    const sq = uz.context.sequelize;
+    const qi = uz.context.sequelize.getQueryInterface();
+    await sq.transaction(async (transaction: any) => {
+        await qi.dropTable('eventinterests', { transaction });
+    });
 };

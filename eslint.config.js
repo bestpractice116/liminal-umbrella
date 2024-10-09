@@ -79,4 +79,10 @@ export default [
     files: ['**/*.js', 'eslint.config.mjs', 'jest.config.cjs'],
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    files: ['src/migrations/*.ts'],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+    }
 ];
