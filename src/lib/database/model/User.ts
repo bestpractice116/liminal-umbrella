@@ -177,10 +177,19 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${message.createdAt}`);
         this.set({
             lastSeenTime: message.createdAt,
-            lastSeenChannel: message.channelId,
             lastSeenMessage: message.id,
-            lastSeenThread: message.thread?.id
         });
+        if (message.hasThread) {
+            this.set({
+                lastSeenChannel: undefined,
+                lastSeenThread: message.thread!.id
+            });
+        } else {
+            this.set({
+                lastSeenChannel: message.channelId,
+                lastSeenThread: undefined
+            });
+        }
 
         return this.save();
     }
