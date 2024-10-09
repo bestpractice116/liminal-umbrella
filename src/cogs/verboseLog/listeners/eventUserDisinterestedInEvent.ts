@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { UserDisinterestedInEvent } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { userMention } from 'discord.js';
 
 export class verboseLogUserDisinterestedInEventListener extends Listener {
@@ -10,7 +10,7 @@ export class verboseLogUserDisinterestedInEventListener extends Listener {
 			...options,
 			name: 'verboseLogUserDisinterestedInEvent',
 			emitter: container.events,
-			event: CustomEvents.UserDisinterestedInEvent
+			event: CUSTOM_EVENTS.UserDisinterestedInEvent
 		});
 	}
 	run(e: UserDisinterestedInEvent) {

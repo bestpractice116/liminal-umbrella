@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
 import { time, TimestampStyles } from 'discord.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class verboseLogBotStartedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -10,7 +10,7 @@ export class verboseLogBotStartedListener extends Listener {
 			...options,
 			name: 'verboseLogBotStarted',
 			emitter: container.events,
-			event: CustomEvents.BotStarted
+			event: CUSTOM_EVENTS.BotStarted
 		});
 	}
 	async run(_: BotStarted) {

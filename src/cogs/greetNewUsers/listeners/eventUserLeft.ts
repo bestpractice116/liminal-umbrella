@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getTextChannel } from '../../../lib/discord.js';
 
 export class greetNewUsersUserLeftistener extends Listener {
@@ -10,7 +10,7 @@ export class greetNewUsersUserLeftistener extends Listener {
 			...options,
 			name: 'greetNewUsersUserLeft',
 			emitter: container.events,
-			event: CustomEvents.UserLeft
+			event: CUSTOM_EVENTS.UserLeft
 		});
 	}
 

@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
 import { doUserGreeting } from '../utils.js';
 import { Sequential } from '../../../lib/utils.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class greetNewUsersUserJoinedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -10,7 +10,7 @@ export class greetNewUsersUserJoinedListener extends Listener {
 			...options,
 			name: 'greetNewUsersUserJoined',
 			emitter: container.events,
-			event: CustomEvents.UserJoined
+			event: CUSTOM_EVENTS.UserJoined
 		});
 	}
 

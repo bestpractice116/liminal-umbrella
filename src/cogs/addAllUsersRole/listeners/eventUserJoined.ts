@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
 import { Sequential } from '../../../lib/utils.js';
 import { Role } from '../../../lib/database/model.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getGuildMemberById } from '../../../lib/discord.js';
 
 export class addAllUsersRoleUserJoinedListener extends Listener {
@@ -11,7 +11,7 @@ export class addAllUsersRoleUserJoinedListener extends Listener {
 			...options,
 			name: 'addAllUsersRoleUserJoined',
 			emitter: container.events,
-			event: CustomEvents.UserJoined
+			event: CUSTOM_EVENTS.UserJoined
 		});
 	}
 

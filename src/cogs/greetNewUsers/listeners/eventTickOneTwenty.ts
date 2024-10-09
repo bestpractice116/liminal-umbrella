@@ -3,7 +3,7 @@ import { TickFive } from '../../../lib/events/index.js';
 import { Sequential, shortSleep } from '../../../lib/utils.js';
 import { User } from '../../../lib/database/model.js';
 import { Op } from '@sequelize/core';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { doUserGreeting } from '../utils.js';
 
 export class greetNewUsersTickOneTwentyListener extends Listener {
@@ -12,7 +12,7 @@ export class greetNewUsersTickOneTwentyListener extends Listener {
 			...options,
 			name: 'greetNewUsersTickOneTwentyListener',
 			emitter: container.events,
-			event: CustomEvents.TickOneTwenty
+			event: CUSTOM_EVENTS.TickOneTwenty
 		});
 	}
 

@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { User } from '../../../lib/database/model.js';
 
 export class logBotActionUserLeftListener extends Listener {
@@ -11,7 +11,7 @@ export class logBotActionUserLeftListener extends Listener {
 			...options,
 			name: 'logBotActionUserLeft',
 			emitter: container.events,
-			event: CustomEvents.UserLeft
+			event: CUSTOM_EVENTS.UserLeft
 		});
 	}
 	async run(e: UserLeft) {

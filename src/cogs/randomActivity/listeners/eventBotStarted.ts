@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { BotStarted } from '../../../lib/events/index.js';
 import { setRandomActivity } from '../activity.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class randomActivityBotStartedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +9,7 @@ export class randomActivityBotStartedListener extends Listener {
 			...options,
 			name: 'randomActivityBotStarted',
 			emitter: container.events,
-			event: CustomEvents.BotStarted
+			event: CUSTOM_EVENTS.BotStarted
 		});
 	}
 

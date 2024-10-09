@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { ActivityCacheClear } from '../../../lib/events/index.js';
 import { clearActivityCache } from '../activity.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class randomActivityActivityCacheClearListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +9,7 @@ export class randomActivityActivityCacheClearListener extends Listener {
 			...options,
 			name: 'randomActivityCacheClearFive',
 			emitter: container.events,
-			event: CustomEvents.ActivityCacheClear
+			event: CUSTOM_EVENTS.ActivityCacheClear
 		});
 	}
 	run(_: ActivityCacheClear) {

@@ -2,7 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserJoined } from '../../../lib/events/index.js';
 import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
-import { CustomEvents } from '../../../lib/events.js';
+import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class logBotActionUserJoinedListener extends Listener {
 	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -10,7 +10,7 @@ export class logBotActionUserJoinedListener extends Listener {
 			...options,
 			name: 'logBotActionUserJoined',
 			emitter: container.events,
-			event: CustomEvents.UserJoined
+			event: CUSTOM_EVENTS.UserJoined
 		});
 	}
 	async run(e: UserJoined) {

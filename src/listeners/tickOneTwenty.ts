@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickOneTwenty } from '../lib/events/index.js';
 import { Sequential } from '../lib/utils.js';
-import { CustomEvents } from '../lib/events.js';
+import { CUSTOM_EVENTS } from '../lib/events.js';
 
 export class TickOneTwentyEvent extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -9,7 +9,7 @@ export class TickOneTwentyEvent extends Listener {
             ...options,
             name: 'eventTickOneTwenty',
             emitter: container.events,
-            event: CustomEvents.TickOneTwenty
+            event: CUSTOM_EVENTS.TickOneTwenty
         });
     }
 
