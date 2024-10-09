@@ -4,18 +4,18 @@ import type { NonThreadGuildBasedChannel } from 'discord.js';
 import { Sequential } from '../lib/utils.js';
 
 export class ChannelCreateEvent extends Listener {
-	constructor(context: Listener.LoaderContext, options: Listener.Options) {
-		super(context, {
-			...options,
-			event: Events.ChannelCreate
-		});
-	}
+    constructor(context: Listener.LoaderContext, options: Listener.Options) {
+        super(context, {
+            ...options,
+            event: Events.ChannelCreate
+        });
+    }
 
-	@Sequential
-	public override run(newChannel: DMChannel | GuildChannel) {
-		if (newChannel instanceof GuildChannel) {
-			return this.container.database.channelCreate((newChannel as NonThreadGuildBasedChannel));
-		}
-		return;
-	}
+    @Sequential
+    public override run(newChannel: DMChannel | GuildChannel) {
+        if (newChannel instanceof GuildChannel) {
+            return this.container.database.channelCreate((newChannel as NonThreadGuildBasedChannel));
+        }
+        return;
+    }
 }
