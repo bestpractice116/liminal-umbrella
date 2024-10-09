@@ -5,23 +5,23 @@ import { CR } from '../lib/api/CRUD.js';
 import { UserSchema } from 'common/schema';
 
 export class ApiUsersList extends CR {
-	public constructor(context: Route.LoaderContext, options: Route.Options) {
-		super(context, {
-			...options,
-			route: 'api/user'
-		});
-	}
+    public constructor(context: Route.LoaderContext, options: Route.Options) {
+        super(context, {
+            ...options,
+            route: 'api/user'
+        });
+    }
 
-	getModel() {
-		return User;
-	}
-	getSchema(): SchemaBundle {
-		return UserSchema;
-	}
-	override findAllInclude() {
-		return ['roles'];
-	}
-	override async findAllWhere() {
-		return { bot: false };
-	}
+    getModel() {
+        return User;
+    }
+    getSchema(): SchemaBundle {
+        return UserSchema;
+    }
+    override findAllInclude() {
+        return ['roles'];
+    }
+    override async findAllWhere() {
+        return Promise.resolve({ bot: false });
+    }
 }

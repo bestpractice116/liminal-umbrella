@@ -8,34 +8,38 @@ import { isAdmin } from '../lib/api/auth.js';
 import { doCoerce } from './api_game.js';
 
 export class ApiGameEdit extends UD {
-	public constructor(context: Route.LoaderContext, options: Route.Options) {
-		super(context, {
-			...options,
-			route: 'api/game/:key'
-		});
-	}
+    public constructor(context: Route.LoaderContext, options: Route.Options) {
+        super(context, {
+            ...options,
+            route: 'api/game/:key'
+        });
+    }
 
-	getModel() {
-		return PlannedGame;
-	}
-	getSchema(): SchemaBundle {
-		return NewGameSchema;
-	}
+    getModel() {
+        return PlannedGame;
+    }
+    getSchema(): SchemaBundle {
+        return NewGameSchema;
+    }
 
-	@DM
-	override async auth_UPDATE() {}
+    @DM
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    override async auth_UPDATE() {}
 
-	override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
-		return await doCoerce(request, response, data);
-	}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return doCoerce(request, response, data);
+    }
 
-	@DM
-	override async auth_DELETE() {}
+    @DM
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    override async auth_DELETE() {}
 
-	override async getRetrieveWhere(request: ApiRequest) {
-		if (isAdmin(request)) {
-			return {};
-		}
-		return { owner: request.auth!.id };
-	}
+    override async getRetrieveWhere(request: ApiRequest) {
+        if (isAdmin(request)) {
+            return Promise.resolve({});
+        }
+        return Promise.resolve({ owner: request.auth!.id });
+    }
 }
