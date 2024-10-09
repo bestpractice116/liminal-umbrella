@@ -22,6 +22,7 @@ import GreetingMessage from './GreetingMessage.js';
 import { GuildMember, Message } from 'discord.js';
 import Campaign from './Campaign.js';
 import CampaignPlayer from './CampaignPlayer.js';
+import { container } from '@sapphire/framework';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     @Attribute(DataTypes.STRING)
@@ -180,5 +181,11 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         });
 
         return this.save();
+    }
+
+    lastSeenLink() {
+        if (this.lastSeenThread) return `https://discord.com/channels/${container.guildId}/${this.lastSeenThread}/${this.lastSeenMessage}`;
+        if (this.lastSeenChannel) return `https://discord.com/channels/${container.guildId}/${this.lastSeenChannel}/${this.lastSeenMessage}`;
+        return;
     }
 }
