@@ -173,7 +173,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     updateLastSeenFromMessage(message: Message) {
         if (message.createdAt < this.lastSeenTime) return;
-        console.log(`updateLastSeenFromMessage for user ${this.nickname} msg ${message.id} from ${message.createdAt}`);
+        const messageLink = message.hasThread ? `https://discord.com/channels/${container.guildId}/${message.thread!.id}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
+        console.log(`updateLastSeenFromMessage for user ${this.nickname} msg ${message.id} (${messageLink}) from ${message.createdAt}`);
         this.set({
             lastSeenTime: message.createdAt,
             lastSeenChannel: message.channelId,
