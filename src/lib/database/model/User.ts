@@ -89,6 +89,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
                 position: role.rawPosition
             }));
         }
+        if (key === 'lastSeenLink') return this.lastSeenLink()
         return this.get(key);
     }
 
