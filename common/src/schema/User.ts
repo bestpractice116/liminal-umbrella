@@ -20,6 +20,7 @@ const read = find.merge(
         ),
         lastSeenTime: z.preprocess(dayJsCoerce, zodDay),
         lastSeenChannel: z.string({}).optional(),
+        lastSeenChannelName: z.string({}).optional(),
         lastSeenThread: z.string({}).optional(),
         lastSeenMessage: z.string({}).optional()
     })
