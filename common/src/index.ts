@@ -7,44 +7,44 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any> | z.ZodIntersection<any, any>): string[] {
-	if (schema instanceof z.ZodIntersection) {
-		return [...getSchemaKeys(schema._def.left), ...getSchemaKeys(schema._def.right)];
-	}
-	if (schema instanceof z.ZodReadonly) {
-		return getSchemaKeys(schema.unwrap());
-	}
-	return Object.keys(schema.shape);
+    if (schema instanceof z.ZodIntersection) {
+        return [...getSchemaKeys(schema._def.left), ...getSchemaKeys(schema._def.right)];
+    }
+    if (schema instanceof z.ZodReadonly) {
+        return getSchemaKeys(schema.unwrap());
+    }
+    return Object.keys(schema.shape);
 }
 
 export function getZObject(schema: AnyZodSchema): z.ZodObject<any> {
-	if (schema instanceof z.ZodReadonly) {
-		return getZObject(schema.unwrap());
-	}
-	if (schema instanceof z.ZodOptional) {
-		return getZObject(schema.unwrap());
-	}
-	return schema;
+    if (schema instanceof z.ZodReadonly) {
+        return getZObject(schema.unwrap());
+    }
+    if (schema instanceof z.ZodOptional) {
+        return getZObject(schema.unwrap());
+    }
+    return schema;
 }
 
 export function dayJsCoerce(val: unknown): dayjs.Dayjs | undefined {
-	if (!val) return undefined;
+    if (!val) return undefined;
 
-	if (val instanceof dayjs) {
-		return val as dayjs.Dayjs;
-	}
-	if (val instanceof Date) {
-		return dayjs(val);
-	}
-	return dayjs(val as string);
+    if (val instanceof dayjs) {
+        return val as dayjs.Dayjs;
+    }
+    if (val instanceof Date) {
+        return dayjs(val);
+    }
+    return dayjs(val as string);
 }
 
 export function dayJsCoerceOrUndefined(val: unknown) {
-	const d = dayJsCoerce(val);
-	if (d?.isValid()) return d;
-	return undefined;
+    const d = dayJsCoerce(val);
+    if (d?.isValid()) return d;
+    return undefined;
 }
 
 export const zodDay: z.ZodTypeAny = z.custom<dayjs.Dayjs>((val) => {
-	if (!val) return false;
-	return dayjs(val).isValid();
+    if (!val) return false;
+    return dayjs(val).isValid();
 }, 'Invalid date/time');
