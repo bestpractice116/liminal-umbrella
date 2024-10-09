@@ -7,7 +7,6 @@ import { dirname } from 'node:path';
 import type {
     TextChannel,
     TextBasedChannel,
-    CategoryChannel,
     Guild,
     FetchMessagesOptions,
     FetchArchivedThreadOptions,
@@ -532,7 +531,7 @@ export default class Database {
                     await this.indexMessage(msg);
                 }
 
-                options.before = earliestMessageSeen.id;
+                options.before = earliestMessageSeen!.id;
             }
 
             console.log(`Indexed ${messages.size} messages in channel ${(channel as any).name}`);
