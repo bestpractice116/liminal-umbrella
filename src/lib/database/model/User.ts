@@ -171,7 +171,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare lastSeenMessage?: string;
 
     updateLastSeenFromMessage(message: Message) {
-        if (message.createdAt > this.lastSeenTime) return;
+        if (message.createdAt < this.lastSeenTime) return;
         console.log(`updateLastSeenFromMessage for user ${this.nickname} msg ${message.id} from ${message.createdAt}`);
         this.set({
             lastSeenTime: message.createdAt,
