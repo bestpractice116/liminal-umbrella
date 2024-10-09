@@ -5,31 +5,31 @@ import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getTextChannel } from '../../../lib/discord.js';
 
 export class greetNewUsersUserLeftistener extends Listener {
-	public constructor(context: Listener.LoaderContext, options: Listener.Options) {
-		super(context, {
-			...options,
-			name: 'greetNewUsersUserLeft',
-			emitter: container.events,
-			event: CUSTOM_EVENTS.UserLeft
-		});
-	}
+    public constructor(context: Listener.LoaderContext, options: Listener.Options) {
+        super(context, {
+            ...options,
+            name: 'greetNewUsersUserLeft',
+            emitter: container.events,
+            event: CUSTOM_EVENTS.UserLeft
+        });
+    }
 
-	async run(e: UserLeft) {
-		if (!e.greetingMessageId) return;
+    async run(e: UserLeft) {
+        if (!e.greetingMessageId) return;
 
-		const greetingChannelName = getChannelName();
-		if (!greetingChannelName) return;
-		const greetingChannel = await getTextChannel(greetingChannelName);
-		if (!greetingChannel) return;
-		const msg = await greetingChannel.messages.fetch(e.greetingMessageId);
-		if (!msg) return;
-		let reactions = 0;
-		const greenTick = msg.reactions.resolve('✅');
-		if (greenTick) reactions += greenTick.count;
-		const redX = msg.reactions.resolve('❌');
-		if (redX) reactions += redX.count;
-		if (reactions === 0) {
-			await msg.react('👋');
-		}
-	}
+        const greetingChannelName = getChannelName();
+        if (!greetingChannelName) return;
+        const greetingChannel = await getTextChannel(greetingChannelName);
+        if (!greetingChannel) return;
+        const msg = await greetingChannel.messages.fetch(e.greetingMessageId);
+        if (!msg) return;
+        let reactions = 0;
+        const greenTick = msg.reactions.resolve('✅');
+        if (greenTick) reactions += greenTick.count;
+        const redX = msg.reactions.resolve('❌');
+        if (redX) reactions += redX.count;
+        if (reactions === 0) {
+            await msg.react('👋');
+        }
+    }
 }
