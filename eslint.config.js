@@ -33,14 +33,6 @@ export default [
       "@typescript-eslint/naming-convention": [
         "error",
         {
-          "selector": "variable",
-          "modifiers": ["const", "global"],
-          "format": ["UPPER_CASE"]
-        }
-      ],
-      "@typescript-eslint/naming-convention": [
-        "error",
-        {
           "selector": [
             "parameter",
             "variable"
@@ -60,8 +52,15 @@ export default [
           "format": [
             "camelCase"
           ]
+        },
+        {
+          "selector": "variable",
+          "modifiers": ["const", "global", "exported"],
+          "format": ["UPPER_CASE"]
         }
       ],
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
       // note you must disable the base rule
       // as it can report incorrect errors
       "no-unused-vars": "off",

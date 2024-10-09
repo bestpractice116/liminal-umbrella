@@ -15,7 +15,7 @@ import type {
     GuildScheduledEvent,
     User as GuildUser,
     Role as GuildRole,
-    AnyThreadChannel
+    AnyThreadChannel,
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark, EventInterest, GameSessionUserSignup, Thread } from './database/model.js';
@@ -35,6 +35,30 @@ import { Sequential, sleep } from './utils.js';
 import { CustomEvents } from './events.js';
 import { getGuildMemberById } from './discord.js';
 import { END_OF_TIME, START_OF_TIME } from './dates.js';
+
+interface ChannelData {
+    name: string
+    type: string
+    parentId?: string
+    position: number
+    rawPosition: number
+    createdTimestamp: number
+    nsfw?: boolean
+    lastMessageId?: string
+    topic?: string
+    rateLimitPerUser?: number
+}
+
+interface RoleData {
+    name: string
+    mentionable: boolean
+    tags: string
+    position: number
+    rawPosition: number
+    hexColor: string
+    unicodeEmoji: string
+    permissions: string
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -130,15 +154,15 @@ export default class Database {
         });
     }
 
-    getRoleData(role: GuildRole): any {
+    getRoleData(role: GuildRole): RoleData {
         return {
             name: role.name,
             mentionable: role.mentionable,
-            tags: JSON.stringify(role.tags || []) || '',
+            tags: JSON.stringify(role.tags ?? []) || '',
             position: role.position,
             rawPosition: role.rawPosition,
             hexColor: role.hexColor,
-            unicodeEmoji: role.unicodeEmoji || '',
+            unicodeEmoji: role.unicodeEmoji ?? '',
             permissions: JSON.stringify(role.permissions.serialize())
         };
     }
@@ -161,11 +185,12 @@ export default class Database {
             await this.roleCreate(role);
         }
         for (const [_key, dbRole] of dbRoles) {
-            this.roleDelete(undefined, dbRole);
+            await this.roleDelete(undefined, dbRole);
         }
     }
 
     async roleCreate(role: GuildRole) {
+         
         await Role.create({
             key: role.id,
             ...this.getRoleData(role)
@@ -176,13 +201,13 @@ export default class Database {
         if (!dbRole && !role) {
             throw new Error('Must supply either discord Guildrole or DB role as parameter');
         }
-        if (!dbRole) dbRole = (await Role.findByPk(role!.id)) || undefined;
+        if (!dbRole) dbRole = (await Role.findByPk(role!.id)) ?? undefined;
         if (!dbRole) return;
         await dbRole.destroy();
     }
 
     async roleUpdate(role: GuildRole, dbRole?: Role  ) {
-        if (!dbRole) dbRole = (await Role.findByPk(role.id)) || undefined;
+        if (!dbRole) dbRole = (await Role.findByPk(role.id)) ?? undefined;
         if (!dbRole) return this.roleCreate(role);
         dbRole.set(this.getRoleData(role));
         await dbRole.save();
@@ -218,22 +243,22 @@ export default class Database {
             return;
         }
         let changed = false;
-        const newNick = (guildMember.nickname || guildMember.user.globalName || guildMember.user.username);
+        const newNick = ((guildMember.nickname ?? guildMember.user.globalName) ?? guildMember.user.username);
         if (newNick != user.nickname) {
             this.events.emit('userChangedNickname', new UserChangedNickname(guildMember.id, user.nickname, newNick, user, guildMember));
             user.nickname = newNick;
             changed = true;
         }
-        const newAvatar = guildMember.user.avatarURL() || guildMember.user.defaultAvatarURL;
+        const newAvatar = guildMember.user.avatarURL() ?? guildMember.user.defaultAvatarURL;
         if (newAvatar != user.avatarURL) {
             user.avatarURL = newAvatar;
             changed = true;
         }
-        if (!arrayStrictEquals(Array.from(guildMember.roles.cache.keys()).sort(), ((await user.roles) || []).map((role) => role.name).sort())) {
+        if (!arrayStrictEquals(Array.from(guildMember.roles.cache.keys()).sort(), (user.roles || []).map((role) => role.name).sort())) {
             await user.setRoles(guildMember.roles.cache.keys());
         }
         if (changed) {
-            user.save();
+            await user.save();
         }
         await this.maybeSetHighestWatermark();
     }
@@ -301,7 +326,7 @@ export default class Database {
                 await this.guildMemberUpdate(guildMember, dbMember);
                 if (
                     JSON.stringify(Array.from(guildMember.roles.cache.keys()).sort()) !=
-                    JSON.stringify(((await dbMember.roles) || []).map((role) => role.key).sort())
+                    JSON.stringify((dbMember.roles || []).map((role) => role.key).sort())
                 ) {
                     await dbMember.setRoles(guildMember.roles.cache.keys());
                 }
@@ -317,29 +342,27 @@ export default class Database {
         }
     }
 
-    getChannelData(guildChannel: NonThreadGuildBasedChannel): any {
-        const data: any = {};
-        data.name = guildChannel.name;
-        data.type = guildChannel.type.toString();
-        data.parentId = guildChannel.parentId;
-        data.position = guildChannel.position;
-        data.rawPosition = guildChannel.rawPosition;
-        data.createdTimestamp = guildChannel.createdTimestamp;
-        let chan: any = null;
+    getChannelData(guildChannel: NonThreadGuildBasedChannel): ChannelData {
+        const data: ChannelData = {
+            name: guildChannel.name,
+            type: guildChannel.type.toString(),
+            parentId: guildChannel.parentId ?? undefined,
+            position: guildChannel.position,
+            rawPosition: guildChannel.rawPosition,
+            createdTimestamp: guildChannel.createdTimestamp
+        }
         if (
             guildChannel.type == ChannelType.GuildText ||
             guildChannel.type == ChannelType.GuildAnnouncement ||
             guildChannel.type == ChannelType.GuildForum
         ) {
-            chan = guildChannel as TextChannel;
+            const chan = guildChannel as TextChannel;
+            data.nsfw = chan.nsfw;
+            data.lastMessageId = chan.lastMessageId ?? undefined;
+            data.topic = chan.topic ?? undefined;
+            data.rateLimitPerUser = chan.rateLimitPerUser;
         }
-        if (guildChannel.type == ChannelType.GuildCategory) {
-            chan = guildChannel;
-        }
-        data.nsfw = chan.nsfw;
-        data.lastMessageId = chan.lastMessageId;
-        data.topic = chan.topic;
-        data.rateLimitPerUser = chan.rateLimitPerUser;
+
         return data;
     }
 
@@ -440,8 +463,8 @@ export default class Database {
         return Promise.resolve();
     }
 
-    async getdiscordChannel(guild: Guild, channel_name: string): Promise<GuildBasedChannel> {
-        const channel = await Channel.findOne({ where: { name: channel_name } });
+    async getdiscordChannel(guild: Guild, channelName: string): Promise<GuildBasedChannel> {
+        const channel = await Channel.findOne({ where: { name: channelName } });
         assertIsDefined(channel);
         const discordChannel = await guild.channels.fetch(channel.id);
         assertIsDefined(discordChannel);
@@ -476,7 +499,7 @@ export default class Database {
                 dbMessage.editedTimestamp = msg.editedTimestamp;
                 dbMessage.hasThread = msg.hasThread;
                 if (dbMessage.hasThread) {
-                    dbMessage.threadId = msg.thread?.id || null;
+                    dbMessage.threadId = msg.thread?.id ?? null;
                 }
                 dbMessage.embedCount = msg.embeds.length;
                 dbMessage.pinned = msg.pinned;
@@ -488,7 +511,7 @@ export default class Database {
                 id: msg.id,
                 authorId: msg.author.id,
                 channelId: msg.channel.id,
-                applicationId: msg.applicationId || '',
+                applicationId: msg.applicationId ?? '',
                 type: MessageType[msg.type],
                 content: msg.content,
                 createdTimestamp: msg.createdTimestamp,
@@ -503,6 +526,7 @@ export default class Database {
     }
 
     async fetchAndStoreMessages(channel: TextBasedChannel, earliest?: Date): Promise<Date> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
         console.log(`fetchAndStoreMessages for ${(channel as any).name}`);
         const fetchAmount = 100;
         const options: FetchMessagesOptions = {
@@ -511,29 +535,28 @@ export default class Database {
         earliest ||= START_OF_TIME;
         let earliestDateSeen = END_OF_TIME;
         let latestDateSeen = START_OF_TIME;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         while (true) {
             const messages = await channel.messages.fetch(options);
             await sleep(100);
 
             if (messages.size > 0) {
-                let earliestMessageSeen;
                 for (const pairs of messages) {
                     const msg = pairs[1];
                     const createdTimestamp = new Date(msg.createdTimestamp);
 
                     if (createdTimestamp < earliestDateSeen) {
                         earliestDateSeen = new Date(msg.createdTimestamp);
-                        earliestMessageSeen = msg;
+                        options.before = msg.id;
                     }
                     if (createdTimestamp > latestDateSeen) {
                         latestDateSeen = new Date(msg.createdTimestamp);
                     }
                     await this.indexMessage(msg);
                 }
-
-                options.before = earliestMessageSeen!.id;
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
             console.log(`Indexed ${messages.size} messages in channel ${(channel as any).name}`);
             if (messages.size < fetchAmount || earliestDateSeen <= earliest) {
                 break;
@@ -572,6 +595,7 @@ export default class Database {
                 limit: 100
             };
             console.log('Fetch archived threads START');
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             while (true) {
                 console.log('Fetch archived threads TOP OF LOOP');
                 const archivedThreads = await discordChannel.threads.fetchArchived(fetchArchivedOptions);
@@ -592,13 +616,11 @@ export default class Database {
 
             // No need to do extra stuff with active threads, as fetchActive() just always returns them all
             const activeThreads = await discordChannel.threads.fetchActive();
-            if (activeThreads) {
-                for (const [_name, thread] of activeThreads.threads) {
-                    this.syncedChannels.add(thread.id);
-                    if (doIndex) this.indexedChannels.add(thread.id);
-                    await this.syncThread(thread);
-                }
-            }
+            for (const [_name, thread] of activeThreads.threads) {
+                this.syncedChannels.add(thread.id);
+                if (doIndex) this.indexedChannels.add(thread.id);
+                await this.syncThread(thread);
+            }    
         }
     }
 
@@ -626,7 +648,7 @@ export default class Database {
                 archiveTimestamp: thread.archiveTimestamp!,
                 locked: thread.locked!,
                 createdTimestamp: thread.createdTimestamp!,
-                lastMessageId: thread.lastMessageId || undefined,
+                lastMessageId: thread.lastMessageId ?? undefined,
                 lastSeenIndexedToDate: earliest
             };
             if (!dbThread) {
