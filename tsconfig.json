@@ -1,23 +1,34 @@
 {
-	"extends": ["@sapphire/ts-config", "@sapphire/ts-config/extra-strict", "@sapphire/ts-config/decorators"],
-	"module": "ESNext",
-	"ts-node": {
-		"esm": true
-	},
-	"allowImportingTsExtensions": true,
-	"compilerOptions": {
-		"rootDir": "src/",
-		"outDir": "dist/",
-		"tsBuildInfoFile": "dist/.tsbuildinfo",
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"strict": true,
-		"skipLibCheck": true
-	},
-	"include": ["src", "common/dist"],
-	"references": [
-		{
-			"path": "./common"
-		}
-	]
+    "extends": [
+        "@sapphire/ts-config",
+        "@sapphire/ts-config/extra-strict",
+        "@sapphire/ts-config/decorators"
+    ],
+    "module": "ESNext",
+    "ts-node": {
+        "esm": true
+    },
+    "allowImportingTsExtensions": true,
+    "compilerOptions": {
+        "rootDir": "src/",
+        "outDir": "dist/",
+        "tsBuildInfoFile": "dist/.tsbuildinfo",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "strict": true,
+        "skipLibCheck": true
+    },
+    "allowDefaultProject": [
+        "eslint.config.mjs"
+    ],
+    "defaultProject": "./tsconfig.json",
+    "include": [
+        "src",
+        "common/dist"
+    ],
+    "references": [
+        {
+            "path": "./common"
+        }
+    ]
 }

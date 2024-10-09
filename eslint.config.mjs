@@ -1,5 +1,3 @@
-// @ts-check
-
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
@@ -19,12 +17,6 @@ export default tseslint.config(
     },
     "plugins": {
       "prettier": {
-        "tabWidth": 2,
-        "useTabs": false,
-        "semi": false,
-        "singleQuote": true,
-        "trailingComma": "all",
-        "printWidth": 110
       }
     },
     "rules": {
