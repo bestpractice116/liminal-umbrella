@@ -5,10 +5,10 @@ import type { PresetColorType } from 'antd/es/_util/colors.js';
 import { EditModeContext } from '../EditMode';
 import { EditOutlined } from '@ant-design/icons';
 
-export type TooltipParams = {
+export interface TooltipParams {
 	messageKey: string;
 	color?: PresetColorType | undefined;
-};
+}
 export function Tooltip({ messageKey, color, children }: TooltipParams & { children: React.ReactNode }) {
 	const { botMessage } = useBotMessage();
 	const { editMode } = useContext(EditModeContext);

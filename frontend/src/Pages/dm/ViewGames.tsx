@@ -93,7 +93,7 @@ export function ViewGames() {
 		});
 	}
 	for (const col of defaultColumns) {
-		col['onCell'] = (_record, _rowIndex) => {
+		col.onCell = (_record, _rowIndex) => {
 			return { style: { padding: 0, margin: 0, textAlign: 'center' } };
 		};
 	}
@@ -112,7 +112,7 @@ export function ViewGames() {
 						components={components}
 						rowClassName={() => 'editable-row'}
 						bordered
-						dataSource={result.data!}
+						dataSource={result.data}
 						columns={columns as ColumnTypes}
 					/>
 				</>

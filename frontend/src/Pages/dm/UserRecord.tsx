@@ -4,12 +4,12 @@ import Typography from 'antd/es/typography';
 import { Tooltip } from 'antd';
 const { Text } = Typography;
 
-export type AutoCompleteUser = {
+export interface AutoCompleteUser {
 	nickname: string;
 	avatarURL: string;
 	key: string;
 	username: string;
-};
+}
 
 export default function UserRecord({ user, size = 'large' }: { user: AutoCompleteUser; size?: AvatarProps['size'] }) {
 	return (

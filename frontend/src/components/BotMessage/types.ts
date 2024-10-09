@@ -1,20 +1,20 @@
-export type MessagesData = { [key: string]: string };
+export type MessagesData = Record<string, string>;
 
-export type MessagesQueryDatum = {
+export interface MessagesQueryDatum {
 	key: number;
 	name: string;
 	value: string;
-};
+}
 
 export type MessagesQueryData = MessagesQueryDatum[];
 
-export type MessagesQueryError = {
+export interface MessagesQueryError {
 	error: string;
-};
+}
 
 export type MessagesFetchResult = MessagesQueryData | MessagesQueryError;
 
-export type MessagesQueryResult = {
+export interface MessagesQueryResult {
 	data: MessagesFetchResult | undefined;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	error: any;
@@ -25,8 +25,8 @@ export type MessagesQueryResult = {
 	isLoading: boolean;
 	isSuccess: boolean;
 	failureCount: number;
-};
+}
 
-export type BotMessageProps = {
+export interface BotMessageProps {
 	messageKey: string;
-};
+}

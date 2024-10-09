@@ -27,7 +27,7 @@ export function useErrorBoundary<TError = any>(): UseErrorBoundaryApi<TError> {
 				context.resetErrorBoundary();
 				setState({ error: null, errorInfo: null, hasError: false });
 			},
-			showBoundary: (error: TError, info?: ErrorInfo | undefined) => {
+			showBoundary: (error: TError, info?: ErrorInfo  ) => {
 				setState({
 					error,
 					errorInfo: info || null,

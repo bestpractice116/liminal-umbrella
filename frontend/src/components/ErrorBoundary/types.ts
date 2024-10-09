@@ -1,11 +1,11 @@
 import { Component, ComponentType, ErrorInfo, FunctionComponent, PropsWithChildren, ReactElement } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type FallbackProps = {
+export interface FallbackProps {
     error: any;
     errorInfo: any;
     resetErrorBoundary: (...args: any[]) => void;
-};
+}
 
 type ErrorBoundarySharedProps = PropsWithChildren<{
     onError?: (error: Error, info: ErrorInfo) => void;
@@ -35,12 +35,12 @@ export type ErrorBoundaryPropsWithFallback = ErrorBoundarySharedProps & {
 
 export type ErrorBoundaryProps = ErrorBoundaryPropsWithFallback | ErrorBoundaryPropsWithComponent | ErrorBoundaryPropsWithRender;
 
-export type ErrorBoundaryContextType = {
+export interface ErrorBoundaryContextType {
     didCatch: boolean;
     error: any;
     errorInfo: any;
     resetErrorBoundary: (...args: any[]) => void;
-};
+}
 
 export type ErrorBoundaryState =
     | {
@@ -58,7 +58,7 @@ export type UseErrorBoundaryState<TError> =
     | { error: TError; errorInfo: ErrorInfo | null; hasError: true }
     | { error: null; errorInfo: null; hasError: false };
 
-export type UseErrorBoundaryApi<TError> = {
+export interface UseErrorBoundaryApi<TError> {
     resetBoundary: () => void;
-    showBoundary: (error: TError, errorInfo?: ErrorInfo | undefined) => void;
-};
+    showBoundary: (error: TError, errorInfo?: ErrorInfo  ) => void;
+}

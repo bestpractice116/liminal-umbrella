@@ -14,7 +14,7 @@ import {
 	UserChangedNickname
 } from './events/index.js';
 
-export type emitterSpec = {
+export interface emitterSpec {
 	userJoined: UserJoined;
 	userLeft: UserLeft;
 	botStarted: BotStarted;
@@ -28,7 +28,7 @@ export type emitterSpec = {
 	userInterestedInEvent: UserInterestedInEvent;
 	userDisinterestedInGame: UserDisinterestedInEvent;
 	userChangedNickname: UserChangedNickname;
-};
+}
 
 export const CustomEvents = {
 	UserJoined: 'userJoined' as const,

@@ -11,18 +11,16 @@ export interface EditableCellProps<T> {
 	editable: boolean;
 	dataIndex: keyof T;
 	record: T;
-	// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-	handleSave: (record: T, form: FormInstance<any>, _: Function) => void;
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	handleSave: (record: T, form: FormInstance, _: Function) => void;
 }
 
 export type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
-export type ColumnTypeArray = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
-export type SaveHandler<Item> = {
-	// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-	(row: Item, form: RefObject<FormInstance<any>>, toggleEdit: Function): boolean;
-};
-export type DefaultColumns = Array<ColumnTypes[number] & { editable?: boolean; dataIndex: string }>;
+export type ColumnTypeArray = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type SaveHandler<Item> = (row: Item, form: RefObject<FormInstance>, toggleEdit: Function) => boolean;
+export type DefaultColumns = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
 
 export interface Item {
 	key: string;

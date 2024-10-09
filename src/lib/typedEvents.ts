@@ -16,7 +16,7 @@ export interface Emitter<T extends EventMap> {
 	removeAllListeners<K extends EventKey<T>>(eventName: K): EventEmitter;
 	setMaxListeners(arg0: number): EventEmitter;
 	getMaxListeners(): number;
-	listenerCount(eventName: string | symbol, listener?: Function | undefined): number;
+	listenerCount(eventName: string | symbol, listener?: Function  ): number;
 	eventNames(): (string | symbol)[];
 	listeners<K extends EventKey<T>>(eventName: K): Function[];
 	rawListeners<K extends EventKey<T>>(eventName: K): Function[];

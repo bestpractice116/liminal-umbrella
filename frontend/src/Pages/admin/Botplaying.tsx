@@ -41,7 +41,7 @@ export function AdminBotplaying() {
 			ellipsis: true,
 			render: (_, record) =>
 				result.data!.length >= 1 ? (
-					<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+					<Popconfirm title="Sure to delete?" onConfirm={() => { handleDelete(record.key); }}>
 						<DeleteOutlined />
 						&nbsp;<a>Delete</a>
 					</Popconfirm>
@@ -75,7 +75,7 @@ export function AdminBotplaying() {
 					components={components}
 					rowClassName={() => 'editable-row'}
 					bordered
-					dataSource={result.data!}
+					dataSource={result.data}
 					columns={columns as ColumnTypes}
 				/>
 			</>

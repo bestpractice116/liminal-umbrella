@@ -36,7 +36,7 @@ export default function PostGameForm({
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	mutation: UseMutationResult<void, Error, any, void>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	initialValues: { [key: string]: any };
+	initialValues: Record<string, any>;
 	children?: React.ReactNode;
 	createForm?: boolean;
 	disabled?: boolean;
@@ -69,16 +69,16 @@ export default function PostGameForm({
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const timeNormalize = (val: any): any => {
 		if (!val || !formRef.current) return val;
-		const date = formRef.current?.getFieldValue('date');
-		if (!date || !date.isValid || !date.isValid()) return val;
+		const date = formRef.current.getFieldValue('date');
+		if (!date?.isValid?.()) return val;
 		return setDate(val, date);
 	};
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const timeGetValue = (val: any): any => {
 		if (!val) return val;
 		if (!formRef.current) return { value: dayjs(val) };
-		const date = formRef.current?.getFieldValue('date');
-		if (!date || !date.isValid || !date.isValid()) return { value: dayjs(val) };
+		const date = formRef.current.getFieldValue('date');
+		if (!date?.isValid?.()) return { value: dayjs(val) };
 		return { value: setDate(dayjs(val), date) };
 	};
 
@@ -140,8 +140,8 @@ export default function PostGameForm({
 							format={'dddd D MMM (YYYY-MM-DD)'}
 							onChange={(val) => {
 								if (val) {
-									formRef.current?.setFieldValue('starttime', setDate(formRef.current?.getFieldValue('starttime'), val));
-									formRef.current?.setFieldValue('endtime', setDate(formRef.current?.getFieldValue('endtime'), val));
+									formRef.current?.setFieldValue('starttime', setDate(formRef.current.getFieldValue('starttime'), val));
+									formRef.current?.setFieldValue('endtime', setDate(formRef.current.getFieldValue('endtime'), val));
 									save();
 								}
 							}}

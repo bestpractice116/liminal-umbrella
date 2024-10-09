@@ -31,7 +31,7 @@ export function AdminRoles() {
 					components={components}
 					rowClassName={() => 'editable-row'}
 					bordered
-					dataSource={result.data!}
+					dataSource={result.data}
 					columns={columns as ColumnTypes}
 				/>
 			</>

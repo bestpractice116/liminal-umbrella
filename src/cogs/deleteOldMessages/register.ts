@@ -7,7 +7,7 @@ export class DeleteOldMessagesRegister {
 		console.log('DOING PLUGIN REGISTRATION POST LOGIN DeleteOldMessagesRegister');
 		const channelName = getChannelName();
 		if (!channelName) return;
-		const channel = await getTextChannel(channelName!);
+		const channel = await getTextChannel(channelName);
 		if (!channel) return;
 		container.database.indexChannel(channel.id);
 	}

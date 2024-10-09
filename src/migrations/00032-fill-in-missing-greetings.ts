@@ -8,7 +8,7 @@ export const up = async (_uz: MigrationParams<any>) => {
 	const channel = await Channel.findOne({ where: { name: channelName } });
 	const messages = await Message.findAll({ where: { channelId: channel!.id } });
 	for (const message of messages) {
-		const match = message.content.match(/<@(\d+)>/);
+		const match = /<@(\d+)>/.exec(message.content);
 		if (match) {
 			const userId = match[1];
 			const greetingMessage = await GreetingMessage.findOne({ where: { userId } });

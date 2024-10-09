@@ -12,6 +12,6 @@ promClient.collectDefaultMetrics({ register });
 export class UserRoute extends Route {
 	public async [methods.GET](_: ApiRequest, response: ApiResponse) {
 		response.setHeader('Content-Type', register.contentType);
-		return response.respond(await register.metrics());
+		response.respond(await register.metrics());
 	}
 }

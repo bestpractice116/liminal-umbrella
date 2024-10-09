@@ -13,7 +13,7 @@ export class RefreshRoute extends Route {
 	}
 
 	async [methods.POST](request: ApiRequest, response: ApiResponse) {
-		if (!request.auth) return response.error(HttpCodes.Unauthorized);
+		if (!request.auth) { response.error(HttpCodes.Unauthorized); return; }
 
 		const requestAuth = request.auth;
 		const serverAuth = this.container.server.auth!;
@@ -35,10 +35,10 @@ export class RefreshRoute extends Route {
 		}
 		// Refresh the user's data
 		try {
-			return response.json(await serverAuth.fetchData(authToken));
+			response.json(await serverAuth.fetchData(authToken)); return;
 		} catch (error) {
 			this.container.logger.fatal(error);
-			return response.error(HttpCodes.InternalServerError);
+			response.error(HttpCodes.InternalServerError); return;
 		}
 	}
 

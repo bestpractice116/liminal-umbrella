@@ -2,7 +2,7 @@ import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plu
 import { readFile } from 'fs';
 import { extname } from 'path';
 
-const mimeTypes: { [key: string]: string } = {
+const mimeTypes: Record<string, string> = {
 	'.html': 'text/html',
 	'.js': 'text/javascript',
 	'.css': 'text/css',

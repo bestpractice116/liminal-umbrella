@@ -14,7 +14,7 @@ import { SchemaBundle } from 'common/schema';
 
 import { getZObject } from 'common';
 
-export function useFetchQuery<T>(apipath: string, querykey: QueryKey): UseQueryResult<T, Error> {
+export function useFetchQuery<T>(apipath: string, querykey: QueryKey): UseQueryResult<T> {
 	return useQuery({
 		queryKey: coerceQueryKey(querykey),
 		queryFn: (): Promise<T> => {
@@ -139,7 +139,7 @@ export function useDeleteMutation(
 	apipath: string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	onSuccess: (data: any, row: any) => void
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	 
 ) {
 	const [isDeleting, setIsMutating] = useState(false);
 	const { showBoundary } = useErrorBoundary();
@@ -156,7 +156,7 @@ export function useDeleteMutation(
 				.then((data) => {
 					onSuccess(data, r);
 				})
-				.catch((e) => showBoundary(e));
+				.catch((e) => { showBoundary(e); });
 		},
 		onMutate: () => {
 			setIsMutating(true);
@@ -187,10 +187,10 @@ export function useDeleteMutationAndUpdateQueryData(apipath: string, querykey: Q
 export function useMutationErrorToFormError() {
 	const { showBoundary } = useErrorBoundary();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return function (form: FormInstance<any>, e: any) {
+	return function (form: FormInstance, e: any) {
 		try {
 			if (e instanceof z.ZodError) {
-				const formatted = (e as z.ZodError).format();
+				const formatted = (e).format();
 				const f = Object.entries(formatted)
 					.filter(([key, _]) => key !== '_errors')
 					.map(([key, value]) => {
@@ -217,10 +217,10 @@ export function useFormHandlers<APIRow>(apipath: string, querykey: QueryKey) {
 			deleteMutation.mutate({ key });
 		},
 		isDeleting,
-		// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-		handleUpdate: (row: APIRow, form: RefObject<FormInstance<any>>, toggleEdit: Function): boolean => {
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		handleUpdate: (row: APIRow, form: RefObject<FormInstance>, toggleEdit: Function): boolean => {
 			updateMutation.mutate(row, {
-				onError: (e) => mutationErrorToFormError(form.current!, e),
+				onError: (e) => { mutationErrorToFormError(form.current!, e); },
 				onSuccess: () => toggleEdit()
 			});
 			return true;

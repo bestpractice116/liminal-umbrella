@@ -8,7 +8,7 @@ import { Tooltip } from '../../components/Tooltip';
 
 const createFormRule = createSchemaFieldRule(getZObject(gameTypeSchema));
 
-export type GameTypeSelectInputs = { save: () => void; disabled: boolean };
+export interface GameTypeSelectInputs { save: () => void; disabled: boolean }
 
 export default function GameTypeSelect({ save, disabled }: GameTypeSelectInputs) {
 	const { botMessage } = useBotMessage();

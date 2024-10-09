@@ -25,7 +25,7 @@ export class ApiGamePost extends Route {
 	public async [methods.POST](request: ApiRequest, response: ApiResponse) {
 		const findSchema = GameSchema.find;
 		if (!findSchema) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		const { success, error, data } = findSchema.safeParse(request.body);
 		if (!success) {

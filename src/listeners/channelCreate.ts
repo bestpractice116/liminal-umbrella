@@ -14,7 +14,7 @@ export class ChannelCreateEvent extends Listener {
 	@Sequential
 	public override run(newChannel: DMChannel | GuildChannel) {
 		if (newChannel instanceof GuildChannel) {
-			return this.container.database.channelCreate(<NonThreadGuildBasedChannel>newChannel);
+			return this.container.database.channelCreate((newChannel as NonThreadGuildBasedChannel));
 		}
 		return;
 	}

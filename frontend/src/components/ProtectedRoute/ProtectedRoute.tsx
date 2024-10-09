@@ -2,11 +2,11 @@ import { FC, useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { AuthContext } from '../Auth';
 
-type Props = {
+interface Props {
 	redirectPath?: string;
 	role?: string;
 	isBotBetaTester?: boolean;
-};
+}
 
 export const ProtectedRoute: FC<Props> = ({ role, isBotBetaTester = false, redirectPath = '/login' }) => {
 	const auth = useContext(AuthContext);

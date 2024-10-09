@@ -51,33 +51,33 @@ export class ApiGameSessions extends UD {
 	}
 
 	override async UPDATE_coerce(_request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-		const starttime = new Date(data.starttime!);
-		const endtime = new Date(data.endtime)!;
+		const starttime = new Date(data.starttime);
+		const endtime = new Date(data.endtime);
 
 		if (isNaN(starttime.getTime())) {
-			return response.badRequest('starttime is invalid');
+			response.badRequest('starttime is invalid'); return;
 		}
 		if (isNaN(endtime.getTime())) {
-			return response.badRequest('starttime is invalid');
+			response.badRequest('starttime is invalid'); return;
 		}
 
 		const now = new Date(Date.now());
 		if (starttime < now) {
 			// Session started in the past, not valid
-			return response.badRequest('Session start is in the past, cannot edit');
+			response.badRequest('Session start is in the past, cannot edit'); return;
 		}
 		if (endtime < starttime) {
 			// End time cannot be before start time, not valid
-			return response.badRequest('End time cannot be before start time - invalid game');
+			response.badRequest('End time cannot be before start time - invalid game'); return;
 		}
 
 		const out = { ...data, starttime, endtime };
 		if (data.gamesystem) {
 			const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
 			if (!gamesystem) {
-				return response.badRequest('Cannot find game system');
+				response.badRequest('Cannot find game system'); return;
 			}
-			out['gamesystem'] = gamesystem.key;
+			out.gamesystem = gamesystem.key;
 		}
 		return out;
 	}

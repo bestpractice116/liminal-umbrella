@@ -259,7 +259,7 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 		const message = await this.getGameListing();
 		if (!message) return;
 		const newContents = await format(this);
-		if (newContents !== message?.content) {
+		if (newContents !== message.content) {
 			await message.edit(newContents);
 		}
 	}

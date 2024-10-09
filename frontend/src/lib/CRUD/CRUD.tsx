@@ -23,7 +23,7 @@ export function CreateForm<T>({
 	hidden = false,
 	formRef
 }: {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	 
 	mutation: UseMutationResult<void, Error, any, void>;
 	children: React.ReactNode;
 	initialValues?: Store | undefined;
@@ -43,8 +43,8 @@ export function CreateForm<T>({
 
 	useEffect(() => {
 		form.validateFields({})
-			.then(() => setSubmittable(true))
-			.catch(() => setSubmittable(false));
+			.then(() => { setSubmittable(true); })
+			.catch(() => { setSubmittable(false); });
 	}, [form, values]);
 
 	if (hidden) {
@@ -88,7 +88,7 @@ export function AddRow<T>({ createMutation, children }: { createMutation: UseMut
 	if (!isCreating) {
 		button = (
 			<div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-				<Button onClick={() => setIsCreating(true)} type="primary" style={{ marginBottom: 16 }}>
+				<Button onClick={() => { setIsCreating(true); }} type="primary" style={{ marginBottom: 16 }}>
 					Add a row
 				</Button>
 			</div>
@@ -115,7 +115,7 @@ export function WrapCRUD<Res>({
 }: {
 	spin?: boolean;
 	children: React.ReactNode;
-	result: UseQueryResult<Array<Res>, Error>;
+	result: UseQueryResult<Res[]>;
 }) {
 	if (spin || result.isLoading) {
 		return <Spin />;

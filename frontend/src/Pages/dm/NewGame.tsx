@@ -20,7 +20,7 @@ export function NewGame() {
 	const formRef = createRef<FormInstance<GameCreateItem & { date?: any }>>();
 	// FIXME - this name is bad as it isn't just creating
 	const [postId, setPostId] = useState(-1);
-	const result = useFetchQuery<Array<NewGameListItem>>('/api/game', 'game');
+	const result = useFetchQuery<NewGameListItem[]>('/api/game', 'game');
 	const queryClient = useQueryClient();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const { createMutation, isCreating } = useCreateMutation('/api/game', 'game', (data: any) => {
@@ -50,7 +50,7 @@ export function NewGame() {
 	let hasGame = false;
 	if (result.isFetched && result.data && result.data.length >= 1) {
 		// THe length should never be > 1, but lets try to work anyway.
-		const res = getZObject(NewGameSchema.read!).safeParse(result.data[0]);
+		const res = getZObject(NewGameSchema.read).safeParse(result.data[0]);
 		if (!res.success) {
 			console.error('error parsing NewGameSchea.read', res.error.format());
 		} else {
@@ -70,7 +70,7 @@ export function NewGame() {
 		if (!formRef.current) {
 			return;
 		}
-		const data = formRef.current!.getFieldsValue();
+		const data = formRef.current.getFieldsValue();
 		delete data.date;
 		mutation.mutate(data);
 	};
@@ -103,7 +103,7 @@ export function NewGame() {
 							);
 							setPostId(data.datum.key);
 						})
-						.catch((e) => showBoundary(e))
+						.catch((e) => { showBoundary(e); })
 				);
 			},
 			onError: (e) => {
@@ -128,8 +128,8 @@ export function NewGame() {
 	);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function PostButton({ form, doPost }: { form: React.RefObject<FormInstance<any> | undefined>; doPost: () => void }) {
+ 
+function PostButton({ form, doPost }: { form: React.RefObject<FormInstance | undefined>; doPost: () => void }) {
 	const values = Form.useWatch([], form.current || undefined);
 	if (!form.current) return <></>;
 	const hasFieldErrors = form.current.getFieldsError().filter((field) => field.errors.length > 0).length > 0;

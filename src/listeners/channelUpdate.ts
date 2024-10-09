@@ -14,7 +14,7 @@ export class ChannelUpdateEvent extends Listener {
 	@Sequential
 	public override run(_: DMChannel | GuildChannel, newChannel: DMChannel | GuildChannel) {
 		if (newChannel instanceof GuildChannel) {
-			return this.container.database.channelUpdate(<NonThreadGuildBasedChannel>newChannel);
+			return this.container.database.channelUpdate((newChannel as NonThreadGuildBasedChannel));
 		}
 		return;
 	}

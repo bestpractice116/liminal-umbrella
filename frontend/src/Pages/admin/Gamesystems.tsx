@@ -51,7 +51,7 @@ export function AdminGamesystems() {
 			ellipsis: true,
 			render: (_, record) =>
 				result.data!.length >= 1 ? (
-					<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+					<Popconfirm title="Sure to delete?" onConfirm={() => { handleDelete(record.key); }}>
 						<a>
 							<DeleteOutlined />
 							&nbsp;Delete
@@ -104,7 +104,7 @@ export function AdminGamesystems() {
 					components={components}
 					rowClassName={() => 'editable-row'}
 					bordered
-					dataSource={result.data!}
+					dataSource={result.data}
 					columns={columns as ColumnTypes}
 				/>
 			</>

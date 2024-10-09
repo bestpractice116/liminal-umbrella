@@ -23,7 +23,7 @@ export class addAllUsersRoleUserJoinedListener extends Listener {
 			return;
 		}
 		// If the user already has AllUsers, do nothing
-		if (!!Array.from(discordUser.roles.cache.keys()).find((name) => name === 'AllUsers')) {
+		if (Array.from(discordUser.roles.cache.keys()).find((name) => name === 'AllUsers')) {
 			return;
 		}
 

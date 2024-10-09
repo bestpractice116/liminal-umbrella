@@ -4,14 +4,14 @@ import Tag from 'antd/es/tag';
 import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
 
-type UserFragment = {
+interface UserFragment {
 	roles: RoleFragment[];
-};
-type RoleFragment = {
+}
+interface RoleFragment {
 	name: string;
 	hexColor: string;
 	position: number;
-};
+}
 
 export function AdminUsers() {
 	const components = useTableComponents(UserSchema);
@@ -95,7 +95,7 @@ export function AdminUsers() {
 					components={components}
 					rowClassName={() => 'editable-row'}
 					bordered
-					dataSource={result.data!}
+					dataSource={result.data}
 					columns={columns as ColumnTypes}
 				/>
 			</>

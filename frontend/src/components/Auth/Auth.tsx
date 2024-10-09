@@ -11,7 +11,7 @@ export function LoginButton() {
 		return null;
 	}
 	const redirectTo = location.state?.redirectTo || '/';
-	let returnTo: string = '/';
+	let returnTo = '/';
 	if (redirectTo) {
 		returnTo = redirectTo;
 	}
@@ -28,7 +28,7 @@ export function LoginButton() {
 
 export function AuthData() {
 	const auth = useContext(AuthContext);
-	if (!auth || !auth.data) {
+	if (!auth?.data) {
 		return <div>NO AUTH DATA</div>;
 	}
 	return (

@@ -23,7 +23,7 @@ export class ApiGameSessionUserSignupsList extends CR {
 
 	// There is no list all game signups endpoint
 	override async auth_GET(_request: ApiRequest, response: ApiResponse) {
-		return response.notFound();
+		response.notFound();
 	}
 
 	@DM
@@ -35,12 +35,12 @@ export class ApiGameSessionUserSignupsList extends CR {
 		// and we need the GameSession object to check permissions anyway.
 		const session = await GameSession.findOne({ where: { key: data.gameSessionKey } });
 		if (!session) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		if (!isAdmin(request)) {
 			// If user is not an admin, check they own the session before allowing adding a user
 			if (session.owner != request.auth!.id) {
-				return response.notFound('Game session does not exist, or is not owned by current user');
+				response.notFound('Game session does not exist, or is not owned by current user'); return;
 			}
 		}
 		// Also check for valid / known user. This is needed as the DB constraint will not check for bots/left users,
@@ -54,17 +54,17 @@ export class ApiGameSessionUserSignupsList extends CR {
 			}
 		});
 		if (!user) {
-			return response.notFound('Tried to sign up unknown user for game session');
+			response.notFound('Tried to sign up unknown user for game session'); return;
 		}
 		if (session.owner === user.key) {
-			return response.badRequest('Cannot sign up the owner of a game session to their own session');
+			response.badRequest('Cannot sign up the owner of a game session to their own session'); return;
 		}
 		const currentUsers = await session.getSignedupUsers();
-		if (!!currentUsers.find((currentUser) => currentUser.key == user.key)) {
-			return response.badRequest('This player is already signed up to this game');
+		if (currentUsers.find((currentUser) => currentUser.key == user.key)) {
+			response.badRequest('This player is already signed up to this game'); return;
 		}
 		if (session.maxplayers <= currentUsers.length) {
-			return response.badRequest('Game already has maximum number of players, cannot add more');
+			response.badRequest('Game already has maximum number of players, cannot add more'); return;
 		}
 		return data;
 	}

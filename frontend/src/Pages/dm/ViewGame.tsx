@@ -70,7 +70,7 @@ function UsersSignedUpTable({
 				return (
 					<Popconfirm
 						title="Remove player from game?"
-						onConfirm={() => removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey })}
+						onConfirm={() => { removeUserFromGameMutation.mutate({ userKey: record.key, gameSessionKey }); }}
 					>
 						<a>
 							<DeleteOutlined />
@@ -155,11 +155,11 @@ export function ViewGame() {
 		const now = dayjs(Date.now());
 		editable = initialValues?.starttime && initialValues.starttime > now;
 		signedUpUsers = initialValues?.signedupplayers;
-		full = initialValues?.maxplayers <= signedUpUsers?.length;
+		full = initialValues?.maxplayers <= signedUpUsers.length;
 	}
 	const excludeFindUsers = signedUpUsers.map((player: AutoCompleteUser) => player.key);
 	if (initialValues?.owner) {
-		excludeFindUsers.push(initialValues?.owner.key);
+		excludeFindUsers.push(initialValues.owner.key);
 	}
 	return (
 		<Collapse bordered={false} defaultActiveKey={['1']}>
@@ -178,7 +178,7 @@ export function ViewGame() {
 					submitButtonText={'Update Game Listing'}
 				/>
 				<div style={{ float: 'right', position: 'relative', top: -55 }}>
-					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => deleteMutation.mutate({ key })}>
+					<Popconfirm title="Are you sure you wish to cancel this game?" onConfirm={() => { deleteMutation.mutate({ key }); }}>
 						<a>
 							<Button danger disabled={isUpdating} icon={<DeleteOutlined />}>
 								Cancel game

@@ -2,7 +2,7 @@ import { BotMessage } from './database/model.js';
 import { container } from '@sapphire/framework';
 import { getChannelAndSend } from '../cogs/verboseLog/utils.js';
 
-const messageCache: { [propName: string]: string } = {};
+const messageCache: Record<string, string> = {};
 export function clearMessageCache() {
 	for (const key in messageCache) {
 		delete messageCache[key];
@@ -26,7 +26,7 @@ async function getMessageString(name: string): Promise<string> {
 	return messageOb.value;
 }
 
-export async function getMessage(name: string, args: { [propName: string]: any }): Promise<string> {
+export async function getMessage(name: string, args: Record<string, any>): Promise<string> {
 	const message = await getMessageString(name);
 	try {
 		return new Function('return `' + message + '`;').call(args);

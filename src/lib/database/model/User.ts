@@ -111,9 +111,9 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
 	static userDataFromGuildMember(guildMember: GuildMember) {
 		return {
-			nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!,
+			nickname: (guildMember.nickname || guildMember.user.globalName || guildMember.user.username),
 			username: guildMember.user.username,
-			name: (guildMember.user.globalName || guildMember.user.username)!,
+			name: (guildMember.user.globalName || guildMember.user.username),
 			rulesaccepted: false, // FIXME
 			left: false,
 			bot: guildMember.user.bot,

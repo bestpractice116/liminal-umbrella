@@ -11,7 +11,7 @@ export class DiscordRedirectRoute extends Route {
 	public [methods.GET](request: ApiRequest, response: ApiResponse) {
 		const redirect_uri = request.query.redirect_uri as string;
 		if (!redirect_uri) {
-			return response.badRequest();
+			response.badRequest(); return;
 		}
 		const oauthURL = new URL('https://discord.com/oauth2/authorize');
 		oauthURL.search = new URLSearchParams([

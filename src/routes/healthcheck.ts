@@ -4,6 +4,6 @@ import { Route, methods, type ApiRequest, type ApiResponse } from '@sapphire/plu
 @ApplyOptions<Route.Options>({ route: 'health' })
 export class UserRoute extends Route {
 	public [methods.GET](_: ApiRequest, response: ApiResponse) {
-		return response.json({ iam: 'ok' });
+		response.json({ iam: 'ok' });
 	}
 }

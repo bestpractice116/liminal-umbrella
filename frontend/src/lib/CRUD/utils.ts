@@ -46,8 +46,8 @@ export function coerceQueryKey(key: QueryKey): TanstackQueryKey {
 	return Array.from(key, (v: QueryKeyElement) => `${v}`);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getEditableContext(): React.Context<FormInstance<any> | null> {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return createContext<FormInstance<any> | null>(null);
+ 
+export function getEditableContext(): React.Context<FormInstance | null> {
+	 
+	return createContext<FormInstance | null>(null);
 }

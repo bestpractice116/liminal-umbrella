@@ -4,10 +4,10 @@ import { useBotMessage } from '../BotMessage';
 import QuestionOutlined from '@ant-design/icons';
 import Popover from 'antd/es/popover';
 
-export type HelpButtonParams = {
+export interface HelpButtonParams {
 	titleKey: string;
 	contentKey: string;
-};
+}
 export function HelpIcon({ titleKey, contentKey }: HelpButtonParams) {
 	const { debug } = useContext(DebugContext);
 	const { botMessage } = useBotMessage();

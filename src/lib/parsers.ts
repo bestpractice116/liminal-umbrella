@@ -1,4 +1,4 @@
-export type AGameSession = {
+export interface AGameSession {
 	name: string;
 	type: string;
 	date: string;
@@ -7,7 +7,7 @@ export type AGameSession = {
 	spaces_free: number;
 	dm_contact: string;
 	description: string;
-};
+}
 
 const inputRe = new RegExp(/\s\s\s+/);
 const nameRe = new RegExp(/(?:\*\*)?(?:Adventure [nN]ame|Game)\s*(?:\*\*)?:\s*(?:\*\*)?\s*([^\n\*]*)/);
@@ -30,34 +30,34 @@ export function parseAvailableGame(input: string): AGameSession {
 		dm_contact: '??',
 		description: '??'
 	};
-	const nameMatches = input.match(nameRe);
+	const nameMatches = nameRe.exec(input);
 	if (nameMatches) {
-		out['name'] = nameMatches[1];
+		out.name = nameMatches[1];
 	}
-	const typeMatches = input.match(typeRe);
+	const typeMatches = typeRe.exec(input);
 	if (typeMatches) {
-		out['type'] = typeMatches[1];
+		out.type = typeMatches[1];
 	}
-	const dateMatches = input.match(dateRe);
+	const dateMatches = dateRe.exec(input);
 	if (dateMatches) {
-		out['date'] = dateMatches[1];
+		out.date = dateMatches[1];
 	}
-	const dmMatches = input.match(dmRe);
+	const dmMatches = dmRe.exec(input);
 	if (dmMatches) {
-		out['dm_contact'] = dmMatches[1];
+		out.dm_contact = dmMatches[1];
 	}
-	const locationMatches = input.match(locationRe);
+	const locationMatches = locationRe.exec(input);
 	if (locationMatches) {
-		out['location'] = locationMatches[1];
+		out.location = locationMatches[1];
 	}
-	const spacesMatches = input.match(spacesRe);
+	const spacesMatches = spacesRe.exec(input);
 	if (spacesMatches) {
-		out['spaces_free'] = parseInt(spacesMatches[1]);
-		out['spaces_total'] = parseInt(spacesMatches[2]);
+		out.spaces_free = parseInt(spacesMatches[1]);
+		out.spaces_total = parseInt(spacesMatches[2]);
 	}
-	const descriptionMatches = input.match(descriptionRe);
+	const descriptionMatches = descriptionRe.exec(input);
 	if (descriptionMatches) {
-		out['description'] = descriptionMatches[1].trim();
+		out.description = descriptionMatches[1].trim();
 	}
 	return out;
 }

@@ -7,12 +7,12 @@ import UserRecord from './UserRecord.js';
 import { type AutoCompleteUser } from './UserRecord.js';
 import { PlusCircleOutlined } from '@ant-design/icons';
 
-type ListOfAutoCompleteUsers = Array<AutoCompleteUser>;
+type ListOfAutoCompleteUsers = AutoCompleteUser[];
 
-type AddUserToGameParameters = {
+interface AddUserToGameParameters {
 	gameSessionKey: number;
 	userKey: string;
-};
+}
 
 function findUserFromKey(key: string, users: ListOfAutoCompleteUsers): AutoCompleteUser | undefined {
 	return users.find((user) => user.key == key);

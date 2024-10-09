@@ -42,7 +42,7 @@ export class deleteOldMessagesTickOneTwentyListener extends Listener {
 		const db = await this.container.database.getdb();
 		await db.transaction(async () => {
 			try {
-				const discordMessage = await discordChannel!.messages.fetch(msg.id);
+				const discordMessage = await discordChannel.messages.fetch(msg.id);
 				await discordMessage.delete();
 			} catch (e: any) {
 				if (e.code === 10008) {
@@ -63,8 +63,8 @@ export class deleteOldMessagesTickOneTwentyListener extends Listener {
 
 		await sleepUpToTwoHours();
 
-		const discordChannel = await this.container.database.getdiscordChannel(this.container.guild!, channel_name!);
-		if (discordChannel!.type !== ChannelType.GuildText) {
+		const discordChannel = await this.container.database.getdiscordChannel(this.container.guild!, channel_name);
+		if (discordChannel.type !== ChannelType.GuildText) {
 			return;
 		}
 

@@ -12,7 +12,7 @@ export function Page({ children }: { children: React.ReactNode }) {
 		margin: isMobile ? 0 : '2em'
 	};
 	if (isMobile) {
-		style['width'] = '100%';
+		style.width = '100%';
 	}
 	return (
 		<Layout style={style}>

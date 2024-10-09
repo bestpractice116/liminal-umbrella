@@ -49,7 +49,7 @@ export const DATABASE_FILENAME = process.env.DATABASE_NAME.startsWith('/')
     ? process.env.DATABASE_NAME
     : path.join(__dirname, '..', '..', process.env.DATABASE_NAME);
 
-type ThreadMeta = { [key: string]: string | number | boolean | Date | undefined };
+type ThreadMeta = Record<string, string | number | boolean | Date | undefined>;
 
 export default class Database {
     db: Sequelize | undefined;
@@ -88,7 +88,7 @@ export default class Database {
         this.db = new Sequelize('database', 'user', 'password', {
             host: 'localhost',
             dialect: 'sqlite',
-            logging: log ? (msg) => container.logger.debug(msg) : false,
+            logging: log ? (msg) => { container.logger.debug(msg); } : false,
             storage,
             models: await importModels(__dirname + '/database/model/*.js'),
             transactionType: TransactionType.IMMEDIATE,
@@ -173,17 +173,17 @@ export default class Database {
         });
     }
 
-    async roleDelete(role?: GuildRole | undefined, dbRole?: Role | undefined) {
+    async roleDelete(role?: GuildRole  , dbRole?: Role  ) {
         if (!dbRole && !role) {
             throw new Error('Must supply either discord Guildrole or DB role as parameter');
         }
         if (!dbRole) dbRole = (await Role.findByPk(role!.id)) || undefined;
         if (!dbRole) return;
-        await dbRole?.destroy();
+        await dbRole.destroy();
     }
 
-    async roleUpdate(role: GuildRole, dbRole?: Role | undefined) {
-        if (!dbRole) dbRole = (await Role.findByPk(role!.id)) || undefined;
+    async roleUpdate(role: GuildRole, dbRole?: Role  ) {
+        if (!dbRole) dbRole = (await Role.findByPk(role.id)) || undefined;
         if (!dbRole) return this.roleCreate(role);
         dbRole.set(this.getRoleData(role));
         await dbRole.save();
@@ -219,7 +219,7 @@ export default class Database {
             return;
         }
         let changed = false;
-        const newNick = (guildMember.nickname || guildMember.user.globalName || guildMember.user.username)!;
+        const newNick = (guildMember.nickname || guildMember.user.globalName || guildMember.user.username);
         if (newNick != user.nickname) {
             this.events.emit('userChangedNickname', new UserChangedNickname(guildMember.id, user.nickname, newNick, user, guildMember));
             user.nickname = newNick;
@@ -248,9 +248,9 @@ export default class Database {
         }
         let greetingMessageId: string | undefined = undefined;
         await this.db!.transaction(async () => {
-            member!.left = true;
-            await member!.save();
-            await member!.setRoles([]);
+            member.left = true;
+            await member.save();
+            await member.setRoles([]);
             const eventInterests = await EventInterest.findAll({
                 where: {
                     userId: id
@@ -320,12 +320,12 @@ export default class Database {
 
     getChannelData(guildChannel: NonThreadGuildBasedChannel): any {
         const data: any = {};
-        data['name'] = guildChannel.name;
-        data['type'] = guildChannel.type.toString();
-        data['parentId'] = guildChannel.parentId;
-        data['position'] = guildChannel.position;
-        data['rawPosition'] = guildChannel.rawPosition;
-        data['createdTimestamp'] = guildChannel.createdTimestamp;
+        data.name = guildChannel.name;
+        data.type = guildChannel.type.toString();
+        data.parentId = guildChannel.parentId;
+        data.position = guildChannel.position;
+        data.rawPosition = guildChannel.rawPosition;
+        data.createdTimestamp = guildChannel.createdTimestamp;
         let chan: any = null;
         if (
             guildChannel.type == ChannelType.GuildText ||
@@ -335,18 +335,18 @@ export default class Database {
             chan = guildChannel as TextChannel;
         }
         if (guildChannel.type == ChannelType.GuildCategory) {
-            chan = guildChannel as CategoryChannel;
+            chan = guildChannel;
         }
-        data['nsfw'] = chan.nsfw;
-        data['lastMessageId'] = chan.lastMessageId;
-        data['topic'] = chan.topic;
-        data['rateLimitPerUser'] = chan.rateLimitPerUser;
+        data.nsfw = chan.nsfw;
+        data.lastMessageId = chan.lastMessageId;
+        data.topic = chan.topic;
+        data.rateLimitPerUser = chan.rateLimitPerUser;
         return data;
     }
 
     async channelUpdate(channel: NonThreadGuildBasedChannel) {
         const dbChannel = await Channel.findOne({ where: { id: channel.id } });
-        dbChannel!.set(this.getChannelData(channel!));
+        dbChannel!.set(this.getChannelData(channel));
         await dbChannel!.save();
     }
 
@@ -374,7 +374,7 @@ export default class Database {
             if (!dbChannel) {
                 missingChannels.push(id);
             } else {
-                dbChannel.set(this.getChannelData(guildChannel!));
+                dbChannel.set(this.getChannelData(guildChannel));
                 await dbChannel.save();
             }
             dbchannels.delete(id);
@@ -518,8 +518,8 @@ export default class Database {
 
             if (messages.size > 0) {
                 let earliestMessageSeen;
-                for (let pairs of messages) {
-                    let msg = pairs[1];
+                for (const pairs of messages) {
+                    const msg = pairs[1];
                     const createdTimestamp = new Date(msg.createdTimestamp);
 
                     if (createdTimestamp < earliestDateSeen) {
@@ -568,7 +568,7 @@ export default class Database {
             throw new Error(`We should not end up in syncChannel for a thread ID ${discordChannel.id}`);
         }
         if (discordChannel.type === ChannelType.GuildForum || discordChannel.type === ChannelType.GuildText) {
-            let fetchArchivedOptions: FetchArchivedThreadOptions = {
+            const fetchArchivedOptions: FetchArchivedThreadOptions = {
                 fetchAll: true,
                 limit: 100
             };
@@ -605,7 +605,7 @@ export default class Database {
 
     async syncThread(thread: AnyThreadChannel) {
         await this.db!.transaction(async () => {
-            let dbThread = await Thread.findByPk(thread.id);
+            const dbThread = await Thread.findByPk(thread.id);
             if (
                 dbThread &&
                 dbThread.locked == thread.locked &&
@@ -634,7 +634,7 @@ export default class Database {
                 const data: ThreadMeta = { key: thread.id, ...threadMetadata };
                 await Thread.create(data as CreationAttributes<Thread>);
             } else {
-                if (Object.keys(threadMetadata).some((key) => threadMetadata[key] !== dbThread!.get(key))) {
+                if (Object.keys(threadMetadata).some((key) => threadMetadata[key] !== dbThread.get(key))) {
                     dbThread.set(threadMetadata);
                     await dbThread.save();
                 }

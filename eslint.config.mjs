@@ -17,7 +17,7 @@ export default tseslint.config(
     },
     "plugins": {
       "prettier": {
-      }
+      },
     },
     "rules": {
       "@typescript-eslint/naming-convention": [
@@ -53,6 +53,17 @@ export default tseslint.config(
           "caughtErrorsIgnorePattern": "^_"
         }
       ],
+      // note you must disable the base rule
+      // as it can report incorrect errors
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn", // or "error"
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ]
     },
   },
   {

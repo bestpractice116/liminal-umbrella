@@ -299,8 +299,8 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 		if (!tag) {
 			throw new Error(`Cannot find tag: ${gamesystem?.tag}`);
 		}
-		const starttime = dayjs(this.starttime!);
-		const endtime = dayjs(this.endtime!);
+		const starttime = dayjs(this.starttime);
+		const endtime = dayjs(this.endtime);
 		const tags: Snowflake[] = [tag.id];
 		const thread = await channel?.threads.create({
 			name: `${this.name!} (${starttime.format('DD/MM/YYYY HH:mm')}-${endtime.format('HH:mm')})`,

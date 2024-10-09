@@ -19,7 +19,7 @@ export class AdminOnlyPrecondition extends Precondition {
 
 	private async checkAdmin(guild: Guild, userId: string) {
 		const guildMember = await guild.members.fetch(userId);
-		return !!Array.from(guildMember.roles.cache)
+		return Array.from(guildMember.roles.cache)
 			.map(([_, role]) => role.name)
 			.find((name) => name === 'Admin')
 			? this.ok()

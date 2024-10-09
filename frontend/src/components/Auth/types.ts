@@ -1,4 +1,4 @@
-export type AuthQueryData = {
+export interface AuthQueryData {
 	user: {
 		avatarURL: string;
 		discriminator: string;
@@ -8,15 +8,15 @@ export type AuthQueryData = {
 		nickname: string;
 	};
 	roles: string[];
-};
+}
 
-export type AuthError = {
+export interface AuthError {
 	error: string;
-};
+}
 
 export type AuthFetchResult = AuthQueryData | AuthError;
 
-export type AuthQueryResult = {
+export interface AuthQueryResult {
 	data: AuthFetchResult | undefined;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	error: any;
@@ -26,8 +26,8 @@ export type AuthQueryResult = {
 	isPending: boolean;
 	isLoading: boolean;
 	isSuccess: boolean;
-};
+}
 
-export type LogoutFetchResult = {
+export interface LogoutFetchResult {
 	success: boolean;
-};
+}

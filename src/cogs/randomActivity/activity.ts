@@ -9,7 +9,7 @@ export async function getActivityList(): Promise<string[]> {
 		const activities = await Activity.findAll({ where: { type: 'playing' }, attributes: ['name'] });
 		activityList = activities.map((activity: Activity) => activity.name);
 	}
-	return activityList!;
+	return activityList;
 }
 
 export function clearActivityCache() {

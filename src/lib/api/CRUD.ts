@@ -38,7 +38,7 @@ export async function findItem(
 	response: ApiResponse
 ): Promise<any | null> {
 	if (!findSchema) {
-		return response.notFound();
+		response.notFound(); return;
 	}
 	const data = zodParseOrError(findSchema, params, response);
 	if (!data) return;
@@ -124,7 +124,7 @@ export abstract class CR extends CRUDBase {
 
 		const createSchema = this.getSchemaCreate();
 		if (!createSchema) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		const data = zodParseOrError(createSchema, request.body, response);
 		if (!data) return;
@@ -141,7 +141,7 @@ export abstract class CR extends CRUDBase {
 	// We don't allow delete using params in the body by default.
 	@AuthenticatedAdmin
 	async auth_DELETE(_request: ApiRequest, response: ApiResponse) {
-		return response.notFound();
+		response.notFound();
 	}
 
 	async getRetrieveWhere(_request: ApiRequest): Promise<any> {
@@ -163,7 +163,7 @@ export abstract class CR extends CRUDBase {
 			return;
 		}
 		if (!this.getSchema().delete) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		const item = await this.findItem(request, response);
 		if (response.writableEnded) {
@@ -171,7 +171,7 @@ export abstract class CR extends CRUDBase {
 		}
 		const delete_error = await this.DELETE_disallowed(item, request);
 		if (delete_error) {
-			return response.error(HttpCodes.MethodNotAllowed, delete_error);
+			response.error(HttpCodes.MethodNotAllowed, delete_error); return;
 		}
 		await item.destroy();
 		await this.onMutation(item, MutationOperation.DELETE);
@@ -232,7 +232,7 @@ export abstract class UD extends CRUDBase {
 		}
 		const updateSchema = this.getSchemaUpdate();
 		if (!updateSchema) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		const item = await this.findItem(request, response);
 		if (response.writableEnded) {
@@ -240,7 +240,7 @@ export abstract class UD extends CRUDBase {
 		}
 		const update_error = this.UPDATE_disallowed(item);
 		if (update_error) {
-			return response.error(HttpCodes.MethodNotAllowed, update_error);
+			response.error(HttpCodes.MethodNotAllowed, update_error); return;
 		}
 		const data = zodParseOrError(updateSchema, request.body, response);
 		if (!data) return;
@@ -269,7 +269,7 @@ export abstract class UD extends CRUDBase {
 			return;
 		}
 		if (!this.getSchema().delete) {
-			return response.notFound();
+			response.notFound(); return;
 		}
 		const item = await this.findItem(request, response);
 		if (response.writableEnded) {
@@ -277,7 +277,7 @@ export abstract class UD extends CRUDBase {
 		}
 		const delete_error = await this.DELETE_disallowed(item, request);
 		if (delete_error) {
-			return response.error(HttpCodes.MethodNotAllowed, delete_error);
+			response.error(HttpCodes.MethodNotAllowed, delete_error); return;
 		}
 		item.CRUDDestroy ? await item.CRUDDestroy() : await item.destroy();
 		await this.onMutation(item, MutationOperation.DELETE);
