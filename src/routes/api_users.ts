@@ -27,7 +27,7 @@ export class ApiUsersList extends CR {
             readOb.lastSeenChannelName = channelNameCache.get(readOb.lastSeenChannel);
             if (!channelNameCache.has(readOb.lastSeenChannel)) {
                 const channel = await Channel.findByPk(readOb.lastSeenChannel);
-                if (channel) channelNameCache.set(readOb.lastSeenChannel, channel?.name);
+                if (channel) channelNameCache.set(readOb.lastSeenChannel, channel.name);
                 readOb.lastSeenChannelName = channel?.name
             }
         }
@@ -38,6 +38,6 @@ export class ApiUsersList extends CR {
         return ['roles'];
     }
     override async findAllWhere() {
-        return Promise.resolve({ bot: false });
+        return Promise.resolve({ bot: false, left: false });
     }
 }
