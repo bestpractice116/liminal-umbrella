@@ -4,7 +4,7 @@ export const up = async (uz: MigrationParams<any>) => {
     const sq = uz.context.sequelize;
     const qi = uz.context.sequelize.getQueryInterface();
     await sq.transaction(async (transaction: any) => {
-        await sq.query('DELETE FROM botmessage WHERE name IN ("NEW_USER_GREETING", "USER_NO_NAME_CHANGE_KICK")', { raw: true, transaction });
+        await sq.query('DELETE FROM botmessages WHERE name IN ("NEW_USER_GREETING", "USER_NO_NAME_CHANGE_KICK")', { raw: true, transaction });
         await qi.bulkInsert(
             'botmessages',
             [
