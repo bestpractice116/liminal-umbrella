@@ -3,16 +3,16 @@ import { Attribute, NotNull, PrimaryKey, Index, Unique } from '@sequelize/core/d
 import User from './User.js';
 
 export default class GreetingMessage extends Model<InferAttributes<GreetingMessage>, InferCreationAttributes<GreetingMessage>> {
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	@PrimaryKey
-	declare messageId: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    @PrimaryKey
+    declare messageId: string;
 
-	@Attribute(DataTypes.STRING)
-	@Unique
-	@Index
-	declare userId?: string;
+    @Attribute(DataTypes.STRING)
+    @Unique
+    @Index
+    declare userId?: string;
 
-	declare user: NonAttribute<User>;
-	declare getUser: HasOneGetAssociationMixin<User>;
+    declare user: NonAttribute<User>;
+    declare getUser: HasOneGetAssociationMixin<User>;
 }

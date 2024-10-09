@@ -4,20 +4,20 @@ import { ActivityType } from 'common/schema';
 
 @Table({ tableName: 'activities' })
 export default class Activity extends Model<InferAttributes<Activity>, InferCreationAttributes<Activity>> {
-	@Attribute(DataTypes.INTEGER)
-	@PrimaryKey
-	@AutoIncrement
-	declare key: number | null;
+    @Attribute(DataTypes.INTEGER)
+    @PrimaryKey
+    @AutoIncrement
+    declare key: number | null;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	@Unique
-	declare name: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    @Unique
+    declare name: string;
 
-	@Attribute(DataTypes.ENUM('playing', 'streaming', 'listening', 'watching'))
-	@NotNull
-	declare type: ActivityType;
+    @Attribute(DataTypes.ENUM('playing', 'streaming', 'listening', 'watching'))
+    @NotNull
+    declare type: ActivityType;
 
-	@DeletedAt
-	declare deletedAt: Date | null;
+    @DeletedAt
+    declare deletedAt: Date | null;
 }

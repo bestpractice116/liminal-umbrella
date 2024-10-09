@@ -2,54 +2,54 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes } from '@seq
 import { Attribute, NotNull, PrimaryKey, Index } from '@sequelize/core/decorators-legacy';
 
 export default class Message extends Model<InferAttributes<Message>, InferCreationAttributes<Message>> {
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	@PrimaryKey
-	declare id: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    @PrimaryKey
+    declare id: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare authorId: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare authorId: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	@Index
-	declare channelId: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    @Index
+    declare channelId: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare applicationId: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare applicationId: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare type: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare type: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare content: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare content: string;
 
-	@Attribute(DataTypes.BIGINT)
-	@NotNull
-	declare createdTimestamp: number;
+    @Attribute(DataTypes.BIGINT)
+    @NotNull
+    declare createdTimestamp: number;
 
-	@Attribute(DataTypes.BIGINT)
-	declare editedTimestamp: number | null;
+    @Attribute(DataTypes.BIGINT)
+    declare editedTimestamp: number | null;
 
-	@Attribute(DataTypes.BOOLEAN)
-	@NotNull
-	declare hasThread: boolean;
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare hasThread: boolean;
 
-	@Attribute(DataTypes.STRING)
-	declare threadId: string | null;
+    @Attribute(DataTypes.STRING)
+    declare threadId: string | null;
 
-	@Attribute(DataTypes.BIGINT)
-	@NotNull
-	declare embedCount: number;
+    @Attribute(DataTypes.BIGINT)
+    @NotNull
+    declare embedCount: number;
 
-	@Attribute(DataTypes.BOOLEAN)
-	@NotNull
-	declare pinned: boolean;
-	/*
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare pinned: boolean;
+    /*
     @Attribute(DataTypes. BOOLEAN)
     @NotNull
     declare system: boolean;

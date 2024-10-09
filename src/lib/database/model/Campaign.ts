@@ -7,36 +7,36 @@ import User from './User.js';
 import GameSystem from './GameSystem.js';
 
 export default class Campaign extends Model<InferAttributes<Campaign>, InferCreationAttributes<Campaign>> {
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	@PrimaryKey
-	declare key: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    @PrimaryKey
+    declare key: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare name: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare name: string;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare dmUser: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare dmUser: string;
 
-	@BelongsTo(() => User, 'dmUser')
-	declare dmUserOb?: NonAttribute<User>;
-	declare getDmUserOb: BelongsToGetAssociationMixin<User>;
+    @BelongsTo(() => User, 'dmUser')
+    declare dmUserOb?: NonAttribute<User>;
+    declare getDmUserOb: BelongsToGetAssociationMixin<User>;
 
-	@Attribute(DataTypes.STRING)
-	@Unique
-	@NotNull
-	declare roleKey: string;
+    @Attribute(DataTypes.STRING)
+    @Unique
+    @NotNull
+    declare roleKey: string;
 
-	//@BelongsTo(() => Role, 'role')
-	//declare roleOb?: NonAttribute<Role>;
-	//declare getRoleOb: BelongsToGetAssociationMixin<Role>;
+    //@BelongsTo(() => Role, 'role')
+    //declare roleOb?: NonAttribute<Role>;
+    //declare getRoleOb: BelongsToGetAssociationMixin<Role>;
 
-	@Attribute(DataTypes.STRING)
-	@NotNull
-	declare gamesystemKey: string;
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare gamesystemKey: string;
 
-	declare gamesystem?: NonAttribute<GameSystem>;
-	declare getGamesystem: BelongsToGetAssociationMixin<GameSystem>;
+    declare gamesystem?: NonAttribute<GameSystem>;
+    declare getGamesystem: BelongsToGetAssociationMixin<GameSystem>;
 }
