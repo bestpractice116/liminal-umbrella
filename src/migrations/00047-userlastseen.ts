@@ -1,4 +1,3 @@
-import { DataTypes } from '@sequelize/core';
 import type { MigrationParams } from 'umzug';
 
 export const up = async (uz: MigrationParams<any>) => {
@@ -47,6 +46,7 @@ export const up = async (uz: MigrationParams<any>) => {
         await sq.query('INSERT INTO eventinterests SELECT * FROM _eventinterests_old', { raw: true, transaction });
         await sq.query('DROP TABLE _eventinterests_old', { raw: true, transaction });
 
+        await sq.query('update users set lastSeenMessage = "0" where lastSeenMessage IS NULL');
         await qi.changeColumn(
             'users',
             'lastSeenChannel',
