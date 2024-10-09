@@ -4770,13 +4770,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builtin-modules@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "builtin-modules@npm:1.1.1"
-  checksum: 10c0/58d72ea7f59db3c2ae854e1058d85b226f75ff7386d0f71d628e25a600383fc6652af218e20ba2361925c605a4144590ceb890dfdca298fdf8f3d040c0591a23
-  languageName: node
-  linkType: hard
-
 "cacache@npm:^15.2.0":
   version: 15.3.0
   resolution: "cacache@npm:15.3.0"
@@ -4899,7 +4892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+"chalk@npm:^2.1.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -5150,7 +5143,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.12.1, commander@npm:^2.19.0, commander@npm:^2.20.0":
+"commander@npm:^2.19.0, commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
   checksum: 10c0/74c781a5248c2402a0a3e966a0a2bba3c054aad144f5c023364be83265e796b20565aa9feff624132ff629aa64e16999fa40a743c10c12f7c61e96a794b99288
@@ -5789,22 +5782,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:5.0.0":
-  version: 5.0.0
-  resolution: "eslint-plugin-prettier@npm:5.0.0"
+"eslint-plugin-prettier@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "eslint-plugin-prettier@npm:5.2.1"
   dependencies:
     prettier-linter-helpers: "npm:^1.0.0"
-    synckit: "npm:^0.8.5"
+    synckit: "npm:^0.9.1"
   peerDependencies:
     "@types/eslint": ">=8.0.0"
     eslint: ">=8.0.0"
+    eslint-config-prettier: "*"
     prettier: ">=3.0.0"
   peerDependenciesMeta:
     "@types/eslint":
       optional: true
     eslint-config-prettier:
       optional: true
-  checksum: 10c0/7a3641196fc7305c11ed53faae4b69e82bd1d58ba3894d1ac77d68af7ea91c9e2b1fd50e2645f5dc2831bbcb866bb3897a0710c955c0a7fc9918ef4fb7687b97
+  checksum: 10c0/4bc8bbaf5bb556c9c501dcdff369137763c49ccaf544f9fa91400360ed5e3a3f1234ab59690e06beca5b1b7e6f6356978cdd3b02af6aba3edea2ffe69ca6e8b2
   languageName: node
   linkType: hard
 
@@ -6730,7 +6724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.3, glob@npm:^7.1.1, glob@npm:^7.1.3, glob@npm:^7.1.4":
+"glob@npm:^7.0.3, glob@npm:^7.1.3, glob@npm:^7.1.4":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
@@ -8228,7 +8222,7 @@ __metadata:
     dayjs: "npm:^1.11.12"
     discord.js: "npm:^14.14.1"
     eslint: "npm:^9.12.0"
-    eslint-plugin-prettier: "npm:5.0.0"
+    eslint-plugin-prettier: "npm:^5.2.1"
     jest: "npm:^29.7.0"
     limit-concurrency-decorator: "npm:^0.6.0"
     prettier: "npm:^3.3.3"
@@ -8239,8 +8233,6 @@ __metadata:
     ts-jest-resolver: "npm:^2.0.1"
     ts-node: "npm:^10.9.2"
     tsc-watch: "npm:^6.0.4"
-    tslint: "npm:^6.1.3"
-    tslint-config-prettier: "npm:^1.18.0"
     typescript: "npm:^5.6.3"
     typescript-eslint: "npm:^8.8.1"
     umzug: "npm:^3.7.0"
@@ -8856,7 +8848,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:^0.5.1, mkdirp@npm:^0.5.3":
+"mkdirp@npm:^0.5.1":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
   dependencies:
@@ -10808,7 +10800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.14.2, resolve@npm:^1.20.0, resolve@npm:^1.3.2, resolve@npm:~1.22.1":
+"resolve@npm:^1.14.2, resolve@npm:^1.20.0, resolve@npm:~1.22.1":
   version: 1.22.8
   resolution: "resolve@npm:1.22.8"
   dependencies:
@@ -10830,7 +10822,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.3.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>":
   version: 1.22.8
   resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
   dependencies:
@@ -11051,7 +11043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^5.3.0, semver@npm:^5.5.0, semver@npm:^5.6.0":
+"semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.2
   resolution: "semver@npm:5.7.2"
   bin:
@@ -11670,13 +11662,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"synckit@npm:^0.8.5":
-  version: 0.8.8
-  resolution: "synckit@npm:0.8.8"
+"synckit@npm:^0.9.1":
+  version: 0.9.2
+  resolution: "synckit@npm:0.9.2"
   dependencies:
     "@pkgr/core": "npm:^0.1.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/c3d3aa8e284f3f84f2f868b960c9f49239b364e35f6d20825a448449a3e9c8f49fe36cdd5196b30615682f007830d46f2ea354003954c7336723cb821e4b6519
+  checksum: 10c0/e0c262817444e5b872708adb6f5ad37951ba33f6b2d1d4477d45db1f57573a784618ceed5e6614e0225db330632b1f6b95bb74d21e4d013e45ad4bde03d0cb59
   languageName: node
   linkType: hard
 
@@ -11983,55 +11975,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.10.0, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
-  languageName: node
-  linkType: hard
-
-"tslint-config-prettier@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "tslint-config-prettier@npm:1.18.0"
-  bin:
-    tslint-config-prettier-check: bin/check.js
-  checksum: 10c0/64a5e5fa921626c2be5d4e41df5940c478cb844b300edfe8990102e25e2b262491fb3f3841c48a3e465589c5317f3a5cb61889ff175102216662f0d627c9ad07
-  languageName: node
-  linkType: hard
-
-"tslint@npm:^6.1.3":
-  version: 6.1.3
-  resolution: "tslint@npm:6.1.3"
-  dependencies:
-    "@babel/code-frame": "npm:^7.0.0"
-    builtin-modules: "npm:^1.1.1"
-    chalk: "npm:^2.3.0"
-    commander: "npm:^2.12.1"
-    diff: "npm:^4.0.1"
-    glob: "npm:^7.1.1"
-    js-yaml: "npm:^3.13.1"
-    minimatch: "npm:^3.0.4"
-    mkdirp: "npm:^0.5.3"
-    resolve: "npm:^1.3.2"
-    semver: "npm:^5.3.0"
-    tslib: "npm:^1.13.0"
-    tsutils: "npm:^2.29.0"
-  peerDependencies:
-    typescript: ">=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >=3.0.0-dev || >= 3.1.0-dev || >= 3.2.0-dev || >= 4.0.0-dev"
-  bin:
-    tslint: bin/tslint
-  checksum: 10c0/04717de06d187ee46ffa99e28af80f1b5a2edbec051e32b43ca681da625a61e94e5eb9ebb638fafe07975fb3536760ffd772f76c57134db723a9ecff6aeac380
-  languageName: node
-  linkType: hard
-
-"tsutils@npm:^2.29.0":
-  version: 2.29.0
-  resolution: "tsutils@npm:2.29.0"
-  dependencies:
-    tslib: "npm:^1.8.1"
-  peerDependencies:
-    typescript: ">=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >= 3.0.0-dev || >= 3.1.0-dev"
-  checksum: 10c0/e37794513526dbf1cf960414d0a65b956ad319dbc93171bccfe08e3fece1eea35b4e130153f41d917a0f28ecac04f3ca78e9a99c4bddc64a5f225925abc0cf14
   languageName: node
   linkType: hard
 

@@ -17,6 +17,16 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    "plugins": {
+      "prettier": {
+        "tabWidth": 2,
+        "useTabs": false,
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "all",
+        "printWidth": 110
+      }
+    },
     "rules": {
       "@typescript-eslint/naming-convention": [
         "error",
@@ -51,18 +61,7 @@ export default tseslint.config(
           "caughtErrorsIgnorePattern": "^_"
         }
       ],
-      "prettier/prettier": [
-        "error",
-        {
-          "tabWidth": 2,
-          "useTabs": false,
-          "semi": false,
-          "singleQuote": true,
-          "trailingComma": "all",
-          "printWidth": 110
-        }
-      ]
-    }
+    },
   },
   {
     files: ['**/*.js'],
