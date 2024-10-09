@@ -46,7 +46,7 @@ export const up = async (uz: MigrationParams<any>) => {
         await sq.query('INSERT INTO eventinterests SELECT * FROM _eventinterests_old', { raw: true, transaction });
         await sq.query('DROP TABLE _eventinterests_old', { raw: true, transaction });
 
-        await sq.query('update users set lastSeenMessage = "0" where lastSeenMessage IS NULL');
+        await sq.query('update users set lastSeenMessage = "0" where lastSeenMessage IS NULL', { raw: true, transaction });
         await qi.changeColumn(
             'users',
             'lastSeenChannel',
