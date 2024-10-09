@@ -174,22 +174,20 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         if (message.createdAt < this.lastSeenTime) return;
         const messageLink = message.hasThread ? `https://discord.com/channels/${container.guildId}/${message.thread!.id}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
         console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${message.createdAt}`);
-        this.set({
+        const updates: Record<string, string | undefined | Date > = {
             lastSeenTime: message.createdAt,
-            lastSeenMessage: message.id,
-        });
+            lastSeenMessage: message.id
+        };
+            
         if (message.hasThread) {
-            this.set({
-                lastSeenChannel: undefined,
-                lastSeenThread: message.thread!.id
-            });
+            updates.lastSeenChannel = undefined;
+            updates.lastSeenThread = message.thread!.id;
         } else {
-            this.set({
-                lastSeenChannel: message.channelId,
-                lastSeenThread: undefined
-            });
+            updates.lastSeenChannel = message.channelId;
+            updates.lastSeenThread = undefined;
         }
-
+        console.log(`updates ${JSON.stringify(updates)}`);
+        this.set(updates);
         return this.save();
     }
 
