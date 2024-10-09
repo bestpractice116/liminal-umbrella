@@ -1,4 +1,4 @@
-import { Sequelize, importModels, DataTypes, TransactionType, Op, CreationAttributes } from '@sequelize/core';
+import { Sequelize, importModels, DataTypes, TransactionType, Op, CreationAttributes, Transaction, IsolationLevel } from '@sequelize/core';
 import { container } from '@sapphire/framework';
 import { Umzug, SequelizeStorage } from 'umzug';
 import * as path from 'path';
@@ -145,12 +145,13 @@ export default class Database {
 
     async greetingMessageAdd(message: DiscordMessage, user: User): Promise<void> {
         const db = await this.getdb();
-        await db.transaction(async () => {
+        await db.transaction(async (transaction) => {
             await GreetingMessage.findOrCreate({
                 where: { userId: user.key },
-                defaults: { userId: user.key, messageId: message.id }
+                defaults: { userId: user.key, messageId: message.id },
+                transaction
             });
-            await user.updateLastSeenFromMessage(message);
+            await user.updateLastSeenFromMessage(transaction, message);
         });
     }
 
@@ -476,18 +477,18 @@ export default class Database {
         if (dbMessage) await dbMessage.destroy();
     }
 
-    async indexMessage(msg: DiscordMessage) {
+    async indexMessage(transaction: Transaction, msg: DiscordMessage) {
         if (!this.usersLastSeen.has(msg.author.id) || (this.usersLastSeen.get(msg.author.id) || START_OF_TIME) < msg.createdAt) {
-            const user = await User.findOne({ where: { key: msg.author.id } });
+            const user = await User.findOne({ where: { key: msg.author.id }, transaction });
             if (user && !user.bot) {
-                await user.updateLastSeenFromMessage(msg);
+                await user.updateLastSeenFromMessage(transaction, msg);
             }
             this.usersLastSeen.set(msg.author.id, msg.createdAt);
         }
         if (!this.indexedChannels.has(msg.channel.id)) {
             return;
         }
-        const dbMessage = await Message.findOne({ where: { id: msg.id } });
+        const dbMessage = await Message.findOne({ where: { id: msg.id }, transaction });
         if (dbMessage) {
             if (
                 (!dbMessage.editedTimestamp && msg.editedTimestamp) ||
@@ -503,7 +504,7 @@ export default class Database {
                 }
                 dbMessage.embedCount = msg.embeds.length;
                 dbMessage.pinned = msg.pinned;
-                await dbMessage.save();
+                await dbMessage.save({transaction});
                 this.events.emit('messageUpdated', new MessageUpdated(msg, dbMessage));
             }
         } else {
@@ -520,12 +521,12 @@ export default class Database {
                 threadId: msg.thread?.id,
                 embedCount: msg.embeds.length,
                 pinned: msg.pinned
-            });
+            }, {transaction});
             this.events.emit('messageAdded', new MessageAdded(msg, dbMessage));
         }
     }
 
-    async fetchAndStoreMessages(channel: TextBasedChannel, earliest?: Date): Promise<Date> {
+    async fetchAndStoreMessages(transaction: Transaction, channel: TextBasedChannel, earliest?: Date): Promise<Date> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
         console.log(`fetchAndStoreMessages for ${(channel as any).name}`);
         const fetchAmount = 100;
@@ -552,7 +553,7 @@ export default class Database {
                     if (createdTimestamp > latestDateSeen) {
                         latestDateSeen = new Date(msg.createdTimestamp);
                     }
-                    await this.indexMessage(msg);
+                    await this.indexMessage(transaction, msg);
                 }
             }
 
@@ -580,10 +581,12 @@ export default class Database {
             if (channel.synced) {
                 earliest = channel.lastSeenIndexedToDate;
             }
-            await this.db!.transaction(async () => {
-                const lastSeenIndexedToDate = await this.fetchAndStoreMessages(discordChannel, earliest);
+            await this.db!.transaction({
+                isolationLevel: IsolationLevel.SERIALIZABLE,
+              }, async (transaction) => {
+                const lastSeenIndexedToDate = await this.fetchAndStoreMessages(transaction, discordChannel, earliest);
                 channel.set({ lastSeenIndexedToDate, synced: true });
-                await channel.save();
+                await channel.save({transaction});
             });
         }
         if (discordChannel.type === ChannelType.PublicThread) {
@@ -625,8 +628,8 @@ export default class Database {
     }
 
     async syncThread(thread: AnyThreadChannel) {
-        await this.db!.transaction(async () => {
-            const dbThread = await Thread.findByPk(thread.id);
+        await this.db!.transaction(async (transaction) => {
+            const dbThread = await Thread.findByPk(thread.id, {transaction});
             if (
                 dbThread &&
                 dbThread.locked == thread.locked &&
@@ -639,7 +642,7 @@ export default class Database {
                 earliest = dbThread.lastSeenIndexedToDate;
             }
             if (!dbThread || dbThread.archiveTimestamp !== thread.archiveTimestamp || dbThread.lastMessageId !== thread.lastMessageId) {
-                earliest = await this.fetchAndStoreMessages(thread, earliest);
+                earliest = await this.fetchAndStoreMessages(transaction, thread, earliest);
             }
             const threadMetadata: ThreadMeta = {
                 name: thread.name,
@@ -653,11 +656,11 @@ export default class Database {
             };
             if (!dbThread) {
                 const data: ThreadMeta = { key: thread.id, ...threadMetadata };
-                await Thread.create(data as CreationAttributes<Thread>);
+                await Thread.create(data as CreationAttributes<Thread>, {transaction});
             } else {
                 if (Object.keys(threadMetadata).some((key) => threadMetadata[key] !== dbThread.get(key))) {
                     dbThread.set(threadMetadata);
-                    await dbThread.save();
+                    await dbThread.save({transaction});
                 }
             }
         });
