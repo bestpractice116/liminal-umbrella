@@ -35,7 +35,7 @@ import User from './User.js';
 import EventInterest from './EventInterest.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotThread } from '../../discord.js';
-import { GuildScheduledEvent, Message, GuildScheduledEventStatus } from 'discord.js';
+import { GuildScheduledEvent, Message, GuildScheduledEventStatus, DiscordAPIError } from 'discord.js';
 import dayjs from '../../dayjs.js';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
@@ -151,10 +151,10 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
     declare hasSignedupUsers: BelongsToManyHasAssociationsMixin<User, User['key']>;
     declare countSignedupUsers: BelongsToManyCountAssociationsMixin<User>;
 
-    async gameListingsMessageLink(): Promise<string | null> {
+    gameListingsMessageLink(): Promise<string | null> {
         const channel = getGameListingChannel();
-        if (!channel) return null;
-        return `https://discord.com/channels/${container.guildId}/${channel.id}/${this.gameListingsMessageId}`;
+        if (!channel) return Promise.resolve(null);
+        return Promise.resolve(`https://discord.com/channels/${container.guildId}/${channel.id}/${this.gameListingsMessageId}`);
     }
 
     @Attribute(DataTypes.VIRTUAL(DataTypes.STRING, ['eventId']))
@@ -245,8 +245,8 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
         const channel = getGameListingChannel();
         try {
             return (await channel?.messages.fetch(this.gameListingsMessageId)) ?? null;
-        } catch (e: any) {
-            if (e.code === 10008) {
+        } catch (e) {
+            if (e instanceof DiscordAPIError && e.code === 10008) {
                 // 'Unknown Message' - message has already been deleted, skip
                 return null;
             } else {
@@ -271,9 +271,9 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
 
     async getEvent(): Promise<GuildScheduledEvent | null> {
         try {
-            return (await container.guild?.scheduledEvents.fetch(this.get('eventId'))) || null;
-        } catch (e: any) {
-            if (e.code === 10070) {
+            return (await container.guild?.scheduledEvents.fetch(this.get('eventId'))) ?? null;
+        } catch (e) {
+            if (e instanceof DiscordAPIError && e.code === 10070) {
                 // 'Unknown Guild Scheduled Event' - event has already been deleted, skip
                 return null;
             } else {

@@ -17,21 +17,21 @@ import User from './model/User.js';
 import Watermark from './model/Watermark.js';
 
 export {
-	Activity,
-	BotMessage,
-	Campaign,
-	CampaignPlayer,
-	Channel,
-	EventInterest,
-	GameSession,
-	GameSessionUserSignup,
-	GameSystem,
-	GreetingMessage,
-	Message,
-	PlannedGame,
-	Role,
-	RoleMember,
-	Thread,
-	User,
-	Watermark
+    Activity,
+    BotMessage,
+    Campaign,
+    CampaignPlayer,
+    Channel,
+    EventInterest,
+    GameSession,
+    GameSessionUserSignup,
+    GameSystem,
+    GreetingMessage,
+    Message,
+    PlannedGame,
+    Role,
+    RoleMember,
+    Thread,
+    User,
+    Watermark
 };

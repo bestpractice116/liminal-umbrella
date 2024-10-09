@@ -7,7 +7,8 @@ import {
     InferCreationAttributes,
     CreationOptional,
     NonAttribute,
-    BelongsToGetAssociationMixin
+    BelongsToGetAssociationMixin,
+    CreationAttributes
 } from '@sequelize/core';
 import { Attribute, NotNull, PrimaryKey, Index, AutoIncrement, Unique, BelongsTo } from '@sequelize/core/decorators-legacy';
 import GameSystem from './GameSystem.js';
@@ -32,7 +33,6 @@ import {
     ModalSubmitInteraction,
     Message,
     StringSelectMenuInteraction,
-    ChannelType,
     GuildScheduledEventEntityType,
     GuildScheduledEventPrivacyLevel,
     ThreadAutoArchiveDuration,
@@ -223,7 +223,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
         let channelId: string | undefined;
         let gameListingsMessageId: string | undefined;
         let eventId: string | undefined;
-        let gameSessionParams: any;
+        let gameSessionParams: CreationAttributes<GameSession> | undefined;
         try {
             return await db.transaction(async () => {
                 channelId = await this.createGameThread();
@@ -284,7 +284,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
     async postGameListing(): Promise<Snowflake> {
         const channel = getGameListingChannel();
-        if (channel && channel.type == ChannelType.GuildText) {
+        if (channel) {
             const msg = await channel.send(await format(this));
             return msg.id;
         }
@@ -293,7 +293,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
     async createGameThread(): Promise<Snowflake> {
         const gamesystem = await this.getGamesystemOb();
-        const channel = await getOneShotsChannel();
+        const channel = getOneShotsChannel();
         const possibleTags = channel!.availableTags;
         const tag = possibleTags.find((tag) => tag.name == gamesystem?.tag);
         if (!tag) {
@@ -365,7 +365,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
         return false;
     }
 
-    async countSignedupUsers(): Promise<number> {
-        return 0;
+    countSignedupUsers(): Promise<number> {
+        return Promise.resolve(0);
     }
 }

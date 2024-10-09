@@ -32,7 +32,7 @@ import {
 import GreetingMessage from './database/model/GreetingMessage.js';
 import { arrayStrictEquals } from '@sapphire/utilities';
 import { Sequential, sleep } from './utils.js';
-import { CustomEvents } from './events.js';
+import { CUSTOM_EVENTS } from './events.js';
 import { getGuildMemberById } from './discord.js';
 import { END_OF_TIME, START_OF_TIME } from './dates.js';
 
@@ -698,7 +698,7 @@ export default class Database {
         });
         if (!created) return;
         this.events.emit(
-            CustomEvents.UserInterestedInEvent,
+            CUSTOM_EVENTS.UserInterestedInEvent,
             new UserInterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
         );
     }
@@ -713,7 +713,7 @@ export default class Database {
         if (!eventInterest) return;
         await eventInterest.destroy();
         this.events.emit(
-            CustomEvents.UserDisinterestedInEvent,
+            CUSTOM_EVENTS.UserDisinterestedInEvent,
             new UserDisinterestedInEvent(guildScheduledEvent.id, guildScheduledEvent, user.id, user, eventInterest)
         );
     }
