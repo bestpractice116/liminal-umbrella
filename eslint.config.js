@@ -1,24 +1,34 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
-  ...tseslint.configs.recommendedTypeChecked,
+export default [
+  ...tseslint.config(
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    ...tseslint.configs.strictTypeChecked,
+    ...tseslint.configs.stylisticTypeChecked,
+    ...tseslint.configs.recommendedTypeChecked,
+  ),
   {
-    ignores: ["**/node_modules/", ".git/", "**/dist/", ".yarn/"],
     languageOptions: {
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+      globals: {
+        module: true,
+        require: true,
+        process: true,
+        __dirname: true,
+        exports: true,
+        global: true,
+      }
     },
     "plugins": {
       "prettier": {
       },
     },
+    ignores: ["**/node_modules/", ".git/", "**/dist/", ".yarn/"],
     "rules": {
       "@typescript-eslint/naming-convention": [
         "error",
@@ -44,6 +54,9 @@ export default tseslint.config(
           ]
         }
       ],
+      // note you must disable the base rule
+      // as it can report incorrect errors
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -53,21 +66,10 @@ export default tseslint.config(
           "caughtErrorsIgnorePattern": "^_"
         }
       ],
-      // note you must disable the base rule
-      // as it can report incorrect errors
-      "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "warn", // or "error"
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "caughtErrorsIgnorePattern": "^_"
-        }
-      ]
     },
   },
   {
-    files: ['**/*.js'],
+    files: ['**/*.js', 'eslint.config.mjs', 'jest.config.cjs'],
     ...tseslint.configs.disableTypeChecked,
   },
-);
+];

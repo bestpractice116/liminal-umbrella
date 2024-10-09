@@ -19,7 +19,8 @@
         "skipLibCheck": true
     },
     "allowDefaultProject": [
-        "eslint.config.mjs"
+        "eslint.config.js",
+        "jest.config.cjs"
     ],
     "defaultProject": "./tsconfig.json",
     "include": [
