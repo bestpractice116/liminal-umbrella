@@ -161,7 +161,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare lastSeenTime: Date;
 
     @Attribute(DataTypes.STRING)
-    @NotNull
     declare lastSeenChannel?: string;
 
     @Attribute(DataTypes.STRING)
@@ -169,7 +168,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     @Attribute(DataTypes.STRING)
     @NotNull
-    declare lastSeenMessage?: string;
+    declare lastSeenMessage: string;
 
     updateLastSeenFromMessage(message: Message) {
         if (message.createdAt < this.lastSeenTime) return;
