@@ -7,35 +7,35 @@ import { RefObject, FC } from 'react';
 export type InputRef = GetRef<typeof Input>;
 
 export interface EditableCellProps<T> {
-	title: React.ReactNode;
-	editable: boolean;
-	dataIndex: keyof T;
-	record: T;
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	handleSave: (record: T, form: FormInstance, _: Function) => void;
+    title: React.ReactNode;
+    editable: boolean;
+    dataIndex: keyof T;
+    record: T;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    handleSave: (record: T, form: FormInstance, _: Function) => void;
 }
 
 export type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 export type ColumnTypeArray = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export type SaveHandler<Item> = (row: Item, form: RefObject<FormInstance>, toggleEdit: Function) => boolean;
 export type DefaultColumns = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
 
 export interface Item {
-	key: string;
-	name: string;
+    key: string;
+    name: string;
 }
 
 export interface EditableRowProps {
-	index: number;
+    index: number;
 }
 
 export interface TableComponents {
-	body: {
-		row: FC<EditableRowProps>;
-		cell: FC<EditableCellProps<Item>>;
-	};
+    body: {
+        row: FC<EditableRowProps>;
+        cell: FC<EditableCellProps<Item>>;
+    };
 }
 
 export type QueryKeyElement = string | number;

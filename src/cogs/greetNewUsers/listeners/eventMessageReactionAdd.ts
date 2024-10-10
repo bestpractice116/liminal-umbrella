@@ -44,6 +44,8 @@ export class verboseLogBotStartedListener extends Listener {
         if (r.message.channel.type !== ChannelType.GuildText) return;
         if (r.message.channel.name !== greetingChannelName) return;
 
+        console.log('In eventMessageReactionAdd')
+
         const getRoles = async (key: string) => {
             const u = await User.findOne({
                 where: { key },
@@ -51,12 +53,13 @@ export class verboseLogBotStartedListener extends Listener {
                 include: ['roles']
             });
             if (!u || u.left || u.bot) return false;
-            return u.roles || [];
+            return u.roles ?? [];
         };
 
         let kickUser = false;
         let admitMember = false;
         for (const userId of (await r.users.fetch()).keys()) {
+
             const roles = await getRoles(userId);
             if (!roles) continue; // Skip reactions from bots
             // Remove any non-Admin reacts
@@ -65,12 +68,13 @@ export class verboseLogBotStartedListener extends Listener {
             if (r.emoji.name === '❌') kickUser = true;
             if (r.emoji.name === '✅') admitMember = true;
         }
+        console.log('kickUser', kickUser, 'admitMember', admitMember)
         if (!kickUser && !admitMember) return;
 
         // Find the message in the DB that was reacted to, and from that find the user who's greeting message it was
         const messageId = r.message.id;
         const greeting = await GreetingMessage.findOne({ include: ['user'], where: { messageId } });
-
+        console.log('greeting', greeting)
         if (!greeting) return;
         const dbUser = greeting.user;
         const roles = await getRoles(dbUser.key);
@@ -93,6 +97,7 @@ export class verboseLogBotStartedListener extends Listener {
             });
         }
         if (admitMember) {
+            console.log('Doing admitMember')
             const dbRole = await Role.findOne({ where: { name: 'Member' } });
             if (!dbRole) return;
             await guildMember.roles.add(dbRole.key);
