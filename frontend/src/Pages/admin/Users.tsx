@@ -43,7 +43,7 @@ const RenderLastSeen = ({lastSeenTime, record}: {lastSeenTime: string, record: a
 
     return <>
             {seen}
-            {record.lastSeenChannelName ? <>&nbsp;in {record.lastSeenChannelName}</> : null}
+            {record.lastSeenChannelName ? <>&nbsp;in #{record.lastSeenChannelName}</> : null}
             {record.lastSeenChannel ? <>&nbsp;<a href={record.lastSeenLink} target="_blank"><LinkOutlined /></a></> : null}
         </>
 }
