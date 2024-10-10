@@ -22,6 +22,7 @@ import GreetingMessage from './GreetingMessage.js';
 import { ChannelType, GuildMember, Message } from 'discord.js';
 import Campaign from './Campaign.js';
 import CampaignPlayer from './CampaignPlayer.js';
+import { START_OF_TIME } from '../../dates.js';
 import { container } from '@sapphire/framework';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -129,8 +130,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         return User.create({
             key: guildMember.id,
             ...User.userDataFromGuildMember(guildMember),
-            lastSeenTime: new Date(Date.now()),
-            lastSeenChannel: 'unknown',
+            lastSeenTime: START_OF_TIME,
             lastSeenMessage: 'unknown'
         });
     }

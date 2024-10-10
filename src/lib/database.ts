@@ -211,9 +211,11 @@ export default class Database {
     }
 
     async guildMemberAdd(guildMember: GuildMember) {
+        console.log(`Find user by PK ${guildMember.id}`)
         let user = await User.findByPk(guildMember.id);
         let exMember = true;
         if (!user) {
+            console.log('No user - create')
             user = await User.createFromGuildMember(guildMember);
             exMember = false;
         } else {
