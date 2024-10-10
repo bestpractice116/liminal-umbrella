@@ -81,6 +81,8 @@ export function AdminUsers() {
             dataIndex: 'nickname',
             editable: false,
             ellipsis: true,
+            defaultSortOrder: 'ascend',
+            sorter: (a, b) => a.nickname.toUpperCase() < b.nickname.toUpperCase() ? -1 : a.nickname.toUpperCase() > b.nickname.toUpperCase() ? 1 : 0,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             render: (nickname, record) => <RenderNickname nickname={nickname} record={record} />
         },
@@ -88,19 +90,23 @@ export function AdminUsers() {
             title: 'Name',
             dataIndex: 'name',
             editable: false,
-            ellipsis: true
+            ellipsis: true,
+            sorter: (a, b) => a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0,
         },
         {
             title: 'Username',
             dataIndex: 'username',
             editable: false,
-            ellipsis: true
+            ellipsis: true,
+            sorter: (a, b) => a.username.toUpperCase() < b.username.toUpperCase() ? -1 : a.username.toUpperCase() > b.username.toUpperCase() ? 1 : 0,
+
         },
         {
             title: 'Last seen',
             dataIndex: 'lastSeenTime',
             editable: false,
-            render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />
+            render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />,
+            sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
         },
         {
             title: 'Roles',
