@@ -179,7 +179,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
             lastSeenThread = message.channel.id
         }
         const messageLink = lastSeenThread ? `https://discord.com/channels/${container.guildId}/${lastSeenThread}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
-        console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${message.createdAt}`);
+        console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${this.lastSeenTime} to ${message.createdAt}`);
         const updates: Record<string, string | null | Date > = {
             lastSeenTime: message.createdAt,
             lastSeenMessage: message.id,
