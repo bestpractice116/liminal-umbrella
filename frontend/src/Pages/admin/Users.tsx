@@ -5,10 +5,9 @@ import { Spin } from '../../components/Spin';
 import Tag from 'antd/es/tag';
 import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
-import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
+import { LinkOutlined} from '@ant-design/icons';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import Button from 'antd/es/button';
-import Input from 'antd/es/input';
 import Space from 'antd/es/space';
 import Slider, { SliderSingleProps } from 'antd/es/slider';
 import { useState } from 'react';
@@ -78,7 +77,6 @@ export function AdminUsers() {
     const { isUpdating, handleUpdate } = useFormHandlers('/api/user', 'user');
     const defaultLastSeen = 12;
     const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
-    const [doLastSeenFilter, setDoLastSeenFilter] = useState(false);
 
     console.log(`lastSeenFilter: ${lastSeenFilter} doLastSeenFilter: ${doLastSeenFilter}`);
 
@@ -90,7 +88,7 @@ export function AdminUsers() {
                 <Button
                     type="primary"
                     onClick={() => {
-                        setDoLastSeenFilter(true);
+                        setSelectedKeys(['lastseen', ...selectedKeys])
                         confirm({closeDropdown: true})
                     }}
                     size="small"
@@ -99,7 +97,7 @@ export function AdminUsers() {
                     Filter
                 </Button>
                 <Button
-                    onClick={() => { setLastSeenFilter(defaultLastSeen); setDoLastSeenFilter(false); if (clearFilters) { clearFilters() }; }}
+                    onClick={() => { setLastSeenFilter(defaultLastSeen); setSelectedKeys(selectedKeys.filter(key => key !== 'lastseen')); if (clearFilters) { clearFilters() }; }}
                     size="small"
                     style={{ width: 90 }}
 
@@ -161,7 +159,7 @@ export function AdminUsers() {
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
             filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />,
             onFilter: (value, record) => {
-                console.log(`Record last seen ${(new Date(record.lastSeenTime)).getTime()} value ${Date.now() - (value * 365/12 * 24 * 60 * 60 * 1000)}`)
+                console.log(`Record last seen ${(new Date(record.lastSeenTime)).getTime()} value ${Date.now() - (value as number * 365/12 * 24 * 60 * 60 * 1000)}`)
                 return (new Date(record.lastSeenTime)).getTime() < (Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000))
             },
             filteredValue: doLastSeenFilter ? [lastSeenFilter] : [],
