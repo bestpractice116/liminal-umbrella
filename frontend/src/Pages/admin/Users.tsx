@@ -5,7 +5,11 @@ import { Spin } from '../../components/Spin';
 import Tag from 'antd/es/tag';
 import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
-import { LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
+import { FilterDropdownProps } from 'antd/es/table/interface';
+import Button from 'antd/es/button';
+import Input from 'antd/es/input';
+import Space from 'antd/es/space';
 
 interface UserFragment {
     roles: RoleFragment[];
@@ -16,6 +20,7 @@ interface RoleFragment {
     position: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RenderNickname = ({nickname, record}: {nickname: string, record: any}) => {
     const uf = record as UserFragment;
     const roles = uf.roles
@@ -63,6 +68,54 @@ const RenderRoles = ({roles, record}: {roles: { name: string; hexColor: string }
             </span>
         ))
 
+const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
+    console.log(setSelectedKeys, selectedKeys, confirm, clearFilters, close);
+    return (<div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
+<Input
+  placeholder={`Search foo`}
+  value={selectedKeys[0]}
+  onChange={(e) => { setSelectedKeys(e.target.value ? [e.target.value] : []); }}
+  style={{ marginBottom: 8, display: 'block' }}
+/>
+<Space>
+  <Button
+    type="primary"
+    onClick={() => {}}
+    icon={<SearchOutlined />}
+    size="small"
+    style={{ width: 90 }}
+  >
+    Search
+  </Button>
+  <Button
+    onClick={() => {}}
+    size="small"
+    style={{ width: 90 }}
+  >
+    Reset
+  </Button>
+  <Button
+    type="link"
+    size="small"
+    onClick={() => {
+      confirm({ closeDropdown: false });
+    }}
+  >
+    Filter
+  </Button>
+  <Button
+    type="link"
+    size="small"
+    onClick={() => {
+      close();
+    }}
+  >
+    close
+  </Button>
+</Space>
+</div>)
+};
+
 export function AdminUsers() {
     const components = useTableComponents(UserSchema);
     const result = useFetchQuery<UserListItem[]>('/api/user', 'user');
@@ -84,7 +137,7 @@ export function AdminUsers() {
             defaultSortOrder: 'ascend',
             sorter: (a, b) => a.nickname.toUpperCase() < b.nickname.toUpperCase() ? -1 : a.nickname.toUpperCase() > b.nickname.toUpperCase() ? 1 : 0,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            render: (nickname, record) => <RenderNickname nickname={nickname} record={record} />
+            render: (nickname: string, record: any) => <RenderNickname nickname={nickname} record={record as UserListItem} />
         },
         {
             title: 'Name',
@@ -107,13 +160,20 @@ export function AdminUsers() {
             editable: false,
             render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />,
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
+            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />
         },
         {
             title: 'Roles',
             dataIndex: 'roles',
             editable: false,
             ellipsis: true,
-            render: (roles, record) => <RenderRoles roles={roles} record={record} />
+            render: (roles, record) => <RenderRoles roles={roles} record={record} />,
+            onFilter: (value, record) => {
+                const roleNames = record.roles.map((role: { name: any; }) => role.name);
+                return value === 'Not Known Member' ? !roleNames.includes('Known Member') : roleNames.includes('Known Member')
+            },
+            filterMultiple: false,
+            filters: ['Not Known Member', 'Known Member'].map((val: string) => {return {text: val, value: val}}),
         }
     ];
 
