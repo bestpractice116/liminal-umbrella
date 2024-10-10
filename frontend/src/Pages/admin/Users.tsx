@@ -78,7 +78,7 @@ export function AdminUsers() {
     const defaultLastSeen = 12;
     const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
 
-    console.log(`lastSeenFilter: ${lastSeenFilter} doLastSeenFilter: ${doLastSeenFilter}`);
+    console.log(`lastSeenFilter: ${lastSeenFilter}`);
 
     const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
         return (
@@ -162,7 +162,7 @@ export function AdminUsers() {
                 console.log(`Record last seen ${(new Date(record.lastSeenTime)).getTime()} value ${Date.now() - (value as number * 365/12 * 24 * 60 * 60 * 1000)}`)
                 return (new Date(record.lastSeenTime)).getTime() < (Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000))
             },
-            filteredValue: doLastSeenFilter ? [lastSeenFilter] : [],
+            //filteredValue: lastSeenFilter
         },
         {
             title: 'Roles',
