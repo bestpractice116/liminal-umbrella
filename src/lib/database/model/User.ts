@@ -19,7 +19,7 @@ import PlannedGame from './PlannedGame.js';
 import GameSession from './GameSession.js';
 import EventInterest from './EventInterest.js';
 import GreetingMessage from './GreetingMessage.js';
-import { GuildMember, Message } from 'discord.js';
+import { ChannelType, GuildMember, Message } from 'discord.js';
 import Campaign from './Campaign.js';
 import CampaignPlayer from './CampaignPlayer.js';
 import { container } from '@sapphire/framework';
@@ -172,21 +172,20 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     updateLastSeenFromMessage(message: Message) {
         if (message.createdAt < this.lastSeenTime) return;
-        const messageLink = message.hasThread ? `https://discord.com/channels/${container.guildId}/${message.thread!.id}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
-        console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${message.createdAt}`);
-        const updates: Record<string, string | undefined | Date > = {
-            lastSeenTime: message.createdAt,
-            lastSeenMessage: message.id
-        };
-            
-        if (message.hasThread) {
-            updates.lastSeenChannel = undefined;
-            updates.lastSeenThread = message.thread!.id;
-        } else {
-            updates.lastSeenChannel = message.channelId;
-            updates.lastSeenThread = undefined;
+        let lastSeenThread = null;
+        let lastSeenChannel = message.channel.id
+        if (message.channel.type === ChannelType.PublicThread) {
+            lastSeenChannel = message.channel.parent!.id
+            lastSeenThread = message.channel.id
         }
-        console.log(`updates ${JSON.stringify(updates)}`);
+        const messageLink = lastSeenThread ? `https://discord.com/channels/${container.guildId}/${lastSeenThread}/${message.id}` : `https://discord.com/channels/${container.guildId}/${message.channelId}/${message.id}` 
+        console.log(`updateLastSeenFromMessage for user ${this.nickname} (${this.key}) to channelId ${message.channelId} msgId ${message.id} (${messageLink}) from ${message.createdAt}`);
+        const updates: Record<string, string | null | Date > = {
+            lastSeenTime: message.createdAt,
+            lastSeenMessage: message.id,
+            lastSeenThread,
+            lastSeenChannel
+        };
         this.set(updates);
         return this.save();
     }
