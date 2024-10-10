@@ -10,6 +10,8 @@ import { FilterDropdownProps } from 'antd/es/table/interface';
 import Button from 'antd/es/button';
 import Input from 'antd/es/input';
 import Space from 'antd/es/space';
+import Slider, { SliderSingleProps } from 'antd/es/slider';
+import { useState } from 'react';
 
 interface UserFragment {
     roles: RoleFragment[];
@@ -68,58 +70,55 @@ const RenderRoles = ({roles, record}: {roles: { name: string; hexColor: string }
             </span>
         ))
 
-const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
-    console.log(setSelectedKeys, selectedKeys, confirm, clearFilters, close);
-    return (<div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
-<Input
-  placeholder={`Search foo`}
-  value={selectedKeys[0]}
-  onChange={(e) => { setSelectedKeys(e.target.value ? [e.target.value] : []); }}
-  style={{ marginBottom: 8, display: 'block' }}
-/>
-<Space>
-  <Button
-    type="primary"
-    onClick={() => {}}
-    icon={<SearchOutlined />}
-    size="small"
-    style={{ width: 90 }}
-  >
-    Search
-  </Button>
-  <Button
-    onClick={() => {}}
-    size="small"
-    style={{ width: 90 }}
-  >
-    Reset
-  </Button>
-  <Button
-    type="link"
-    size="small"
-    onClick={() => {
-      confirm({ closeDropdown: false });
-    }}
-  >
-    Filter
-  </Button>
-  <Button
-    type="link"
-    size="small"
-    onClick={() => {
-      close();
-    }}
-  >
-    close
-  </Button>
-</Space>
-</div>)
-};
+const formatter: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (value) => `${value} months`;
 
 export function AdminUsers() {
     const components = useTableComponents(UserSchema);
     const result = useFetchQuery<UserListItem[]>('/api/user', 'user');
     const { isUpdating, handleUpdate } = useFormHandlers('/api/user', 'user');
+    const defaultLastSeen = 12;
+    const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
+    const [doLastSeenFilter, setDoLastSeenFilter] = useState(false);
+
+    console.log(`lastSeenFilter: ${lastSeenFilter} doLastSeenFilter: ${doLastSeenFilter}`);
+
+    const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
+        return (
+            <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
+                <Slider min={3} max={24} defaultValue={defaultLastSeen} tooltip={{ formatter }} onChange={(val) => { setLastSeenFilter(val); }}/>
+                <Space>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setDoLastSeenFilter(true);
+                        confirm({closeDropdown: true})
+                    }}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Filter
+                </Button>
+                <Button
+                    onClick={() => { setLastSeenFilter(defaultLastSeen); setDoLastSeenFilter(false); if (clearFilters) { clearFilters() }; }}
+                    size="small"
+                    style={{ width: 90 }}
+
+                >
+                    Reset
+                </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                        close();
+                    }}
+                >
+                    close
+                </Button>
+                </Space>
+            </div>
+        )
+    };
 
     const defaultColumns: DefaultColumns = [
         {
@@ -160,7 +159,12 @@ export function AdminUsers() {
             editable: false,
             render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />,
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
-            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />
+            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />,
+            onFilter: (value, record) => {
+                console.log(`Record last seen ${(new Date(record.lastSeenTime)).getTime()} value ${Date.now() - (value * 365/12 * 24 * 60 * 60 * 1000)}`)
+                return (new Date(record.lastSeenTime)).getTime() < (Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000))
+            },
+            filteredValue: doLastSeenFilter ? [lastSeenFilter] : [],
         },
         {
             title: 'Roles',
