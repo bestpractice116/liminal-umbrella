@@ -9,5 +9,5 @@ export const up = async (uz: MigrationParams<any>) => {
     })
 };
 
-export const down = async (uz: MigrationParams<any>) => {
+export const down = async (_uz: MigrationParams<any>) => {
 };
