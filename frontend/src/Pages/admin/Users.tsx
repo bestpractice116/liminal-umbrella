@@ -77,18 +77,20 @@ export function AdminUsers() {
     const { isUpdating, handleUpdate } = useFormHandlers('/api/user', 'user');
     const defaultLastSeen = 12;
     const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
+    const [doLastSeenFilter, setDoLastSeenFilter] = useState(false);
 
     console.log(`lastSeenFilter: ${lastSeenFilter}`);
 
     const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
         return (
             <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
-                <Slider min={3} max={24} defaultValue={defaultLastSeen} tooltip={{ formatter }} onChange={(val) => { setLastSeenFilter(val); }}/>
+                <Slider min={3} max={24} step={1} defaultValue={lastSeenFilter} tooltip={{ formatter }} onChange={(val) => { setLastSeenFilter(val); }}/>
                 <Space>
                 <Button
                     type="primary"
                     onClick={() => {
-                        setSelectedKeys(['lastseen', ...selectedKeys])
+                        setSelectedKeys(['lastseen', ...selectedKeys]);
+                        setDoLastSeenFilter(true);
                         confirm({closeDropdown: true})
                     }}
                     size="small"
@@ -97,7 +99,13 @@ export function AdminUsers() {
                     Filter
                 </Button>
                 <Button
-                    onClick={() => { setLastSeenFilter(defaultLastSeen); setSelectedKeys(selectedKeys.filter(key => key !== 'lastseen')); if (clearFilters) { clearFilters() }; }}
+                    onClick={() => {
+                        setLastSeenFilter(defaultLastSeen); 
+                        setDoLastSeenFilter(false);
+                        setSelectedKeys(selectedKeys.filter(key => key !== 'lastseen'));
+                        if (clearFilters) { clearFilters() };
+                        close();
+                    }}
                     size="small"
                     style={{ width: 90 }}
 
@@ -159,10 +167,12 @@ export function AdminUsers() {
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
             filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />,
             onFilter: (value, record) => {
-                console.log(`Record last seen ${(new Date(record.lastSeenTime)).getTime()} value ${Date.now() - (value as number * 365/12 * 24 * 60 * 60 * 1000)}`)
-                return (new Date(record.lastSeenTime)).getTime() < (Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000))
+                const recordTime = (new Date(record.lastSeenTime)).getTime();
+                const valTime = Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000);
+                console.log(`Record last seen ${recordTime} val ${valTime} answer ${recordTime < valTime}`);
+                return recordTime < valTime;
             },
-            //filteredValue: lastSeenFilter
+            filteredValue: doLastSeenFilter ? [lastSeenFilter] : [],
         },
         {
             title: 'Roles',
@@ -174,7 +184,7 @@ export function AdminUsers() {
                 const roleNames = record.roles.map((role: { name: any; }) => role.name);
                 return value === 'Not Known Member' ? !roleNames.includes('Known Member') : roleNames.includes('Known Member')
             },
-            filterMultiple: false,
+            filterMultiple: true,
             filters: ['Not Known Member', 'Known Member'].map((val: string) => {return {text: val, value: val}}),
         }
     ];
