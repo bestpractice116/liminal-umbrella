@@ -4,14 +4,16 @@ import Tooltip from 'antd/es/tooltip';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { GameSchema, type GameReadItem } from 'common/schema';
-import { useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFetchQuery, useFormHandlers } from '../../lib/CRUD';
+import { useTableComponents, getColumns, DefaultColumns, WrapCRUD, useFetchQuery, useFormHandlers } from '../../lib/CRUD';
 import { useAuthStatus } from '../../components/Auth';
 import UserRecord from './UserRecord.js';
 import dayjs from '../../lib/dayjs.js';
+import { TableColumnsType } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toolTipValue(value: any, _record: any) {
     return (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         <Tooltip placement="topLeft" title={value}>
             {value}
         </Tooltip>
@@ -25,11 +27,12 @@ export function ViewGames() {
     const result = useFetchQuery<GameReadItem[]>('/api/gamesessions', 'gamesessions');
     const { handleUpdate } = useFormHandlers<GameReadItem>('/api/gamesessions', 'gamesessions');
 
-    const defaultColumns: DefaultColumns = [
+    const defaultColumns: DefaultColumns<GameReadItem> = [
         {
             title: 'Edit',
             dataIndex: 'edit',
             render: (_, record) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 if (new Date(record.starttime) < new Date(Date.now())) return <></>;
                 return (
                     <Link style={{ width: '100%', display: 'inline-block' }} to={`../viewgame/${record.key}`} relative="path">
@@ -66,7 +69,7 @@ export function ViewGames() {
             editable: false,
             ellipsis: true,
             render: (_, record) => {
-                const playerCount = `${(record.signedupplayers || []).length} / ${record.maxplayers}`;
+                const playerCount = `${(record.signedupplayers).length} / ${record.maxplayers}`;
                 return (
                     <Tooltip placement="topLeft" title={playerCount}>
                         {playerCount}
@@ -80,6 +83,7 @@ export function ViewGames() {
             editable: false,
             ellipsis: true,
             render: (_, record) =>
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 toolTipValue(dayjs(record.starttime).format('ddd, MMM D h:mm A - ') + dayjs(record.endtime).format('h:mm A'), record)
         }
     ];
@@ -89,6 +93,7 @@ export function ViewGames() {
             dataIndex: 'owner',
             editable: false,
             ellipsis: true,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             render: (_, record) => <UserRecord user={record.owner} />
         });
     }
@@ -113,7 +118,7 @@ export function ViewGames() {
                         rowClassName={() => 'editable-row'}
                         bordered
                         dataSource={result.data}
-                        columns={columns as ColumnTypes}
+                        columns={columns as TableColumnsType<GameReadItem>}
                     />
                 </>
             </WrapCRUD>

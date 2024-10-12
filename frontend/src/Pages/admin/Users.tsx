@@ -1,12 +1,12 @@
 import ReactTimeAgo from 'react-time-ago'
-
+import type { TableProps } from 'antd';
 import Table from 'antd/es/table';
 import { Spin } from '../../components/Spin';
 import Tag from 'antd/es/tag';
-import { useFetchQuery, useTableComponents, ColumnTypes, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
+import { useFetchQuery, useTableComponents, getColumns, DefaultColumns, WrapCRUD, useFormHandlers } from '../../lib/CRUD';
 import { UserSchema, type UserListItem } from 'common/schema';
 import { LinkOutlined} from '@ant-design/icons';
-import { FilterDropdownProps } from 'antd/es/table/interface';
+import { ColumnsType, FilterDropdownProps } from 'antd/es/table/interface';
 import Button from 'antd/es/button';
 import Space from 'antd/es/space';
 import Slider, { SliderSingleProps } from 'antd/es/slider';
@@ -135,7 +135,19 @@ export function AdminUsers() {
         )
     };
 
-    const defaultColumns: DefaultColumns = [
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const rowSelection: TableProps<UserListItem>['rowSelection'] = {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: UserListItem[]) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        getCheckboxProps: (record: UserListItem) => ({
+          disabled: record.name === 'Disabled User', // Column configuration not to be checked
+          name: record.name,
+        }),
+        type: 'checkbox',
+      };
+
+    const defaultColumns: DefaultColumns<UserListItem> = [
         {
             title: 'Avatar',
             dataIndex: 'avatarURL',
@@ -213,11 +225,12 @@ export function AdminUsers() {
             <>
                 <Spin spinning={isUpdating} />
                 <Table
+                    rowSelection={rowSelection}
                     components={components}
                     rowClassName={() => 'editable-row'}
                     bordered
                     dataSource={result.data}
-                    columns={columns as ColumnTypes}
+                    columns={columns as ColumnsType<UserListItem>}
                 />
             </>
         </WrapCRUD>

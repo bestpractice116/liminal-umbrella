@@ -1,7 +1,7 @@
 import { GetRef } from 'antd/es/_util/type';
 import { FormInstance } from 'antd/es/form';
 import Input from 'antd/es/input';
-import Table from 'antd/es/table';
+import Table, { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { RefObject, FC } from 'react';
 
 export type InputRef = GetRef<typeof Input>;
@@ -16,11 +16,11 @@ export interface EditableCellProps<T> {
 }
 
 export type EditableTableProps = Parameters<typeof Table>[0];
-export type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
-export type ColumnTypeArray = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
+export type ColumnTypes<T> = ColumnGroupType<T> | ColumnType<T>;
+export type ColumnTypeArray<T> = (ColumnTypes<T> & { editable?: boolean; dataIndex: string })[];
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export type SaveHandler<Item> = (row: Item, form: RefObject<FormInstance>, toggleEdit: Function) => boolean;
-export type DefaultColumns = (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
+export type DefaultColumns<T> = (ColumnTypes<T> & { editable?: boolean; dataIndex: string })[];
 
 export interface Item {
     key: string;

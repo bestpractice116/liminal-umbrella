@@ -50,13 +50,13 @@ function UsersSignedUpTable({
             });
         }
     });
-    const columns: DefaultColumns = [
+    const columns: DefaultColumns<AutoCompleteUser> = [
         {
             title: 'Name',
             dataIndex: 'nickname',
             key: 'nickname',
             render: (_, record) => {
-                return <UserRecord user={record as AutoCompleteUser} />;
+                return <UserRecord user={record as unknown as AutoCompleteUser} />;
             },
             ellipsis: true
         }
