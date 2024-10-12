@@ -86,6 +86,7 @@ export function AdminUsers() {
     const defaultLastSeen = 12;
     const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
     const [doLastSeenFilter, setDoLastSeenFilter] = useState(false);
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     console.log(`lastSeenFilter: ${lastSeenFilter}`);
 
@@ -137,15 +138,26 @@ export function AdminUsers() {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const rowSelection: TableProps<UserListItem>['rowSelection'] = {
-        onChange: (selectedRowKeys: React.Key[], selectedRows: UserListItem[]) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        onChange: (selectedRowKeys: React.Key[], _selectedRows: UserListItem[]) => {
+          setSelectedKeys(selectedRowKeys.map(k => `${k}`));
         },
-        getCheckboxProps: (record: UserListItem) => ({
-          disabled: record.name === 'Disabled User', // Column configuration not to be checked
-          name: record.name,
-        }),
+        getCheckboxProps: (record: UserListItem) => {
+            const roleNames = record.roles.map(role => role.name);
+            return {
+                disabled: roleNames.includes('Admin') || roleNames.includes('Patron'), 
+                name: record.key,
+            }
+        },
         type: 'checkbox',
       };
+
+    const tableFooter = () => {
+        const kickDisabled= selectedKeys.length === 0
+        return <>
+        <Button type="primary" danger disabled={kickDisabled} onClick={() => {alert('foo')}}>
+            Kick users
+        </Button>
+    </>}
 
     const defaultColumns: DefaultColumns<UserListItem> = [
         {
@@ -225,12 +237,14 @@ export function AdminUsers() {
             <>
                 <Spin spinning={isUpdating} />
                 <Table
+                    pagination={{ pageSize: 50, pageSizeOptions: [200, 100, 50], defaultPageSize: 100 }}
                     rowSelection={rowSelection}
                     components={components}
                     rowClassName={() => 'editable-row'}
                     bordered
                     dataSource={result.data}
                     columns={columns as ColumnsType<UserListItem>}
+                    footer={tableFooter}
                 />
             </>
         </WrapCRUD>

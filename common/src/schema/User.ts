@@ -3,7 +3,7 @@ import { SchemaBundle } from './types.js';
 import { dayJsCoerce, zodDay } from '../index.js';
 
 const find = z.object({
-    key: z.coerce.number().int().positive()
+    key: z.coerce.number().int().positive().transform((val) => `${val}`)
 });
 const read = find.merge(
     z.object({
