@@ -25,8 +25,10 @@ export function getColumns<Item>(columns: ColumnTypeArray<Item>, handleSave: Sav
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function zodErrorConvertor(data: any): Error | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (data.status && data.status !== 'ok' && data.error) {
         console.error('Error updating data', data);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         return new z.ZodError(data.error);
     }
     return;
