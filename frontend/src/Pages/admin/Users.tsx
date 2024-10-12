@@ -11,6 +11,9 @@ import Button from 'antd/es/button';
 import Space from 'antd/es/space';
 import Slider, { SliderSingleProps } from 'antd/es/slider';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
+import { set } from 'zod';
 
 interface UserFragment {
     roles: RoleFragment[];
@@ -80,6 +83,7 @@ const RenderRoles = ({roles, record}: {roles: { name: string; hexColor: string }
 const formatter: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (value) => `${value} months`;
 
 export function AdminUsers() {
+    const queryClient = useQueryClient();
     const components = useTableComponents(UserSchema);
     const result = useFetchQuery<UserListItem[]>('/api/user', 'user');
     const { isUpdating, handleUpdate } = useFormHandlers('/api/user', 'user');
@@ -87,6 +91,27 @@ export function AdminUsers() {
     const [lastSeenFilter, setLastSeenFilter] = useState(defaultLastSeen);
     const [doLastSeenFilter, setDoLastSeenFilter] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+    const kickUsersMutation = useMutation({
+        mutationFn: (r: string[]) => {
+            return fetch(
+                '/api/user',
+                {
+                    method: FetchMethods.Delete,
+                    body: JSON.stringify(r),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                },
+                FetchResultTypes.JSON
+            ).then((data) => {
+                return queryClient.invalidateQueries({ queryKey: ['user']}).then(() => {
+                    setSelectedKeys([]);
+                    return data;
+                })
+            });
+        }
+    });
 
     console.log(`lastSeenFilter: ${lastSeenFilter}`);
 
@@ -154,7 +179,7 @@ export function AdminUsers() {
     const tableFooter = () => {
         const kickDisabled= selectedKeys.length === 0
         return <>
-        <Button type="primary" danger disabled={kickDisabled} onClick={() => {alert('foo')}}>
+        <Button type="primary" danger disabled={kickDisabled} onClick={() => { kickUsersMutation.mutate(selectedKeys); }}>
             Kick users
         </Button>
     </>}

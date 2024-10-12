@@ -11,3 +11,4 @@ export * from './ActivityCacheClear.js';
 export * from './BotMessageCacheClear.js';
 export * from './UserInterestedInEvent.js';
 export * from './UserDisinterestedInEvent.js';
+export * from './UserWinnow.js'

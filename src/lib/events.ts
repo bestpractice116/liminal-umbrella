@@ -11,7 +11,8 @@ import {
     BotMessageCacheClear,
     UserInterestedInEvent,
     UserDisinterestedInEvent,
-    UserChangedNickname
+    UserChangedNickname,
+    UserWinnow
 } from './events/index.js';
 
 export interface emitterSpec {
@@ -28,6 +29,7 @@ export interface emitterSpec {
     userInterestedInEvent: UserInterestedInEvent;
     userDisinterestedInGame: UserDisinterestedInEvent;
     userChangedNickname: UserChangedNickname;
+    userWinnow: UserWinnow;
 }
 
 export const CUSTOM_EVENTS = {
@@ -43,5 +45,6 @@ export const CUSTOM_EVENTS = {
     BotMessageCacheClear: 'botMessageCacheClear' as const,
     UserInterestedInEvent: 'userInterestedInEvent' as const,
     UserDisinterestedInEvent: 'userDisinterestedInEvent' as const,
-    UserChangedNickname: 'userChangedNickname' as const
+    UserChangedNickname: 'userChangedNickname' as const,
+    UserWinnow: 'userWinnow' as const
 };
