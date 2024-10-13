@@ -1,7 +1,7 @@
 import { container } from '@sapphire/framework';
 import { ChannelType, EmbedBuilder } from 'discord.js';
 
-export function channelNames(): string[] {
+export function getChannelNames(): string[] {
     const channel_names: string[] = [];
     const log_channel_name = process.env.LOG_CHANNEL;
     if (log_channel_name) {
@@ -14,12 +14,12 @@ export function channelNames(): string[] {
     return channel_names;
 }
 
-export function getChannelAndSend(msg: string) {
-    const channel_names = channelNames();
+export async function getChannelAndSend(msg: string) {
+    const channel_names = getChannelNames();
     for (const channel_name of channel_names) {
         const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
         if (channel && channel.type == ChannelType.GuildText) {
-            channel.send(msg);
+            await channel.send(msg);
         } else {
             container.logger.warn('Cannot find the ${channel_name} channel, or not a text channel');
         }
@@ -27,9 +27,9 @@ export function getChannelAndSend(msg: string) {
 }
 
 export async function getChannelAndEmbed(embed: EmbedBuilder) {
-    const channel_names = channelNames();
-    for (const channel_name of channel_names) {
-        const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
+    const channelNames = getChannelNames();
+    for (const channelName of channelNames) {
+        const channel = container.client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channelName);
         if (channel && channel.type == ChannelType.GuildText) {
             return await channel.send({ embeds: [embed] });
         } else {

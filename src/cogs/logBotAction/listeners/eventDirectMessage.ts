@@ -15,6 +15,7 @@ export class logBotActionDirectMessageListener extends Listener {
         });
     }
     async run(e: DirectMessage) {
+        console.log("GOT DM HERE IN logBotAction");
         const dbUser = await User.findOne({ where: { key: e.discordMessage.author.id } })
         const embed = new EmbedBuilder()
             .setColor(0xffff00)

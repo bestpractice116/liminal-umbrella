@@ -5,7 +5,7 @@ import { getMessage } from '../lib/message.js';
 
 const IGNORE_FOR_TIME = 5 * 60; // 5 mins
 
-export class logBotActionDirectMessageListener extends Listener {
+export class directMessageListener extends Listener {
     userCache: Map<string, number>
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
         super(context, {
@@ -17,6 +17,7 @@ export class logBotActionDirectMessageListener extends Listener {
         this.userCache = new Map();
     }
     async run(e: DirectMessage) {
+        console.log("main listener for directMessage")
         if (this.userCache.has(e.discordMessage.author.id)) {
             const lastTime = this.userCache.get(e.discordMessage.author.id);
             if (lastTime) {
@@ -28,6 +29,7 @@ export class logBotActionDirectMessageListener extends Listener {
         }
         this.userCache.set(e.discordMessage.author.id, Date.now());
         await this.doMsg(e);
+        return;
     }
     async doMsg(e: DirectMessage) {
         const reply = await getMessage('DM_REPLY_MEMBER', {});
