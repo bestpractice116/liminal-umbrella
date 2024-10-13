@@ -12,11 +12,11 @@ interface PartialFetchable {
     fetch(): Promise<this>;
 }
 
-export class verboseLogBotStartedListener extends Listener {
+export class greetNewUsersEventMessageReactionAddListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
         super(context, {
             ...options,
-            name: 'kickNewUsersOnX',
+            name: 'greetNewUsersEventMessageReactionAddListener',
             event: Events.MessageReactionAdd
         });
     }
