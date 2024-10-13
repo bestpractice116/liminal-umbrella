@@ -14,7 +14,10 @@ export class MessageCreateEvent extends Listener {
     @Sequential
     public override async run(message: Message) {
         if (!message.guildId) {
-            this.container.events.emit('directMessage', new DirectMessage(message))
+            if (!message.author.bot) {
+                console.log('DM');
+                this.container.events.emit('directMessage', new DirectMessage(message))
+            }
             return;
         }
         await this.container.database.indexMessage(message);
