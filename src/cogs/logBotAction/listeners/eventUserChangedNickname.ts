@@ -15,7 +15,7 @@ export class logBotActionUserChangedNicknameListener extends Listener {
     }
     async run(e: UserChangedNickname) {
         // Log change (with old and new nickname in bot_log)
-        const exampleEmbed = new EmbedBuilder()
+        const embed = new EmbedBuilder()
             .setColor(0x0000ff)
             .setAuthor({ name: 'Member Changed Nickname', iconURL: e.dbUser.avatarURL })
             .setDescription(`${userMention(e.id)} (${e.dbUser.username})`)
@@ -24,6 +24,6 @@ export class logBotActionUserChangedNicknameListener extends Listener {
             .setTimestamp()
             .setFooter({ text: `ID: ${e.id}` });
 
-        await getChannelAndEmbed(exampleEmbed);
+        await getChannelAndEmbed(embed);
     }
 }
