@@ -10,7 +10,7 @@ export class directMessageListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
         super(context, {
             ...options,
-            name: 'logBotActionDirectMessage',
+            name: 'directMessage',
             emitter: container.events,
             event: CUSTOM_EVENTS.DirectMessage
         });
