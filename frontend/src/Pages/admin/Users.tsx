@@ -13,7 +13,6 @@ import Slider, { SliderSingleProps } from 'antd/es/slider';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
-import { set } from 'zod';
 
 interface UserFragment {
     roles: RoleFragment[];
@@ -98,7 +97,7 @@ export function AdminUsers() {
                 '/api/user',
                 {
                     method: FetchMethods.Delete,
-                    body: JSON.stringify(r),
+                    body: JSON.stringify({userIds: r}),
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -163,10 +162,13 @@ export function AdminUsers() {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const rowSelection: TableProps<UserListItem>['rowSelection'] = {
-        onChange: (selectedRowKeys: React.Key[], _selectedRows: UserListItem[]) => {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: UserListItem[]) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`);
+          console.log(`selectedRows: `, selectedRows);
           setSelectedKeys(selectedRowKeys.map(k => `${k}`));
         },
         getCheckboxProps: (record: UserListItem) => {
+            console.log(record);
             const roleNames = record.roles.map(role => role.name);
             return {
                 disabled: roleNames.includes('Admin') || roleNames.includes('Patron'), 

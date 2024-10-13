@@ -9,4 +9,4 @@ export interface SchemaBundle {
     read: z.ZodReadonly<any>;
 }
 
-export type AnyZodSchema = z.ZodArray<any> | z.ZodObject<any> | z.ZodReadonly<any> | z.ZodOptional<any>;
+export type AnyZodSchema = z.ZodObject<any> | z.ZodReadonly<any> | z.ZodOptional<any>;

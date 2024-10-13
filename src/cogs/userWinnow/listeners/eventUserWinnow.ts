@@ -14,7 +14,10 @@ export class verboseLogUserWinnowListener extends Listener {
     }
     async run(e: UserWinnow) {
         const guildMember = await container.guild!.members.fetch(e.id);
-        const msg = await getMessage('USER_NO_NAME_CHANGE_KICK', {});
+        const knownMember = (await e.dbUser.getRoles()).some(role => role.name === 'Known Member');
+        const msgId = knownMember ? 'KNOWN_MEMBER_WINNOW_KICK' : 'MEMBER_WINNOW_KICK';
+        const msg = await getMessage(msgId, {});
+        container.logger.info(msg);
         await (
             await this.container.database.getdb()
         ).transaction(async () => {

@@ -79,7 +79,7 @@ ${line03}${dev ? ` ${pad}${blc('<')}${llc('/')}${blc('>')} ${llc('DEVELOPMENT MO
         for (const store of stores) logger.info(this.styleStore(store, false));
         logger.info(this.styleStore(last, true));
         const routes = client.stores.get('routes');
-        for (const routeType of ['GET', 'POST']) {
+        for (const routeType of ['GET', 'POST', 'DELETE']) {
             for (const route of routes.table.get(routeType as Methods)!.keys()) {
                 logger.info(gray(`├─ Loaded route ${routeType} /${route.router.path}.`));
             }

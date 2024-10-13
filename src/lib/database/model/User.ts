@@ -10,6 +10,7 @@ import {
     BelongsToManyHasAssociationMixin,
     BelongsToManyHasAssociationsMixin,
     BelongsToManyCountAssociationsMixin,
+    BelongsToManyGetAssociationsMixin,
     HasManyGetAssociationsMixin
 } from '@sequelize/core';
 import { Attribute, PrimaryKey, NotNull, BelongsToMany, HasMany, HasOne } from '@sequelize/core/decorators-legacy';
@@ -71,6 +72,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         through: () => RoleMember
     })
     declare roles?: NonAttribute<Role[]>;
+    declare getRoles: BelongsToManyGetAssociationsMixin<Role>;
     declare setRoles: BelongsToManySetAssociationsMixin<Role, Role['key']>;
     declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['key']>;
     declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, Role['key']>;

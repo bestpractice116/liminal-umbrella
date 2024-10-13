@@ -7,7 +7,10 @@ import { Sequential } from '../lib/utils.js';
 import * as z from 'zod';
 import { UserWinnow } from '../lib/events/UserWinnow.js';
 
-const userDeleteSchema = z.array(z.coerce.number().int().positive());
+const userDeleteSchema = z.object({
+    userIds: z.array(z.string()),
+});
+type TUserDelete = z.infer<typeof userDeleteSchema>
 
 export class ApiUsersList extends CR {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -58,16 +61,22 @@ export class ApiUsersList extends CR {
 
     @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
+        this.container.logger.info('DELETE user request with body ', JSON.stringify(request.body));
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const data = zodParseOrError(userDeleteSchema, request.params, response);
+        const data: TUserDelete = zodParseOrError(userDeleteSchema, request.body, response);
+        this.container.logger.info('DELETE user request with data ', JSON.stringify(data));
         if (response.writableEnded) {
             return;
         }
-        for (const id of data) {
+        
+        this.container.logger.info(`DELETE request for IDs ${data.userIds.join(', ')}`);
+        for (const id of data.userIds) {
+            this.container.logger.info(`LOOKUP USER ${id} for winnow event`);
             const user = await User.findByPk(id)
             if (!user) continue;
-            this.container.events.emit('userWinnow', new UserWinnow(id as string, user));
+            this.container.logger.info(`Send winnow event for user ID ${id}`)
+            this.container.events.emit('userWinnow', new UserWinnow(id, user));
         }
-        response.json({ status: 'deleted', ids: data as string[] });
+        response.json({ status: 'deleted', ids: data.userIds });
     }
 }
