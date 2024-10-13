@@ -1,6 +1,7 @@
 import { Listener, Events } from '@sapphire/framework';
 import { Message } from 'discord.js';
 import { Sequential } from '../lib/utils.js';
+import { DirectMessage } from '../lib/events/index.js';
 
 export class MessageCreateEvent extends Listener {
     constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -11,11 +12,12 @@ export class MessageCreateEvent extends Listener {
     }
 
     @Sequential
-    public override run(message: Message) {
+    public override async run(message: Message) {
         if (!message.guildId) {
+            this.container.events.emit('directMessage', new DirectMessage(message))
             return;
         }
-        this.container.database.indexMessage(message);
+        await this.container.database.indexMessage(message);
         return;
     }
 }

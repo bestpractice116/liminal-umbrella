@@ -12,7 +12,8 @@ import {
     UserInterestedInEvent,
     UserDisinterestedInEvent,
     UserChangedNickname,
-    UserWinnow
+    UserWinnow,
+    DirectMessage
 } from './events/index.js';
 
 export interface emitterSpec {
@@ -30,6 +31,7 @@ export interface emitterSpec {
     userDisinterestedInGame: UserDisinterestedInEvent;
     userChangedNickname: UserChangedNickname;
     userWinnow: UserWinnow;
+    directMessage: DirectMessage;
 }
 
 export const CUSTOM_EVENTS = {
@@ -46,5 +48,6 @@ export const CUSTOM_EVENTS = {
     UserInterestedInEvent: 'userInterestedInEvent' as const,
     UserDisinterestedInEvent: 'userDisinterestedInEvent' as const,
     UserChangedNickname: 'userChangedNickname' as const,
-    UserWinnow: 'userWinnow' as const
+    UserWinnow: 'userWinnow' as const,
+    DirectMessage: 'directMessage' as const,
 };
