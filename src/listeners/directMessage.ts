@@ -31,17 +31,6 @@ export class logBotActionDirectMessageListener extends Listener {
         await this.doMsg(e);
     }
     async doMsg(e: DirectMessage) {
-        const dbUser = await User.findOne({ where: { key: e.discordMessage.author.id } })
-        if (!dbUser) {
-            const reply = await getMessage('DM_REPLY_NEVER_MEMBER', {});
-            await e.discordMessage.reply(reply);
-            return
-        }
-        if (dbUser.left) {
-            const reply = await getMessage('DM_REPLY_EX_MEMBER', {});
-            await e.discordMessage.reply(reply);
-            return
-        }
         const reply = await getMessage('DM_REPLY_MEMBER', {});
         await e.discordMessage.reply(reply);
         return
