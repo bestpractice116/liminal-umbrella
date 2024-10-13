@@ -1,7 +1,6 @@
 import { Listener, container } from '@sapphire/framework';
 import { DirectMessage } from '../lib/events/index.js';
 import { CUSTOM_EVENTS } from '../lib/events.js';
-import { User } from '../lib/database/model.js';
 import { getMessage } from '../lib/message.js';
 
 const IGNORE_FOR_TIME = 5 * 60; // 5 mins
