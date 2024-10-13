@@ -17,7 +17,6 @@ export class directMessageListener extends Listener {
         this.userCache = new Map();
     }
     async run(e: DirectMessage) {
-        console.log("main listener for directMessage")
         if (this.userCache.has(e.discordMessage.author.id)) {
             const lastTime = this.userCache.get(e.discordMessage.author.id);
             if (lastTime) {

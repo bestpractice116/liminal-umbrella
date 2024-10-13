@@ -15,7 +15,6 @@ export class MessageCreateEvent extends Listener {
     public override async run(message: Message) {
         if (!message.guildId) {
             if (!message.author.bot) {
-                console.log('Send DM event');
                 this.container.events.emit('directMessage', new DirectMessage(message))
             }
             return;

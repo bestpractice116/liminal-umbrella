@@ -16,6 +16,7 @@ import type {
     User as GuildUser,
     Role as GuildRole,
     AnyThreadChannel,
+    GuildChannel,
 } from 'discord.js';
 import { ChannelType, GuildBasedChannel, MessageType, GuildMember } from 'discord.js';
 import { User, Role, Channel, Message, Watermark, EventInterest, GameSessionUserSignup, Thread } from './database/model.js';
@@ -376,6 +377,12 @@ export default class Database {
             synced: false,
             lastSeenIndexedToDate: START_OF_TIME
         });
+    }
+
+    async channelDelete(channel: GuildChannel) {
+        const dbChannel = await Channel.findByPk(channel.id);
+        if (!dbChannel) return;
+        await dbChannel.destroy();
     }
 
     async syncChannels(guild: Guild) {
