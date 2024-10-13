@@ -13,11 +13,17 @@ export class verboseLogUserWinnowListener extends Listener {
         });
     }
     async run(e: UserWinnow) {
-        const guildMember = await container.guild!.members.fetch(e.id);
-        const knownMember = (await e.dbUser.getRoles()).some(role => role.name === 'Known Member');
+        if (e.dbUser.bot) return;
+        let guildMember;
+        try {
+            guildMember = await container.guild!.members.fetch(e.id);
+        } catch { /* empty */ } // FIXME - catch only the fetch error.
+        if (!guildMember) return;
+        const userRoleNames = (await e.dbUser.getRoles()).map(role => role.name);
+        if (userRoleNames.some(name => name === 'Admin')) return;
+        const knownMember = userRoleNames.some(name => name === 'Known Member');
         const msgId = knownMember ? 'KNOWN_MEMBER_WINNOW_KICK' : 'MEMBER_WINNOW_KICK';
         const msg = await getMessage(msgId, {});
-        container.logger.info(msg);
         await (
             await this.container.database.getdb()
         ).transaction(async () => {
