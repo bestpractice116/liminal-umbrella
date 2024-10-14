@@ -3,7 +3,7 @@ import { DirectMessage } from '../lib/events/index.js';
 import { CUSTOM_EVENTS } from '../lib/events.js';
 import { getMessage } from '../lib/message.js';
 
-const IGNORE_FOR_TIME = 5 * 60; // 5 mins
+const ignoreForTime = 5 * 60; // 5 mins
 
 export class directMessageListener extends Listener {
     userCache: Map<string, number>
@@ -21,7 +21,7 @@ export class directMessageListener extends Listener {
             const lastTime = this.userCache.get(e.discordMessage.author.id);
             if (lastTime) {
                 const diff = Date.now() - lastTime;
-                if (diff < IGNORE_FOR_TIME * 1000) {
+                if (diff < ignoreForTime * 1000) {
                     return;
                 }
             }

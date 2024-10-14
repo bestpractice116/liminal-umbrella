@@ -96,6 +96,12 @@ export default [
     ...tseslint.configs.disableTypeChecked,
   },
   {
+    files: ['src/lib/events/**/*.ts'],
+    rules: {
+      "@typescript-eslint/no-extraneous-class": "off",
+    }
+  },
+  {
     files: ['src/migrations/*.ts'],
     rules: {
       "@typescript-eslint/no-unsafe-member-access": "off",

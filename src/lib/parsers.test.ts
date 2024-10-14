@@ -11,7 +11,7 @@ describe('parseAvailableGames', () => {
         test(d, () => {
             const input = readFileSync(join(basePath, d, 'input')).toString();
             const expStr = readFileSync(join(basePath, d, 'output.json'));
-            const expected: AGameSession = JSON.parse(expStr.toString());
+            const expected = JSON.parse(expStr.toString()) as AGameSession;
             expect(parseAvailableGame(input)).toStrictEqual(expected);
         });
     }

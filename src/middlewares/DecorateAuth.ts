@@ -23,7 +23,7 @@ export class DecorateAuth extends Middleware {
             if (u) {
                 request.auth.nickname = u.nickname;
                 request.auth.avatarURL = u.avatarURL;
-                const roles = u.roles || [];
+                const roles = u.roles ?? [];
                 request.auth.roles = roles.map((r) => r.name);
             }
         }

@@ -11,11 +11,11 @@ export class MessageDeleteEvent extends Listener {
     }
 
     @Sequential
-    public override run(message: Message) {
+    public override async run(message: Message) {
         if (!message.guildId) {
             return;
         }
-        this.container.database.deleteMessage(message);
+        await this.container.database.deleteMessage(message);
         return;
     }
 }

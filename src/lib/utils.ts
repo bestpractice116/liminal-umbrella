@@ -47,6 +47,7 @@ function getGuildInfo(guild: Guild | null) {
     return `${guild.name}[${cyan(guild.id)}]`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/naming-convention
 export const Sequential = limitConcurrency(1);
 
 export async function sleep(time: number) {

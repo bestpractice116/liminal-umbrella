@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { TypedEvent } from '../lib/typedEvents.js';
 import { TickFive, TickOneTwenty } from './events/index.js';
 import { Guild } from 'discord.js';
