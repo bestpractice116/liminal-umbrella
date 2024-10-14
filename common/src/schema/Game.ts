@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
-import { dayJsCoerce, zodDay } from '../index.js';
+import { dateCoerce, zodDay } from '../index.js';
 
 export enum GameType {
     oneshot = 'oneshot',
@@ -39,8 +39,8 @@ const baseUpdate = z
             .trim()
             .min(50, { message: 'Description must be at least 50 characters long' })
             .max(500, { message: 'Description must be less than 500 characters' }),
-        starttime: z.preprocess(dayJsCoerce, zodDay),
-        endtime: z.preprocess(dayJsCoerce, zodDay),
+        starttime: z.preprocess(dateCoerce, zodDay),
+        endtime: z.preprocess(dateCoerce, zodDay),
         location: z
             .string({
                 required_error: 'Location is required',
@@ -56,7 +56,7 @@ const baseUpdate = z
     .merge(find);
 
 type updateInput = z.input<typeof baseUpdate> & { starttime?: unknown, endtime?: unknown }
-type updateOutput = Omit<Omit<z.output<typeof baseUpdate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dayJsCoerce>, endtime?: ReturnType<typeof dayJsCoerce> }
+type updateOutput = Omit<Omit<z.output<typeof baseUpdate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dateCoerce>, endtime?: ReturnType<typeof dateCoerce> }
 const update: z.ZodType<updateOutput, z.ZodTypeDef, updateInput> = baseUpdate;
 
 const user = z.object({

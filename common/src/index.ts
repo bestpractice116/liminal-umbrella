@@ -45,7 +45,11 @@ export function dayJsCoerceOrUndefined(val: unknown) {
     return undefined;
 }
 
-export const zodDay: z.ZodTypeAny = z.custom<dayjs.Dayjs>((val) => {
+export function dateCoerce(val: unknown): Date | undefined {
+    return dayJsCoerce(val)?.toDate();
+}
+
+export const zodDay: z.ZodTypeAny = z.custom<Date>((val) => {
     if (!val) return false;
     return dayjs(val).isValid();
 }, 'Invalid date/time');

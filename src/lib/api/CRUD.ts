@@ -97,7 +97,7 @@ abstract class CRUDBase extends Route {
 
 export abstract class CR extends CRUDBase {
     async findAllWhere(_request: ApiRequest): Promise<CRUDWhere> {
-        return {};
+        return Promise.resolve({});
     }
     findAllOrder(): OrderItem[] {
         return [];
