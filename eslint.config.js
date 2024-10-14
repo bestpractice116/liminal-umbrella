@@ -79,6 +79,19 @@ export default [
     },
   },
   {
+    files: ['common/src/**/*.ts'],
+    rules: {
+      "@typescript-eslint/naming-convention": [
+	"error",
+	{
+          "selector": "variable",
+          "modifiers": ["const", "global", "exported"],
+          "format": ["UPPER_CASE", "camelCase", "PascalCase"]
+        }
+      ]
+    }
+  },
+  {
     files: ['**/*.js', 'eslint.config.mjs', 'jest.config.cjs'],
     ...tseslint.configs.disableTypeChecked,
   },
