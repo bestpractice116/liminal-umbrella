@@ -98,8 +98,12 @@ export default [
   {
     files: ['src/migrations/*.ts'],
     rules: {
+      "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
     }
   },
   {
