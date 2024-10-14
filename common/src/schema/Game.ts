@@ -21,7 +21,7 @@ export const gameTypeSchema = z.object({
 const find = z.object({
     key: z.coerce.number().int().positive()
 });
-const update = z
+const baseUpdate = z
     .object({
         name: z
             .string({
@@ -54,6 +54,11 @@ const update = z
     .merge(gameSystemSchema)
     .merge(gameTypeSchema)
     .merge(find);
+
+type updateInput = z.input<typeof baseUpdate> & { starttime?: unknown, endtime?: unknown }
+type updateOutput = Omit<Omit<z.output<typeof baseUpdate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dayJsCoerce>, endtime?: ReturnType<typeof dayJsCoerce> }
+const update: z.ZodType<updateOutput, z.ZodTypeDef, updateInput> = baseUpdate;
+
 const user = z.object({
     key: z.string(),
     nickname: z.string(),

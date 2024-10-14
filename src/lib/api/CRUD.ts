@@ -247,7 +247,7 @@ export abstract class UD extends CRUDBase {
         return data;
     }
 
-    getSchemaUpdate(): z.ZodTypeAny | undefined {
+    getSchemaUpdate() {
         return this.getSchema().update;
     }
 

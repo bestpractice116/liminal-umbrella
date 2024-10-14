@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as z from 'zod';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
@@ -22,7 +24,7 @@ export function getZObject(schema: z.ZodTypeAny): z.ZodObject<any> {
     if (schema instanceof z.ZodOptional) {
         return getZObject(schema.unwrap());
     }
-    return schema;
+    return schema as z.ZodObject<any>;
 }
 
 export function dayJsCoerce(val: unknown): dayjs.Dayjs | undefined {
