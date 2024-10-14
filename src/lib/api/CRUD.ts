@@ -3,6 +3,7 @@ import type { SchemaBundle, AnyZodSchema } from 'common/schema';
 import { getSchemaKeys } from 'common';
 import { Admin as AuthenticatedAdmin } from '../api/decorators.js';
 import { Sequential } from '../utils.js';
+import { z } from 'zod';
 
 type SequelizeInclude =
     | string
@@ -21,13 +22,14 @@ export enum MutationOperation {
     DELETE
 }
 
-export function zodParseOrError(schema: AnyZodSchema, input: unknown, response: ApiResponse): any {
-    const { success, error, data } = schema.safeParse(input);
-    if (!success) {
-        response.status(HttpCodes.BadRequest).json({ status: 'error', error: error.issues });
+export function zodParseOrError<T extends z.ZodTypeAny>(schema: T, input: unknown, response: ApiResponse) {
+    const result = schema.safeParse(input);
+    if (!result.success) {
+        response.status(HttpCodes.BadRequest).json({ status: 'error', error: result.error.issues });
         return null;
     }
-    return data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return result.data as z.infer<T>;;
 }
 
 export async function findItem(

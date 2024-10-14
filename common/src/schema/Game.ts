@@ -85,6 +85,7 @@ export const GameSchema: SchemaBundle = {
     read: read.readonly(),
     delete: true
 };
+export type GameFindItem = z.infer<typeof find>;
 export type GameCreateItem = z.infer<typeof create>;
 export type GameUpdateItem = z.infer<typeof update>;
 export type GameReadItem = z.infer<typeof read>;

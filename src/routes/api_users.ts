@@ -10,7 +10,6 @@ import { UserWinnow } from '../lib/events/UserWinnow.js';
 const userDeleteSchema = z.object({
     userIds: z.array(z.string()),
 });
-type TUserDelete = z.infer<typeof userDeleteSchema>
 
 export class ApiUsersList extends CR {
     public constructor(context: Route.LoaderContext, options: Route.Options) {
@@ -62,12 +61,10 @@ export class ApiUsersList extends CR {
     @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
         this.container.logger.info('DELETE user request with body ', JSON.stringify(request.body));
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const data: TUserDelete = zodParseOrError(userDeleteSchema, request.body, response);
+        const data = zodParseOrError(userDeleteSchema, request.body, response);
         this.container.logger.info('DELETE user request with data ', JSON.stringify(data));
-        if (response.writableEnded) {
-            return;
-        }
+        if (response.writableEnded) return;
+        if (!data) return;
         
         this.container.logger.info(`DELETE request for IDs ${data.userIds.join(', ')}`);
         for (const id of data.userIds) {
