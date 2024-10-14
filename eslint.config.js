@@ -1,5 +1,6 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import react from "@eslint-react/eslint-plugin";
 
 export default [
   ...tseslint.config(
@@ -85,5 +86,9 @@ export default [
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-call": "off",
     }
-  }
+  },
+  {
+    files: ["frontend/src/**/*.{ts,tsx}"],
+    ...react.configs.recommended,
+  },
 ];

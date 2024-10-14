@@ -2,6 +2,7 @@ import { Listener, container } from '@sapphire/framework';
 import { UserWinnow } from '../../../lib/events/index.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getMessage } from '../../../lib/message.js';
+import { GuildMember } from 'discord.js';
 
 export class verboseLogUserWinnowListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -14,7 +15,7 @@ export class verboseLogUserWinnowListener extends Listener {
     }
     async run(e: UserWinnow) {
         if (e.dbUser.bot) return;
-        let guildMember;
+        let guildMember: GuildMember | undefined;
         try {
             guildMember = await container.guild!.members.fetch(e.id);
         } catch { /* empty */ } // FIXME - catch only the fetch error.
