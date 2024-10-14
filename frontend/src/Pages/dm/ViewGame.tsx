@@ -140,7 +140,6 @@ export function ViewGame() {
         return <NotFound />;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const save = () => {};
 
     if (!result.data) {

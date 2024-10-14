@@ -21,7 +21,6 @@ export class ApiGameSessions extends UD {
         return GameSchema;
     }
     @DM
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_GET() {}
 
     override async getRetrieveWhere(request: ApiRequest) {
@@ -30,7 +29,6 @@ export class ApiGameSessions extends UD {
     }
 
     @DM
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
 
     override async DELETE_disallowed(item: any, _request: ApiRequest): Promise<string | undefined> {
@@ -42,7 +40,6 @@ export class ApiGameSessions extends UD {
     }
 
     @DM
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_UPDATE(_request: ApiRequest, _response: ApiResponse) {}
 
     override UPDATE_disallowed(item: any): string | undefined {

@@ -35,7 +35,7 @@ export class RootRoute extends Route {
         readFile('frontend/dist/assets/' + request.params.asset, function (error, content) {
             if (error) {
                 response.writeHead(500);
-                response.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
+                response.end(`Sorry, check with the site admin for error: ${error.code} ..\n`);
             }
             response.writeHead(200, { 'Content-Type': contentType });
             response.end(content, 'utf-8');

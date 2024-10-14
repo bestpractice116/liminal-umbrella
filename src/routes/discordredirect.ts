@@ -9,13 +9,13 @@ export class DiscordRedirectRoute extends Route {
     }
 
     public [methods.GET](request: ApiRequest, response: ApiResponse) {
-        const redirect_uri = request.query.redirect_uri as string;
-        if (!redirect_uri) {
+        const redirectUri = request.query.redirect_uri as string;
+        if (!redirectUri) {
             response.badRequest(); return;
         }
         const oauthURL = new URL('https://discord.com/oauth2/authorize');
         oauthURL.search = new URLSearchParams([
-            ['redirect_uri', redirect_uri],
+            ['redirect_uri', redirectUri],
             ['response_type', 'code'],
             ['scope', ['identify'].join(' ')],
             ['client_id', process.env.DISCORD_APPLICATION_ID]

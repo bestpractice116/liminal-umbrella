@@ -18,6 +18,5 @@ export class ApiBotpMessagesList extends CR {
     getSchema(): SchemaBundle {
         return BotMessageSchema;
     }
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_GET(_request: ApiRequest, _response: ApiResponse) {}
 }

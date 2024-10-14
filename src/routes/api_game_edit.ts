@@ -23,7 +23,6 @@ export class ApiGameEdit extends UD {
     }
 
     @DM
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_UPDATE() {}
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +32,6 @@ export class ApiGameEdit extends UD {
     }
 
     @DM
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     override async auth_DELETE() {}
 
     override async getRetrieveWhere(request: ApiRequest) {

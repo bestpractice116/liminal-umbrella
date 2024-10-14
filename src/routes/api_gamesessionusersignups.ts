@@ -70,7 +70,7 @@ export class ApiGameSessionUserSignupsList extends CR {
     }
 
     @DM
-    override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {}
+    override async auth_DELETE(_request: ApiRequest, _response: ApiResponse) {/*empty*/}
 
     public override async DELETE_disallowed(item: GameSessionUserSignup, request: ApiRequest): Promise<string | undefined> {
         if (isAdmin(request)) return;

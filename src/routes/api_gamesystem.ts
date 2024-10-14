@@ -21,5 +21,5 @@ export class ApiGameSystemList extends CR {
     }
 
     @DM
-    override async auth_GET() {}
+    override async auth_GET() {/* empty */}
 }

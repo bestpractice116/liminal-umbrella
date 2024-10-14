@@ -73,8 +73,7 @@ export class MySapphireClient extends SapphireClient {
             container.logger.info('Registering cog: ' + d);
             this.stores.registerPath(join(this.rootData.root, 'cogs', d));
             const registerPath = join(this.rootData.root, 'cogs', d, 'register.js');
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            if (existsSync(registerPath)) setTimeout((_e: unknown) => { import(registerPath).then(()=> {}).catch(()=> {}); }, 0)
+            if (existsSync(registerPath)) setTimeout((_e: unknown) => { import(registerPath).then(()=> {}).catch((e)=> {container.logger.warn(`Error registering ${registerPath}: `, e)}); }, 0)
         }
     }
 
