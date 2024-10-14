@@ -1,6 +1,6 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { PlannedGame } from '../lib/database/model.js';
-import type { SchemaBundle } from 'common/schema';
+import type { GameReadItem, SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
 import { NewGameSchema } from 'common/schema';
 import { DM } from '../lib/api/decorators.js';
@@ -27,8 +27,7 @@ export class ApiGameEdit extends UD {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     override async UPDATE_coerce(request: ApiRequest, response: ApiResponse, data: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return doCoerce(request, response, data);
+        return doCoerce(request, response, data as Partial<GameReadItem>);
     }
 
     @DM

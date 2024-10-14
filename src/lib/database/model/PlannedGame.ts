@@ -78,35 +78,32 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
     declare getOwnerOb: BelongsToGetAssociationMixin<User>;
 
     @Attribute(DataTypes.STRING)
-    declare name: string | null;
+    declare name?: string;
 
     @BelongsTo(() => GameSystem, 'gamesystem')
     declare gamesystemOb?: NonAttribute<GameSystem>;
     declare getGamesystemOb: BelongsToGetAssociationMixin<GameSystem>;
 
     @Attribute(DataTypes.INTEGER)
-    declare gamesystem: number | null;
+    declare gamesystem?: number;
 
     @Attribute(DataTypes.STRING)
-    declare type: string | null;
+    declare type?: string;
 
     @Attribute(DataTypes.DATE)
-    declare date: Date | null;
+    declare starttime?: Date;
 
     @Attribute(DataTypes.DATE)
-    declare starttime: Date | null;
-
-    @Attribute(DataTypes.DATE)
-    declare endtime: Date | null;
+    declare endtime?: Date;
 
     @Attribute(DataTypes.INTEGER)
-    declare maxplayers: number | null;
+    declare maxplayers?: number;
 
     @Attribute(DataTypes.STRING)
-    declare description: string | null;
+    declare description?: string;
 
     @Attribute(DataTypes.STRING)
-    declare location: string | null;
+    declare location?: string;
 
     async CRUDRead(name: string) {
         if (name == 'gamesystem') {
@@ -184,7 +181,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
             await GameSystem.addGameSystemOptions(menu);
             components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu));
         }
-        if (!this.date) {
+        if (!this.starttime) {
             const formatter = new Intl.DateTimeFormat('en-UK', { weekday: 'short', month: 'short', day: 'numeric' });
             const now = new Date();
             const days = Array.from({ length: 25 }, (_, days) => days + 1).map((days) => {
@@ -207,7 +204,7 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
 
         const row = new ActionRowBuilder<ButtonBuilder>();
         const save = new ButtonBuilder().setCustomId('game-post-do-it').setLabel('Post Game').setStyle(ButtonStyle.Success).setDisabled(true);
-        if (this.gamesystem && this.date) {
+        if (this.gamesystem && this.starttime) {
             save.setDisabled(false);
         }
         row.addComponents(save);

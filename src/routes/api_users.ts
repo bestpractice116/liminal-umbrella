@@ -1,7 +1,7 @@
 import { ApiRequest, ApiResponse, methods, Route } from '@sapphire/plugin-api';
 import { Channel, User } from '../lib/database/model.js';
 import type { SchemaBundle } from 'common/schema';
-import { CR, zodParseOrError } from '../lib/api/CRUD.js';
+import { CR, zodParseOrError, type CRUDReadable } from '../lib/api/CRUD.js';
 import { UserSchema } from 'common/schema';
 import { Sequential } from '../lib/utils.js';
 import * as z from 'zod';
@@ -26,28 +26,26 @@ export class ApiUsersList extends CR {
         return UserSchema;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    override async getReadObjectFromDbObject(item: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
+    override async getReadObjectFromDbObject(item: CRUDReadable | undefined) {
         const readOb = await super.getReadObjectFromDbObject(item);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         if (!readOb) return readOb;
         const channelNameCache = new Map<string, string>();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+         
         if (readOb.lastSeenChannel) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-            readOb.lastSeenChannelName = channelNameCache.get(readOb.lastSeenChannel);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-            if (!channelNameCache.has(readOb.lastSeenChannel)) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+             
+            readOb.lastSeenChannelName = channelNameCache.get(`${readOb.lastSeenChannel}`);
+             
+            if (!channelNameCache.has(`${readOb.lastSeenChannel}`)) {
+                 
                 const channel = await Channel.findByPk(readOb.lastSeenChannel);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-                if (channel) channelNameCache.set(readOb.lastSeenChannel, channel.name);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                 
+                if (channel) channelNameCache.set(`${readOb.lastSeenChannel}`, channel.name);
+                 
                 readOb.lastSeenChannelName = channel?.name
             }
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+         
         return readOb;
     }
 

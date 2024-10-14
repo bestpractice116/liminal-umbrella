@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import * as z from 'zod';
 
 export interface SchemaBundle {
-    create?: z.ZodReadonly<any>;
-    update?: z.ZodReadonly<any>;
+    create?: z.ZodReadonly<z.ZodTypeAny>;
+    update?: z.ZodReadonly<z.ZodTypeAny>;
     delete: boolean;
-    find?: z.ZodReadonly<any>;
-    read: z.ZodReadonly<any>;
+    find?: z.ZodReadonly<z.ZodTypeAny>;
+    read: z.ZodReadonly<z.ZodTypeAny>;
 }
-
-export type AnyZodSchema = z.ZodObject<any> | z.ZodReadonly<any> | z.ZodOptional<any>;

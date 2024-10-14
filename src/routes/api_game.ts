@@ -1,21 +1,26 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import { GameSystem, PlannedGame } from '../lib/database/model.js';
-import type { SchemaBundle } from 'common/schema';
+import type { GameReadItem, SchemaBundle } from 'common/schema';
 import { CR } from '../lib/api/CRUD.js';
 import { NewGameSchema } from 'common/schema';
 import { DM } from '../lib/api/decorators.js';
+import { InferCreationAttributes } from '@sequelize/core';
 
-export async function doCoerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-    const out = {
+export async function doCoerce(request: ApiRequest, response: ApiResponse, data: Partial<GameReadItem>): Promise<Omit<InferCreationAttributes<PlannedGame>, 'key'> | null> {
+    const {gamesystem, ...out} = {
         ...data,
         owner: request.auth!.id
     };
-    if (data.gamesystem) {
-        const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
-        if (!gamesystem) {
-            response.badRequest('Cannot find game system'); return;
+    if (gamesystem) {
+        const gamesystemOb = await GameSystem.findOne({ where: { name: gamesystem } });
+        if (!gamesystemOb) {
+            response.badRequest('Cannot find game system');
+            return null;
         }
-        out.gamesystem = gamesystem.key;
+        return {
+            ...out,
+            gamesystem: gamesystemOb.key
+        }
     }
     return out;
 }
@@ -41,8 +46,9 @@ export class ApiGameList extends CR {
     @DM
     override async auth_CREATE() {}
 
-    override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: any): Promise<any> {
-        return await doCoerce(request, response, data);
+    override async CREATE_coerce(request: ApiRequest, response: ApiResponse, data: unknown): Promise<Omit<InferCreationAttributes<PlannedGame>, 'key'> | null> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+        return await doCoerce(request, response, data as any);
     }
 
     override async findAllWhere(request: ApiRequest) {

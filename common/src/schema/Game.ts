@@ -9,9 +9,8 @@ export enum GameType {
 }
 
 export const gameSystemSchema = z.object({
-    gamesystem: z.string({
+    gamesystem: z.coerce.number({
         required_error: 'Game system is required',
-        invalid_type_error: 'Game system must be a string'
     })
 });
 
