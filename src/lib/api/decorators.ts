@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { createFunctionPrecondition } from '@sapphire/decorators';
 import { ApiRequest, ApiResponse, HttpCodes } from '@sapphire/plugin-api';
 
 class AuthDecorators {
     static Authenticated = createFunctionPrecondition(
         (request: ApiRequest, response: ApiResponse) => !response.writableEnded && !!request.auth && !!request.auth.nickname,
-        (_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
+        (_request: ApiRequest, response: ApiResponse) => { if (!response.writableEnded) response.error(HttpCodes.Unauthorized); }
     );
 
     static AuthenticatedWithRole = (roles: string | string[]) =>
@@ -20,7 +22,7 @@ class AuthDecorators {
                 }
                 return false;
             },
-            (_request: ApiRequest, response: ApiResponse) => !response.writableEnded && response.error(HttpCodes.Unauthorized)
+            (_request: ApiRequest, response: ApiResponse) => { if (!response.writableEnded) response.error(HttpCodes.Unauthorized); }
         );
 }
 

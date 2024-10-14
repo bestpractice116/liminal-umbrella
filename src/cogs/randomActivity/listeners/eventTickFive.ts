@@ -12,7 +12,7 @@ export class randomActivityTickFiveListener extends Listener {
             event: CUSTOM_EVENTS.TickFive
         });
     }
-    run(_: TickFive) {
+    async run(_: TickFive) {
         // Fires every 5 minutes. We pick a random number between 0 (inclusive) and 1 (exclusive).
         // If that is < 0.02 (which should happen 2% of the time) then we change the activity.
         // On average this will mean we change every 4h 10m.
@@ -44,7 +44,7 @@ export class randomActivityTickFiveListener extends Listener {
       50 x 5 minutes = 4h 10m
     */
         if (Math.random() < 0.02) {
-            setRandomActivity();
+            await setRandomActivity();
         }
     }
 }

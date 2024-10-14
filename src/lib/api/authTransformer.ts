@@ -37,7 +37,7 @@ class AuthTransformer {
             nickname: u.nickname,
             avatarURL: u.avatarURL
         };
-        const roles = ((await u.roles) || []).map((r) => r.name);
+        const roles = (u.roles ?? []).map((r) => r.name);
 
         return { ...loginData, user: userAuthData, roles };
     }

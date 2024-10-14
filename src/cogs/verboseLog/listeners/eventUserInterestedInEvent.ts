@@ -13,7 +13,7 @@ export class verboseLogUserInterestedInEventListener extends Listener {
             event: CUSTOM_EVENTS.UserInterestedInEvent
         });
     }
-    run(e: UserInterestedInEvent) {
-        getChannelAndSend(`User ${userMention(e.userId)} is interested in ${e.guildScheduledEvent.name}`);
+    async run(e: UserInterestedInEvent) {
+        await getChannelAndSend(`User ${userMention(e.userId)} is interested in ${e.guildScheduledEvent.name}`);
     }
 }

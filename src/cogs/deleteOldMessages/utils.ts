@@ -1,7 +1,7 @@
 export function getChannelName(): string | null {
-    const channel_name = process.env.DELETE_OLD_MESSAGES_CHANNEL;
-    if (!channel_name) {
+    const channelName = process.env.DELETE_OLD_MESSAGES_CHANNEL;
+    if (!channelName) {
         return null;
     }
-    return channel_name;
+    return channelName;
 }

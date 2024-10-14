@@ -14,7 +14,8 @@ export class randomActivityBotStartedListener extends Listener {
     }
 
     run(_: BotStarted) {
+        const logger = this.container.logger;
         // Set when we restart the bot + 1 second. (This just means that usually/mostly we'll get the 'RPGBot restarted' notice first... Done like this as it's simple and not critical the order.)
-        setTimeout(setRandomActivity, 1000);
+        setTimeout(() => { setRandomActivity().catch((e: unknown) => { logger.error('Error in setRandomActivity(): ', e)}); }, 1000);
     }
 }

@@ -11,8 +11,8 @@ export class SelectsPostGamenHandler extends InteractionHandler {
     }
 
     public override parse(interaction: StringSelectMenuInteraction) {
-        for (const field_name of ['post-game-system', 'post-game-date']) {
-            if (interaction.customId == field_name) {
+        for (const fieldName of ['post-game-system', 'post-game-date']) {
+            if (interaction.customId == fieldName) {
                 return this.some();
             }
         }
@@ -25,9 +25,9 @@ export class SelectsPostGamenHandler extends InteractionHandler {
             //gamerow?.set({ gamesystem: Number(interaction.values[0]) });
         }
         if (interaction.customId == 'post-game-date') {
-            gamerow?.set({ date: new Date(interaction.values[0]) });
+            gamerow?.set({ starttime: new Date(interaction.values[0]) });
         }
-        gamerow?.save();
+        await gamerow?.save();
         const pingMessage = await gamerow?.showEditForm(interaction);
         return gamerow?.handleEditForm(interaction, pingMessage!);
     }

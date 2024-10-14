@@ -6,8 +6,8 @@ import { Op } from '@sequelize/core';
 import { shortSleep, sleepUpToTwoHours } from '../../../lib/utils.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
-const CLEANUP_GAME_LISTINGS_AFTER_TIME = 1 * 24 * 60 * 60 * 1000; // 1 day ago
-const CLEANUP_GAME_CHANNELS_AFTER_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days ago
+const cleanupGameListingsAfterTime = 1 * 24 * 60 * 60 * 1000; // 1 day ago
+const cleanupGameChannelsAfterTime = 10 * 24 * 60 * 60 * 1000; // 10 days ago
 
 interface GameChannelsLocked {
     considered: number;
@@ -36,7 +36,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
     @Sequential
     getGameListingsToDelete() {
         // Find all non-pinned messages > 30 days old from the channel.
-        const since = Date.now() - CLEANUP_GAME_LISTINGS_AFTER_TIME;
+        const since = Date.now() - cleanupGameListingsAfterTime;
         return GameSession.findAll({
             where: {
                 endtime: { [Op.lt]: since },
@@ -75,7 +75,7 @@ export class gameSessionCleanupTickOneTwentyListener extends Listener {
 
     @Sequential
     getGameChannelsToLockSessions() {
-        const since = Date.now() - CLEANUP_GAME_CHANNELS_AFTER_TIME;
+        const since = Date.now() - cleanupGameChannelsAfterTime;
         return GameSession.findAll({
             where: {
                 endtime: { [Op.lt]: since },

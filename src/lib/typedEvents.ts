@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 import EventEmitter from 'node:events';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EventMap = Record<string, any>;
 type EventKey<T extends EventMap> = string & keyof T;
 type EventReceiver<T> = (params: T) => void;
@@ -16,7 +19,7 @@ export interface Emitter<T extends EventMap> {
     removeAllListeners<K extends EventKey<T>>(eventName: K): EventEmitter;
     setMaxListeners(arg0: number): EventEmitter;
     getMaxListeners(): number;
-    listenerCount(eventName: string | symbol, listener?: Function  ): number;
+    listenerCount(eventName: string | symbol, listener?: Function): number;
     eventNames(): (string | symbol)[];
     listeners<K extends EventKey<T>>(eventName: K): Function[];
     rawListeners<K extends EventKey<T>>(eventName: K): Function[];

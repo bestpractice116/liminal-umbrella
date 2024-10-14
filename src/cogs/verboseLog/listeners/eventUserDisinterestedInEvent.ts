@@ -13,7 +13,7 @@ export class verboseLogUserDisinterestedInEventListener extends Listener {
             event: CUSTOM_EVENTS.UserDisinterestedInEvent
         });
     }
-    run(e: UserDisinterestedInEvent) {
-        getChannelAndSend(`User ${userMention(e.userId)} is no longer interested in ${e.guildScheduledEvent.name}`);
+    async run(e: UserDisinterestedInEvent) {
+        await getChannelAndSend(`User ${userMention(e.userId)} is no longer interested in ${e.guildScheduledEvent.name}`);
     }
 }

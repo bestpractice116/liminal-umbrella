@@ -13,9 +13,9 @@ export class verboseLogTickOneTwentyListener extends Listener {
             event: CUSTOM_EVENTS.TickOneTwenty
         });
     }
-    run(e: TickOneTwenty) {
+    async run(e: TickOneTwenty) {
         const thing = dayjs(new Date(e.firedAt));
         container.logger.info(`verboseLog cog - tickOneTwenty at ${thing.format('LT')}`);
-        getChannelAndSend(`Tick (2 hours): ${thing.format('LT')}`);
+        await getChannelAndSend(`Tick (2 hours): ${thing.format('LT')}`);
     }
 }

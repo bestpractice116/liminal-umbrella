@@ -3,6 +3,7 @@ import { UserLeft } from '../../../lib/events/index.js';
 import { getChannelName } from '../utils.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getTextChannel } from '../../../lib/discord.js';
+import { Message } from 'discord.js';
 
 export class greetNewUsersUserLeftistener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -16,13 +17,17 @@ export class greetNewUsersUserLeftistener extends Listener {
 
     async run(e: UserLeft) {
         if (!e.greetingMessageId) return;
-
         const greetingChannelName = getChannelName();
         if (!greetingChannelName) return;
-        const greetingChannel = await getTextChannel(greetingChannelName);
+        const greetingChannel = getTextChannel(greetingChannelName);
         if (!greetingChannel) return;
-        const msg = await greetingChannel.messages.fetch(e.greetingMessageId);
-        if (!msg) return;
+        let msg: Message | undefined = undefined;
+        try {
+            msg = await greetingChannel.messages.fetch(e.greetingMessageId);
+        } catch (e: unknown) {
+            container.logger.error(e);
+            return;
+        }
         let reactions = 0;
         const greenTick = msg.reactions.resolve('✅');
         if (greenTick) reactions += greenTick.count;

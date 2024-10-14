@@ -4,23 +4,23 @@ import { getMessage } from '../../lib/message.js';
 import { User } from '../../lib/database/model.js';
 
 export function getChannelName(): string | null {
-    const channel_name = process.env.GREET_USERS_CHANNEL;
-    if (!channel_name) {
+    const channelName = process.env.GREET_USERS_CHANNEL;
+    if (!channelName) {
         return null;
     }
-    return channel_name;
+    return channelName;
 }
 
-export async function getChannelAndSend(msg: string): Promise<void | Message> {
-    const channel_name = getChannelName();
-
+export async function getChannelAndSend(msg: string): Promise<null | Message> {
+    const channelName = getChannelName();
     const client = container.client;
-    const channel = client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channel_name);
+    const channel = client.channels.cache.find((channel) => channel.type == ChannelType.GuildText && channel.name === channelName);
     if (channel && channel.type == ChannelType.GuildText) {
         return channel.send(msg);
     } else {
         container.logger.warn('Cannot find the ${channel_name} channel, or not a text channel');
     }
+    return null;
 }
 
 export async function doUserGreeting(u: User) {

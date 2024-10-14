@@ -19,6 +19,6 @@ export function clearActivityCache() {
 export async function setRandomActivity() {
     const lines = await getActivityList();
     const thing = lines[Math.floor(Math.random() * lines.length)];
-    getChannelAndSend(`Set activity: Playing ${thing}`);
+    await getChannelAndSend(`Set activity: Playing ${thing}`);
     container.client.user?.setActivity({ name: thing, type: ActivityType.Playing });
 }

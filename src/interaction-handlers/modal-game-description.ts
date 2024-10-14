@@ -26,7 +26,7 @@ export class ModalGameDescriptionHandler extends InteractionHandler {
 
         const gamerow = await PlannedGame.findGameFromInteraction(interaction);
         gamerow?.set({ name, description });
-        gamerow?.save();
+        await gamerow?.save();
         const pingMessage = await gamerow?.showEditForm(interaction);
         return gamerow?.handleEditForm(interaction, pingMessage!);
     }
