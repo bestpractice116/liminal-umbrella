@@ -1,5 +1,5 @@
 import ReactTimeAgo from 'react-time-ago'
-import type { TableProps } from 'antd';
+import { Button, type TableProps } from 'antd';
 import Table from 'antd/es/table';
 import { Spin } from '../../components/Spin';
 import Tag from 'antd/es/tag';
@@ -7,7 +7,6 @@ import { useFetchQuery, useTableComponents, getColumns, DefaultColumns, WrapCRUD
 import { UserSchema, type UserListItem } from 'common/schema';
 import { LinkOutlined} from '@ant-design/icons';
 import { ColumnsType, FilterDropdownProps } from 'antd/es/table/interface';
-import Button from 'antd/es/button';
 import Space from 'antd/es/space';
 import Slider, { SliderSingleProps } from 'antd/es/slider';
 import { useState } from 'react';
@@ -80,6 +79,69 @@ const RenderRoles = ({roles, record}: {roles: { name: string; hexColor: string }
         ))
 
 const formatter: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (value) => `${value} months`;
+const ages: SliderSingleProps['marks'] = {
+    3: '3',
+    6: '6',
+    9: '9',
+    12: '12',
+    18: '18',
+    24: '24',
+}
+
+interface filterLastSeenProps {
+    setLastSeenFilter: React.Dispatch<React.SetStateAction<number>>,
+    doLastSeenFilter: boolean,
+    setDoLastSeenFilter: React.Dispatch<React.SetStateAction<boolean>>,
+    defaultLastSeen: number
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close, setLastSeenFilter, setDoLastSeenFilter, defaultLastSeen }: 
+    FilterDropdownProps & filterLastSeenProps
+) => {     
+    return (
+        <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
+            <Slider min={3} max={24} step={1} defaultValue={defaultLastSeen} tooltip={{ formatter }} marks={ages} onChange={(val) => { setLastSeenFilter(val); }}/>
+            <Space>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setSelectedKeys(['lastseen', ...selectedKeys]);
+                        setDoLastSeenFilter(true);
+                        confirm({closeDropdown: true})
+                    }}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Filter
+                </Button>
+                <Button
+                    onClick={() => {
+                        setLastSeenFilter(defaultLastSeen); 
+                        setDoLastSeenFilter(false);
+                        setSelectedKeys(selectedKeys.filter(key => key !== 'lastseen'));
+                        if (clearFilters) { clearFilters() };
+                        close();
+                    }}
+                    size="small"
+                    style={{ width: 90 }}
+
+                >
+                    Reset
+                </Button>
+                <Button
+                    type="dashed"
+                    size="small"
+                    onClick={() => {
+                        close();
+                    }}
+                >
+                    Close
+                </Button>
+            </Space>
+        </div>
+    )
+};
 
 export function AdminUsers() {
     const queryClient = useQueryClient();
@@ -113,52 +175,6 @@ export function AdminUsers() {
     });
 
     console.log(`lastSeenFilter: ${lastSeenFilter}`);
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const FilterLastSeen = ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}: FilterDropdownProps) => {
-        return (
-            <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
-                <Slider min={3} max={24} step={1} defaultValue={lastSeenFilter} tooltip={{ formatter }} onChange={(val) => { setLastSeenFilter(val); }}/>
-                <Space>
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setSelectedKeys(['lastseen', ...selectedKeys]);
-                        setDoLastSeenFilter(true);
-                        confirm({closeDropdown: true})
-                    }}
-                    size="small"
-                    style={{ width: 90 }}
-                >
-                    Filter
-                </Button>
-                <Button
-                    onClick={() => {
-                        setLastSeenFilter(defaultLastSeen); 
-                        setDoLastSeenFilter(false);
-                        setSelectedKeys(selectedKeys.filter(key => key !== 'lastseen'));
-                        if (clearFilters) { clearFilters() };
-                        close();
-                    }}
-                    size="small"
-                    style={{ width: 90 }}
-
-                >
-                    Reset
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                        close();
-                    }}
-                >
-                    close
-                </Button>
-                </Space>
-            </div>
-        )
-    };
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const rowSelection: TableProps<UserListItem>['rowSelection'] = {
@@ -229,7 +245,11 @@ export function AdminUsers() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />,
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
-            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} />,
+            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} 
+                setLastSeenFilter={setLastSeenFilter}
+                doLastSeenFilter={doLastSeenFilter}
+                setDoLastSeenFilter={setDoLastSeenFilter}
+                defaultLastSeen={defaultLastSeen} />,
             onFilter: (value, record) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const recordTime = (new Date(record.lastSeenTime)).getTime();
