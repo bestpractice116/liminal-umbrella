@@ -1,5 +1,5 @@
 import { Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
-import { GameSession, GameSystem } from '../lib/database/model.js';
+import { GameSession } from '../lib/database/model.js';
 import { GameSchema } from 'common/schema';
 import type { GameUpdateItem, SchemaBundle } from 'common/schema';
 import { UD } from '../lib/api/CRUD.js';
@@ -73,14 +73,6 @@ export class ApiGameSessions extends UD {
             response.badRequest('End time cannot be before start time - invalid game'); return null;
         }
 
-        const out = { ...data, starttime, endtime };
-        if (data.gamesystem) {
-            const gamesystem = await GameSystem.findOne({ where: { name: data.gamesystem } });
-            if (!gamesystem) {
-                response.badRequest('Cannot find game system'); return null;
-            }
-            out.gamesystem = gamesystem.key;
-        }
-        return out;
+        return { ...data, starttime, endtime };
     }
 }

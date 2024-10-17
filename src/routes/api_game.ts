@@ -12,7 +12,7 @@ export async function doCoerce(request: ApiRequest, response: ApiResponse, data:
         owner: request.auth!.id
     };
     if (gamesystem) {
-        const gamesystemOb = await GameSystem.findOne({ where: { name: gamesystem } });
+        const gamesystemOb = await GameSystem.findOne({ where: { key: gamesystem } });
         if (!gamesystemOb) {
             response.badRequest('Cannot find game system');
             return null;

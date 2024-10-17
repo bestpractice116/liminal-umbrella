@@ -106,11 +106,6 @@ export default class PlannedGame extends Model<InferAttributes<PlannedGame>, Inf
     declare location?: string;
 
     async CRUDRead(name: string) {
-        if (name == 'gamesystem') {
-            if (this.gamesystem) {
-                return (await this.getGamesystemOb())!.name;
-            }
-        }
         if (name == 'owner') {
             const user = await this.getOwnerOb();
             return { key: user!.key, nickname: user!.nickname, avatarURL: user!.avatarURL, username: user!.username };

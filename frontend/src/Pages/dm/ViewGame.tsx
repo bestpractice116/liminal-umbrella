@@ -158,12 +158,16 @@ export function ViewGame() {
             showBoundary(zodErrorConvertor(e));
         }
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        if (initialValues) initialValues.date = initialValues.starttime?.clone().hour(12).minute(0).second(0).millisecond(0);
+        if (initialValues) {
+            initialValues.starttime = dayjs(initialValues.starttime as Date);
+            initialValues.endtime = dayjs(initialValues.endtime as Date);
+            initialValues.date = dayjs(initialValues.starttime as Date).clone().hour(12).minute(0).second(0).millisecond(0);
+        }
         const now = dayjs(Date.now());
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         editable = initialValues?.starttime && initialValues.starttime > now;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        signedUpUsers = initialValues?.signedupplayers;
+        signedUpUsers = initialValues?.signedupplayers || [];
         full = initialValues?.maxplayers <= signedUpUsers.length;
     }
     const excludeFindUsers = signedUpUsers.map((player: AutoCompleteUser) => player.key);

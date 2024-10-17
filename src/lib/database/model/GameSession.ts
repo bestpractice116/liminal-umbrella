@@ -167,11 +167,6 @@ export default class GameSession extends Model<InferAttributes<GameSession>, Inf
     }
 
     async CRUDRead(name: string) {
-        if (name == 'gamesystem') {
-            if (this.gamesystem) {
-                return (await this.getGamesystemOb())!.name;
-            }
-        }
         if (name == 'signedupplayers') {
             return (await this.getSignedupUsers()).map((user: User) => {
                 return { key: user.key, nickname: user.nickname, avatarURL: user.avatarURL, username: user.username };

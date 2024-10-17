@@ -17,14 +17,14 @@ export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any> | z.
     return Object.keys(schema.shape);
 }
 
-export function getZObject(schema: z.ZodTypeAny): z.ZodObject<any> {
+export function getZObject<T extends z.ZodRawShape>(schema: z.ZodTypeAny): z.ZodObject<T> {
     if (schema instanceof z.ZodReadonly) {
         return getZObject(schema.unwrap());
     }
     if (schema instanceof z.ZodOptional) {
         return getZObject(schema.unwrap());
     }
-    return schema as z.ZodObject<any>;
+    return schema as z.ZodObject<T>;
 }
 
 export function dayJsCoerce(val: unknown): dayjs.Dayjs | undefined {

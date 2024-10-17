@@ -65,7 +65,7 @@ const user = z.object({
     avatarURL: z.string(),
     username: z.string()
 });
-const read = update.and(
+const read = baseUpdate.merge(
     z.object({
         owner: user,
         signedupplayers: z.array(user),
@@ -78,7 +78,7 @@ const read = update.and(
     })
 );
 
-const create = update.and(find);
+const create = baseUpdate.merge(find);
 
 export const GameSchema: SchemaBundle = {
     // This is a strange case, as Game is Created from NewGame, but the update schema is used on
