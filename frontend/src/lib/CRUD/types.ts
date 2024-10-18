@@ -6,6 +6,7 @@ import { RefObject, FC } from 'react';
 
 export interface Keyable {
     key: string | number | bigint
+    [map: string]: unknown
 }
 
 export interface MutationReturn<T extends Keyable> {
@@ -33,7 +34,7 @@ export type EditableTableProps = Parameters<typeof Table>[0];
 export type ColumnTypes<T> = ColumnGroupType<T> | ColumnType<T>;
 export type ColumnTypeArray<T> = (ColumnTypes<T> & { editable?: boolean; dataIndex: string })[];
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export type SaveHandler<Item> = (row: Item, form: RefObject<FormInstance>, toggleEdit: Function) => boolean;
+export type SaveHandler<Item> = (row: Item, form: RefObject<FormInstance>, toggleEdit: () => void) => boolean;
 export type DefaultColumns<T> = (ColumnTypes<T> & { editable?: boolean; dataIndex: string })[];
 
 export interface Item {

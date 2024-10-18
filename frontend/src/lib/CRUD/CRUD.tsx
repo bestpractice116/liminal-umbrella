@@ -10,6 +10,7 @@ import { SaveOutlined } from '@ant-design/icons';
 import { ColProps } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { useMutationErrorToFormError } from './hooks';
+import { Keyable, MutationReturn } from './types';
 
 export function CreateForm<T>({
     mutation,
@@ -24,7 +25,7 @@ export function CreateForm<T>({
     formRef
 }: {
      
-    mutation: UseMutationResult<void, Error, any, void>;
+    mutation: UseMutationResult<MutationReturn<T & Keyable>, Error, any>;
     children: React.ReactNode;
     initialValues?: Store | undefined;
     submitButton?: boolean;
@@ -39,6 +40,7 @@ export function CreateForm<T>({
     wrapperCol ||= { span: 19 };
     const [isSubmittable, setSubmittable] = useState(false);
     const [form] = Form.useForm<T>();
+    // eslint-disable-next-line @eslint-react/no-create-ref
     if (!formRef) formRef = createRef<FormInstance<T>>();
     const values = Form.useWatch([], form);
     const mutationErrorToFormError = useMutationErrorToFormError();
@@ -64,6 +66,9 @@ export function CreateForm<T>({
                 mutation.mutate(values, {
                     onError: (e) => {
                         mutationErrorToFormError(form, e);
+                    },
+                    onSuccess: () => {
+                        form.resetFields();
                     }
                 });
             }}
@@ -84,7 +89,7 @@ export function CreateForm<T>({
     );
 }
 
-export function AddRow<T>({ createMutation, children }: { createMutation: UseMutationResult<void, Error, any, void>; children: React.ReactNode }) {
+export function AddRow<T>({ createMutation, children }: { createMutation: UseMutationResult<MutationReturn<T & Keyable>, Error, any>; children: React.ReactNode }) {
     const [isCreating, setIsCreating] = useState(false);
     let button = <></>;
     if (!isCreating) {

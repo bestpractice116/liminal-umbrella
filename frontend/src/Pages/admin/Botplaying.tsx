@@ -24,8 +24,8 @@ const createFormRule = createSchemaFieldRule(getZObject(ActivitySchema.create!))
 export function AdminBotplaying() {
     const components = useTableComponents(ActivitySchema);
     const result = useFetchQuery<BotActivityListItem[]>('/api/botplaying', 'bot_playing');
-    const { isUpdating, isDeleting, handleUpdate, handleDelete } = useFormHandlers<BotActivityListItem>('/api/botplaying', 'bot_playing');
-    const { isCreating, createMutation } = useCreateMutationAndUpdateQueryData('/api/botplaying', 'bot_playing');
+    const { isUpdating, isDeleting, handleUpdate, handleDelete } = useFormHandlers('/api/botplaying', 'bot_playing');
+    const { isCreating, createMutation } = useCreateMutationAndUpdateQueryData<BotActivityCreate, BotActivityListItem>('/api/botplaying', 'bot_playing');
 
     const defaultColumns: DefaultColumns<BotActivityListItem> = [
         {
