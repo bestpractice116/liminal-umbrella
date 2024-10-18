@@ -1,7 +1,7 @@
 import Table, { ColumnsType } from 'antd/es/table';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
-import Spin from 'antd/es/spin';
+import { Spin } from '../../components/Spin';
 import Popconfirm from 'antd/es/popconfirm';
 import Divider from 'antd/es/divider';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -53,7 +53,7 @@ export function AdminBotplaying() {
     return (
         <WrapCRUD<BotActivityListItem> result={result}>
             <>
-                <Spin spinning={isCreating || isUpdating || isDeleting} fullscreen />
+                <Spin spinning={isCreating || isUpdating || isDeleting} />
                 <div>
                     This page is for editing the games which the bot can be listed as '<code>Playing ...</code>' in the user list at the side of
                     Discord. The bot will randomly pick a new activity from this list roughly every 4 hours (although this will vary!).

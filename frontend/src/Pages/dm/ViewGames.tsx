@@ -7,7 +7,7 @@ import { GameSchema, type GameReadItem } from 'common/schema';
 import { useTableComponents, getColumns, DefaultColumns, WrapCRUD, useFetchQuery, useFormHandlers } from '../../lib/CRUD';
 import { useAuthStatus } from '../../components/Auth';
 import UserRecord from './UserRecord.js';
-import dayjs from '../../lib/dayjs.js';
+import dayjs from 'antd/node_modules/dayjs';
 import { TableColumnsType } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +25,7 @@ export function ViewGames() {
     const admin = isAdmin();
     const components = useTableComponents(GameSchema);
     const result = useFetchQuery<GameReadItem[]>('/api/gamesessions', 'gamesessions');
-    const { handleUpdate } = useFormHandlers<GameReadItem>('/api/gamesessions', 'gamesessions');
+    const { handleUpdate } = useFormHandlers('/api/gamesessions', 'gamesessions');
 
     const defaultColumns: DefaultColumns<GameReadItem> = [
         {

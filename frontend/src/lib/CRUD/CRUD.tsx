@@ -11,6 +11,7 @@ import { ColProps } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { useMutationErrorToFormError } from './hooks';
 import { Keyable, MutationReturn } from './types';
+import { useLocation } from 'react-router-dom';
 
 export function CreateForm<T>({
     mutation,
@@ -124,11 +125,10 @@ export function WrapCRUD<Res>({
     children: React.ReactNode;
     result: UseQueryResult<Res[]>;
 }) {
-    if (spin || result.isLoading) {
-        return <Spin />;
-    }
-    if (result.isError) {
-        return <ErrorFallback error={result.error} />;
-    }
-    return <div style={{ display: 'block' }}>{children}</div>;
+    const { pathname } = useLocation();
+    const spintip = `Loading data for${pathname.replaceAll('/', ' ')}`
+    const spinner = (spin || result.isLoading) ? <Spin tip={spintip} /> : <></>;
+    if (result.isError)
+        return <>{spinner}<ErrorFallback error={result.error} /></>;
+    return <>{spinner}<div style={{ display: 'block' }}>{children}</div></>;
 }

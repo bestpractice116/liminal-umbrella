@@ -1,8 +1,8 @@
 import { createRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema, type GameCreateItem } from 'common/schema';
+import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getZObject } from 'common';
-import dayjs from '../../lib/dayjs';
+import dayjs from 'antd/node_modules/dayjs';
 import PostGameForm from './PostGameForm';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';
@@ -10,7 +10,7 @@ import Collapse from 'antd/es/collapse';
 import Panel from 'antd/es/collapse/CollapsePanel';
 import List from 'antd/es/list';
 import { FormInstance } from 'antd/es/form';
-import { type DefaultColumns, zodErrorConvertor, useDeleteMutation, useFetchQuery, useUpdateMutation } from '../../lib/CRUD';
+import { type DefaultColumns, zodErrorConvertor, useDeleteMutation, useFetchQuery, useUpdateMutationAndUpdateQueryData } from '../../lib/CRUD';
 import FindUserSearchBox from './FindUser.js';
 import Popconfirm from 'antd/es/popconfirm';
 import { LinkOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -20,6 +20,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { NotFound } from '..//NotFound';
 import { useErrorBoundary } from '../../components/ErrorBoundary';
 import { AnyObject } from 'antd/es/_util/type.js';
+import { GameForm } from './types.js';
 
 function UsersSignedUpTable({
     deleteDisabled,
@@ -119,12 +120,7 @@ export function ViewGame() {
     const key = data.key as number;
     const queryKey = ['gamesessions', key];
     const result = useFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
-    const { updateMutation, isUpdating } = useUpdateMutation(`/api/gamesessions`, () => {
-        // FIXME - this is a crappy way to do this, see how it's done in CRUD.tsx
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        queryClient.invalidateQueries({ queryKey: ['gamesessions', key] });
-        console.log('updated');
-    });
+    const { updateMutation, isUpdating } = useUpdateMutationAndUpdateQueryData<GameForm>('/api/gamesessions', ['gamesessions', key])
     const { deleteMutation } = useDeleteMutation(
         '/api/gamesessions',
         // FIXME - why can't we use the built in query mangler
@@ -135,7 +131,8 @@ export function ViewGame() {
             navigate('/dm/viewgames');
         }
     );
-    const formRef = createRef<FormInstance<GameCreateItem>>();
+    // eslint-disable-next-line @eslint-react/no-create-ref
+    const formRef = createRef<FormInstance<GameForm>>();
     if (error) {
         return <NotFound />;
     }

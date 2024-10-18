@@ -1,9 +1,9 @@
 import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
-import dayjs from '../../lib/dayjs.js';
+import dayjs from 'antd/node_modules/dayjs';
 import { type GameCreateItem, type NewGameListItem, GameSchema, NewGameSchema } from 'common/schema';
 import { useCreateMutation, useFetchQuery, useUpdateMutation } from '../../lib/CRUD';
-import Spin from 'antd/es/spin';
+import { Spin } from '../../components/Spin';
 import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';

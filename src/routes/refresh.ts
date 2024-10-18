@@ -35,7 +35,7 @@ export class RefreshRoute extends Route {
         }
         // Refresh the user's data
         try {
-            response.json(await serverAuth.fetchData(authToken)); return;
+            response.json({error: false, ...await serverAuth.fetchData(authToken)}); return;
         } catch (error) {
             this.container.logger.fatal(error);
             response.error(HttpCodes.InternalServerError); return;
