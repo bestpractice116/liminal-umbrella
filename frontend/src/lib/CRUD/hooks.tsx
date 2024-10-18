@@ -7,7 +7,7 @@ import Input from 'antd/es/input';
 import { EditOutlined } from '@ant-design/icons';
 import { createSchemaFieldRule } from 'antd-zod';
 
-import { EditableCellProps, QueryKey, EditableRowProps, Item, InputRef } from './types';
+import { EditableCellProps, QueryKey, EditableRowProps, Item, InputRef, Keyable, MutationReturn, DeleteReturn } from './types';
 import { coerceQueryKey, zodErrorConvertorThrow, getEditableContext } from './utils';
 import { useErrorBoundary } from '../../components/ErrorBoundary';
 import { SchemaBundle } from 'common/schema';
@@ -24,22 +24,17 @@ export function useFetchQuery<T>(apipath: string, querykey: QueryKey): UseQueryR
     });
 }
 
-interface MutationReturn<T> {
-    status: 'ok',
-    datum: T,
-}
-
-export function useCreateMutation<T>(
+export function useCreateMutation<TIn, TCreated extends Keyable>(
     apipath: string,
     querykey: QueryKey,
-    onCreate: (data: MutationReturn<T>) => void
+    onCreate: (data: MutationReturn<TCreated>) => void
 ) {
     const queryClient = useQueryClient();
     const { showBoundary } = useErrorBoundary();
     const [isCreating, setIsMutating] = useState(false);
-    const createMutation = useMutation<MutationReturn<T>, Error, T, T>({
+    const createMutation = useMutation<MutationReturn<TCreated>, Error, TIn>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mutationFn: async (r: T) => {
+        mutationFn: async (r: TIn) => {
             return fetch(
                 apipath,
                 {
@@ -53,9 +48,9 @@ export function useCreateMutation<T>(
             ).then((data) => {
                 void queryClient.invalidateQueries({ queryKey: coerceQueryKey(querykey) });
                 zodErrorConvertorThrow(data, () => {
-                    onCreate(data as MutationReturn<T>);
+                    onCreate(data as MutationReturn<TCreated>);
                 });
-                return data as MutationReturn<T>;
+                return data as MutationReturn<TCreated>;
             });
         },
         onError: (e) => {
@@ -73,18 +68,18 @@ export function useCreateMutation<T>(
     return { createMutation, isCreating };
 }
 
-export function useCreateMutationAndUpdateQueryData<T>(apipath: string, querykey: QueryKey) {
+export function useCreateMutationAndUpdateQueryData<TIn, TCreated extends Keyable>(apipath: string, querykey: QueryKey) {
     const queryClient = useQueryClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return useCreateMutation<T>(apipath, querykey, (data: MutationReturn<T>) => {
+    return useCreateMutation<TIn, TCreated>(apipath, querykey, (data: MutationReturn<TCreated>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryClient.setQueryData<T[]>([querykey], (old: T[] | undefined) => {
-            return [...(old ?? []), data.datum] as T[];
+        queryClient.setQueryData<TCreated[]>([querykey], (old: TCreated[] | undefined) => {
+            return [...(old ?? []), data.datum] as TCreated[];
         });
     });
 }
 
-export function useUpdateMutation<T>(
+export function useUpdateMutation<T extends Keyable>(
     apipath: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSuccess: (data: MutationReturn<T>, row: T) => void
@@ -126,7 +121,7 @@ export function useUpdateMutation<T>(
     return { updateMutation, isUpdating };
 }
 
-export function useUpdateMutationAndUpdateQueryData<T>(apipath: string, querykey: QueryKey) {
+export function useUpdateMutationAndUpdateQueryData<T extends Keyable>(apipath: string, querykey: QueryKey) {
     const queryClient = useQueryClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return useUpdateMutation<T>(apipath, (data: MutationReturn<T>) => {
@@ -143,17 +138,17 @@ export function useUpdateMutationAndUpdateQueryData<T>(apipath: string, querykey
     });
 }
 
-export function useDeleteMutation(
+export function useDeleteMutation<T extends Keyable>(
     apipath: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onSuccess: (data: any, row: any) => void
+    onSuccess: (data: DeleteReturn<T>, row: T) => void
      
 ) {
     const [isDeleting, setIsMutating] = useState(false);
     const { showBoundary } = useErrorBoundary();
-    const deleteMutation = useMutation({
+    const deleteMutation = useMutation<DeleteReturn<T>, Error, T>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mutationFn: async (r: any) => {
+        mutationFn: async (r: T) => {
             return fetch(
                 `${apipath}/${r.key}`,
                 {
@@ -162,12 +157,17 @@ export function useDeleteMutation(
                 FetchResultTypes.JSON
             )
                 .then((data) => {
-                    onSuccess(data, r);
+                    onSuccess(data as DeleteReturn<T>, r);
+                    return data as DeleteReturn<T>;
                 })
-                .catch((e) => { showBoundary(e); });
+                .catch((e: unknown) => {
+                    showBoundary(e); 
+                    return {} as DeleteReturn<T>;
+                });
         },
         onMutate: () => {
             setIsMutating(true);
+            return undefined;
         },
         onSettled: () => {
             setIsMutating(false);
@@ -180,14 +180,16 @@ export function useDeleteMutation(
     return { deleteMutation, isDeleting };
 }
 
-export function useDeleteMutationAndUpdateQueryData(apipath: string, querykey: QueryKey) {
+export function useDeleteMutationAndUpdateQueryData<T extends Keyable>(apipath: string, querykey: QueryKey) {
     const queryClient = useQueryClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return useDeleteMutation(apipath, (row: any) => {
+    return useDeleteMutation(apipath, (row: DeleteReturn<T>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryClient.setQueryData(coerceQueryKey(querykey), (old: any) => {
+        queryClient.setQueryData<T[]>(coerceQueryKey(querykey), (old: T[] | undefined) => {
+            console.log('old', old, 'row is ', row);
+            if (!old) return [];
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return old.filter((item: any) => item.key !== row.key);
+            return old.filter((item: T) => item.key !== row.datum.key);
         });
     });
 }
@@ -201,9 +203,8 @@ export function useMutationErrorToFormError() {
                 const formatted = (e).format();
                 const f = Object.entries(formatted)
                     .filter(([key, _]) => key !== '_errors')
-                    .map(([key, value]) => {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        return { name: key, errors: (value as any)._errors };
+                    .map(([key, errors]) => {
+                        return { name: key, errors };
                     });
                 form.setFields(f);
             } else {
@@ -215,31 +216,33 @@ export function useMutationErrorToFormError() {
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function useFormHandlers<APIRow>(apipath: string, querykey: QueryKey) {
+export function useFormHandlers(apipath: string, querykey: QueryKey) {
     const { deleteMutation, isDeleting } = useDeleteMutationAndUpdateQueryData(apipath, querykey);
     const { updateMutation, isUpdating } = useUpdateMutationAndUpdateQueryData(apipath, querykey);
     const mutationErrorToFormError = useMutationErrorToFormError();
-    return {
-        handleDelete: (key: React.Key) => {
+    const f = {
+        handleDelete: (key: Keyable['key']) => {
             deleteMutation.mutate({ key });
         },
         isDeleting,
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        handleUpdate: (row: APIRow, form: RefObject<FormInstance>, toggleEdit: Function): boolean => {
+        handleUpdate: (row: Keyable, form: RefObject<FormInstance>, toggleEdit: () => void): boolean => {
             updateMutation.mutate(row, {
                 onError: (e) => { mutationErrorToFormError(form.current!, e); },
-                onSuccess: () => toggleEdit()
+                onSuccess: () => { toggleEdit(); }
             });
             return true;
         },
         isUpdating
     };
+    return f
 }
 
+// eslint-disable-next-line @eslint-react/hooks-extra/no-redundant-custom-hook
 export function useTableComponents(schema: SchemaBundle) {
-    const formRule = createSchemaFieldRule(getZObject(schema.update || schema.read));
+    const formRule = createSchemaFieldRule(getZObject(schema.update ?? schema.read));
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const EditableContext = getEditableContext();
+    // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars
     const EditableRow: FC<EditableRowProps> = ({ index, ...props }) => {
         const [form] = Form.useForm();
         return (
@@ -250,7 +253,9 @@ export function useTableComponents(schema: SchemaBundle) {
             </Form>
         );
     };
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps<Item>>> = ({
+        // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars
         title,
         editable,
         children,
@@ -274,14 +279,14 @@ export function useTableComponents(schema: SchemaBundle) {
             form.setFieldsValue({ [dataIndex]: record[dataIndex] });
         };
 
-        const save = async () => {
+        const save = () => { void (async () => {
             try {
-                const values = await form.validateFields();
+                const values = await form.validateFields() as Item;
                 handleSave({ ...record, ...values }, form, toggleEdit);
             } catch (errInfo) {
                 console.log('Save failed:', errInfo);
             }
-        };
+        })() };
 
         let childNode = children;
 

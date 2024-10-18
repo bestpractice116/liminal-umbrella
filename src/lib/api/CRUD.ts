@@ -35,6 +35,9 @@ export function zodParseOrError<T extends z.ZodTypeAny>(schema: T, input: unknow
     return result.data as z.infer<T>;
 }
 
+interface Keyable {
+    key: string | number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export async function findItem<T extends z.ZodTypeAny>(
@@ -43,7 +46,7 @@ export async function findItem<T extends z.ZodTypeAny>(
     model: ModelStatic,
     where: CRUDWhere,
     response: ApiResponse
-): Promise<Model | null> {
+): Promise<Model & Keyable | null> {
     if (!findSchema) {
         response.notFound(); 
         return null;
@@ -55,7 +58,7 @@ export async function findItem<T extends z.ZodTypeAny>(
         response.status(HttpCodes.NotFound).json({ status: 'error', error: 'Item not found' });
         return null;
     }
-    return item;
+    return item as Model & Keyable; // TODO - fix type here, shouldn't be needed?
 }
 
 export type ReadObject = Record<string, string | number | null | undefined>
@@ -74,6 +77,7 @@ export interface CRUDSaveable {
 export interface CRUDDestroyable {
     destroy(): Promise<void>
     CRUDDestroy?(): Promise<void>
+    key: string | number
 }
 
 abstract class CRUDBase extends Route {
@@ -181,7 +185,7 @@ export abstract class CR extends CRUDBase {
         return;
     }
 
-    protected async findItem(request: ApiRequest, response: ApiResponse): Promise<Model | null> {
+    protected async findItem(request: ApiRequest, response: ApiResponse) {
         return findItem(this.getSchema().find, request.body, this.getModel(), await this.getRetrieveWhere(request), response);
     }
 
@@ -219,7 +223,7 @@ export abstract class UD extends CRUDBase {
         return this.getSchema().find;
     }
 
-    protected async findItem(request: ApiRequest, response: ApiResponse): Promise<Model | null> {
+    protected async findItem(request: ApiRequest, response: ApiResponse) {
         return findItem(this.getSchemaFind(), request.params, this.getModel(), await this.getRetrieveWhere(request), response);
     }
 
@@ -316,7 +320,8 @@ export abstract class UD extends CRUDBase {
         }
         const deleteError = await this.DELETE_disallowed(item, request);
         if (deleteError) {
-            response.error(HttpCodes.MethodNotAllowed, deleteError); return;
+            response.error(HttpCodes.MethodNotAllowed, deleteError);
+            return;
         }
         if (item.CRUDDestroy) {
             await item.CRUDDestroy();
@@ -324,6 +329,6 @@ export abstract class UD extends CRUDBase {
             await item.destroy();
         }
         await this.onMutation(item, MutationOperation.DELETE);
-        response.json({ status: 'deleted', datum: request.params });
+        response.json({ status: 'deleted', datum: {key: item.key} });
     }
 }

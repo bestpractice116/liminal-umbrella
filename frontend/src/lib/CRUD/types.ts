@@ -4,6 +4,20 @@ import Input from 'antd/es/input';
 import Table, { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { RefObject, FC } from 'react';
 
+export interface Keyable {
+    key: string | number | bigint
+}
+
+export interface MutationReturn<T extends Keyable> {
+    status: 'ok',
+    datum: T,
+}
+
+export interface DeleteReturn<T extends Keyable> {
+    status: 'deleted',
+    datum: T,
+}
+
 export type InputRef = GetRef<typeof Input>;
 
 export interface EditableCellProps<T> {
