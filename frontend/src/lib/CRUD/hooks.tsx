@@ -187,7 +187,6 @@ export function useDeleteMutationAndUpdateQueryData<T extends Keyable>(apipath: 
     return useDeleteMutation(apipath, (row: DeleteReturn<T>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         queryClient.setQueryData<T[]>(coerceQueryKey(querykey), (old: T[] | undefined) => {
-            console.log('old', old, 'row is ', row);
             if (!old) return [];
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return old.filter((item: T) => item.key !== row.datum.key);

@@ -86,7 +86,6 @@ function SearchBox({ disabled, gameSessionKey, exclude = [] }: { disabled: boole
                 disabled={disabled}
                 filterOption={(_inputValue, option) => {
                     return !exclude.find((maybeExclude) => {
-                        console.log(maybeExclude, option?.value);
                         return maybeExclude == option?.value;
                     });
                 }}
