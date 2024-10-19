@@ -4652,6 +4652,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-tsconfig-paths@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "babel-plugin-tsconfig-paths@npm:1.0.3"
+  peerDependencies:
+    "@babel/core": ^7.9.0
+  checksum: 10c0/95ce3ee2cfc9fbe23634dd060bd5a4b7cf3737b453eb21517f4f11f8527fb7f9d4f8159aaa95b39e06aa56cdfc788c96e557d50e89ca030a1496c513240994b7
+  languageName: node
+  linkType: hard
+
 "babel-preset-current-node-syntax@npm:^1.0.0":
   version: 1.0.1
   resolution: "babel-preset-current-node-syntax@npm:1.0.1"
@@ -6756,7 +6765,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-router-dom: "npm:^6.23.1"
     react-time-ago: "npm:^7.3.3"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.6.3"
     use-debounce: "npm:^10.0.1"
     vite: "npm:^5.2.0"
     zod: "npm:^3.23.8"
@@ -8478,6 +8487,7 @@ __metadata:
     "@types/node": "npm:^20.11.5"
     "@types/ws": "npm:^8.5.10"
     babel-jest: "npm:^29.7.0"
+    babel-plugin-tsconfig-paths: "npm:^1.0.3"
     bufferutil: "npm:^4.0.8"
     colorette: "npm:^2.0.20"
     common: "npm:1.0.0"
@@ -12334,17 +12344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.2.2, typescript@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "typescript@npm:5.3.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^5.6.3":
+"typescript@npm:5.6.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -12354,17 +12354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
-  version: 5.3.3
-  resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/1d0a5f4ce496c42caa9a30e659c467c5686eae15d54b027ee7866744952547f1be1262f2d40de911618c242b510029d51d43ff605dba8fb740ec85ca2d3f9500
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.6.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:

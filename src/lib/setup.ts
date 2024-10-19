@@ -2,6 +2,9 @@
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 process.env.NODE_ENV ??= 'development';
 
+import dayjs from 'common';
+dayjs();
+
 import { ApplicationCommandRegistries, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-api/register';

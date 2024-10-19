@@ -1,7 +1,7 @@
 import { Listener, container } from '@sapphire/framework';
 import { TickOneTwenty } from '../../../lib/events/index.js';
 import { getChannelAndSend } from '../utils.js';
-import dayjs from '../../../lib/dayjs.js';
+import dayjs from 'common';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 
 export class verboseLogTickOneTwentyListener extends Listener {

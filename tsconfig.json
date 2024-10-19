@@ -4,7 +4,6 @@
         "@sapphire/ts-config/extra-strict",
         "@sapphire/ts-config/decorators"
     ],
-    "module": "ESNext",
     "ts-node": {
         "esm": true
     },
@@ -18,7 +17,9 @@
         "strict": true,
         "skipLibCheck": true,
 	"esModuleInterop": true,
-    	"allowSyntheticDefaultImports": true
+    	"allowSyntheticDefaultImports": true,
+	"moduleResolution": "bundler",
+	"module": "ESNext"
     },
     "allowDefaultProject": [
         "eslint.config.js",

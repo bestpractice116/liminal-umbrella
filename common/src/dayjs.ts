@@ -1,23 +1,28 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import 'dayjs/plugin/weekday';
-import 'dayjs/plugin/localeData';
-import 'dayjs/plugin/weekOfYear';
-import 'dayjs/plugin/weekYear';
-import 'dayjs/plugin/advancedFormat';
-import 'dayjs/plugin/customParseFormat';
-dayjs.extend(require('dayjs/plugin/customParseFormat'));
-dayjs.extend(require('dayjs/plugin/advancedFormat'));
-dayjs.extend(require('dayjs/plugin/weekday'));
-dayjs.extend(require('dayjs/plugin/localeData'));
-dayjs.extend(require('dayjs/plugin/weekOfYear'));
-dayjs.extend(require('dayjs/plugin/weekYear'));
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+import localizedFormat from 'dayjs/plugin/localizedFormat.js';
+import weekday from 'dayjs/plugin/weekday.js';
+import localeData from 'dayjs/plugin/localeData.js';
+import weekOfYear from 'dayjs/plugin/weekOfYear.js';
+import weekYear from 'dayjs/plugin/weekYear.js';
+import advancedFormat from 'dayjs/plugin/advancedFormat.js';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(localizedFormat);
+dayjs.extend(customParseFormat);
+dayjs.extend(advancedFormat);
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
 dayjs.extend(function (_o, c) {
   // todo support Wo (ISO week)
   const proto = c.prototype;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const oldFormat = proto.format;
   proto.format = function f(formatStr) {
     const str = (formatStr ?? '').replace('Wo', 'wo');

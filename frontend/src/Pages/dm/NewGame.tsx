@@ -1,6 +1,7 @@
 import { useState, createRef } from 'react';
 import Button from 'antd/es/button';
 import dayjs from 'common';
+import type { Dayjs } from 'common';
 import { type GameCreateItem, type NewGameListItem, GameSchema, GameType, GameUpdateItem, NewGameSchema } from 'common/schema';
 import { MutationReturn, useCreateMutation, useFetchQuery, useUpdateMutation } from '../../lib/CRUD';
 import { Spin } from '../../components/Spin';
@@ -17,9 +18,13 @@ import { GameForm } from './types.js';
 import { SafeParseReturnType } from 'zod';
 
 export function NewGame() {
-    const { showBoundary } = useErrorBoundary();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @eslint-react/no-create-ref
-    const formRef = createRef<FormInstance<GameUpdateItem & { date?: any }>>();
+    const formRef = createRef<FormInstance<GameUpdateItem & { date?: Dayjs }>>();
+    return <NewGameInner formRef={formRef} />;
+}
+
+function NewGameInner({ formRef }: { formRef: React.RefObject<FormInstance<GameUpdateItem & { date?: Dayjs }>> }) {
+    const { showBoundary } = useErrorBoundary();
     // FIXME - this name is bad as it isn't just creating
     const [postId, setPostId] = useState(-1);
     const result = useFetchQuery<NewGameListItem[]>('/api/game', 'game');
@@ -57,9 +62,6 @@ export function NewGame() {
             console.error('error parsing NewGameSchea.read', res.error.format());
         } else {
             initialValues = res.data;
-            console.log('initialValues ', initialValues);
-            console.log('initialValues.starttime cloned ', dayjs(initialValues.starttime));
-            console.log('initialValues.starttime cloned weekday() ', dayjs(initialValues.starttime).weekday);
             initialValues.date = dayjs(initialValues.starttime).clone().hour(12).minute(0).second(0).millisecond(0);
             hasGame = true;
         }

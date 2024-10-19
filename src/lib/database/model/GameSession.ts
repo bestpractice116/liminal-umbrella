@@ -36,7 +36,7 @@ import EventInterest from './EventInterest.js';
 import { container } from '@sapphire/framework';
 import { getGameListingChannel, format, getOneShotThread } from '../../discord.js';
 import { GuildScheduledEvent, Message, GuildScheduledEventStatus, DiscordAPIError } from 'discord.js';
-import dayjs from '../../dayjs.js';
+import dayjs from 'common';
 
 export default class GameSession extends Model<InferAttributes<GameSession>, InferCreationAttributes<GameSession>> {
     @Attribute(DataTypes.INTEGER)

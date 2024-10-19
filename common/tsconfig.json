@@ -1,5 +1,4 @@
 {
-    "module": "ESNext",
     "ts-node": {
         "esm": true
     },
@@ -20,7 +19,9 @@
         "declarationMap": true,
         "skipLibCheck": true,
 	"esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+	"moduleResolution": "bundler",
+        "module": "ESNext"
     },
     "include": ["src"]
 }
