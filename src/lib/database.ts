@@ -603,11 +603,13 @@ export default class Database {
                 fetchAll: true,
                 limit: 100
             };
-            console.log('Fetch archived threads START');
+            console.log(`Fetch archived threads START for ${discordChannel.name}`);
+            let fetchedThreads = 0;
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             while (true) {
-                console.log('Fetch archived threads TOP OF LOOP');
+                console.log(`Fetch archived threads TOP OF LOOP for for ${discordChannel.name}`);
                 const archivedThreads = await discordChannel.threads.fetchArchived(fetchArchivedOptions);
+                fetchedThreads += archivedThreads.threads.size;
                 await sleep(100);
 
                 for (const [_name, thread] of archivedThreads.threads) {
@@ -617,11 +619,12 @@ export default class Database {
                 }
 
                 if (!archivedThreads.hasMore) {
-                    console.log('no more archived threads');
+                    console.log(`no more archived threads for ${discordChannel.name}`);
                     break;
                 }
                 fetchArchivedOptions.before = archivedThreads.threads.first()!.id;
             }
+            console.log(`Fetch archived threads END for ${discordChannel.name} fetched ${fetchedThreads} threads`);
 
             // No need to do extra stuff with active threads, as fetchActive() just always returns them all
             const activeThreads = await discordChannel.threads.fetchActive();
@@ -635,19 +638,24 @@ export default class Database {
 
     async syncThread(thread: AnyThreadChannel) {
             const dbThread = await Thread.findByPk(thread.id);
+            console.log(`Working to sync Thread name ${thread.name}`);
             if (
                 dbThread &&
                 dbThread.locked == thread.locked &&
                 dbThread.archived == thread.archived &&
                 thread.archiveTimestamp == dbThread.archiveTimestamp
-            )
+            ) {
+                console.log(`No need to sync Thread name ${thread.name} - have in db and already synced`);
                 return;
+            }
             let earliest = START_OF_TIME;
             if (dbThread) {
                 earliest = dbThread.lastSeenIndexedToDate;
             }
             if (!dbThread || dbThread.archiveTimestamp !== thread.archiveTimestamp || dbThread.lastMessageId !== thread.lastMessageId) {
+                console.log(`Doing fetch and store for Thread name ${thread.name} - previous earliest is ${earliest}`);
                 earliest = await this.fetchAndStoreMessages(thread, earliest);
+                console.log(`Finished fetch and store for Thread name ${thread.name} - got back to (lastSeenIndexedToDate) ${earliest}`);
             }
             const threadMetadata: ThreadMeta = {
                 name: thread.name,
