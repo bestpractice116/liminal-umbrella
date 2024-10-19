@@ -303,7 +303,6 @@ export function AdminUsers() {
 
     const handleChange: OnChange = (_pagination, filters, sorter) => {
         setFilteredInfo(filters);
-        console.log('sorter', sorter);
         setSortedInfo(sorter as Sorts);
       };
 
