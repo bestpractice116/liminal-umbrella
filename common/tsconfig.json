@@ -1,22 +1,26 @@
 {
-	"ts-node": {
-		"esm": true
-	},
-	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": ["@tsconfig/node20/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
-	"allowImportingTsExtensions": true,
-	"compilerOptions": {
-		"tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-		"rootDir": "src",
-		"outDir": "dist",
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"baseUrl": ".",
-		"strict": true,
-		"composite": true,
-		"module": "nodenext",
-		"declaration": true,
-		"declarationMap": true
-	},
-	"include": ["src"]
+    "module": "ESNext",
+    "ts-node": {
+        "esm": true
+    },
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": ["@tsconfig/node20/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
+    "allowImportingTsExtensions": true,
+    "compilerOptions": {
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+        "rootDir": "src",
+        "outDir": "dist",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "baseUrl": ".",
+        "strict": true,
+        "composite": true,
+        "module": "nodenext",
+        "declaration": true,
+        "declarationMap": true,
+        "skipLibCheck": true,
+	"esModuleInterop": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": ["src"]
 }

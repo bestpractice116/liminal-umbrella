@@ -22,7 +22,7 @@ const createFormRule = createSchemaFieldRule(getZObject(GameSystemSchema.create!
 export function AdminGamesystems() {
     const components = useTableComponents(GameSystemSchema);
     const result = useFetchQuery<GameSystemListItem[]>('/api/gamesystem', 'gamesystem');
-    const { isDeleting, isUpdating, handleDelete, handleUpdate } = useFormHandlers<GameSystemListItem>('/api/gamesystem', 'gamesystem');
+    const { isDeleting, isUpdating, handleDelete, handleUpdate } = useFormHandlers('/api/gamesystem', 'gamesystem');
     const { isCreating, createMutation } = useCreateMutationAndUpdateQueryData('/api/gamesystem', 'gamesystem');
 
     const defaultColumns: ColumnTypeArray<GameSystemListItem> = [

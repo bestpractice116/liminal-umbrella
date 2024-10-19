@@ -32,7 +32,7 @@ export function useCreateMutation<TIn, TCreated extends Keyable>(
     const queryClient = useQueryClient();
     const { showBoundary } = useErrorBoundary();
     const [isCreating, setIsMutating] = useState(false);
-    const createMutation = useMutation<MutationReturn<TCreated>, Error, TIn>({
+    const createMutation = useMutation<MutationReturn<TCreated>, Error, TIn, TIn>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mutationFn: async (r: TIn) => {
             return fetch(

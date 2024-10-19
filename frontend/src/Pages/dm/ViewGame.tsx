@@ -2,7 +2,7 @@ import { createRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { type GameReadItem, type GameSessionUserSignupDelete, GameSchema } from 'common/schema';
 import { getZObject } from 'common';
-import dayjs from 'antd/node_modules/dayjs';
+import dayjs from 'common';
 import PostGameForm from './PostGameForm';
 import Table from 'antd/es/table';
 import Button from 'antd/es/button';

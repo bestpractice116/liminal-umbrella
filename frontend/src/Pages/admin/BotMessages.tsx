@@ -7,7 +7,7 @@ import { useTableComponents, useFetchQuery, useFormHandlers, getColumns, Default
 export function AdminBotMessages() {
     const components = useTableComponents(BotMessageSchema);
     const result = useFetchQuery<BotMessageListItem[]>('/api/botmessages', 'botmessages');
-    const { isUpdating, handleUpdate } = useFormHandlers<BotMessageListItem>('/api/botmessages', 'botmessages');
+    const { isUpdating, handleUpdate } = useFormHandlers('/api/botmessages', 'botmessages');
 
     const defaultColumns: DefaultColumns<BotMessageListItem> = [
         {

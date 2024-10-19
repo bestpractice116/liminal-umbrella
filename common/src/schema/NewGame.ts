@@ -3,7 +3,7 @@ import { SchemaBundle } from './types.js';
 import { dayJsCoerceOrUndefined, zodDay } from '../index.js';
 import { gameTypeSchema, gameSystemSchema } from './Game.js';
 
-const create = z
+const baseCreate = z
     .object({
         name: z
             .string({
@@ -29,16 +29,28 @@ const create = z
         maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })
     })
     .merge(gameSystemSchema)
-    .merge(gameTypeSchema);
+    .merge(gameTypeSchema)
+    .partial();
+
+type createInput = z.input<typeof baseCreate> & { starttime?: unknown, endtime?: unknown }
+type createOutput = Omit<Omit<z.output<typeof baseCreate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dayJsCoerceOrUndefined>, endtime?: ReturnType<typeof dayJsCoerceOrUndefined> }
+const create: z.ZodType<createOutput, z.ZodTypeDef, createInput> = baseCreate;
+    
+
 const find = z.object({
     key: z.coerce.number().int().positive()
 });
 
+const baseRead = baseCreate.merge(find);
+type readInput = z.input<typeof baseRead>
+type readOutput = z.output<typeof baseRead>
+const read: z.ZodType<readOutput, z.ZodTypeDef, readInput> = baseRead;
+
 export const NewGameSchema: SchemaBundle = {
-    create: create.partial().readonly(),
-    update: create.partial().readonly(),
+    create: create.readonly(),
+    update: create.readonly(),
     find: find.readonly(),
-    read: create.partial().merge(find).readonly(),
+    read: read.readonly(),
     delete: true
 };
-export type NewGameListItem = z.infer<typeof create>;
+export type NewGameListItem = z.infer<typeof find>;

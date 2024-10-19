@@ -30,7 +30,8 @@
         "zod": "^3.23.8"
     },
     "resolutions": {
-        "dayjs": "1.11.13"
+        "dayjs": "1.11.13",
+        "antd": "^5.19.3"
     },
     "devDependencies": {
         "@babel/core": "^7.24.0",

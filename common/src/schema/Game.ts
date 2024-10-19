@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
 import { dateCoerce, zodDay } from '../index.js';
+import type { Dayjs } from 'common';
 
 export enum GameType {
     oneshot = 'oneshot',
@@ -56,7 +57,7 @@ const baseUpdate = z
     .merge(find);
 
 type updateInput = z.input<typeof baseUpdate> & { starttime?: unknown, endtime?: unknown }
-type updateOutput = Omit<Omit<z.output<typeof baseUpdate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dateCoerce>, endtime?: ReturnType<typeof dateCoerce> }
+type updateOutput = Omit<Omit<z.output<typeof baseUpdate>, 'starttime'>, 'endtime'> & { starttime?: ReturnType<typeof dateCoerce> | Dayjs, endtime?: ReturnType<typeof dateCoerce> | Dayjs }
 const update: z.ZodType<updateOutput, z.ZodTypeDef, updateInput> = baseUpdate;
 
 const user = z.object({
@@ -78,7 +79,10 @@ const read = baseUpdate.merge(
     })
 );
 
-const create = baseUpdate.merge(find);
+const baseCreate = baseUpdate.merge(find);
+type createInput = z.input<typeof baseCreate> & { starttime?: unknown, endtime?: unknown }
+type createOutput = Omit<Omit<z.output<typeof baseCreate>, 'starttime'>, 'endtime'> & { starttime?: Dayjs | Date, endtime?: Dayjs | Date}
+const create: z.ZodType<createOutput, z.ZodTypeDef, createInput> = baseCreate;
 
 export const GameSchema: SchemaBundle = {
     // This is a strange case, as Game is Created from NewGame, but the update schema is used on

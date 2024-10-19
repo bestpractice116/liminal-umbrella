@@ -5,7 +5,7 @@ import { RoleSchema, type RoleListItem } from 'common/schema';
 
 export function AdminRoles() {
     const result = useFetchQuery<RoleListItem[]>('/api/role', 'role');
-    const { isUpdating, handleUpdate } = useFormHandlers<RoleListItem>('/api/role', 'role');
+    const { isUpdating, handleUpdate } = useFormHandlers('/api/role', 'role');
     const components = useTableComponents(RoleSchema);
 
     const defaultColumns: DefaultColumns<RoleListItem> = [

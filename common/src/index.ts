@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as z from 'zod';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
-import timezone from 'dayjs/plugin/timezone.js';
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import dayjs from './dayjs.js';
+import type { Dayjs } from './dayjs.js';
+
+export default dayjs;
+
+export type { Dayjs };
 
 export function getSchemaKeys(schema: z.ZodObject<any> | z.ZodReadonly<any> | z.ZodIntersection<any, any>): string[] {
     if (schema instanceof z.ZodIntersection) {
@@ -27,11 +28,11 @@ export function getZObject<T extends z.ZodRawShape>(schema: z.ZodTypeAny): z.Zod
     return schema as z.ZodObject<T>;
 }
 
-export function dayJsCoerce(val: unknown): dayjs.Dayjs | undefined {
+export function dayJsCoerce(val: unknown): Dayjs | undefined {
     if (!val) return undefined;
 
     if (val instanceof dayjs) {
-        return val as dayjs.Dayjs;
+        return val as Dayjs;
     }
     if (val instanceof Date) {
         return dayjs(val);

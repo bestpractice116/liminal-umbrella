@@ -1,23 +1,26 @@
-import dayjs from 'antd/node_modules/dayjs';
-import type { Dayjs } from 'antd/node_modules/dayjs';
-import weekday from 'antd/node_modules/dayjs/plugin/weekday';
-import localeData from 'antd/node_modules/dayjs/plugin/localeData';
-import weekOfYear from 'antd/node_modules/dayjs/plugin/weekOfYear';
-import weekYear from 'antd/node_modules/dayjs/plugin/weekYear';
-import advancedFormat from 'antd/node_modules/dayjs/plugin/advancedFormat';
-import customParseFormat from 'antd/node_modules/dayjs/plugin/customParseFormat';
-dayjs.extend(customParseFormat);
-dayjs.extend(advancedFormat);
-dayjs.extend(weekday);
-dayjs.extend(localeData);
-dayjs.extend(weekOfYear);
-dayjs.extend(weekYear);
-dayjs.extend(function (o, c) {
+/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
+import 'dayjs/plugin/weekday';
+import 'dayjs/plugin/localeData';
+import 'dayjs/plugin/weekOfYear';
+import 'dayjs/plugin/weekYear';
+import 'dayjs/plugin/advancedFormat';
+import 'dayjs/plugin/customParseFormat';
+dayjs.extend(require('dayjs/plugin/customParseFormat'));
+dayjs.extend(require('dayjs/plugin/advancedFormat'));
+dayjs.extend(require('dayjs/plugin/weekday'));
+dayjs.extend(require('dayjs/plugin/localeData'));
+dayjs.extend(require('dayjs/plugin/weekOfYear'));
+dayjs.extend(require('dayjs/plugin/weekYear'));
+dayjs.extend(function (_o, c) {
   // todo support Wo (ISO week)
-  var proto = c.prototype;
-  var oldFormat = proto.format;
+  const proto = c.prototype;
+  const oldFormat = proto.format;
   proto.format = function f(formatStr) {
-    var str = (formatStr || '').replace('Wo', 'wo');
+    const str = (formatStr ?? '').replace('Wo', 'wo');
     return oldFormat.bind(this)(str);
   };
 });
