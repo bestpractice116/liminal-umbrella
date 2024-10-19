@@ -195,7 +195,6 @@ export default function PostGameForm({
                         rules={[
                             ({ getFieldValue }) => ({
                                 validator(_, newEndtime) {
-                                    console.log('validator for endtime');
                                     const starttime = getFieldValue('starttime') as Dayjs | undefined;
                                     if (!newEndtime || !starttime) {
                                         return Promise.resolve();
@@ -203,7 +202,6 @@ export default function PostGameForm({
                                     if (setDate(starttime, newEndtime as Dayjs)!.isBefore(newEndtime as Dayjs)) {
                                         return Promise.resolve();
                                     }
-                                    console.log('INVALID endTIme', starttime, newEndtime);
                                     return Promise.reject(new Error('The end time must be after the start time!'));
                                 }
                             })
