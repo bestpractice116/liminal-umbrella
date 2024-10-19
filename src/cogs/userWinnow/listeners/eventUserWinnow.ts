@@ -3,16 +3,19 @@ import { UserWinnow } from '../../../lib/events/index.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { getMessage } from '../../../lib/message.js';
 import { GuildMember } from 'discord.js';
+import { Sequential } from '../../../lib/utils.js';
 
-export class verboseLogUserWinnowListener extends Listener {
+export class userWinnowUserWinnowListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
         super(context, {
             ...options,
-            name: 'verboseLogUserWinnow',
+            name: 'userWinnowUserWinnow',
             emitter: container.events,
             event: CUSTOM_EVENTS.UserWinnow
         });
     }
+
+    @Sequential
     async run(e: UserWinnow) {
         if (e.dbUser.bot) return;
         let guildMember: GuildMember | undefined;
