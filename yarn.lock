@@ -4652,15 +4652,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-tsconfig-paths@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "babel-plugin-tsconfig-paths@npm:1.0.3"
-  peerDependencies:
-    "@babel/core": ^7.9.0
-  checksum: 10c0/95ce3ee2cfc9fbe23634dd060bd5a4b7cf3737b453eb21517f4f11f8527fb7f9d4f8159aaa95b39e06aa56cdfc788c96e557d50e89ca030a1496c513240994b7
-  languageName: node
-  linkType: hard
-
 "babel-preset-current-node-syntax@npm:^1.0.0":
   version: 1.0.1
   resolution: "babel-preset-current-node-syntax@npm:1.0.1"
@@ -8487,7 +8478,6 @@ __metadata:
     "@types/node": "npm:^20.11.5"
     "@types/ws": "npm:^8.5.10"
     babel-jest: "npm:^29.7.0"
-    babel-plugin-tsconfig-paths: "npm:^1.0.3"
     bufferutil: "npm:^4.0.8"
     colorette: "npm:^2.0.20"
     common: "npm:1.0.0"
