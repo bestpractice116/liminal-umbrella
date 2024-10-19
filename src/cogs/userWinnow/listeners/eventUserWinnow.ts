@@ -28,7 +28,7 @@ export class verboseLogUserWinnowListener extends Listener {
         await (
             await this.container.database.getdb()
         ).transaction(async () => {
-            e.dbUser.set({ kicked: true });
+            e.dbUser.set({ kicked: true, winnowed: true });
             await guildMember.send(msg);
             await guildMember.kick(
                 `RPGBot Kicked user ${e.dbUser.nickname} (${e.dbUser.name} : ${e.dbUser.key} due to Winnow event`

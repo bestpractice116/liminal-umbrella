@@ -15,7 +15,7 @@ export class logBotActionUserJoinedListener extends Listener {
     }
     async run(e: UserJoined) {
         // Log user joined
-        const exampleEmbed = new EmbedBuilder()
+        const embed = new EmbedBuilder()
             .setColor(0x00ff00)
             .setAuthor({ name: 'Member Joined', iconURL: e.avatarURL })
             .setDescription(userMention(e.id))
@@ -24,10 +24,14 @@ export class logBotActionUserJoinedListener extends Listener {
                 { name: 'Account name', value: e.username, inline: true },
                 { name: 'Nickname', value: e.nickname, inline: true },
                 { name: 'Previous Member', value: e.exMember ? 'Yes' : 'No', inline: true }
-            )
-            .setTimestamp()
+            );
+        if (e.exMember) {
+            embed.addFields({ name: 'Was winnowed', value: e.dbUser.winnowed ? 'Yes' : 'No', inline: true });
+            embed.addFields({ name: 'Previous Roles', value: (JSON.parse(e.dbUser.previousRoles) as string[]).sort().join(', ') });
+        }
+        embed.setTimestamp()
             .setFooter({ text: `ID: ${e.id}` });
 
-        await getChannelAndEmbed(exampleEmbed);
+        await getChannelAndEmbed(embed);
     }
 }

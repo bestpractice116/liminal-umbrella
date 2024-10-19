@@ -35,7 +35,7 @@ import { arrayStrictEquals } from '@sapphire/utilities';
 import { Sequential, sleep } from './utils.js';
 import { CUSTOM_EVENTS } from './events.js';
 import { getGuildMemberById } from './discord.js';
-import { END_OF_TIME, START_OF_TIME } from './dates.js';
+import { END_OF_TIME, isStartOfTime, START_OF_TIME } from './dates.js';
 
 interface ChannelData {
     name: string
@@ -212,11 +212,9 @@ export default class Database {
     }
 
     async guildMemberAdd(guildMember: GuildMember) {
-        console.log(`Find user by PK ${guildMember.id}`)
         let user = await User.findByPk(guildMember.id);
         let exMember = true;
         if (!user) {
-            console.log('No user - create')
             user = await User.createFromGuildMember(guildMember);
             exMember = false;
         } else {
@@ -254,6 +252,15 @@ export default class Database {
             user.avatarURL = newAvatar;
             changed = true;
         }
+        // TODO - remove if (isStartOfTime(user.joinedDiscordAt)) once run
+        if (isStartOfTime(user.joinedDiscordAt)) {
+            user.joinedDiscordAt = guildMember.user.createdAt;
+            changed = true;
+        }
+        if (isStartOfTime(user.joinedGuildAt) && guildMember.joinedAt) {
+            user.joinedGuildAt = guildMember.joinedAt;
+            changed = true;
+        }
         if (!arrayStrictEquals(Array.from(guildMember.roles.cache.keys()).sort(), (user.roles || []).map((role) => role.name).sort())) {
             await user.setRoles(guildMember.roles.cache.keys());
         }
@@ -270,32 +277,34 @@ export default class Database {
         if (!member) {
             return;
         }
+        member.left = true;
+        const previousRoles = (await member.getRoles()).map(role => role.name);
+        member.previousRoles = JSON.stringify(previousRoles);
+        await member.save();
+        await member.setRoles([]);
+        const eventInterests = await EventInterest.findAll({
+            where: {
+                userId: id
+            }
+        });
+        for (const eventInterest of eventInterests) {
+            await eventInterest.destroy();
+        }
+        const sessions = await GameSessionUserSignup.findAll({
+            where: {
+                userKey: id
+            }
+        });
+        for (const session of sessions) {
+            // FIXME - also need to call updateGameListing
+            await session.destroy();
+        }
         let greetingMessageId: string | undefined = undefined;
-            member.left = true;
-            await member.save();
-            await member.setRoles([]);
-            const eventInterests = await EventInterest.findAll({
-                where: {
-                    userId: id
-                }
-            });
-            for (const eventInterest of eventInterests) {
-                await eventInterest.destroy();
-            }
-            const sessions = await GameSessionUserSignup.findAll({
-                where: {
-                    userKey: id
-                }
-            });
-            for (const session of sessions) {
-                // FIXME - also need to call updateGameListing
-                await session.destroy();
-            }
-            const greeting = await GreetingMessage.findOne({ where: { userId: id } });
-            if (greeting) {
-                greetingMessageId = greeting.messageId;
-                await greeting.destroy();
-            }
+        const greeting = await GreetingMessage.findOne({ where: { userId: id } });
+        if (greeting) {
+            greetingMessageId = greeting.messageId;
+            await greeting.destroy();
+        }
         this.events.emit(
             'userLeft',
             new UserLeft(
@@ -304,7 +313,7 @@ export default class Database {
                 member.name,
                 member.nickname,
                 member.avatarURL,
-                new Date(member.joinedDiscordAt),
+                member.joinedDiscordAt,
                 member,
                 greetingMessageId
             )

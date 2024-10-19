@@ -24,12 +24,8 @@ export class logBotActionDirectMessageListener extends Listener {
             .setTimestamp();
 
         if (dbUser) {
+            embed.addFields({ name: 'Account name', value: dbUser.username, inline: true }, { name: 'Nickname', value: dbUser.nickname, inline: true })
             embed.setFooter({ text: `User ID: ${dbUser.key}` });
-            embed.addFields(
-                { name: 'In DB', value: 'Yes', inline: true },
-                { name: 'Kicked', value: dbUser.kicked ? 'Yes' : 'No', inline: true }
-            )
-
         }
 
         await getChannelAndEmbed(embed);
