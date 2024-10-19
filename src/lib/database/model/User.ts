@@ -60,13 +60,39 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     @NotNull
     declare avatarURL: string;
 
-    @Attribute(DataTypes.INTEGER)
+    @Attribute(DataTypes.DATE)
     @NotNull
-    declare joinedDiscordAt: number;
+    declare joinedDiscordAt: Date;
+
+    @Attribute(DataTypes.DATE)
+    @NotNull
+    declare joinedGuildAt: Date;
 
     @Attribute(DataTypes.BOOLEAN)
     @NotNull
     declare kicked: boolean;
+
+    @Attribute(DataTypes.BOOLEAN)
+    @NotNull
+    declare winnowed: boolean;
+
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare previousRoles: string;
+
+    @Attribute(DataTypes.DATE)
+    @NotNull
+    declare lastSeenTime: Date;
+
+    @Attribute(DataTypes.STRING)
+    declare lastSeenChannel?: string;
+
+    @Attribute(DataTypes.STRING)
+    declare lastSeenThread?: string;
+
+    @Attribute(DataTypes.STRING)
+    @NotNull
+    declare lastSeenMessage: string;
 
     @BelongsToMany(() => Role, {
         through: () => RoleMember
@@ -123,7 +149,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
             left: false,
             bot: guildMember.user.bot,
             avatarURL: guildMember.user.avatarURL() ?? guildMember.user.defaultAvatarURL,
-            joinedDiscordAt: guildMember.user.createdAt.valueOf(),
+            joinedDiscordAt: guildMember.user.createdAt,
+            joinedGuildAt: guildMember.joinedAt ?? START_OF_TIME,
             kicked: false
         };
     }
@@ -133,7 +160,9 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
             key: guildMember.id,
             ...User.userDataFromGuildMember(guildMember),
             lastSeenTime: START_OF_TIME,
-            lastSeenMessage: 'unknown'
+            lastSeenMessage: 'unknown',
+            winnowed: false,
+            previousRoles: '',
         });
     }
 
@@ -157,20 +186,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare removeCampaignsPlaying: BelongsToManyRemoveAssociationsMixin<Campaign, Campaign['key']>;
     declare hasCampaignPlaying: BelongsToManyHasAssociationMixin<Campaign, Campaign['key']>;
     declare countCampaignsPlaying: BelongsToManyCountAssociationsMixin<Campaign>;
-
-    @Attribute(DataTypes.DATE)
-    @NotNull
-    declare lastSeenTime: Date;
-
-    @Attribute(DataTypes.STRING)
-    declare lastSeenChannel?: string;
-
-    @Attribute(DataTypes.STRING)
-    declare lastSeenThread?: string;
-
-    @Attribute(DataTypes.STRING)
-    @NotNull
-    declare lastSeenMessage: string;
 
     updateLastSeenFromMessage(message: Message) {
         if (message.createdAt < this.lastSeenTime) return;
