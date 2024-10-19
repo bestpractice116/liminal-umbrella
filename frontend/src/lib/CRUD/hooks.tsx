@@ -126,7 +126,8 @@ export function useUpdateMutationAndUpdateQueryData<T extends Keyable>(apipath: 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return useUpdateMutation<T>(apipath, (data: MutationReturn<T>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryClient.setQueryData([querykey], (old: T[]) => {
+        queryClient.setQueryData([querykey], (old?: T[]) => {
+	    if (!old) return [data.datum];
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return old.map((item: T) => {
                 if (item.key === data.datum.key) {
