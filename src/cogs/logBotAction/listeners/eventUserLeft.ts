@@ -4,6 +4,7 @@ import { getChannelAndEmbed } from '../utils.js';
 import { userMention, EmbedBuilder } from 'discord.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { User } from '../../../lib/database/model.js';
+import { Sequential } from '../../../lib/utils.js';
 
 export class logBotActionUserLeftListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -14,6 +15,8 @@ export class logBotActionUserLeftListener extends Listener {
             event: CUSTOM_EVENTS.UserLeft
         });
     }
+
+    @Sequential
     async run(e: UserLeft) {
         // Log user left (with nickname in bot_log)
         const embed = new EmbedBuilder()

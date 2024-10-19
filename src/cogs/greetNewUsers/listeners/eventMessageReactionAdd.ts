@@ -44,8 +44,6 @@ export class greetNewUsersEventMessageReactionAddListener extends Listener {
         if (r.message.channel.type !== ChannelType.GuildText) return;
         if (r.message.channel.name !== greetingChannelName) return;
 
-        console.log('In eventMessageReactionAdd')
-
         const getRoles = async (key: string) => {
             const u = await User.findOne({
                 where: { key },

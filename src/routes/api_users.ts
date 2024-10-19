@@ -12,11 +12,13 @@ const userDeleteSchema = z.object({
 });
 
 export class ApiUsersList extends CR {
+    winnows: UserWinnow[];
     public constructor(context: Route.LoaderContext, options: Route.Options) {
         super(context, {
             ...options,
             route: 'api/user'
         });
+        this.winnows = [];
     }
 
     getModel() {
@@ -56,6 +58,20 @@ export class ApiUsersList extends CR {
         return Promise.resolve({ bot: false, left: false });
     }
 
+    _startProcessing() {
+        const process = async () => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            while (true) {
+                if (this.winnows.length === 0) break;
+                const winnow = this.winnows.shift();
+                if (!winnow) break;
+                this.container.events.emit('userWinnow', winnow);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+        setTimeout(process.bind(this) as () => void, 1000)
+    }
+
     @Sequential
     public async [methods.DELETE](request: ApiRequest, response: ApiResponse) {
         this.container.logger.info('DELETE user request with body ', JSON.stringify(request.body));
@@ -76,9 +92,10 @@ export class ApiUsersList extends CR {
                 continue;
             }
             this.container.logger.info(`Send winnow event for user ID ${id}`)
-            this.container.events.emit('userWinnow', new UserWinnow(id, user));
+            this.winnows.push(new UserWinnow(id, user));
             deletedUsers.push(id);
         }
+        this._startProcessing();
         response.json({ status: 'deleted', ids: data.userIds });
     }
 }

@@ -4,6 +4,7 @@ import { getChannelAndEmbed } from '../utils.js';
 import { EmbedBuilder } from 'discord.js';
 import { CUSTOM_EVENTS } from '../../../lib/events.js';
 import { User } from '../../../lib/database/model.js';
+import { Sequential } from '../../../lib/utils.js';
 
 export class logBotActionDirectMessageListener extends Listener {
     public constructor(context: Listener.LoaderContext, options: Listener.Options) {
@@ -14,6 +15,8 @@ export class logBotActionDirectMessageListener extends Listener {
             event: CUSTOM_EVENTS.DirectMessage
         });
     }
+
+    @Sequential
     async run(e: DirectMessage) {
         const dbUser = await User.findOne({ where: { key: e.discordMessage.author.id } })
         const embed = new EmbedBuilder()
