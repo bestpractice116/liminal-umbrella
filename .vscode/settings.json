@@ -28,5 +28,6 @@
     ],
     "[jsonc]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    }
+    },
+    "eslint.useFlatConfig": true
 }

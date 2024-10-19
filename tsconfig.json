@@ -16,7 +16,9 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "strict": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+	"esModuleInterop": true,
+    	"allowSyntheticDefaultImports": true
     },
     "allowDefaultProject": [
         "eslint.config.js",
