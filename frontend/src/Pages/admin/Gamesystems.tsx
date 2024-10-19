@@ -14,7 +14,8 @@ import {
     ColumnTypeArray,
     WrapCRUD,
     useFormHandlers,
-    useCreateMutationAndUpdateQueryData
+    useCreateMutationAndUpdateQueryData,
+    getColumns
 } from '../../lib/CRUD';
 import { createSchemaFieldRule } from 'antd-zod';
 
@@ -60,21 +61,7 @@ export function AdminGamesystems() {
         }
     ];
 
-    const columns = defaultColumns.map((col) => {
-        if (!col.editable) {
-            return col;
-        }
-        return {
-            ...col,
-            onCell: (record: GameSystemListItem) => ({
-                record,
-                editable: col.editable,
-                dataIndex: col.dataIndex,
-                title: col.title,
-                handleUpdate
-            })
-        };
-    });
+    const columns = getColumns<GameSystemListItem>(defaultColumns, handleUpdate);
 
     return (
         <WrapCRUD<GameSystemListItem> spin={isUpdating || isDeleting || isCreating} result={result}>

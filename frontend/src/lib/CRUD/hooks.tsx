@@ -127,7 +127,7 @@ export function useUpdateMutationAndUpdateQueryData<T extends Keyable>(apipath: 
     return useUpdateMutation<T>(apipath, (data: MutationReturn<T>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         queryClient.setQueryData([querykey], (old?: T[]) => {
-	    if (!old) return [data.datum];
+        if (!old) return [data.datum];
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return old.map((item: T) => {
                 if (item.key === data.datum.key) {
@@ -255,7 +255,7 @@ export function useTableComponents(schema: SchemaBundle) {
         );
     };
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps<Item>>> = ({
+    const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps<Item> & {handleUpdate?: unknown}>> = ({
         // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars
         title,
         editable,
@@ -263,6 +263,9 @@ export function useTableComponents(schema: SchemaBundle) {
         dataIndex,
         record,
         handleSave,
+        // Pull this out to stop React shouting at us
+        // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars
+        handleUpdate,
         ...restProps
     }) => {
         const [editing, setEditing] = useState(false);
@@ -303,7 +306,6 @@ export function useTableComponents(schema: SchemaBundle) {
                 </div>
             );
         }
-
         return <td {...restProps}>{childNode}</td>;
     };
     return {
