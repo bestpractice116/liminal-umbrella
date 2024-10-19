@@ -21,7 +21,7 @@ export class verboseLogUserWinnowListener extends Listener {
         } catch { /* empty */ } // FIXME - catch only the fetch error.
         if (!guildMember) return;
         const userRoleNames = (await e.dbUser.getRoles()).map(role => role.name);
-        if (userRoleNames.some(name => name === 'Admin')) return;
+        if (userRoleNames.some(name => name === 'Admin' || name === 'Patron')) return;
         const knownMember = userRoleNames.some(name => name === 'Known Member');
         const msgId = knownMember ? 'KNOWN_MEMBER_WINNOW_KICK' : 'MEMBER_WINNOW_KICK';
         const msg = await getMessage(msgId, {});

@@ -27,6 +27,9 @@ export class logBotActionUserLeftListener extends Listener {
 
         const message = await getChannelAndEmbed(embed);
         const user = await User.findByPk(e.id);
+        if (user?.winnowed) {
+            await message?.react('🍂');
+        }
         if (user?.kicked) {
             await message?.react('🥾');
             return;

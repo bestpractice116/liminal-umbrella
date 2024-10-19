@@ -65,12 +65,19 @@ export class ApiUsersList extends CR {
         if (!data) return;
         
         this.container.logger.info(`DELETE request for IDs ${data.userIds.join(', ')}`);
+        const deletedUsers = [];
         for (const id of data.userIds) {
             this.container.logger.info(`LOOKUP USER ${id} for winnow event`);
             const user = await User.findByPk(id)
             if (!user) continue;
+            const roles = await user.getRoles();
+            if (roles.map(role => role.name).find((name) => name === 'Admin' || name === 'Patron')) {
+                this.container.logger.error(`Ignored winnow request for user ID ${id} as Patron or admin!`);
+                continue;
+            }
             this.container.logger.info(`Send winnow event for user ID ${id}`)
             this.container.events.emit('userWinnow', new UserWinnow(id, user));
+            deletedUsers.push(id);
         }
         response.json({ status: 'deleted', ids: data.userIds });
     }

@@ -131,7 +131,7 @@ export const up = async (uz: MigrationParams<any>) => {
             },
             { transaction }
         );
-        await sq.query('UPDATE users SET previousRoles = ""', { raw: true, transaction });
+        await sq.query('UPDATE users SET previousRoles = "[]"', { raw: true, transaction });
         await qi.changeColumn(
             'users',
             'previousRoles',

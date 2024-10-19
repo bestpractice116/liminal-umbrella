@@ -13,6 +13,9 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const START_OF_TIME = new Date('1970-01-02:00:00:00.000Z');
+
 type OnChange = NonNullable<TableProps<UserListItem>['onChange']>;
 type Filters = Parameters<OnChange>[1];
 
@@ -47,13 +50,18 @@ const RenderNickname = ({nickname, record}: {nickname: string, record: any}) => 
     );
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
-const RenderLastSeen = ({lastSeenTime, record}: {lastSeenTime: string, record: any}) => {
-    const lst = new Date(lastSeenTime);
-    if (lst <= new Date('1970-01-02:00:00:00.000Z')) {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const RenderDateAgo = ({date}: {date: string}) => {
+    const d = new Date(date);
+    if (d <= START_OF_TIME) {
         return 'Never';
     }
-    const seen = <><ReactTimeAgo date={lst} /> ({lst.toLocaleDateString()})</>;
+    return <><ReactTimeAgo date={d} /> {d.toLocaleDateString()})</>;
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
+const RenderLastSeen = ({lastSeenTime, record}: {lastSeenTime: string, record: any}) => {
+    const seen = <RenderDateAgo date={lastSeenTime} />;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const lastSeenChannelName: string = record.lastSeenChannelName;
@@ -94,23 +102,23 @@ const ages: SliderSingleProps['marks'] = {
     24: '24',
 }
 
-interface filterLastSeenProps {
-    setLastSeenFilter: (val: number | null) => void,
-    defaultLastSeen: number
+interface filterTimeAgoProps {
+    setFilter: (val: number | null) => void,
+    defaultVal: number
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const FilterLastSeen = ({ confirm, close, setLastSeenFilter, defaultLastSeen }: 
-    FilterDropdownProps & filterLastSeenProps
+const FilterTimeAgo = ({ confirm, close, setFilter, defaultVal }: 
+    FilterDropdownProps & filterTimeAgoProps
 ) => {
-    const [sliderVal, setSliderVal] = useState(defaultLastSeen);
+    const [sliderVal, setSliderVal] = useState(defaultVal);
     return (
         <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation(); }}>
-            <Slider min={3} max={24} step={1} defaultValue={defaultLastSeen} tooltip={{ formatter }} marks={ages} onChange={setSliderVal}/>
+            <Slider min={3} max={24} step={1} defaultValue={defaultVal} tooltip={{ formatter }} marks={ages} onChange={setSliderVal}/>
             <Space>
                 <Button
                     onClick={() => {
-                        setLastSeenFilter(null); 
+                        setFilter(null); 
                         close();
                     }}
                     size="small"
@@ -122,7 +130,7 @@ const FilterLastSeen = ({ confirm, close, setLastSeenFilter, defaultLastSeen }:
                 <Button
                     type="primary"
                     onClick={() => {
-                        setLastSeenFilter(sliderVal);
+                        setFilter(sliderVal);
                         confirm({closeDropdown: true})
                     }}
                     size="small"
@@ -135,6 +143,14 @@ const FilterLastSeen = ({ confirm, close, setLastSeenFilter, defaultLastSeen }:
     )
 };
 
+function filterAgo(value: unknown, ago: unknown) {
+    if (!value || isNaN(value as number)) return true;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const recordTime = (new Date(ago as string)).getTime();
+    const valTime = Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000);
+    return recordTime < valTime;
+}
+
 export function AdminUsers() {
     const queryClient = useQueryClient();
     const components = useTableComponents(UserSchema);
@@ -144,8 +160,6 @@ export function AdminUsers() {
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [filteredInfo, setFilteredInfo] = useState<Filters>({});
     const [sortedInfo, setSortedInfo] = useState<Sorts>({});
-
-    console.log('Filtered Info is ', filteredInfo)
 
     const kickUsersMutation = useMutation({
         mutationFn: (r: string[]) => {
@@ -170,13 +184,10 @@ export function AdminUsers() {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const rowSelection: TableProps<UserListItem>['rowSelection'] = {
-        onChange: (selectedRowKeys: React.Key[], selectedRows: UserListItem[]) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`);
-          console.log(`selectedRows: `, selectedRows);
+        onChange: (selectedRowKeys: React.Key[], _selectedRows: UserListItem[]) => {
           setSelectedKeys(selectedRowKeys.map(k => `${k}`));
         },
         getCheckboxProps: (record: UserListItem) => {
-            console.log(record);
             const roleNames = record.roles.map(role => role.name);
             return {
                 disabled: roleNames.includes('Admin') || roleNames.includes('Patron'), 
@@ -194,6 +205,8 @@ export function AdminUsers() {
         </Button>
     </>}
 
+    const makeSetFilter = (columnName: string) => (val: number | null) => { setFilteredInfo({...filteredInfo, [columnName]: val ? [`${val}`] : null}); }
+
     const defaultColumns: DefaultColumns<UserListItem> = [
         {
             title: 'Avatar',
@@ -208,7 +221,7 @@ export function AdminUsers() {
             editable: false,
             ellipsis: true,
             defaultSortOrder: 'ascend',
-            sortOrder: sortedInfo.columnKey === 'nickname' ? sortedInfo.order : null,
+            sortOrder: sortedInfo.field === 'nickname' ? sortedInfo.order : null,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             sorter: (a, b) => a.nickname.toUpperCase() < b.nickname.toUpperCase() ? -1 : a.nickname.toUpperCase() > b.nickname.toUpperCase() ? 1 : 0,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -221,7 +234,7 @@ export function AdminUsers() {
             ellipsis: true,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             sorter: (a, b) => a.name.toUpperCase() < b.name.toUpperCase() ? -1 : a.name.toUpperCase() > b.name.toUpperCase() ? 1 : 0,
-            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+            sortOrder: sortedInfo.field === 'name' ? sortedInfo.order : null,
         },
         {
             title: 'Username',
@@ -230,7 +243,24 @@ export function AdminUsers() {
             ellipsis: true,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             sorter: (a, b) => a.username.toUpperCase() < b.username.toUpperCase() ? -1 : a.username.toUpperCase() > b.username.toUpperCase() ? 1 : 0,
-            sortOrder: sortedInfo.columnKey === 'username' ? sortedInfo.order : null,
+            sortOrder: sortedInfo.field === 'username' ? sortedInfo.order : null,
+        },
+        {
+            title: 'Joined',
+            dataIndex: 'joinedGuildAt',
+            editable: false,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            render: (joinedGuildAtTime, _record) => <RenderDateAgo date={joinedGuildAtTime} />,
+            sorter: (a, b) => a.joinedGuildAt < b.joinedGuildAt ? -1 : a.joinedGuildAt > b.joinedGuildAt ? 1 : 0,
+            sortOrder: sortedInfo.field === 'joinedGuildAt' ? sortedInfo.order : null,
+            filterDropdown: (props: FilterDropdownProps) =>
+                <FilterTimeAgo
+                    {...props}
+                    setFilter={makeSetFilter('joinedGuildAt')}
+                    defaultVal={defaultLastSeen}
+                />,
+            onFilter: (value, record) => filterAgo(value, record.joinedGuildAt),
+            filteredValue: filteredInfo.joinedGuildAt ?? null,
         },
         {
             title: 'Last seen',
@@ -239,26 +269,14 @@ export function AdminUsers() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             render: (lastSeenTime, record) => <RenderLastSeen lastSeenTime={lastSeenTime} record={record} />,
             sorter: (a, b) => a.lastSeenTime < b.lastSeenTime ? -1 : a.lastSeenTime > b.lastSeenTime ? 1 : 0,
-            sortOrder: sortedInfo.columnKey === 'lastSeenTime' ? sortedInfo.order : null,
-            filterDropdown: (props: FilterDropdownProps) => <FilterLastSeen {...props} 
-                setLastSeenFilter={(val: number | null) => {
-                    if (val) {
-                        setFilteredInfo({...filteredInfo, 'lastSeenTime': [`${val}`]})
-                    } else {
-                        setFilteredInfo({...filteredInfo, 'lastSeenTime': null});
-                    }
-                }}
-                defaultLastSeen={defaultLastSeen}
-            />,
-            onFilter: (value, record) => {
-                console.log('onFilter for lastSeenTime ', value, record);
-                if (!value || isNaN(value as number)) return true;
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                const recordTime = (new Date(record.lastSeenTime)).getTime();
-                const valTime = Date.now() - Math.abs(value as number * 365/12 * 24 * 60 * 60 * 1000);
-                console.log(`Record last seen ${recordTime} val ${valTime} answer ${recordTime < valTime}`);
-                return recordTime < valTime;
-            },
+            sortOrder: sortedInfo.field === 'lastSeenTime' ? sortedInfo.order : null,
+            filterDropdown: (props: FilterDropdownProps) =>
+                <FilterTimeAgo
+                    {...props}
+                    setFilter={makeSetFilter('lastSeenTime')}
+                    defaultVal={defaultLastSeen}
+                />,
+            onFilter: (value, record) => filterAgo(value, record.lastSeenTime),
             filteredValue: filteredInfo.lastSeenTime ?? null,
 
         },
@@ -283,9 +301,9 @@ export function AdminUsers() {
 
     const columns = getColumns<UserListItem>(defaultColumns, handleUpdate);
 
-    const handleChange: OnChange = (pagination, filters, sorter) => {
-        console.log('Various parameters', pagination, filters, sorter);
+    const handleChange: OnChange = (_pagination, filters, sorter) => {
         setFilteredInfo(filters);
+        console.log('sorter', sorter);
         setSortedInfo(sorter as Sorts);
       };
 
