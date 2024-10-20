@@ -188,7 +188,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare countCampaignsPlaying: BelongsToManyCountAssociationsMixin<Campaign>;
 
     updateLastSeenFromMessage(message: Message) {
-        if (message.createdAt < this.lastSeenTime) return;
+        if (message.createdAt <= this.lastSeenTime) return;
         let lastSeenThread = null;
         let lastSeenChannel = message.channel.id
         if (message.channel.type === ChannelType.PublicThread) {
