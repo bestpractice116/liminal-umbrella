@@ -16,7 +16,6 @@ export class GamePostCommand extends Command {
 
     // Register Chat Input and Context Menu command
     public override registerApplicationCommands(registry: Command.Registry) {
-        container.logger.error(this.name);
         // Register Chat Input command
         registry.registerChatInputCommand((builder) =>
             builder //
