@@ -66,13 +66,11 @@ export class greetNewUsersEventMessageReactionAddListener extends Listener {
             if (r.emoji.name === '❌') kickUser = true;
             if (r.emoji.name === '✅') admitMember = true;
         }
-        console.log('kickUser', kickUser, 'admitMember', admitMember)
         if (!kickUser && !admitMember) return;
 
         // Find the message in the DB that was reacted to, and from that find the user who's greeting message it was
         const messageId = r.message.id;
         const greeting = await GreetingMessage.findOne({ include: ['user'], where: { messageId } });
-        console.log('greeting', greeting)
         if (!greeting) return;
         const dbUser = greeting.user;
         const roles = await getRoles(dbUser.key);
@@ -95,7 +93,6 @@ export class greetNewUsersEventMessageReactionAddListener extends Listener {
             });
         }
         if (admitMember) {
-            console.log('Doing admitMember')
             const dbRole = await Role.findOne({ where: { name: 'Member' } });
             if (!dbRole) return;
             await guildMember.roles.add(dbRole.key);
