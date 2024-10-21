@@ -19,39 +19,44 @@ export const gameTypeSchema = z.object({
     type: z.nativeEnum(GameType)
 });
 
+export const gameNameSchema = z.object({name: z.string({
+    required_error: 'Name is required',
+    invalid_type_error: 'Name must be a string'
+})
+.trim()
+.min(2, { message: 'Name must be at least 2 characters long' })
+.max(100, { message: 'Name must be less than 100 characters' })})
+
+export const gameDescriptionSchema = z.object({description: z.string({
+    required_error: 'Description is required',
+    invalid_type_error: 'Description must be a string'
+})
+.trim()
+.min(50, { message: 'Description must be at least 50 characters long' })
+.max(500, { message: 'Description must be less than 500 characters' })});
+
+export const gameLocationSchema = z.object({location: z.string({
+    required_error: 'Location is required',
+    invalid_type_error: 'Location must be a string'
+})
+.trim()
+.min(2, { message: 'Location must be at least 2 characters long' })
+.max(200, { message: 'Location must be less than 200 characters' })})
+
+export const gameMaxPlayersSchema = z.object({maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })});
+
 const find = z.object({
     key: z.coerce.number().int().positive()
 });
 const baseUpdate = z
     .object({
-        name: z
-            .string({
-                required_error: 'Name is required',
-                invalid_type_error: 'Name must be a string'
-            })
-            .trim()
-            .min(2, { message: 'Name must be at least 2 characters long' })
-            .max(100, { message: 'Name must be less than 100 characters' }),
-        description: z
-            .string({
-                required_error: 'Description is required',
-                invalid_type_error: 'Description must be a string'
-            })
-            .trim()
-            .min(50, { message: 'Description must be at least 50 characters long' })
-            .max(500, { message: 'Description must be less than 500 characters' }),
         starttime: z.preprocess(dateCoerce, zodDay),
         endtime: z.preprocess(dateCoerce, zodDay),
-        location: z
-            .string({
-                required_error: 'Location is required',
-                invalid_type_error: 'Location must be a string'
-            })
-            .trim()
-            .min(2, { message: 'Location must be at least 2 characters long' })
-            .max(200, { message: 'Location must be less than 200 characters' }),
-        maxplayers: z.number().int('Must be an integer').min(1, { message: 'Must have at least 1 player' }).max(8, { message: 'Max 8 players' })
     })
+    .merge(gameNameSchema)
+    .merge(gameDescriptionSchema)
+    .merge(gameMaxPlayersSchema)
+    .merge(gameLocationSchema)
     .merge(gameSystemSchema)
     .merge(gameTypeSchema)
     .merge(find);

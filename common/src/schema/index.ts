@@ -9,3 +9,4 @@ export * from './NewGame.js';
 export * from './Role.js';
 export * from './types.js';
 export * from './User.js';
+export * from './Campaign.js';

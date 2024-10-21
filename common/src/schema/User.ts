@@ -5,12 +5,17 @@ import { Dayjs, dayJsCoerce, zodDay } from '../index.js';
 const find = z.object({
     key: z.coerce.number().int().positive().transform((val) => `${val}`)
 });
-const baseRead = find.merge(
+
+export const baseUser = z.object({
+    key: z.string(),
+    nickname: z.string(),
+    avatarURL: z.string(),
+    username: z.string()
+})
+
+const baseRead = find.merge(baseUser).merge(
     z.object({
-        name: z.string({}),
-        username: z.string({}),
-        nickname: z.string({}),
-        avatarURL: z.string({}),
+        name: z.string(),
         roles: z.array(
             z.object({
                 name: z.string(),
