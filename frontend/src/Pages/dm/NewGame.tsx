@@ -49,8 +49,8 @@ function NewGameInner({ formRef }: { formRef: React.RefObject<FormInstance<GameU
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let initialValues: Partial<GameForm> = {
         date: dayjs('12:00', 'HH:mm').add(14, 'days'),
-        starttime: dayjs('18:00', 'HH:mm'),
-        endtime: dayjs('22:00', 'HH:mm'),
+        starttime: dayjs('18:00', 'HH:mm').add(14, 'days'),
+        endtime: dayjs('22:00', 'HH:mm').add(14, 'days'),
         maxplayers: 4,
         type: 'oneshot' as GameType
     };
