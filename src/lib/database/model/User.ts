@@ -203,6 +203,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
             lastSeenThread,
             lastSeenChannel
         };
+        console.log(JSON.stringify(updates, null, 2))
         this.set(updates);
         return this.save();
     }
