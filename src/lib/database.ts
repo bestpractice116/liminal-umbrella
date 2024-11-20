@@ -537,8 +537,6 @@ export default class Database {
     }
 
     async fetchAndStoreMessages(channel: TextBasedChannel, earliest?: Date): Promise<Date> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        console.log(`fetchAndStoreMessages for ${(channel as any).name}`);
         const fetchAmount = 100;
         const options: FetchMessagesOptions = {
             limit: fetchAmount
@@ -567,8 +565,6 @@ export default class Database {
                 }
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-            console.log(`Indexed ${messages.size} messages in channel ${(channel as any).name}`);
             if (messages.size < fetchAmount || earliestDateSeen <= earliest) {
                 break;
             }
@@ -595,7 +591,7 @@ export default class Database {
                 channel.set({ lastSeenIndexedToDate, synced: true });
                 await channel.save();
         }
-        if (discordChannel.type === ChannelType.PublicThread) {
+        if (discordChannel.type === ChannelType.PublicThread || discordChannel.type === ChannelType.PrivateThread) {
             throw new Error(`We should not end up in syncChannel for a thread ID ${discordChannel.id}`);
         }
         if (discordChannel.type === ChannelType.GuildForum || discordChannel.type === ChannelType.GuildText) {
@@ -603,13 +599,9 @@ export default class Database {
                 fetchAll: true,
                 limit: 100
             };
-            console.log(`Fetch archived threads START for ${discordChannel.name}`);
-            let fetchedThreads = 0;
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             while (true) {
-                console.log(`Fetch archived threads TOP OF LOOP for for ${discordChannel.name}`);
                 const archivedThreads = await discordChannel.threads.fetchArchived(fetchArchivedOptions);
-                fetchedThreads += archivedThreads.threads.size;
                 await sleep(100);
 
                 for (const [_name, thread] of archivedThreads.threads) {
@@ -619,12 +611,10 @@ export default class Database {
                 }
 
                 if (!archivedThreads.hasMore) {
-                    console.log(`no more archived threads for ${discordChannel.name}`);
                     break;
                 }
                 fetchArchivedOptions.before = archivedThreads.threads.first()!.id;
             }
-            console.log(`Fetch archived threads END for ${discordChannel.name} fetched ${fetchedThreads} threads`);
 
             // No need to do extra stuff with active threads, as fetchActive() just always returns them all
             const activeThreads = await discordChannel.threads.fetchActive();
@@ -638,14 +628,12 @@ export default class Database {
 
     async syncThread(thread: AnyThreadChannel) {
             const dbThread = await Thread.findByPk(thread.id);
-            console.log(`Working to sync Thread name ${thread.name}`);
             if (
                 dbThread &&
                 dbThread.locked == thread.locked &&
                 dbThread.archived == thread.archived &&
                 thread.archiveTimestamp == dbThread.archiveTimestamp
             ) {
-                console.log(`No need to sync Thread name ${thread.name} - have in db and already synced`);
                 return;
             }
             let earliest = START_OF_TIME;
@@ -653,9 +641,7 @@ export default class Database {
                 earliest = dbThread.lastSeenIndexedToDate;
             }
             if (!dbThread || dbThread.archiveTimestamp !== thread.archiveTimestamp || dbThread.lastMessageId !== thread.lastMessageId) {
-                console.log(`Doing fetch and store for Thread name ${thread.name} - previous earliest is ${earliest}`);
                 earliest = await this.fetchAndStoreMessages(thread, earliest);
-                console.log(`Finished fetch and store for Thread name ${thread.name} - got back to (lastSeenIndexedToDate) ${earliest}`);
             }
             const threadMetadata: ThreadMeta = {
                 name: thread.name,

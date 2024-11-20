@@ -191,7 +191,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         if (message.createdAt <= this.lastSeenTime) return;
         let lastSeenThread = null;
         let lastSeenChannel = message.channel.id
-        if (message.channel.type === ChannelType.PublicThread) {
+        if (message.channel.type === ChannelType.PublicThread || message.channel.type === ChannelType.PrivateThread) {
             lastSeenChannel = message.channel.parent!.id
             lastSeenThread = message.channel.id
         }
