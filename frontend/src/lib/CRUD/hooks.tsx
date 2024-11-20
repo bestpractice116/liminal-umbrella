@@ -79,16 +79,16 @@ export function useCreateMutationAndUpdateQueryData<TIn, TCreated extends Keyabl
     });
 }
 
-export function useUpdateMutation<T extends Keyable>(
+export function useUpdateMutation<TUpdate extends Keyable, TRead extends Keyable>(
     apipath: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onSuccess: (data: MutationReturn<T>, row: T) => void
+    onSuccess: (data: MutationReturn<TRead>, row: TUpdate) => void
 ) {
     const [isUpdating, setIsMutating] = useState(false);
     const { showBoundary } = useErrorBoundary();
-    const updateMutation = useMutation<MutationReturn<T>, Error, T, T>({
+    const updateMutation = useMutation<MutationReturn<TRead>, Error, TUpdate, TUpdate>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mutationFn: async (r: T) => {
+        mutationFn: async (r: TUpdate) => {
             return fetch(
                 `${apipath}/${r.key}`,
                 {
@@ -101,9 +101,9 @@ export function useUpdateMutation<T extends Keyable>(
                 FetchResultTypes.JSON
             ).then((data) => {
                 zodErrorConvertorThrow(data, () => {
-                    onSuccess(data as MutationReturn<T>, r);
+                    onSuccess(data as MutationReturn<TRead>, r);
                 });
-                return data as MutationReturn<T>;
+                return data as MutationReturn<TRead>;
             });
         },
         onMutate: () => {
@@ -121,15 +121,15 @@ export function useUpdateMutation<T extends Keyable>(
     return { updateMutation, isUpdating };
 }
 
-export function useUpdateMutationAndUpdateQueryData<T extends Keyable>(apipath: string, querykey: QueryKey) {
+export function useUpdateMutationAndUpdateQueryData<T extends Keyable, TRead extends Keyable>(apipath: string, querykey: QueryKey) {
     const queryClient = useQueryClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return useUpdateMutation<T>(apipath, (data: MutationReturn<T>) => {
+    return useUpdateMutation<T, TRead>(apipath, (data: MutationReturn<TRead>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryClient.setQueryData([querykey], (old?: T[]) => {
+        queryClient.setQueryData([querykey], (old?: TRead[]) => {
         if (!old) return [data.datum];
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return old.map((item: T) => {
+            return old.map((item: TRead) => {
                 if (item.key === data.datum.key) {
                     return data.datum;
                 }

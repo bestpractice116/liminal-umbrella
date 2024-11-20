@@ -5,7 +5,7 @@ import { MutationReturn, useCreateMutation, useFetchQuery, useUpdateMutation } f
 import { Spin } from '../../components/Spin';
 import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
-import { useQueryClient } from '@tanstack/react-query';
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import BotMessage from '../../components/BotMessage';
@@ -60,7 +60,8 @@ function NewCampaignInner({ formRef }: { formRef: React.RefObject<FormInstance<C
     if (!result.isFetched) {
         return <Spin spinning={true} />;
     }
-    let mutation = createMutation;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mutation: UseMutationResult<MutationReturn<CampaignReadItem>, Error, any, any> = createMutation;
     if (hasGame) {
         mutation = updateMutation;
     }
@@ -69,7 +70,6 @@ function NewCampaignInner({ formRef }: { formRef: React.RefObject<FormInstance<C
             return;
         }
         const data = formRef.current.getFieldsValue();
-        delete data.date;
         mutation.mutate(data);
     };
     const postcampaign = () => {

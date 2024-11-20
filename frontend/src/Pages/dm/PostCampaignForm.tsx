@@ -3,7 +3,7 @@ import Form, { FormInstance, type FormItemProps } from 'antd/es/form';
 import Input from 'antd/es/input';
 import Select from 'antd/es/select';
 import { Spin } from '../../components/Spin/index.js';
-import { type CampaignUpdateItem, CampaignSchema, CampaignCreateItem } from 'common/schema';
+import { type CampaignUpdateItem, CampaignSchema, CampaignReadItem } from 'common/schema';
 import { CreateForm, MutationReturn } from '../../lib/CRUD/index.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
@@ -46,14 +46,14 @@ export default function PostCampaignForm({
     save: () => void;
     isLoading: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutation: UseMutationResult<MutationReturn<CampaignCreateItem>, Error, CampaignCreateItem, CampaignCreateItem>;
+    mutation: UseMutationResult<MutationReturn<CampaignReadItem>, Error, any, any>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initialValues: Record<string, any>;
     children?: React.ReactNode;
     createForm?: boolean;
     disabled?: boolean;
     submitButtonText?: string;
-    formRef: RefObject<FormInstance<CampaignCreateItem>>;
+    formRef: RefObject<FormInstance>;
 }) {
     children ||= <></>;
 
