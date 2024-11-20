@@ -8,7 +8,7 @@ import { Spin } from '../../components/Spin';
 import Form, { FormInstance } from 'antd/es/form';
 import { getZObject } from 'common';
 import { fetch, FetchResultTypes, FetchMethods } from '@sapphire/fetch';
-import { useQueryClient } from '@tanstack/react-query';
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import PostGameForm from './PostGameForm.js';
 import { CheckCircleOutlined } from '@ant-design/icons';
@@ -69,7 +69,8 @@ function NewGameInner({ formRef }: { formRef: React.RefObject<FormInstance<GameU
     if (!result.isFetched) {
         return <Spin spinning={true} />;
     }
-    let mutation = createMutation;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mutation: UseMutationResult<MutationReturn<GameForm>, Error, any, any> = createMutation;
     if (hasGame) {
         mutation = updateMutation;
     }

@@ -120,7 +120,7 @@ export function ViewGame() {
     const key = data.key as number;
     const queryKey = ['gamesessions', key];
     const result = useFetchQuery<GameReadItem>(`/api/gamesessions/${key}`, queryKey);
-    const { updateMutation, isUpdating } = useUpdateMutationAndUpdateQueryData<GameForm>('/api/gamesessions', ['gamesessions', key])
+    const { updateMutation, isUpdating } = useUpdateMutationAndUpdateQueryData<GameForm, GameReadItem>('/api/gamesessions', ['gamesessions', key])
     const { deleteMutation } = useDeleteMutation(
         '/api/gamesessions',
         // FIXME - why can't we use the built in query mangler
