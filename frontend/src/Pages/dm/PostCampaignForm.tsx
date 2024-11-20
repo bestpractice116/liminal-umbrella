@@ -2,16 +2,16 @@ import { type RefObject } from 'react';
 import Form, { FormInstance, type FormItemProps } from 'antd/es/form';
 import Input from 'antd/es/input';
 import Select from 'antd/es/select';
-import { Spin } from '../../components/Spin';
+import { Spin } from '../../components/Spin/index.js';
 import { type CampaignUpdateItem, CampaignSchema, CampaignCreateItem } from 'common/schema';
-import { CreateForm, MutationReturn } from '../../lib/CRUD';
+import { CreateForm, MutationReturn } from '../../lib/CRUD/index.js';
 import { createSchemaFieldRule } from 'antd-zod';
 import { UseMutationResult } from '@tanstack/react-query';
 import { getZObject } from 'common';
 import GameSystemSelect from './GameSystemSelect.js';
 import GameTypeSelect from './GameTypeSelect.js';
-import { Tooltip } from '../../components/Tooltip';
-import { useBotMessage } from '../../components/BotMessage';
+import { Tooltip } from '../../components/Tooltip/index.js';
+import { useBotMessage } from '../../components/BotMessage/index.js';
 
 const updateFormRule = createSchemaFieldRule(getZObject(CampaignSchema.update!).partial());
 
