@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { SchemaBundle } from './types.js';
-import {gameDescriptionSchema, gameLocationSchema, gameMaxPlayersSchema, gameNameSchema, gameSystemSchema, gameTypeSchema} from "./Game";
+import {gameDescriptionSchema, gameLocationSchema, gameMaxPlayersSchema, gameNameSchema, gameSystemSchema, gameTypeSchema} from "./Game.js";
 import { baseUser } from './User.js';
 
 const find = z.object({
